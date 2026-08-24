@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
 import { LangToggle } from "@/components/ui/LangToggle";
 import { DistributionCurve } from "@/components/rscore/DistributionCurve";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
@@ -19,9 +20,7 @@ export default function MarketingHome() {
     <div className="flex min-h-[100dvh] flex-col bg-chalk">
       <header className="sticky top-0 z-50 bg-chalk/90 backdrop-blur-sm pt-safe">
         <div className="mx-auto flex h-14 w-full max-w-[430px] items-center justify-between px-5">
-          <span className="font-display text-[19px] font-bold tracking-tight text-ink">
-            MaCote
-          </span>
+          <Logo size={22} />
           <LangToggle />
         </div>
       </header>

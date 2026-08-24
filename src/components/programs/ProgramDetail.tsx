@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
 import { LangToggle } from "@/components/ui/LangToggle";
 import { BottomNav } from "@/components/app-shell/BottomNav";
 import { DistributionCurve } from "@/components/rscore/DistributionCurve";
@@ -40,9 +41,7 @@ export function ProgramDetail({
           >
             <ChevronLeft className="h-6 w-6" />
           </Link>
-          <span className="font-display text-[17px] font-bold tracking-tight text-ultramarine">
-            MaCote
-          </span>
+          <Logo size={20} />
           <LangToggle />
         </div>
       </header>

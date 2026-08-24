@@ -1,7 +1,11 @@
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { ChevronLeft, TriangleAlert, CheckCircle2 } from "lucide-react";
-import { PrintButton } from "@/components/PrintButton";
 import { SourceStamp } from "@/components/SourceStamp";
+
+const PrintButton = dynamic(
+  () => import("@/components/PrintButton").then((mod) => mod.PrintButton),
+);
 import { STUDENT_SAMPLE, UNIVERSITY_PROGRAMS, DASHBOARD_SAMPLE } from "@/lib/sample-data";
 import { formatScore, formatSignedScore } from "@/lib/format";
 

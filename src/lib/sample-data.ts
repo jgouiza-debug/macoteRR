@@ -349,6 +349,9 @@ export const DASHBOARD_SAMPLE = {
     { sessionFr: "Hiver 2026", sessionEn: "Winter 2026", score: 31.85 },
     { sessionFr: "Automne 2025", sessionEn: "Fall 2025", score: 30.2 },
   ],
+  // No groupStdDev: real cégep bulletins publish the group average but essentially never
+  // the standard deviation, so this exercises the degraded path in src/lib/rscore/impact.ts
+  // deliberately, rather than the idealised full cote-Z path.
   currentCourses: [
     {
       nameFr: "Calcul différentiel",
@@ -356,7 +359,6 @@ export const DASHBOARD_SAMPLE = {
       code: "201-NYA-05",
       grade: 88,
       groupAverage: 72,
-      impact: "high" as const,
     },
     {
       nameFr: "Physique — Mécanique",
@@ -364,7 +366,6 @@ export const DASHBOARD_SAMPLE = {
       code: "203-NYA-05",
       grade: 82,
       groupAverage: 75,
-      impact: "neutral" as const,
     },
     {
       nameFr: "Philosophie et rationalité",
@@ -372,7 +373,6 @@ export const DASHBOARD_SAMPLE = {
       code: "340-101-MQ",
       grade: 76,
       groupAverage: 78,
-      impact: "low" as const,
     },
   ],
   goalProgram: {

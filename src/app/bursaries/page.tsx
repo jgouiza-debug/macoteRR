@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
@@ -24,15 +25,27 @@ export default function BursariesPage() {
   const f = useFormat();
   const { profile } = useStudentProfile();
 
-  // Local arithmetic over a small dataset — this never round-trips (latency budget).
-  const matches = matchBursaries(BURSARIES, {
-    cegepId: profile.cegepId,
-    cegepProgramId: profile.cegepProgramId,
-    currentSession: profile.currentSession,
-    rScore: profile.rScore,
-    selfTags: profile.selfTags,
-    targetUniversityProgramIds: profile.targetUniversityProgramIds,
-  });
+  // Local arithmetic over a small dataset with referentially stable memoization.
+  const studentContext = useMemo(
+    () => ({
+      cegepId: profile.cegepId,
+      cegepProgramId: profile.cegepProgramId,
+      currentSession: profile.currentSession,
+      rScore: profile.rScore,
+      selfTags: profile.selfTags,
+      targetUniversityProgramIds: profile.targetUniversityProgramIds,
+    }),
+    [
+      profile.cegepId,
+      profile.cegepProgramId,
+      profile.currentSession,
+      profile.rScore,
+      profile.selfTags,
+      profile.targetUniversityProgramIds,
+    ],
+  );
+
+  const matches = useMemo(() => matchBursaries(BURSARIES, studentContext), [studentContext]);
 
   const cegepName =
     CEGEPS.find((c) => c.id === profile.cegepId)?.name ?? t("prof.cegep");

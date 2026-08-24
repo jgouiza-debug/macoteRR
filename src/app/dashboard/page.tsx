@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import {
   CalendarDays,
   BadgeCheck,
@@ -12,21 +13,22 @@ import { AppShell } from "@/components/app-shell/AppShell";
 import { AxisRow } from "@/components/rscore/AxisRow";
 import { SourceStamp } from "@/components/SourceStamp";
 import { DASHBOARD_SAMPLE, DEADLINES } from "@/lib/sample-data";
+import { classifySession, type ImpactBand } from "@/lib/rscore/impact";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import type { TranslationKey } from "@/lib/i18n/dictionary";
 
 const IMPACT: Record<
-  "high" | "neutral" | "low",
+  ImpactBand,
   { key: TranslationKey; icon: typeof ArrowUp; className: string }
 > = {
-  high: { key: "dash.high", icon: ArrowUp, className: "bg-moss/10 text-moss" },
+  strong: { key: "dash.high", icon: ArrowUp, className: "bg-moss/10 text-moss" },
   neutral: {
     key: "dash.neutral",
     icon: Minus,
     className: "border border-dashed border-ink/30 text-ink/55",
   },
-  low: { key: "dash.low", icon: ArrowDown, className: "bg-ember/10 text-ember" },
+  weak: { key: "dash.low", icon: ArrowDown, className: "bg-ember/10 text-ember" },
 };
 
 export default function DashboardPage() {
@@ -44,6 +46,15 @@ export default function DashboardPage() {
   const sessionLabel = locale === "fr" ? currentSessionLabelFr : currentSessionLabelEn;
   const goalName = locale === "fr" ? goalProgram.nameFr : goalProgram.nameEn;
   const needed = goalProgram.cutoff - currentEstimate;
+
+  // Local arithmetic over three rows with memoization — never a network round-trip.
+  const impacts = useMemo(
+    () =>
+      classifySession(
+        currentCourses.map((c) => ({ grade: c.grade, groupAverage: c.groupAverage })),
+      ),
+    [currentCourses],
+  );
 
   return (
     <AppShell rScore={currentEstimate}>
@@ -98,6 +109,7 @@ export default function DashboardPage() {
               {sessionLabel}
             </span>
           </div>
+          <p className="-mt-1.5 text-[11.5px] leading-relaxed text-ink/50">{t("dash.impactBasis")}</p>
           <div className="overflow-hidden rounded border border-ink/12 bg-paper shadow-card">
             <table className="w-full border-collapse text-left">
               <thead>
@@ -108,8 +120,8 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody>
-                {currentCourses.map((course) => {
-                  const impact = IMPACT[course.impact];
+                {currentCourses.map((course, i) => {
+                  const impact = IMPACT[impacts[i].band];
                   return (
                     <tr key={course.code} className="border-b border-ink/10 last:border-b-0">
                       <td className="px-3 py-3">

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User } from "lucide-react";
+import { LogoMark } from "@/components/ui/Logo";
 import { LangToggle } from "@/components/ui/LangToggle";
 import { NAV_ITEMS } from "./nav-items";
 import { useFormat } from "@/lib/i18n/useFormat";
@@ -16,10 +16,8 @@ export function TopNav({ rScore }: { rScore?: number }) {
   return (
     <header className="fixed top-0 z-50 w-full border-b border-ink/10 bg-paper pt-safe">
       <div className="mx-auto flex h-14 w-full max-w-[1200px] items-center justify-between gap-3 px-4 md:px-8">
-        <Link href="/dashboard" className="flex items-center gap-2.5">
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-chalk">
-            <User className="h-4 w-4 text-ultramarine" />
-          </span>
+        <Link href="/dashboard" className="flex items-center gap-2">
+          <LogoMark size={22} />
           <span className="font-display text-[17px] font-bold tracking-tight text-ultramarine">
             MaCote
           </span>

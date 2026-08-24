@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Mortarboard Diamond Top -->
+  <path d="M16 4L30 11L16 18L2 11L16 4Z" fill="#2B4CF5"/>
+  
+  <!-- Mortarboard Cap Body -->
+  <path d="M7 14.5V20.5C7 24.5 16 27.5 16 27.5C16 27.5 25 24.5 25 20.5V14.5" stroke="#2B4CF5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Tassel -->
+  <path d="M26.5 12.5V22C26.5 23 25 23 25 22V12.5" stroke="#2B4CF5" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="25.75" cy="23" r="1.25" fill="#2B4CF5"/>
+</svg>

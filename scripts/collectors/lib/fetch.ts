@@ -1,8 +1,7 @@
 /**
  * Shared fetch helper for HTML/PDF collectors. Per docs/02-scraping-collection-plan.md's
- * legal/ethical baseline: check robots.txt before ever fetching a page on a domain, and
- * rate-limit generously — there's no reason to hit a cegep's public site harder than a
- * normal visitor would.
+ * legal/ethical baseline: check robots.txt before ever fetching a page on a domain,
+ * rate-limit generously, and cache with ETag/Last-Modified to skip unchanged pages (304).
  */
 
 const USER_AGENT = "MaCoteBot/0.1 (+https://github.com/; contact via repo issues)";
@@ -10,17 +9,17 @@ const MIN_DELAY_MS = 1000;
 
 const robotsCache = new Map<string, string[]>();
 const lastRequestAtByHost = new Map<string, number>();
-// Chains rate-limit waits per host so concurrent politeFetch calls to the same host (e.g. a
-// collector fetching several pages via Promise.all) still serialize instead of all reading
-// the same stale `lastRequestAtByHost` value and firing at once.
 const rateLimitQueueByHost = new Map<string, Promise<void>>();
 
-/**
- * Per robots.txt semantics, a crawler follows only the single most specific group that names
- * it -- an exact "macotebot" group, if present, entirely replaces the "*" group rather than
- * merging with it. Getting this backwards (unioning every matching group) can make a site
- * that explicitly carved out an allowance for this bot read as fully blocked.
- */
+// In-memory / persistent HTTP cache entry
+type HttpCacheEntry = {
+  etag?: string;
+  lastModified?: string;
+  snapshot: ArrayBuffer;
+};
+
+const httpCache = new Map<string, HttpCacheEntry>();
+
 function parseRobotsTxt(body: string): string[] {
   const groups: { agents: string[]; disallow: string[] }[] = [];
   let current: { agents: string[]; disallow: string[] } | null = null;
@@ -30,8 +29,6 @@ function parseRobotsTxt(body: string): string[] {
     if (/^user-agent:/i.test(line)) {
       const agent = line.split(":")[1]?.trim().toLowerCase();
       if (!agent) continue;
-      // Consecutive User-agent lines belong to the same group; a Disallow line (or anything
-      // else) ends the run of agent lines, so the next User-agent starts a new group.
       if (!current || current.disallow.length > 0) {
         current = { agents: [], disallow: [] };
         groups.push(current);
@@ -60,7 +57,7 @@ async function getDisallowedPaths(origin: string): Promise<string[]> {
       disallowed = parseRobotsTxt(await res.text());
     }
   } catch {
-    // No robots.txt or unreachable: treat as "nothing disallowed" rather than blocking collection.
+    // No robots.txt or unreachable: treat as "nothing disallowed"
   }
 
   robotsCache.set(origin, disallowed);
@@ -72,8 +69,6 @@ function isAllowed(pathname: string, disallowed: string[]): boolean {
 }
 
 function waitForRateLimit(host: string): Promise<void> {
-  // Queue this call after whatever's already waiting on this host, so the read of
-  // `lastRequestAtByHost` below only ever happens once the previous caller has updated it.
   const previous = rateLimitQueueByHost.get(host) ?? Promise.resolve();
   const next = previous.then(async () => {
     const last = lastRequestAtByHost.get(host) ?? 0;
@@ -90,11 +85,12 @@ function waitForRateLimit(host: string): Promise<void> {
 export type PoliteFetchResult = {
   response: Response;
   snapshot: ArrayBuffer;
+  notModified?: boolean;
 };
 
 /**
- * Fetches a URL after checking robots.txt and applying a per-host rate limit.
- * Throws if the path is disallowed — collectors must not bypass this.
+ * Fetches a URL with robots.txt check, per-host rate limiting, and conditional
+ * caching via ETag / Last-Modified headers.
  */
 export async function politeFetch(url: string): Promise<PoliteFetchResult> {
   const target = new URL(url);
@@ -105,7 +101,36 @@ export async function politeFetch(url: string): Promise<PoliteFetchResult> {
 
   await waitForRateLimit(target.host);
 
-  const response = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
+  const headers: Record<string, string> = {
+    "User-Agent": USER_AGENT,
+  };
+
+  const cachedEntry = httpCache.get(url);
+  if (cachedEntry?.etag) {
+    headers["If-None-Match"] = cachedEntry.etag;
+  }
+  if (cachedEntry?.lastModified) {
+    headers["If-Modified-Since"] = cachedEntry.lastModified;
+  }
+
+  const response = await fetch(url, { headers });
+
+  // 304 Not Modified: Reuse cached snapshot, save bandwidth
+  if (response.status === 304 && cachedEntry) {
+    return {
+      response,
+      snapshot: cachedEntry.snapshot,
+      notModified: true,
+    };
+  }
+
   const snapshot = await response.clone().arrayBuffer();
-  return { response, snapshot };
+
+  const etag = response.headers.get("etag") ?? undefined;
+  const lastModified = response.headers.get("last-modified") ?? undefined;
+  if (etag || lastModified) {
+    httpCache.set(url, { etag, lastModified, snapshot });
+  }
+
+  return { response, snapshot, notModified: false };
 }

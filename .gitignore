@@ -34,6 +34,7 @@ yarn-error.log*
 .env*
 # ...except the template, which is documentation and holds only empty placeholders.
 !.env.local.example
+!.env.example
 
 # vercel
 .vercel
