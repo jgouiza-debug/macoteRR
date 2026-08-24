@@ -1,3 +1,4 @@
+import type { BursaryCriteria } from "@/lib/matching/match";
 // Illustrative sample data for the MVP UI. Shaped after docs/01-data-architecture.md so
 // wiring real Supabase queries in later phases is a drop-in swap, not a redesign.
 //
@@ -25,15 +26,15 @@ export const CEGEP_PROGRAMS: CegepProgram[] = [
   { id: "sciences-lettres-arts", name: "Sciences, lettres et arts" },
 ];
 
-export type Session = { id: number; label: string };
+export type Session = { id: number; labelFr: string; labelEn: string };
 
 export const SESSIONS: Session[] = [
-  { id: 1, label: "Automne 2024" },
-  { id: 2, label: "Hiver 2025" },
-  { id: 3, label: "Automne 2025" },
-  { id: 4, label: "Hiver 2026" },
-  { id: 5, label: "Automne 2026" },
-  { id: 6, label: "Hiver 2027" },
+  { id: 1, labelFr: "Automne 2024", labelEn: "Fall 2024" },
+  { id: 2, labelFr: "Hiver 2025", labelEn: "Winter 2025" },
+  { id: 3, labelFr: "Automne 2025", labelEn: "Fall 2025" },
+  { id: 4, labelFr: "Hiver 2026", labelEn: "Winter 2026" },
+  { id: 5, labelFr: "Automne 2026", labelEn: "Fall 2026" },
+  { id: 6, labelFr: "Hiver 2027", labelEn: "Winter 2027" },
 ];
 
 export type PrerequisiteStatus = "met" | "missing" | "in_progress";
@@ -190,17 +191,24 @@ export const UNIVERSITY_PROGRAMS: UniversityProgram[] = [
   },
 ];
 
-export type Bursary = {
-  id: string;
+/**
+ * Bursary rows carry matching CRITERIA, not a precomputed tier — the tier is derived per
+ * student by src/lib/matching/match.ts so the same row lands differently for different
+ * students, and the "why" is explainable rather than baked in.
+ */
+export type Bursary = BursaryCriteria & {
   name: string;
   sourceOrg: string;
-  amount: number;
-  deadlineIso: string;
+  amountMin: number | null;
   deadlinePrecision?: "day" | "month";
-  tags: string[];
-  minRScore?: number;
-  tier: "matched" | "close" | "explore";
-  applicationUrl: string;
+  /**
+   * null when the foundation handles applications internally. The UI then tells the student
+   * to contact their cégep's financial-aid office rather than inventing a link that 404s.
+   */
+  applicationUrl: string | null;
+  hasPublicApplicationLink: boolean;
+  requiresEssay: boolean;
+  requiresRecommendation: boolean;
   sourceUrl: string;
   lastVerifiedAt: string;
 };
@@ -210,12 +218,19 @@ export const BURSARIES: Bursary[] = [
     id: "excellence-sciences-nature",
     name: "Bourse d'excellence en sciences de la nature",
     sourceOrg: "Fondation du Cégep de Sainte-Foy",
-    amount: 1500,
-    deadlineIso: "2026-10-15",
-    tags: ["Ton cégep", "Cote R > 27"],
+    cegepId: "sainte-foy",
+    eligibleCegepPrograms: ["sciences-nature"],
+    eligibleUniversityPrograms: null,
     minRScore: 27,
-    tier: "matched",
+    minSession: null,
+    tagCriteria: null,
+    amountMin: 1500,
+    amountMax: 1500,
+    deadlineIso: "2026-10-15",
     applicationUrl: "https://www.cegep-ste-foy.qc.ca/fondation/",
+    hasPublicApplicationLink: true,
+    requiresEssay: false,
+    requiresRecommendation: false,
     sourceUrl: "https://www.cegep-ste-foy.qc.ca/fondation/bourses/",
     lastVerifiedAt: "2026-03-03",
   },
@@ -223,24 +238,61 @@ export const BURSARIES: Bursary[] = [
     id: "implication-communautaire",
     name: "Bourse d'implication communautaire Desjardins",
     sourceOrg: "Fondation du Cégep de Sainte-Foy",
-    amount: 500,
+    cegepId: "sainte-foy",
+    eligibleCegepPrograms: null,
+    eligibleUniversityPrograms: null,
+    minRScore: null,
+    minSession: null,
+    tagCriteria: ["volunteering", "community_engagement"],
+    amountMin: 500,
+    amountMax: 500,
     deadlineIso: "2026-11-01",
-    tags: ["Ton cégep", "Bénévolat"],
-    tier: "close",
     applicationUrl: "https://www.cegep-ste-foy.qc.ca/fondation/",
+    hasPublicApplicationLink: true,
+    requiresEssay: true,
+    requiresRecommendation: false,
     sourceUrl: "https://www.cegep-ste-foy.qc.ca/fondation/bourses/",
     lastVerifiedAt: "2026-03-03",
   },
   {
-    id: "mobilite-internationale",
-    name: "Bourse de mobilité étudiante internationale",
+    // Exercises the internal-application path: no public form exists, so the card must
+    // route the student to their cégep instead of offering a dead link.
+    id: "perseverance-sainte-foy",
+    name: "Bourse de persévérance scolaire",
+    sourceOrg: "Fondation du Cégep de Sainte-Foy",
+    cegepId: "sainte-foy",
+    eligibleCegepPrograms: null,
+    eligibleUniversityPrograms: null,
+    minRScore: null,
+    minSession: 2,
+    tagCriteria: ["perseverance"],
+    amountMin: null,
+    amountMax: null,
+    deadlineIso: null,
+    applicationUrl: null,
+    hasPublicApplicationLink: false,
+    requiresEssay: false,
+    requiresRecommendation: true,
+    sourceUrl: "https://www.cegep-ste-foy.qc.ca/fondation/bourses/",
+    lastVerifiedAt: "2026-03-03",
+  },
+  {
+    id: "afe-prets-bourses",
+    name: "Programme de prêts et bourses (AFE)",
     sourceOrg: "Gouvernement du Québec",
-    amount: 2000,
-    deadlineIso: "2027-02-01",
-    deadlinePrecision: "month",
-    tags: ["Gouvernement du Québec"],
-    tier: "explore",
+    cegepId: null,
+    eligibleCegepPrograms: null,
+    eligibleUniversityPrograms: null,
+    minRScore: null,
+    minSession: null,
+    tagCriteria: null,
+    amountMin: null,
+    amountMax: null,
+    deadlineIso: null,
     applicationUrl: "https://www.quebec.ca/education/aide-financiere-aux-etudes",
+    hasPublicApplicationLink: true,
+    requiresEssay: false,
+    requiresRecommendation: false,
     sourceUrl: "https://www.quebec.ca/education/aide-financiere-aux-etudes",
     lastVerifiedAt: "2026-02-18",
   },

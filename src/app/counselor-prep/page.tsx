@@ -61,7 +61,7 @@ export default function CounselorPrepPage() {
         <section className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           <Field label="Cégep" value={STUDENT_SAMPLE.cegep.name} />
           <Field label="Programme" value={STUDENT_SAMPLE.program.name} />
-          <Field label="Session" value={STUDENT_SAMPLE.session.label} />
+          <Field label="Session" value={STUDENT_SAMPLE.session.labelFr} />
         </section>
 
         <section className="flex flex-col gap-3">
@@ -79,7 +79,7 @@ export default function CounselorPrepPage() {
             ))}
             <div>
               <p className="text-[10.5px] font-semibold uppercase tracking-wider text-ink/50">
-                {STUDENT_SAMPLE.session.label} · estimation
+                {STUDENT_SAMPLE.session.labelFr} · estimation
               </p>
               <p className="font-display text-[24px] font-bold text-ink tabular-nums">
                 ≈ {formatScore(score, "fr")}
