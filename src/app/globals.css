@@ -11,6 +11,12 @@
   --color-secondary: #5a5d53;
   --color-hairline: #d3d6ca;
   --color-border: #c9ccc0;
+  /* App chrome (top nav, bottom nav). Deliberately a shade DEEPER than the chalk ground
+     rather than paper: the nav bars used paper, the same value as content cards, so the
+     chrome read as one more card competing with the content instead of framing it.
+     Lightness now steps chrome < ground < card, which is what makes the shell feel settled.
+     ink 13.57:1, ultramarine 4.64:1, secondary 5.13:1 — all clear WCAG AA. */
+  --color-shell: #e0e2d8;
   --color-ultramarine: #2b4cf5;
   --color-pressed: #1e39c4;
   --color-moss: #12795a;
