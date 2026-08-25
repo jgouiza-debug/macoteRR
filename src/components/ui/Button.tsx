@@ -15,8 +15,11 @@ const SIZE_CLASSES: Record<Size, string> = {
   lg: "h-14 px-8 text-base",
 };
 
+// transition-colors excludes transform, so the active:scale press used to snap in both
+// directions on the product's primary button. The explicit property list covers both, at
+// the spec's 120ms press tier.
 const BASE =
-  "inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors duration-150 disabled:opacity-40 disabled:pointer-events-none active:scale-[0.98]";
+  "inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-[transform,background-color,border-color,color] duration-120 disabled:opacity-40 disabled:pointer-events-none active:scale-[0.98]";
 
 type CommonProps = {
   variant?: Variant;

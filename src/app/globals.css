@@ -14,6 +14,22 @@
   --color-ultramarine: #2b4cf5;
   --color-pressed: #1e39c4;
   --color-moss: #12795a;
+  /* Ember is used in 15 files (below-range status, validation errors, destructive actions)
+     but was never defined here, so Tailwind emitted no *-ember utility at all: "below the
+     published range" — the one comparison this product exists to communicate — rendered as
+     plain body text, and DistributionCurve's below-range marker painted black.
+     Measured 6.33:1 on paper and 5.35:1 on chalk — both clear WCAG AA for text. */
+  --color-ember: #a5391b;
+
+  /* Motion. The product spec is 120ms press / 180ms routine state change / 250ms overlay,
+     arrivals on a decelerating curve. Without these, Tailwind's defaults (150ms,
+     cubic-bezier(0.4,0,0.2,1) — which ACCELERATES into the change) applied to ~74 of 77
+     transitions, which is most of what "feel" is. --ease-arrival is a new name on purpose:
+     repointing Tailwind's standard `ease-out` at a different curve would trap the next
+     person reading it. */
+  --default-transition-duration: 180ms;
+  --default-transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-arrival: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* Geometry: Structure is square (3px), actions are pill (full). Nothing between. */
   --radius-DEFAULT: 3px;

@@ -102,7 +102,6 @@ export function ResultsView({
             range={hero?.range ?? null}
             youLabel={t("common.toi")}
             rangeLabel={heroRangeLabel}
-            animate
           />
         </section>
 

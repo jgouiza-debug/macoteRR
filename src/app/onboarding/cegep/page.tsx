@@ -64,7 +64,7 @@ export default function CegepPickerPage() {
               role="option"
               aria-selected={isSelected}
               onClick={() => choose(cegep.id)}
-              className={`flex min-h-[56px] items-center justify-between gap-3 rounded px-4 py-3 text-left text-[15px] transition-transform transition-colors active:scale-[0.99] ${
+              className={`flex min-h-[56px] items-center justify-between gap-3 rounded px-4 py-3 text-left text-[15px] transition-[transform,background-color,border-color,color] active:scale-[0.99] ${
                 isSelected
                   ? "border-[1.5px] border-ultramarine bg-ultramarine/[0.07] font-semibold text-ultramarine"
                   : "border border-ink/15 bg-paper text-ink"

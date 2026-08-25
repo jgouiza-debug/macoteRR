@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useSyncExternalStore } from "react";
 import { R_MAX, R_MEAN, R_MIN, R_SIGMA, clampScore } from "@/lib/rscore/scale";
 import { compareToCutoffRange, type CutoffRange } from "@/lib/rscore/cutoff-range";
 
@@ -17,8 +16,6 @@ const AMPLITUDE = 104;
 const MU = R_MEAN;
 const SIGMA = R_SIGMA;
 const PLOT_W = VIEW_W - PAD_X * 2;
-
-const DRAW_FLAG = "macote.curveDrawn";
 
 function xFor(r: number): number {
   return PAD_X + ((clampScore(r) - R_MIN) / (R_MAX - R_MIN)) * PLOT_W;
@@ -40,42 +37,12 @@ function buildCurvePath(): string {
 const CURVE_PATH = buildCurvePath();
 const AREA_PATH = `${CURVE_PATH}L${xFor(R_MAX).toFixed(2)},${BASELINE}L${xFor(R_MIN).toFixed(2)},${BASELINE}Z`;
 
-// The draw-in is the product's single authored moment: it plays once per account, then
-// never again — not on tab return, not on re-render, not on back navigation.
-const flagListeners = new Set<() => void>();
-
-function subscribeDrawn(listener: () => void) {
-  flagListeners.add(listener);
-  return () => flagListeners.delete(listener);
-}
-
-function readDrawn(): boolean {
-  try {
-    return window.localStorage.getItem(DRAW_FLAG) === "1";
-  } catch {
-    return true; // Storage blocked: prefer the static state over replaying the animation.
-  }
-}
-
-// Server has no storage; render the settled state so the markup never shows a half-drawn curve.
-function serverDrawn(): boolean {
-  return true;
-}
-
-function prefersReducedMotion(): boolean {
-  return (
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches
-  );
-}
-
 export function DistributionCurve({
   score,
   range,
   caption,
   youLabel = "toi",
   rangeLabel,
-  animate = false,
 }: {
   score: number;
   /** null when nothing is verified yet — renders a hatched placeholder, no comparison claim. */
@@ -84,21 +51,7 @@ export function DistributionCurve({
   youLabel?: string;
   /** Fully composed by the caller (locale + year formatting), e.g. "seuil 2020–2022". */
   rangeLabel: string;
-  /** Opt in on the results screen only — the one place the authored draw belongs. */
-  animate?: boolean;
 }) {
-  const alreadyDrawn = useSyncExternalStore(subscribeDrawn, readDrawn, serverDrawn);
-  const shouldDraw = animate && !alreadyDrawn && !prefersReducedMotion();
-
-  useEffect(() => {
-    if (!animate || alreadyDrawn) return;
-    try {
-      window.localStorage.setItem(DRAW_FLAG, "1");
-    } catch {
-      /* storage blocked — the animation simply replays next visit */
-    }
-  }, [animate, alreadyDrawn]);
-
   const status = compareToCutoffRange(score, range);
   const markerColor =
     status === "above" ? "var(--color-moss)" : status === "below" ? "var(--color-ember)" : status === "inside" ? "var(--color-ultramarine)" : "var(--color-ink)";
@@ -115,14 +68,14 @@ export function DistributionCurve({
   const labelX = labelOnRight ? xScore + 12 : xScore - 12;
 
   return (
-    <figure className={`m-0 flex w-full flex-col gap-3 ${shouldDraw ? "curve-draw" : ""}`}>
+    <figure className="m-0 flex w-full flex-col gap-3">
       <svg
         viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
         className="h-auto w-full"
         role="img"
         aria-label={`${youLabel} ${score.toFixed(1).replace(".", ",")}, ${rangeLabel}`}
       >
-        <path d={AREA_PATH} fill="var(--color-ink)" fillOpacity="0.04" className="curve-area" />
+        <path d={AREA_PATH} fill="var(--color-ink)" fillOpacity="0.04" />
         <path
           d={CURVE_PATH}
           fill="none"
@@ -130,7 +83,6 @@ export function DistributionCurve({
           strokeOpacity="0.5"
           strokeWidth="2"
           strokeLinecap="round"
-          className="curve-line"
         />
 
         <line
@@ -175,7 +127,7 @@ export function DistributionCurve({
           {rangeLabel}
         </text>
 
-        <g className="curve-marker">
+        <g>
           <circle cx={xScore} cy={yScore} r="8" fill="var(--color-paper)" />
           <circle cx={xScore} cy={yScore} r="5.5" fill={markerColor} />
           <text

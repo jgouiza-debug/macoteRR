@@ -13,7 +13,7 @@ export function AddTargetButton() {
       type="button"
       onClick={() => setAdded((v) => !v)}
       aria-pressed={added}
-      className={`flex h-14 w-full items-center justify-center gap-2 rounded-full text-[15px] font-semibold shadow-card transition-transform transition-colors active:scale-[0.98] ${
+      className={`flex h-14 w-full items-center justify-center gap-2 rounded-full text-[15px] font-semibold shadow-card transition-[transform,background-color,border-color,color] active:scale-[0.98] ${
         added ? "bg-moss/10 text-moss" : "bg-ultramarine text-paper"
       }`}
     >

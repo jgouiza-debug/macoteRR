@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState, memo } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore, memo } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { AxisRow } from "@/components/rscore/AxisRow";
 import { SourceStamp } from "@/components/SourceStamp";
-import { UNIVERSITY_PROGRAMS, STUDENT_SAMPLE, type UniversityProgram } from "@/lib/sample-data";
+import { UNIVERSITY_PROGRAMS, type UniversityProgram } from "@/lib/sample-data";
 import {
   getCutoffRange,
   compareToCutoffRange,
@@ -17,6 +18,7 @@ import {
   type CutoffRange,
   type CutoffStatus,
 } from "@/lib/rscore/cutoff-range";
+import { useStudentProfile } from "@/lib/profile/store";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
@@ -78,17 +80,36 @@ const ProgramRow = memo(function ProgramRow({
 });
 
 export default function ProgramsPage() {
+  const router = useRouter();
   const { t } = useLocale();
   const f = useFormat();
-  const score = STUDENT_SAMPLE.rScoreEstimated;
+  // The student's OWN score, not STUDENT_SAMPLE — this screen was showing a hardcoded
+  // "≈ 32,4" to every visitor while /dashboard showed their real confirmed number.
+  const { profile } = useStudentProfile();
   const [tier, setTier] = useState<CutoffStatus>("above");
+
+  // Same hydration-safe pattern as /dashboard: the first client render matches the server
+  // snapshot (rScore: null) before correcting to the real localStorage value.
+  const hydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+
+  useEffect(() => {
+    if (hydrated && profile.rScore === null) router.replace("/onboarding");
+  }, [hydrated, profile.rScore, router]);
+
+  const score = profile.rScore;
 
   const rows = useMemo(
     () =>
-      UNIVERSITY_PROGRAMS.map((program) => {
-        const range = getCutoffRange(program.cutoffHistory);
-        return { program, range, tier: compareToCutoffRange(score, range) };
-      }).sort((a, b) => CUTOFF_STATUS_ORDER[a.tier] - CUTOFF_STATUS_ORDER[b.tier]),
+      score === null
+        ? []
+        : UNIVERSITY_PROGRAMS.map((program) => {
+            const range = getCutoffRange(program.cutoffHistory);
+            return { program, range, tier: compareToCutoffRange(score, range) };
+          }).sort((a, b) => CUTOFF_STATUS_ORDER[a.tier] - CUTOFF_STATUS_ORDER[b.tier]),
     [score],
   );
 
@@ -103,13 +124,30 @@ export default function ProgramsPage() {
     [rows, tier],
   );
 
+  if (!hydrated || score === null) {
+    return (
+      <AppShell>
+        <div className="mx-auto flex w-full max-w-[480px] flex-col items-center gap-4 px-4 py-16 text-center">
+          <p className="text-[14px] text-ink/60">{t("dash.noEstimate")}</p>
+          <Link
+            href="/onboarding"
+            className="flex h-12 items-center justify-center rounded-full bg-ultramarine px-6 text-[14px] font-semibold text-paper shadow-card"
+          >
+            {t("dash.startOnboarding")}
+          </Link>
+        </div>
+      </AppShell>
+    );
+  }
+
   return (
     <AppShell rScore={score}>
       <div className="mx-auto flex w-full max-w-[480px] flex-col gap-5 px-4 py-6">
         <div className="rounded border border-ink/12 bg-paper px-4 py-3.5 shadow-card">
           <p className="text-[12px] text-ink/55">{t("plist.calcWith")}</p>
           <p className="mt-0.5 font-display text-[24px] font-bold text-ink tabular-nums">
-            ≈ {f.score(score)}
+            {profile.rScoreStatus !== "confirmed" && "≈ "}
+            {f.score(score)}
           </p>
         </div>
 

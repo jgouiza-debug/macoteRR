@@ -85,7 +85,7 @@ async function main() {
   // Dispatch beforeinstallprompt event
   await page4.evaluate(() => {
     const event = new CustomEvent("beforeinstallprompt", { cancelable: true });
-    const installEvent = event as Event & {
+    const installEvent = event as unknown as Event & {
       prompt: () => Promise<void>;
       userChoice: Promise<{ outcome: string; platform: string }>;
     };
