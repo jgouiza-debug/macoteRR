@@ -8,6 +8,7 @@ import { BottomNav } from "@/components/app-shell/BottomNav";
 import { DistributionCurve } from "@/components/rscore/DistributionCurve";
 import { SourceStamp } from "@/components/SourceStamp";
 import { AddTargetButton } from "./AddTargetButton";
+import { useStudentProfile } from "@/lib/profile/store";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import type { PrerequisiteStatus, UniversityProgram } from "@/lib/sample-data";
@@ -19,15 +20,11 @@ const STATUS: Record<PrerequisiteStatus, { key: TranslationKey; className: strin
   in_progress: { key: "prog.inProgress", className: "bg-ink/8 text-ink/60" },
 };
 
-export function ProgramDetail({
-  program,
-  score,
-}: {
-  program: UniversityProgram;
-  score: number;
-}) {
+export function ProgramDetail({ program }: { program: UniversityProgram }) {
   const { t } = useLocale();
   const f = useFormat();
+  const { profile } = useStudentProfile();
+  const score = profile.rScore ?? 0;
   const clears = score >= program.overallCutoff;
 
   return (
@@ -221,7 +218,7 @@ export function ProgramDetail({
         )}
 
         <div className="mt-2">
-          <AddTargetButton />
+          <AddTargetButton programId={program.id} />
         </div>
 
         <footer className="mt-6 flex flex-col items-center gap-2 border-t border-ink/10 pt-6 text-center">

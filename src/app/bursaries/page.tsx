@@ -6,7 +6,7 @@ import { ExternalLink } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { SourceStamp } from "@/components/SourceStamp";
 import { BURSARIES, type Bursary } from "@/lib/sample-data";
-import { CEGEPS } from "@/lib/sample-data";
+import { findCegep } from "@/lib/data/catalog";
 import { matchBursaries, type BursaryMatch, type MatchReason, type MatchTier } from "@/lib/matching/match";
 import { useStudentProfile } from "@/lib/profile/store";
 import { tagLabel } from "@/lib/tags/taxonomy";
@@ -47,8 +47,7 @@ export default function BursariesPage() {
 
   const matches = useMemo(() => matchBursaries(BURSARIES, studentContext), [studentContext]);
 
-  const cegepName =
-    CEGEPS.find((c) => c.id === profile.cegepId)?.name ?? t("prof.cegep");
+  const cegepName = findCegep(profile.cegepId)?.name ?? t("prof.cegep");
 
   function reasonText(reason: MatchReason): string {
     switch (reason.kind) {

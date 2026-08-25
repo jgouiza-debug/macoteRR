@@ -1,0 +1,968 @@
+[
+    {
+        "cegep_name": "Collège Bart (privé)",
+        "website": "",
+        "programs": [
+            {
+                "program_code": "310C0",
+                "program_name": "Techniques juridiques",
+                "category": "Programme technique",
+                "description": "<h1>Objectifs du programme</h1>\r\n\r\n<p>Ce programme prépare l’étudiant.e à intervenir dans toutes les sphères de l’activité juridique à titre de technicien.ne en droit ou comme huissier.ère de justice...."
+            },
+            {
+                "program_code": "410G0",
+                "program_name": "Techniques d’administration et de gestion",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Le programme d’études Techniques d’administration et de gestion vise à former des technicien.ne.s en administration et en gestion. Ces personnes peuvent exercer leur p..."
+            },
+            {
+                "program_code": "420B0",
+                "program_name": "Techniques de l'informatique",
+                "category": "Programme technique",
+                "description": "<p>Le programme d’études <strong>Techniques de l’informatique</strong> vise à former des technicien.ne.s en informatique qui exerceront leur profession dans les domaines du développement d’application..."
+            },
+            {
+                "program_code": "570G0",
+                "program_name": "Graphisme",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p> On vise par ce programme à former des personnes aptes à exercer la profession de graphiste.\r\nLe programme permet de concilier deux exigences de formation, soit la pol..."
+            },
+            {
+                "program_code": "574C0",
+                "program_name": "Production 3D et synthèse d’images",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p> Ce programme vise à former des personnes aptes à exercer la profession de spécialistes en production 3D et en imagerie de synthèse. Ces personnes travaillent surtout ..."
+            },
+            {
+                "program_code": "589C0",
+                "program_name": "Techniques cinématographiques et télévisuelles",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Le programme Techniques cinématographiques et télévisuelles vise à former des technicien.ne.s pour œuvrer sur les plateaux de production en cinéma et en télévision. La..."
+            }
+        ]
+    },
+    {
+        "cegep_name": "Conservatoire de musique de Québec",
+        "website": "http://www.conservatoire.gouv.qc.ca/",
+        "programs": [
+            {
+                "program_code": "501A0",
+                "program_name": "Musique",
+                "category": "Programme préuniversitaire",
+                "description": "<p>Ce programme d’études préuniversitaires vise à donner à l’étudiant.e une formation équilibrée qui intègre les composantes de la formation générale et celles d’une formation spécifique en musique, l..."
+            }
+        ]
+    },
+    {
+        "cegep_name": "Centre d'études collégiales en Charlevoix",
+        "website": "https://ceccharlevoix.ca/",
+        "programs": [
+            {
+                "program_code": "08106",
+                "program_name": "Tremplin DEC",
+                "category": "Cheminement particulier",
+                "description": "<p> Le Tremplin DEC n’est pas un programme d’études menant à l’obtention d’un Diplôme d’études collégiales (DEC).  Il s’agit d'une session spéciale qui permet à un.e étudiant.e de poursuivre son chemi..."
+            },
+            {
+                "program_code": "180A0",
+                "program_name": "Soins infirmiers",
+                "category": "Programme technique",
+                "description": "<h1>Objectifs du programme</h1>\r\n<p>Ce programme vise à former des personnes aptes à exercer en soins infirmiers. Les personnes diplômées du programme doivent également, pour obtenir le droit de prati..."
+            },
+            {
+                "program_code": "200B1",
+                "program_name": "Sciences de la nature",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme vise à offrir une formation équilibrée, intégrant les composantes de base d’une formation scientifique et d’une formation générale rigoureuses qui ren..."
+            },
+            {
+                "program_code": "300M0",
+                "program_name": "Sciences humaines",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme, au collégial, vise à rendre l’étudiant.e apte à poursuivre des études universitaires dans les grands domaines des sciences humaines, du droit, des sc..."
+            },
+            {
+                "program_code": "300M1",
+                "program_name": "Sciences humaines avec mathématiques supplémentaires",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme, au collégial, vise à rendre l’étudiant.e apte à poursuivre des études universitaires dans les grands domaines des sciences humaines, du droit, des sc..."
+            },
+            {
+                "program_code": "351A1",
+                "program_name": "Techniques d'éducation spécialisée",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n<p>Les technicien.ne.s en éducation spécialisée interviennent auprès de personnes présentant, ou susceptibles de présenter, différents problèmes causant des difficultés d’a..."
+            },
+            {
+                "program_code": "410G0",
+                "program_name": "Techniques d’administration et de gestion",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Le programme d’études Techniques d’administration et de gestion vise à former des technicien.ne.s en administration et en gestion. Ces personnes peuvent exercer leur p..."
+            }
+        ]
+    },
+    {
+        "cegep_name": "Cégep Limoilou : campus de Charlesbourg",
+        "website": "https://www.cegeplimoilou.ca/",
+        "programs": [
+            {
+                "program_code": "08106",
+                "program_name": "Tremplin DEC",
+                "category": "Cheminement particulier",
+                "description": "<p> Le Tremplin DEC n’est pas un programme d’études menant à l’obtention d’un Diplôme d’études collégiales (DEC).  Il s’agit d'une session spéciale qui permet à un.e étudiant.e de poursuivre son chemi..."
+            },
+            {
+                "program_code": "120A0",
+                "program_name": "Techniques de diététique",
+                "category": "Programme technique",
+                "description": "<p>Le programme Techniques de diététique vise à former des personnes aptes à travailler dans les domaines de la nutrition clinique et communautaire, de la gestion de services alimentaires, du contrôle..."
+            },
+            {
+                "program_code": "20012",
+                "program_name": "Sciences de la nature et Sciences humaines",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Le double DEC est un programme d’études qui combine deux programmes d’études collégiales préuniversitaires.  De par la nature de la formation suivie et malgré un curriculum qui exige trois années ..."
+            },
+            {
+                "program_code": "200B1",
+                "program_name": "Sciences de la nature",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme vise à offrir une formation équilibrée, intégrant les composantes de base d’une formation scientifique et d’une formation générale rigoureuses qui ren..."
+            },
+            {
+                "program_code": "221B0",
+                "program_name": "Technologie du génie civil",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n<p>Ce programme vise à former des technologues en génie civil.</p>\r\n\r\n<p>Le champ d’activité de ces spécialistes s’inscrit dans le génie des structures, le génie municipal,..."
+            },
+            {
+                "program_code": "221C0",
+                "program_name": "Technologie du génie du bâtiment (mécanique du bâtiment)",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n<p>Ce programme vise à former des personnes aptes à assurer le bon fonctionnement des systèmes mécaniques et à gérer la dépense énergétique des bâtiments. Elles peuvent tra..."
+            },
+            {
+                "program_code": "300M0",
+                "program_name": "Sciences humaines",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme, au collégial, vise à rendre l’étudiant.e apte à poursuivre des études universitaires dans les grands domaines des sciences humaines, du droit, des sc..."
+            },
+            {
+                "program_code": "300M1",
+                "program_name": "Sciences humaines avec mathématiques supplémentaires",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme, au collégial, vise à rendre l’étudiant.e apte à poursuivre des études universitaires dans les grands domaines des sciences humaines, du droit, des sc..."
+            },
+            {
+                "program_code": "414A0",
+                "program_name": "Techniques de tourisme",
+                "category": "Programme technique",
+                "description": "<h1>Objectifs communs des Techniques de tourisme</h1>\r\n\r\n<p>Le programme de tourisme prépare les étudiant.e.s à travailler activement au développement intégré de l’industrie touristique. En plus de co..."
+            },
+            {
+                "program_code": "430A0",
+                "program_name": "Techniques de gestion hôtelière",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n<p>Ce programme vise à former des superviseur.e.s intermédiaires appelé.e.s à exercer leurs fonctions dans l'une ou l'autre des unités d'un établissement hôtelier (accueil,..."
+            },
+            {
+                "program_code": "430B0",
+                "program_name": "Gestion d'un établissement de restauration",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p> Ce programme vise à former des personnes aptes à exercer la profession de superviseur.e d'un service alimentaire.</p>\r\n\r\n<p> La fonction de superviseur.e d'un service..."
+            }
+        ]
+    },
+    {
+        "cegep_name": "Cégep Garneau",
+        "website": "https://www.cegepgarneau.ca/",
+        "programs": [
+            {
+                "program_code": "08105",
+                "program_name": "Tremplin DEC - Premières Nations",
+                "category": "Cheminement particulier",
+                "description": "<p> Le Tremplin DEC n’est pas un programme d’études menant à l’obtention d’un Diplôme d’études collégiales (DEC).  Il s’agit d'une session spéciale qui permet à un.e étudiant.e de poursuivre son chemi..."
+            },
+            {
+                "program_code": "08106",
+                "program_name": "Tremplin DEC",
+                "category": "Cheminement particulier",
+                "description": "<p> Le Tremplin DEC n’est pas un programme d’études menant à l’obtention d’un Diplôme d’études collégiales (DEC).  Il s’agit d'une session spéciale qui permet à un.e étudiant.e de poursuivre son chemi..."
+            },
+            {
+                "program_code": "111B0",
+                "program_name": "Techniques d'hygiène dentaire",
+                "category": "Programme technique",
+                "description": "<p>Exerçant une profession reconnue, l’hygiéniste dentaire diplômé.e est à la fois éducateur.rice et praticien.ne en matière de santé buccale. Cette personne collabore avec la.le dentiste en intervena..."
+            },
+            {
+                "program_code": "144A1",
+                "program_name": "Techniques de physiothérapie",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n<p>Ce programme vise à former des thérapeutes en réadaptation physique qui seront aptes à prendre connaissance des renseignements inscrits dans le dossier de l’usager, à pr..."
+            },
+            {
+                "program_code": "160A0",
+                "program_name": "Optique et lunetterie",
+                "category": "Programme technique",
+                "description": "<h1>Objectifs du programme</h1>\r\n<p>Ce programme vise à former des personnes qui apprendront l’art de la lunetterie, l’ajustement de lentilles cornéennes, la physiologie de l’œil, les techniques de ve..."
+            },
+            {
+                "program_code": "180A0",
+                "program_name": "Soins infirmiers",
+                "category": "Programme technique",
+                "description": "<h1>Objectifs du programme</h1>\r\n<p>Ce programme vise à former des personnes aptes à exercer en soins infirmiers. Les personnes diplômées du programme doivent également, pour obtenir le droit de prati..."
+            },
+            {
+                "program_code": "200B1",
+                "program_name": "Sciences de la nature",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme vise à offrir une formation équilibrée, intégrant les composantes de base d’une formation scientifique et d’une formation générale rigoureuses qui ren..."
+            },
+            {
+                "program_code": "200Z1",
+                "program_name": "Baccalauréat international : Sciences de la nature",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Ces programmes (du baccalauréat international) de deux ans, en plus de mener à l’obtention du diplôme d’études collégiales (DEC), préparent les personnes aux examens du baccalauréat international ..."
+            },
+            {
+                "program_code": "300M0",
+                "program_name": "Sciences humaines",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme, au collégial, vise à rendre l’étudiant.e apte à poursuivre des études universitaires dans les grands domaines des sciences humaines, du droit, des sc..."
+            },
+            {
+                "program_code": "300M1",
+                "program_name": "Sciences humaines avec mathématiques supplémentaires",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme, au collégial, vise à rendre l’étudiant.e apte à poursuivre des études universitaires dans les grands domaines des sciences humaines, du droit, des sc..."
+            },
+            {
+                "program_code": "310A0",
+                "program_name": "Techniques policières",
+                "category": "Programme technique",
+                "description": "<p>Ce programme s’adresse à des personnes qui agiront comme policier.ère.s patrouilleur.se.s pour différents corps policiers ou agences de sécurité.</p>\r\n\r\n<p>Ces personnes sont les premières à interv..."
+            },
+            {
+                "program_code": "310B1",
+                "program_name": "Techniques d’intervention en criminologie",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Le programme Techniques d’intervention en criminologie est orienté sur la formation de personnes qui seront habilitées à intervenir et accompagner des enfants, des ado..."
+            },
+            {
+                "program_code": "310C0",
+                "program_name": "Techniques juridiques",
+                "category": "Programme technique",
+                "description": "<h1>Objectifs du programme</h1>\r\n\r\n<p>Ce programme prépare l’étudiant.e à intervenir dans toutes les sphères de l’activité juridique à titre de technicien.ne en droit ou comme huissier.ère de justice...."
+            },
+            {
+                "program_code": "393B0",
+                "program_name": "Techniques de la documentation",
+                "category": "Programme technique",
+                "description": "<p>Les technicien.ne.s en documentation sont des spécialistes de l’information documentaire qui organisent et gèrent, selon des méthodes rigoureuses, toutes les catégories de documents conservés dans ..."
+            },
+            {
+                "program_code": "410A1",
+                "program_name": "Gestion des opérations et de la chaîne logistique",
+                "category": "Programme technique",
+                "description": "<p>Le programme Gestion des opérations et de la chaîne logistique vise à former des technicien.ne.s capables d’exercer les tâches liées à la réalisation des différentes étapes du processus de la logis..."
+            },
+            {
+                "program_code": "410G0",
+                "program_name": "Techniques d’administration et de gestion",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Le programme d’études Techniques d’administration et de gestion vise à former des technicien.ne.s en administration et en gestion. Ces personnes peuvent exercer leur p..."
+            },
+            {
+                "program_code": "420B0",
+                "program_name": "Techniques de l'informatique",
+                "category": "Programme technique",
+                "description": "<p>Le programme d’études <strong>Techniques de l’informatique</strong> vise à former des technicien.ne.s en informatique qui exerceront leur profession dans les domaines du développement d’application..."
+            },
+            {
+                "program_code": "500AE",
+                "program_name": "Arts, lettres et communication : option Multidisciplinaire",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Ce programme d’études préuniversitaires permet d’acquérir des connaissances générales dans le domaine des arts, de la culture et des médias en général, et plus spécifiquement reliés à l’option cho..."
+            },
+            {
+                "program_code": "500AG",
+                "program_name": "Arts, lettres et communication : option Cinéma",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Ce programme d’études préuniversitaires permet d’acquérir des connaissances générales dans le domaine des arts, de la culture et des médias en général, et plus spécifiquement reliés au cinéma, dan..."
+            },
+            {
+                "program_code": "500AH",
+                "program_name": "Arts, lettres et communication : option Littérature",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Ce programme d’études préuniversitaires permet d’acquérir des connaissances générales dans le domaine des arts, de la culture et des médias en général, et plus spécifiquement reliés à la littératu..."
+            },
+            {
+                "program_code": "500AL",
+                "program_name": "Arts, lettres et communication : option Langues",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Ce programme d’études préuniversitaires permet d’acquérir des connaissances générales dans le domaine des arts, de la culture et des médias en général, et plus spécifiquement reliées à la linguist..."
+            },
+            {
+                "program_code": "570E0",
+                "program_name": "Techniques de design d'intérieur",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n<p> Ce programme vise à former des personnes aptes à exercer la profession de designer d’intérieur.</p>\r\n\r\n<p>Ces designers sont capables de créer, développer et proposer d..."
+            }
+        ]
+    },
+    {
+        "cegep_name": "Cégep Limoilou : campus de Limoilou",
+        "website": "https://www.cegeplimoilou.ca/",
+        "programs": [
+            {
+                "program_code": "08106",
+                "program_name": "Tremplin DEC",
+                "category": "Cheminement particulier",
+                "description": "<p> Le Tremplin DEC n’est pas un programme d’études menant à l’obtention d’un Diplôme d’études collégiales (DEC).  Il s’agit d'une session spéciale qui permet à un.e étudiant.e de poursuivre son chemi..."
+            },
+            {
+                "program_code": "165A0",
+                "program_name": "Techniques de pharmacie",
+                "category": "Programme technique",
+                "description": "<p>La fonction de travail des personnes diplômées en Techniques de pharmacie vise essentiellement à répondre, de façon optimale, aux tâches pharmaceutiques techniques, administratives et cliniques. El..."
+            },
+            {
+                "program_code": "180A0",
+                "program_name": "Soins infirmiers",
+                "category": "Programme technique",
+                "description": "<h1>Objectifs du programme</h1>\r\n<p>Ce programme vise à former des personnes aptes à exercer en soins infirmiers. Les personnes diplômées du programme doivent également, pour obtenir le droit de prati..."
+            },
+            {
+                "program_code": "20012",
+                "program_name": "Sciences de la nature et Sciences humaines",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Le double DEC est un programme d’études qui combine deux programmes d’études collégiales préuniversitaires.  De par la nature de la formation suivie et malgré un curriculum qui exige trois années ..."
+            },
+            {
+                "program_code": "200B1",
+                "program_name": "Sciences de la nature",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme vise à offrir une formation équilibrée, intégrant les composantes de base d’une formation scientifique et d’une formation générale rigoureuses qui ren..."
+            },
+            {
+                "program_code": "200C1",
+                "program_name": "Sciences, informatique et mathématique",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n<p>Ce programme de sciences s’adresse aux personnes qui souhaitent poursuivre des études universitaires en informatique, en génie informatique ou tout autre programme l..."
+            },
+            {
+                "program_code": "230B0",
+                "program_name": "Technologie de la géomatique",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Le programme d'études Technologie de la géomatique vise à former des technologues en géomatique qui exercent dans les domaines de l'arpentage, de la cartographie et de..."
+            },
+            {
+                "program_code": "235B0",
+                "program_name": "Technologie du génie industriel",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Ce programme vise à former des technicien.ne.s aptes à participer activement à l'optimisation de la production de biens ou de services au sein de divers secteurs d'act..."
+            },
+            {
+                "program_code": "241A0",
+                "program_name": "Techniques de génie mécanique",
+                "category": "Programme technique",
+                "description": "<p>Ce programme vise à rendre les technicien.ne.s en génie mécanique aptes à effectuer la conception de divers composants mécaniques, à planifier leur fabrication et à veiller au contrôle de leur qual..."
+            },
+            {
+                "program_code": "243D0",
+                "program_name": "Technologie du génie électrique : automatisation et contrôle",
+                "category": "Programme technique",
+                "description": "<strong>Buts du programme</strong>\r\n<p>Ce programme vise à former des technologues en génie électrique dans les domaines de l’automatisation et du contrôle. Leur expertise se déploie dans des entrepri..."
+            },
+            {
+                "program_code": "243F0",
+                "program_name": "Technologie du génie électrique : Réseaux et télécommunications",
+                "category": "Programme technique",
+                "description": "<p>Les personnes détentrices d’un DEC en Technologie du génie électrique : Réseaux et télécommunications seront spécialisées en élaboration, amélioration, modification et maintien de systèmes ou d’équ..."
+            },
+            {
+                "program_code": "243G0",
+                "program_name": "Technologie du génie électrique : Électronique programmable",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Les personnes détentrices d’un DEC en Technologie du génie électrique : Électronique programmable seront spécialisées en élaboration, amélioration et modification d’ap..."
+            },
+            {
+                "program_code": "243H0",
+                "program_name": "Technologie de l’électronique : Audiovisuel",
+                "category": "Programme technique",
+                "description": "<p>Ce programme d’études permet d’acquérir les compétences requises au soutien et à la prestation de services techniques dans la conception, la mise au point, l’essai, la production et l’exploitation ..."
+            },
+            {
+                "program_code": "30016",
+                "program_name": "Sciences humaines et Arts, lettres et communication",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Le double DEC est un programme d’études qui combine deux programmes d’études collégiales préuniversitaires.  De par la nature de la formation suivie et malgré un curriculum qui exige trois années ..."
+            },
+            {
+                "program_code": "300M0",
+                "program_name": "Sciences humaines",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme, au collégial, vise à rendre l’étudiant.e apte à poursuivre des études universitaires dans les grands domaines des sciences humaines, du droit, des sc..."
+            },
+            {
+                "program_code": "300M1",
+                "program_name": "Sciences humaines avec mathématiques supplémentaires",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme, au collégial, vise à rendre l’étudiant.e apte à poursuivre des études universitaires dans les grands domaines des sciences humaines, du droit, des sc..."
+            },
+            {
+                "program_code": "410G0",
+                "program_name": "Techniques d’administration et de gestion",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Le programme d’études Techniques d’administration et de gestion vise à former des technicien.ne.s en administration et en gestion. Ces personnes peuvent exercer leur p..."
+            },
+            {
+                "program_code": "420B0",
+                "program_name": "Techniques de l'informatique",
+                "category": "Programme technique",
+                "description": "<p>Le programme d’études <strong>Techniques de l’informatique</strong> vise à former des technicien.ne.s en informatique qui exerceront leur profession dans les domaines du développement d’application..."
+            },
+            {
+                "program_code": "500AJ",
+                "program_name": "Arts, lettres et communication : option Médias",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Ce programme d’études préuniversitaires permet d’acquérir des connaissances générales dans le domaine des arts, de la culture et des médias en général, et plus spécifiquement reliés aux communicat..."
+            },
+            {
+                "program_code": "500AK",
+                "program_name": "Arts, lettres et communication : option Théâtre",
+                "category": "Programme préuniversitaire",
+                "description": "<p>Ce programme d’études préuniversitaires permet d’acquérir des connaissances générales dans le domaine des arts, de la culture et des médias en général, et plus spécifiquement reliés à la littératur..."
+            },
+            {
+                "program_code": "500AL",
+                "program_name": "Arts, lettres et communication : option Langues",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Ce programme d’études préuniversitaires permet d’acquérir des connaissances générales dans le domaine des arts, de la culture et des médias en général, et plus spécifiquement reliées à la linguist..."
+            },
+            {
+                "program_code": "510A0",
+                "program_name": "Arts visuels",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Ce programme d’études préuniversitaires vise à donner à l’étudiant.e une formation équilibrée, qui comprend une formation générale et une formation spécifique en arts plastiques, lui permettant de..."
+            },
+            {
+                "program_code": "561D0",
+                "program_name": "Arts du cirque",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Ce programme vise à former des artistes de cirque professionnel.le.s et polyvalent.e.s, capables de créer leurs propres numéros, leurs propres personnages. À la fin de..."
+            },
+            {
+                "program_code": "573AA",
+                "program_name": "Techniques des métiers d'art : Céramique",
+                "category": "Programme technique",
+                "description": "<h1> Buts du programme <i>Techniques des métiers d’art</i> </h1>\r\n<p> Ce programme est ambitieux, car il vise la synthèse de l’expression personnelle, d’un mode de production et des réalités du marché..."
+            },
+            {
+                "program_code": "573AB",
+                "program_name": "Techniques des métiers d'art : Construction textile",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme Techniques des métiers d’art</h1>\r\n\r\n<p> Ce programme est ambitieux, car il vise la synthèse de l’expression personnelle, d’un mode de production et des réalités du marché. Pour ..."
+            },
+            {
+                "program_code": "573AC",
+                "program_name": "Techniques des métiers d'art : Ébénisterie artisanale",
+                "category": "Programme technique",
+                "description": "<h1> Buts du programme <i>Techniques des métiers d’art</i></h1>\r\n\r\n<p>Ce programme est ambitieux, car il vise la synthèse de l’expression personnelle, d’un mode de production et des réalités du marché..."
+            },
+            {
+                "program_code": "573AE",
+                "program_name": "Techniques des métiers d'art : Joaillerie",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme Techniques des métiers d’art</h1>\r\n\r\n<p>Ce programme est ambitieux, car il vise la synthèse de l’expression personnelle, d’un mode de production et des réalités du marché. Pour u..."
+            },
+            {
+                "program_code": "573AF",
+                "program_name": "Techniques des métiers d'art : Lutherie",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme Techniques des métiers d’art </h1>\r\n\r\n<p> Ce programme est ambitieux, car il vise la synthèse de l’expression personnelle, d’un mode de production et des réalités du marché. Pour..."
+            },
+            {
+                "program_code": "573AH",
+                "program_name": "Techniques des métiers d'arts : Sculpture",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Ce programme est ambitieux, car il vise la synthèse de l’expression personnelle, d’un mode de production et des réalités du marché. Pour un matériau et une technique d..."
+            },
+            {
+                "program_code": "574C0",
+                "program_name": "Production 3D et synthèse d’images",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p> Ce programme vise à former des personnes aptes à exercer la profession de spécialistes en production 3D et en imagerie de synthèse. Ces personnes travaillent surtout ..."
+            }
+        ]
+    },
+    {
+        "cegep_name": "Champlain College: St. Lawrence Campus",
+        "website": "",
+        "programs": [
+            {
+                "program_code": "08106",
+                "program_name": "Tremplin DEC",
+                "category": "Cheminement particulier",
+                "description": "<p> Le Tremplin DEC n’est pas un programme d’études menant à l’obtention d’un Diplôme d’études collégiales (DEC).  Il s’agit d'une session spéciale qui permet à un.e étudiant.e de poursuivre son chemi..."
+            },
+            {
+                "program_code": "20012",
+                "program_name": "Sciences de la nature et Sciences humaines",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Le double DEC est un programme d’études qui combine deux programmes d’études collégiales préuniversitaires.  De par la nature de la formation suivie et malgré un curriculum qui exige trois années ..."
+            },
+            {
+                "program_code": "20016",
+                "program_name": "Sciences de la nature et Arts, lettres et communication",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Le double DEC est un programme d’études qui combine deux programmes d’études collégiales préuniversitaires.  De par la nature de la formation suivie et malgré un curriculum qui exige trois années ..."
+            },
+            {
+                "program_code": "200B1",
+                "program_name": "Sciences de la nature",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme vise à offrir une formation équilibrée, intégrant les composantes de base d’une formation scientifique et d’une formation générale rigoureuses qui ren..."
+            },
+            {
+                "program_code": "30016",
+                "program_name": "Sciences humaines et Arts, lettres et communication",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Le double DEC est un programme d’études qui combine deux programmes d’études collégiales préuniversitaires.  De par la nature de la formation suivie et malgré un curriculum qui exige trois années ..."
+            },
+            {
+                "program_code": "300M0",
+                "program_name": "Sciences humaines",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme, au collégial, vise à rendre l’étudiant.e apte à poursuivre des études universitaires dans les grands domaines des sciences humaines, du droit, des sc..."
+            },
+            {
+                "program_code": "300M1",
+                "program_name": "Sciences humaines avec mathématiques supplémentaires",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme, au collégial, vise à rendre l’étudiant.e apte à poursuivre des études universitaires dans les grands domaines des sciences humaines, du droit, des sc..."
+            },
+            {
+                "program_code": "410G0",
+                "program_name": "Techniques d’administration et de gestion",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Le programme d’études Techniques d’administration et de gestion vise à former des technicien.ne.s en administration et en gestion. Ces personnes peuvent exercer leur p..."
+            },
+            {
+                "program_code": "414A0",
+                "program_name": "Techniques de tourisme",
+                "category": "Programme technique",
+                "description": "<h1>Objectifs communs des Techniques de tourisme</h1>\r\n\r\n<p>Le programme de tourisme prépare les étudiant.e.s à travailler activement au développement intégré de l’industrie touristique. En plus de co..."
+            },
+            {
+                "program_code": "500AE",
+                "program_name": "Arts, lettres et communication : option Multidisciplinaire",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Ce programme d’études préuniversitaires permet d’acquérir des connaissances générales dans le domaine des arts, de la culture et des médias en général, et plus spécifiquement reliés à l’option cho..."
+            }
+        ]
+    },
+    {
+        "cegep_name": "Mérici Collégial Privé (privé)",
+        "website": "https://www.merici.ca/",
+        "programs": [
+            {
+                "program_code": "08106",
+                "program_name": "Tremplin DEC",
+                "category": "Cheminement particulier",
+                "description": "<p> Le Tremplin DEC n’est pas un programme d’études menant à l’obtention d’un Diplôme d’études collégiales (DEC).  Il s’agit d'une session spéciale qui permet à un.e étudiant.e de poursuivre son chemi..."
+            },
+            {
+                "program_code": "144F0",
+                "program_name": "Orthèses, prothèses et soins orthopédiques",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Les personnes diplômées en orthèses et prothèses travaillent surtout dans les établissements publics du réseau de la santé et des services sociaux, dans les laboratoir..."
+            },
+            {
+                "program_code": "200B1",
+                "program_name": "Sciences de la nature",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme vise à offrir une formation équilibrée, intégrant les composantes de base d’une formation scientifique et d’une formation générale rigoureuses qui ren..."
+            },
+            {
+                "program_code": "280F0",
+                "program_name": "Techniques de pilotage d'aéronefs",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Ce programme vise à former des personnes aptes à travailler dans l’un des trois domaines suivants :\r\n<ul><li>pilotage d’avions multimoteurs;</li>\r\n<li>pilotage d’hélic..."
+            },
+            {
+                "program_code": "300M0",
+                "program_name": "Sciences humaines",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme, au collégial, vise à rendre l’étudiant.e apte à poursuivre des études universitaires dans les grands domaines des sciences humaines, du droit, des sc..."
+            },
+            {
+                "program_code": "351A1",
+                "program_name": "Techniques d'éducation spécialisée",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n<p>Les technicien.ne.s en éducation spécialisée interviennent auprès de personnes présentant, ou susceptibles de présenter, différents problèmes causant des difficultés d’a..."
+            },
+            {
+                "program_code": "414A0",
+                "program_name": "Techniques de tourisme",
+                "category": "Programme technique",
+                "description": "<h1>Objectifs communs des Techniques de tourisme</h1>\r\n\r\n<p>Le programme de tourisme prépare les étudiant.e.s à travailler activement au développement intégré de l’industrie touristique. En plus de co..."
+            },
+            {
+                "program_code": "430A0",
+                "program_name": "Techniques de gestion hôtelière",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n<p>Ce programme vise à former des superviseur.e.s intermédiaires appelé.e.s à exercer leurs fonctions dans l'une ou l'autre des unités d'un établissement hôtelier (accueil,..."
+            },
+            {
+                "program_code": "410G0",
+                "program_name": "Techniques d’administration et de gestion",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Le programme d’études Techniques d’administration et de gestion vise à former des technicien.ne.s en administration et en gestion. Ces personnes peuvent exercer leur p..."
+            }
+        ]
+    },
+    {
+        "cegep_name": "Notre-Dame-de-Foy (privé)",
+        "website": "",
+        "programs": [
+            {
+                "program_code": "171A0",
+                "program_name": "Techniques de thanatologie",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n<p>Le programme Techniques de thanatologie vise à former des personnes aptes à exercer la fonction de thanatologue dans le domaine des services funéraires. De plus, il perm..."
+            },
+            {
+                "program_code": "180A0",
+                "program_name": "Soins infirmiers",
+                "category": "Programme technique",
+                "description": "<h1>Objectifs du programme</h1>\r\n<p>Ce programme vise à former des personnes aptes à exercer en soins infirmiers. Les personnes diplômées du programme doivent également, pour obtenir le droit de prati..."
+            },
+            {
+                "program_code": "181A1",
+                "program_name": "Soins préhospitaliers d'urgence",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n<p>Ce programme vise à former des personnes qui interviennent auprès de clientèles de tous âges et de toutes conditions, faisant appel aux services préhospitaliers d’urgenc..."
+            },
+            {
+                "program_code": "20011",
+                "program_name": "Sciences de la nature et Musique",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Le double DEC est un programme d’études qui combine deux programmes d’études collégiales préuniversitaires.  De par la nature de la formation suivie et malgré un curriculum qui exige trois années ..."
+            },
+            {
+                "program_code": "200B1",
+                "program_name": "Sciences de la nature",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme vise à offrir une formation équilibrée, intégrant les composantes de base d’une formation scientifique et d’une formation générale rigoureuses qui ren..."
+            },
+            {
+                "program_code": "221D0",
+                "program_name": "Technologie de l'estimation et de l'évaluation en bâtiment",
+                "category": "Programme technique",
+                "description": "<p>Ce programme, qui comporte deux voies de sorties, vise à former des diplômé.e.s pouvant jouer le rôle d’estimateur.rice en construction ou celui de spécialiste en évaluation immobilière. Certains c..."
+            },
+            {
+                "program_code": "300M0",
+                "program_name": "Sciences humaines",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme, au collégial, vise à rendre l’étudiant.e apte à poursuivre des études universitaires dans les grands domaines des sciences humaines, du droit, des sc..."
+            },
+            {
+                "program_code": "310A0",
+                "program_name": "Techniques policières",
+                "category": "Programme technique",
+                "description": "<p>Ce programme s’adresse à des personnes qui agiront comme policier.ère.s patrouilleur.se.s pour différents corps policiers ou agences de sécurité.</p>\r\n\r\n<p>Ces personnes sont les premières à interv..."
+            },
+            {
+                "program_code": "311A0",
+                "program_name": "Techniques de sécurité incendie (après un DEP)",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n<p>Le programme Techniques de sécurité incendie vise à former des pompiers ou pompières aptes à travailler dans les agglomérations à forte densité de population ainsi que d..."
+            },
+            {
+                "program_code": "322A1",
+                "program_name": "Techniques d’éducation à l’enfance",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n<p>Ce programme vise à former des personnes aptes à exercer la profession d’éducateur.rice en services de garde.</p>\r\n\r\n<p>Ces personnes interviennent auprès d’enfants âgés..."
+            },
+            {
+                "program_code": "501A0",
+                "program_name": "Musique",
+                "category": "Programme préuniversitaire",
+                "description": "<p>Ce programme d’études préuniversitaires vise à donner à l’étudiant.e une formation équilibrée qui intègre les composantes de la formation générale et celles d’une formation spécifique en musique, l..."
+            },
+            {
+                "program_code": "551A0",
+                "program_name": "Techniques professionnelles de musique et de chanson",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n<p>Ce programme vise à former des artistes aptes à évoluer dans différents genres de musique populaire. Il s’agit essentiellement de la musique et de la chanson du XX<sup>e..."
+            },
+            {
+                "program_code": "571A0",
+                "program_name": "Design de mode",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n<p>On vise par ce programme à former des personnes aptes à exercer la profession de designer de mode, dont le travail consiste avant tout à créer des collections de vêtemen..."
+            },
+            {
+                "program_code": "571C0",
+                "program_name": "Commercialisation de la mode",
+                "category": "Programme technique",
+                "description": "<p>Les technicien.ne.s en commercialisation de la mode occupent différentes fonctions de gestion au sein des principaux secteurs de la commercialisation de la mode : vente en gros, vente au détail, ac..."
+            }
+        ]
+    },
+    {
+        "cegep_name": "Collège O'Sullivan de Québec (privé)",
+        "website": "",
+        "programs": [
+            {
+                "program_code": "410F0",
+                "program_name": "Techniques de services financiers et d'assurances",
+                "category": "Programme technique",
+                "description": "<p>Le programme <strong>Techniques de services financiers et d’assurances</strong> vise à former des technicien.n.e.s aptes à exercer les professions suivantes : \r\n<ul><li>agent.e en assurance de domm..."
+            },
+            {
+                "program_code": "410G0",
+                "program_name": "Techniques d’administration et de gestion",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Le programme d’études Techniques d’administration et de gestion vise à former des technicien.ne.s en administration et en gestion. Ces personnes peuvent exercer leur p..."
+            },
+            {
+                "program_code": "420B0",
+                "program_name": "Techniques de l'informatique",
+                "category": "Programme technique",
+                "description": "<p>Le programme d’études <strong>Techniques de l’informatique</strong> vise à former des technicien.ne.s en informatique qui exerceront leur profession dans les domaines du développement d’application..."
+            },
+            {
+                "program_code": "574C0",
+                "program_name": "Production 3D et synthèse d’images",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p> Ce programme vise à former des personnes aptes à exercer la profession de spécialistes en production 3D et en imagerie de synthèse. Ces personnes travaillent surtout ..."
+            }
+        ]
+    },
+    {
+        "cegep_name": "Cégep de Sainte-Foy",
+        "website": "https://www.csfoy.ca",
+        "programs": [
+            {
+                "program_code": "08106",
+                "program_name": "Tremplin DEC",
+                "category": "Cheminement particulier",
+                "description": "<p> Le Tremplin DEC n’est pas un programme d’études menant à l’obtention d’un Diplôme d’études collégiales (DEC).  Il s’agit d'une session spéciale qui permet à un.e étudiant.e de poursuivre son chemi..."
+            },
+            {
+                "program_code": "140C0",
+                "program_name": "Technologie d'analyses biomédicales",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n<p>Ce programme vise à former des personnes aptes à effectuer des analyses ou des travaux à caractère technique et à collaborer à des travaux de recherche et de développeme..."
+            },
+            {
+                "program_code": "141A0",
+                "program_name": "Techniques d'inhalothérapie",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Le programme Techniques d'inhalothérapie vise à familiariser les personnes avec tous les champs d’intervention de la profession, soit l’inhalothérapie, l’anesthésie et..."
+            },
+            {
+                "program_code": "142D0",
+                "program_name": "Technologie de radio-oncologie",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n<p>On vise par ce programme à former des technologues aptes à effectuer correctement les actes techniques, à prendre des décisions éclairées et appropriées, à établir et en..."
+            },
+            {
+                "program_code": "142F0",
+                "program_name": "Technologie de médecine nucléaire",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Le programme Technologie de médecine nucléaire vise à former des personnes capables de maîtriser les techniques de travail, de prendre des décisions éclairées, d’établ..."
+            },
+            {
+                "program_code": "142G0",
+                "program_name": "Technologie de l'échographie médicale",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Le programme Technologie de l’échographie médicale vise à former des personnes qui seront appelées à effectuer plusieurs types d’examens échographiques. Sur la base d’..."
+            },
+            {
+                "program_code": "142H0",
+                "program_name": "Technologie de radiodiagnostic",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>On vise par ce programme à former des personnes qui seront en mesure d’assumer les responsabilités inhérentes à l’exécution des tâches que comporte la profession de te..."
+            },
+            {
+                "program_code": "145C0",
+                "program_name": "Techniques de bioécologie",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Ce programme vise à former des techniciens travaillant principalement dans les domaines de la recherche, de l’aménagement et de l’éducation en milieu naturel. Les fina..."
+            },
+            {
+                "program_code": "180A0",
+                "program_name": "Soins infirmiers",
+                "category": "Programme technique",
+                "description": "<h1>Objectifs du programme</h1>\r\n<p>Ce programme vise à former des personnes aptes à exercer en soins infirmiers. Les personnes diplômées du programme doivent également, pour obtenir le droit de prati..."
+            },
+            {
+                "program_code": "181A1",
+                "program_name": "Soins préhospitaliers d'urgence",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n<p>Ce programme vise à former des personnes qui interviennent auprès de clientèles de tous âges et de toutes conditions, faisant appel aux services préhospitaliers d’urgenc..."
+            },
+            {
+                "program_code": "190B0",
+                "program_name": "Technologie forestière",
+                "category": "Programme technique",
+                "description": "<p>Ce programme vise à former des technologues en foresterie aptes à travailler à l’application et au développement de techniques relatives à l’aménagement durable de la forêt et à la récolte de matiè..."
+            },
+            {
+                "program_code": "20011",
+                "program_name": "Sciences de la nature et Musique",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Le double DEC est un programme d’études qui combine deux programmes d’études collégiales préuniversitaires.  De par la nature de la formation suivie et malgré un curriculum qui exige trois années ..."
+            },
+            {
+                "program_code": "20016",
+                "program_name": "Sciences de la nature et Arts, lettres et communication",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Le double DEC est un programme d’études qui combine deux programmes d’études collégiales préuniversitaires.  De par la nature de la formation suivie et malgré un curriculum qui exige trois années ..."
+            },
+            {
+                "program_code": "200B1",
+                "program_name": "Sciences de la nature",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme vise à offrir une formation équilibrée, intégrant les composantes de base d’une formation scientifique et d’une formation générale rigoureuses qui ren..."
+            },
+            {
+                "program_code": "30011",
+                "program_name": "Sciences humaines et Musique",
+                "category": "Programme préuniversitaire",
+                "description": "<p>Le double DEC est un programme d’études qui combine deux programmes d’études collégiales préuniversitaires.  De par la nature de la formation suivie et malgré un curriculum qui exige trois années d..."
+            },
+            {
+                "program_code": "30016",
+                "program_name": "Sciences humaines et Arts, lettres et communication",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Le double DEC est un programme d’études qui combine deux programmes d’études collégiales préuniversitaires.  De par la nature de la formation suivie et malgré un curriculum qui exige trois années ..."
+            },
+            {
+                "program_code": "300M0",
+                "program_name": "Sciences humaines",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme, au collégial, vise à rendre l’étudiant.e apte à poursuivre des études universitaires dans les grands domaines des sciences humaines, du droit, des sc..."
+            },
+            {
+                "program_code": "300M1",
+                "program_name": "Sciences humaines avec mathématiques supplémentaires",
+                "category": "Programme préuniversitaire",
+                "description": "<h1>Finalité du programme</h1>\r\n\r\n<p>Ce programme, au collégial, vise à rendre l’étudiant.e apte à poursuivre des études universitaires dans les grands domaines des sciences humaines, du droit, des sc..."
+            },
+            {
+                "program_code": "322A1",
+                "program_name": "Techniques d’éducation à l’enfance",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n<p>Ce programme vise à former des personnes aptes à exercer la profession d’éducateur.rice en services de garde.</p>\r\n\r\n<p>Ces personnes interviennent auprès d’enfants âgés..."
+            },
+            {
+                "program_code": "351A1",
+                "program_name": "Techniques d'éducation spécialisée",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n<p>Les technicien.ne.s en éducation spécialisée interviennent auprès de personnes présentant, ou susceptibles de présenter, différents problèmes causant des difficultés d’a..."
+            },
+            {
+                "program_code": "388A1",
+                "program_name": "Techniques de travail social",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Les technicien.ne.s en travail social sont habilité.e.s à intervenir avec des personnes de tout âge, des familles, des groupes et des communautés aux prises avec diffé..."
+            },
+            {
+                "program_code": "410F0",
+                "program_name": "Techniques de services financiers et d'assurances",
+                "category": "Programme technique",
+                "description": "<p>Le programme <strong>Techniques de services financiers et d’assurances</strong> vise à former des technicien.n.e.s aptes à exercer les professions suivantes : \r\n<ul><li>agent.e en assurance de domm..."
+            },
+            {
+                "program_code": "410G0",
+                "program_name": "Techniques d’administration et de gestion",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p>Le programme d’études Techniques d’administration et de gestion vise à former des technicien.ne.s en administration et en gestion. Ces personnes peuvent exercer leur p..."
+            },
+            {
+                "program_code": "420B0",
+                "program_name": "Techniques de l'informatique",
+                "category": "Programme technique",
+                "description": "<p>Le programme d’études <strong>Techniques de l’informatique</strong> vise à former des technicien.ne.s en informatique qui exerceront leur profession dans les domaines du développement d’application..."
+            },
+            {
+                "program_code": "500AG",
+                "program_name": "Arts, lettres et communication : option Cinéma",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Ce programme d’études préuniversitaires permet d’acquérir des connaissances générales dans le domaine des arts, de la culture et des médias en général, et plus spécifiquement reliés au cinéma, dan..."
+            },
+            {
+                "program_code": "500AH",
+                "program_name": "Arts, lettres et communication : option Littérature",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Ce programme d’études préuniversitaires permet d’acquérir des connaissances générales dans le domaine des arts, de la culture et des médias en général, et plus spécifiquement reliés à la littératu..."
+            },
+            {
+                "program_code": "500AL",
+                "program_name": "Arts, lettres et communication : option Langues",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Ce programme d’études préuniversitaires permet d’acquérir des connaissances générales dans le domaine des arts, de la culture et des médias en général, et plus spécifiquement reliées à la linguist..."
+            },
+            {
+                "program_code": "501A0",
+                "program_name": "Musique",
+                "category": "Programme préuniversitaire",
+                "description": "<p>Ce programme d’études préuniversitaires vise à donner à l’étudiant.e une formation équilibrée qui intègre les composantes de la formation générale et celles d’une formation spécifique en musique, l..."
+            },
+            {
+                "program_code": "510A0",
+                "program_name": "Arts visuels",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Ce programme d’études préuniversitaires vise à donner à l’étudiant.e une formation équilibrée, qui comprend une formation générale et une formation spécifique en arts plastiques, lui permettant de..."
+            },
+            {
+                "program_code": "561BB",
+                "program_name": "Danse-interprétation contemporaine",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p> Ce programme vise à former des interprètes professionnel.le.s en danse classique ou en danse contemporaine. Ces interprètes seront capables de répondre aux exigences ..."
+            },
+            {
+                "program_code": "570C0",
+                "program_name": "Techniques de design de produits (design industriel)",
+                "category": "Programme technique",
+                "description": "<p>Les technicien.ne.s en design de produits sont aptes à travailler dans différentes entreprises de transformation et de fabrication, les plus importantes étant celles du meuble, de la machinerie et ..."
+            },
+            {
+                "program_code": "570D0",
+                "program_name": "Techniques de design de présentation",
+                "category": "Programme technique",
+                "description": "<p>Ce programme vise à former des personnes aptes à exercer la profession de designer de présentation.</p>\r\n\r\n<p> Le rôle d'un.e designer de présentation consiste à concevoir, à planifier et à compose..."
+            },
+            {
+                "program_code": "570G0",
+                "program_name": "Graphisme",
+                "category": "Programme technique",
+                "description": "<h1>Buts du programme</h1>\r\n\r\n<p> On vise par ce programme à former des personnes aptes à exercer la profession de graphiste.\r\nLe programme permet de concilier deux exigences de formation, soit la pol..."
+            },
+            {
+                "program_code": "582A1",
+                "program_name": "Techniques d'intégration multimédia",
+                "category": "Programme technique",
+                "description": "<p>Le programme de Techniques d'intégration multimédia vise à former des technicien.ne.s multidisciplinaires qui pourront intervenir dans toutes les étapes d’une production multimédia : site web, appl..."
+            },
+            {
+                "program_code": "700A1",
+                "program_name": "Sciences, lettres et arts",
+                "category": "Programme préuniversitaire",
+                "description": "<p> Le programme préuniversitaire Sciences, lettres et arts permet d’explorer différentes sphères d’intérêt. D’une durée de deux ans, cette formation favorise le développement de connaissances diversi..."
+            },
+            {
+                "program_code": "700B0",
+                "program_name": "Histoire et civilisation",
+                "category": "Programme préuniversitaire",
+                "description": "<p>Les intentions de ce programme sont de découvrir, par le biais d’un programme d’études cohérent, intégré et rigoureux, l’héritage intellectuel de la civilisation moderne et d’enseigner des bases so..."
+            }
+        ]
+    }
+]

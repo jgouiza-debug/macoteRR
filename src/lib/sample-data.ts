@@ -5,26 +5,9 @@ import type { BursaryCriteria } from "@/lib/matching/match";
 // Guardrail #1 (docs/00-BUILD-PROMPT.md): every displayed figure carries `sourceUrl` and
 // `lastVerifiedAt`. Do not add a numeric field here without both.
 
-export type Cegep = { id: string; name: string; region: string };
-
-export const CEGEPS: Cegep[] = [
-  { id: "sainte-foy", name: "Cégep de Sainte-Foy", region: "Québec" },
-  { id: "limoilou", name: "Cégep Limoilou", region: "Québec" },
-  { id: "garneau", name: "Cégep Garneau", region: "Québec" },
-  { id: "champlain-st-lawrence", name: "Cégep Champlain St. Lawrence", region: "Québec" },
-  { id: "merici", name: "Collège Mérici", region: "Québec" },
-  { id: "osullivan-quebec", name: "Collège O'Sullivan de Québec", region: "Québec" },
-];
-
-export type CegepProgram = { id: string; name: string };
-
-export const CEGEP_PROGRAMS: CegepProgram[] = [
-  { id: "sciences-nature", name: "Sciences de la nature" },
-  { id: "sciences-humaines", name: "Sciences humaines" },
-  { id: "arts-lettres", name: "Arts, lettres et communication" },
-  { id: "informatique", name: "Techniques de l'informatique" },
-  { id: "sciences-lettres-arts", name: "Sciences, lettres et arts" },
-];
+// Cégeps and cégep programs used to be stubbed here. They now come from the real scraped
+// catalogue in src/lib/data/catalog.ts (11 schools, 150 programs) — import CATALOG_CEGEPS /
+// programsForCegep from there rather than reintroducing a placeholder list.
 
 export type Session = { id: number; labelFr: string; labelEn: string };
 
@@ -36,6 +19,22 @@ export const SESSIONS: Session[] = [
   { id: 5, labelFr: "Automne 2026", labelEn: "Fall 2026" },
   { id: 6, labelFr: "Hiver 2027", labelEn: "Winter 2027" },
 ];
+
+/**
+ * Which session we are in today, resolved against SESSIONS above.
+ *
+ * Onboarding does not ask — a student knows their cégep and their program, but "which
+ * session number am I in" is product jargon, and the calendar already answers it. Winter
+ * runs January–May and Fall runs August–December; the gap between them resolves forward to
+ * the session about to start, which is what a student filling this in during the summer
+ * means. Falls back to the last known session once SESSIONS runs out.
+ */
+export function currentSessionId(now: Date = new Date()): number {
+  const year = now.getFullYear();
+  const isWinter = now.getMonth() <= 5; // Jan–Jun → the winter session of this year
+  const label = isWinter ? `Hiver ${year}` : `Automne ${year}`;
+  return SESSIONS.find((s) => s.labelFr === label)?.id ?? SESSIONS[SESSIONS.length - 1].id;
+}
 
 export type PrerequisiteStatus = "met" | "missing" | "in_progress";
 
@@ -219,7 +218,7 @@ export const BURSARIES: Bursary[] = [
     name: "Bourse d'excellence en sciences de la nature",
     sourceOrg: "Fondation du Cégep de Sainte-Foy",
     cegepId: "sainte-foy",
-    eligibleCegepPrograms: ["sciences-nature"],
+    eligibleCegepPrograms: ["sainte-foy-200-b1"],
     eligibleUniversityPrograms: null,
     minRScore: 27,
     minSession: null,
@@ -334,9 +333,15 @@ export const DEADLINES: Deadline[] = [
   },
 ];
 
+/**
+ * Illustrative student used by screens that still render sample content (the counselor
+ * prep sheet, the program detail preview). Real screens read src/lib/profile/store.ts;
+ * the cégep and program here are named against the real catalogue so nothing renders a
+ * school or program that does not exist.
+ */
 export const STUDENT_SAMPLE = {
-  cegep: CEGEPS[0],
-  program: CEGEP_PROGRAMS[0],
+  cegepShortCode: "sainte-foy",
+  cegepProgramId: "sainte-foy-200-b1",
   session: SESSIONS[4],
   rScoreEstimated: 32.4,
 };

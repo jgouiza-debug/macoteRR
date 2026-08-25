@@ -1,25 +1,39 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowRight, Info } from "lucide-react";
 import { DistributionCurve } from "@/components/rscore/DistributionCurve";
 import { AxisRow } from "@/components/rscore/AxisRow";
+import { RScoreBandSheet } from "@/components/rscore/RScoreBandSheet";
 import { SourceStamp } from "@/components/SourceStamp";
 import { Logo } from "@/components/ui/Logo";
 import { LangToggle } from "@/components/ui/LangToggle";
 import { UNIVERSITY_PROGRAMS } from "@/lib/sample-data";
+import { bandForScore, bandLabel } from "@/lib/rscore/bands";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 export function ResultsView({
   score,
   status,
+  /**
+   * Inside the funnel the band explainer opens by itself and the CTA continues to the next
+   * step. Outside it (a shared link, a bookmark) the screen stays passive and the explainer
+   * is opt-in — an unprompted modal on a page someone navigated to directly is an ambush.
+   */
+  onboarding = false,
 }: {
   score: number;
   status: "confirmed" | "estimated";
+  onboarding?: boolean;
 }) {
   const { t, locale } = useLocale();
   const f = useFormat();
+  const router = useRouter();
+  const [bandOpen, setBandOpen] = useState(onboarding);
+  const band = bandForScore(score);
 
   const ranked = UNIVERSITY_PROGRAMS.map((program) => ({
     program,
@@ -72,6 +86,16 @@ export function ResultsView({
             cutoffLabel={t("common.seuil")}
             animate
           />
+
+          <button
+            type="button"
+            onClick={() => setBandOpen(true)}
+            className="mt-2 flex w-full items-center justify-center gap-1.5 rounded border border-ink/15 py-2.5 text-[13px] font-semibold text-ink/70 transition-transform active:scale-[0.99]"
+          >
+            <Info className="h-4 w-4 text-ink/45" />
+            {bandLabel(band, locale)} —{" "}
+            {locale === "fr" ? "ce que ça veut dire" : "what that means"}
+          </button>
         </section>
 
         <div className="overflow-hidden rounded border border-ink/12 bg-paper shadow-card">
@@ -118,14 +142,38 @@ export function ResultsView({
           })}
         </div>
 
-        <Link
-          href="/onboarding/cegep"
-          className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98]"
-        >
-          {locale === "fr" ? "Voir les bourses de mon cégep" : "See my cégep's bursaries"}
-          <ArrowRight className="h-[18px] w-[18px]" />
-        </Link>
+        {onboarding ? (
+          <Link
+            href="/onboarding/quiz"
+            className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98]"
+          >
+            {t("common.continue")}
+            <ArrowRight className="h-[18px] w-[18px]" />
+          </Link>
+        ) : (
+          <Link
+            href="/bursaries"
+            className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98]"
+          >
+            {locale === "fr" ? "Voir les bourses de mon cégep" : "See my cégep's bursaries"}
+            <ArrowRight className="h-[18px] w-[18px]" />
+          </Link>
+        )}
       </main>
+
+      <RScoreBandSheet
+        score={score}
+        open={bandOpen}
+        onClose={() => setBandOpen(false)}
+        onContinue={
+          onboarding
+            ? () => {
+                setBandOpen(false);
+                router.push("/onboarding/quiz");
+              }
+            : undefined
+        }
+      />
     </div>
   );
 }

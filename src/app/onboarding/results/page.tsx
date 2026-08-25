@@ -1,5 +1,4 @@
 import { ResultsView } from "@/components/rscore/ResultsView";
-import { STUDENT_SAMPLE } from "@/lib/sample-data";
 
 export default async function OnboardingResultsPage({
   searchParams,
@@ -8,10 +7,19 @@ export default async function OnboardingResultsPage({
 }) {
   const params = await searchParams;
   const parsed = Number(params.score?.replace(",", "."));
-  const score =
-    Number.isFinite(parsed) && parsed > 0 ? parsed : STUDENT_SAMPLE.rScoreEstimated;
+
+  // No score in the URL means the student jumped straight here; the score step owns that
+  // number, so send them to it rather than inventing a figure to render.
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    const { redirect } = await import("next/navigation");
+    redirect("/onboarding/score");
+  }
 
   return (
-    <ResultsView score={score} status={params.status === "confirmed" ? "confirmed" : "estimated"} />
+    <ResultsView
+      score={parsed}
+      status={params.status === "confirmed" ? "confirmed" : "estimated"}
+      onboarding
+    />
   );
 }

@@ -6,25 +6,36 @@
  */
 
 import { idbGet, idbSet } from "./indexed-db";
+import { REFERENCE_CATALOG_VERSION } from "./version";
 import {
-  CEGEPS,
-  CEGEP_PROGRAMS,
   UNIVERSITY_PROGRAMS,
   BURSARIES,
   DEADLINES,
   SESSIONS,
-  type Cegep,
-  type CegepProgram,
   type UniversityProgram,
   type Bursary,
   type Deadline,
   type Session,
 } from "@/lib/sample-data";
+import {
+  CATALOG_CEGEPS,
+  CATALOG_CEGEP_PROGRAMS,
+  CATALOG_UNIVERSITIES,
+  CATALOG_UNIVERSITY_PROGRAMS,
+  type CatalogCegep,
+  type CatalogCegepProgram,
+  type CatalogUniversity,
+  type CatalogUniversityProgram,
+} from "@/lib/data/catalog";
 
 export type ReferenceCatalog = {
   version: number;
-  cegeps: Cegep[];
-  cegepPrograms: CegepProgram[];
+  cegeps: CatalogCegep[];
+  cegepPrograms: CatalogCegepProgram[];
+  universities: CatalogUniversity[];
+  /** Full scraped directory: names and links, no admission figures. */
+  universityCatalog: CatalogUniversityProgram[];
+  /** The subset carrying sourced cutoffs — what the comparison screens read. */
   universityPrograms: UniversityProgram[];
   bursaries: Bursary[];
   deadlines: Deadline[];
@@ -33,14 +44,16 @@ export type ReferenceCatalog = {
 };
 
 const DEFAULT_CATALOG: ReferenceCatalog = {
-  version: 1,
-  cegeps: CEGEPS,
-  cegepPrograms: CEGEP_PROGRAMS,
+  version: REFERENCE_CATALOG_VERSION,
+  cegeps: CATALOG_CEGEPS,
+  cegepPrograms: CATALOG_CEGEP_PROGRAMS,
+  universities: CATALOG_UNIVERSITIES,
+  universityCatalog: CATALOG_UNIVERSITY_PROGRAMS,
   universityPrograms: UNIVERSITY_PROGRAMS,
   bursaries: BURSARIES,
   deadlines: DEADLINES,
   sessions: SESSIONS,
-  generatedAt: "2026-08-24T00:00:00.000Z",
+  generatedAt: "2026-08-25T00:00:00.000Z",
 };
 
 const inFlightRequests = new Map<string, Promise<unknown>>();

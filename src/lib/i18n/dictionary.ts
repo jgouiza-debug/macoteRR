@@ -5,6 +5,11 @@ export const DICTIONARY = {
     "common.continue": "Continuer",
     "common.back": "Retour",
     "common.skip": "Passer",
+    "common.close": "Fermer",
+    "common.next": "Suivant",
+    "common.gotIt": "C'est compris",
+    "common.step": "Étape {n} sur {total}",
+    "common.change": "Modifier",
     "common.toi": "toi",
     "common.seuil": "seuil",
     "common.verifiedOn": "Vérifié le",
@@ -23,6 +28,12 @@ export const DICTIONARY = {
     "prof.tagsNoFinance": "Aucune donnée financière n'est demandée, ici ou ailleurs.",
     "prof.tagsCount": "{n} sélectionnée(s)",
     "prof.unlocks": "Débloque {n} bourse(s)",
+    "prof.targetsTitle": "Mes cibles universitaires",
+    "prof.targetsHelp": "Choisies pendant le quiz ou ajoutées depuis une fiche de programme.",
+    "prof.targetsEmpty": "Aucune cible pour l'instant.",
+    "prof.targetsAdd": "Explorer les programmes",
+    "prof.noCutoff": "Aucun seuil publié",
+    "prof.remove": "Retirer",
 
     "landing.title": "Ta cote R, et ce qu'elle t'ouvre vraiment.",
     "landing.body":
@@ -66,13 +77,13 @@ export const DICTIONARY = {
       "Ceci est une estimation approximative. Ta vraie cote R dépend de la force de ton groupe, une donnée que seuls les cégeps et le BCI possèdent.",
 
     "cegep.title": "Tu étudies où?",
-    "cegep.body": "Ça débloque les bourses de la fondation de ton cégep.",
+    "cegep.body": "On filtre ensuite les programmes offerts chez toi, et on débloque les bourses de ta fondation.",
     "cegep.search": "Cherche ton cégep",
     "cegep.empty": "Aucun cégep trouvé.",
 
-    "account.title": "Garde ta progression",
+    "account.title": "Crée ton compte",
     "account.body":
-      "Un compte gratuit garde ta cote session après session et te montre ta courbe.",
+      "Ton compte garde ta cote, ton programme et tes cibles d'une session à l'autre. Gratuit, et sans mot de passe.",
     "account.email": "Courriel",
     "account.create": "Créer mon compte",
     "account.later": "Plus tard",
@@ -80,6 +91,62 @@ export const DICTIONARY = {
     "account.noPassword": "Pas de mot de passe : on t'envoie un lien.",
     "account.haveAccount": "Tu as déjà un compte?",
     "account.signIn": "Se connecter",
+
+    "cegep.count": "{n} cégeps de la région de Québec",
+
+    "cprog.title": "Ton programme au cégep",
+    "cprog.body": "Seuls les programmes offerts à {cegep} sont listés.",
+    "cprog.search": "Cherche ton programme",
+    "cprog.empty": "Aucun programme trouvé à ce cégep.",
+    "cprog.noCegep": "Choisis d'abord ton cégep.",
+    "cprog.count": "{n} programmes offerts",
+
+    "warn.estTitle": "Une estimation, pas ta cote",
+    "warn.estBody":
+      "Ta cote R ne dépend pas seulement de tes notes : elle dépend aussi de la force de ton groupe dans chaque cours. Deux élèves qui ont 85 % dans deux classes différentes n'obtiennent pas la même cote.",
+    "warn.estBody2":
+      "Personne ne peut calculer ta vraie cote sans les données de groupe, que seuls ton cégep et le BCI possèdent. Ce qui suit est un ordre de grandeur, et l'app le dira chaque fois qu'elle l'affiche.",
+    "warn.estCta": "Je comprends, estimons",
+    "warn.estBack": "En fait, j'ai ma vraie cote",
+
+    "band.title": "Ce que veut dire {score}",
+    "band.yourBand": "TA PLAGE",
+    "band.allBands": "Les autres plages",
+    "band.disclaimer":
+      "Il n'existe aucun classement officiel de la cote R. Ces plages sont notre lecture des seuils d'admission publiés par les universités — pas un jugement sur toi.",
+    "band.cta": "Continuer",
+
+    "quiz.introTitle": "Tu sais déjà où tu t'en vas?",
+    "quiz.introBody":
+      "Si oui, passe directement à la suite. Sinon, deux questions rapides et on te propose des programmes universitaires qui collent à ce qui t'intéresse.",
+    "quiz.introKnow": "Je sais déjà",
+    "quiz.introTake": "Aide-moi à choisir",
+    "quiz.domainsTitle": "Qu'est-ce qui t'intéresse?",
+    "quiz.domainsBody": "Choisis tout ce qui t'attire. Rien n'est définitif.",
+    "quiz.uniTitle": "Une université en tête?",
+    "quiz.uniBody": "Optionnel. Laisse vide pour voir tous les établissements de notre base.",
+    "quiz.uniAny": "Peu importe",
+    "quiz.resultsTitle": "Programmes suggérés",
+    "quiz.resultsBody": "{n} programmes correspondent à tes réponses. Ajoute ceux qui t'intéressent.",
+    "quiz.resultsEmpty": "Aucun programme ne correspond. Reviens en arrière et élargis tes domaines.",
+    "quiz.matchOn": "Correspond à",
+    "quiz.add": "Ajouter",
+    "quiz.added": "Ajouté",
+    "quiz.selected": "{n} cible(s)",
+    "quiz.finish": "Terminer",
+    "quiz.skip": "Passer cette étape",
+    "quiz.noCutoff":
+      "Ces programmes proviennent des répertoires officiels des universités. Le seuil de cote R n'est affiché que là où un chiffre sourcé existe.",
+
+    "account.required": "Un compte est nécessaire pour continuer.",
+    "account.recapTitle": "Ce qu'on enregistre",
+    "account.sentTitle": "Vérifie tes courriels",
+    "account.sentBody": "On a envoyé un lien de connexion à {email}. Ouvre-le sur cet appareil.",
+    "account.resend": "Renvoyer le lien",
+    "account.changeEmail": "Utiliser un autre courriel",
+    "account.sending": "Envoi…",
+    "account.error": "L'envoi a échoué. Vérifie l'adresse et réessaie.",
+    "account.invalidEmail": "Entre une adresse courriel valide.",
 
     "dash.estimateTitle": "Estimation actuelle de ta cote R",
     "dash.estimateBasis": "Basée sur la session",
@@ -169,6 +236,11 @@ export const DICTIONARY = {
     "common.continue": "Continue",
     "common.back": "Back",
     "common.skip": "Skip",
+    "common.close": "Close",
+    "common.next": "Next",
+    "common.gotIt": "Got it",
+    "common.step": "Step {n} of {total}",
+    "common.change": "Change",
     "common.toi": "you",
     "common.seuil": "cutoff",
     "common.verifiedOn": "Verified",
@@ -187,6 +259,12 @@ export const DICTIONARY = {
     "prof.tagsNoFinance": "No financial information is ever requested, here or anywhere else.",
     "prof.tagsCount": "{n} selected",
     "prof.unlocks": "Unlocks {n} bursary/ies",
+    "prof.targetsTitle": "My university targets",
+    "prof.targetsHelp": "Picked during the quiz, or added from a program page.",
+    "prof.targetsEmpty": "No targets yet.",
+    "prof.targetsAdd": "Browse programs",
+    "prof.noCutoff": "No published cutoff",
+    "prof.remove": "Remove",
 
     "landing.title": "Your R-score, and what it actually opens up.",
     "landing.body":
@@ -230,13 +308,13 @@ export const DICTIONARY = {
       "This is a rough estimate. Your real R-score depends on the strength of your group — data only cégeps and the BCI hold.",
 
     "cegep.title": "Where do you study?",
-    "cegep.body": "This unlocks your cégep foundation's bursaries.",
+    "cegep.body": "We then filter to the programs offered where you are, and unlock your foundation's bursaries.",
     "cegep.search": "Search for your cégep",
     "cegep.empty": "No cégep found.",
 
-    "account.title": "Keep your progress",
+    "account.title": "Create your account",
     "account.body":
-      "A free account keeps your score session after session and shows you your curve.",
+      "Your account keeps your score, your program, and your targets from one session to the next. Free, and passwordless.",
     "account.email": "Email",
     "account.create": "Create my account",
     "account.later": "Later",
@@ -244,6 +322,62 @@ export const DICTIONARY = {
     "account.noPassword": "No password: we send you a link.",
     "account.haveAccount": "Already have an account?",
     "account.signIn": "Sign in",
+
+    "cegep.count": "{n} cégeps in the Quebec City area",
+
+    "cprog.title": "Your cégep program",
+    "cprog.body": "Only programs offered at {cegep} are listed.",
+    "cprog.search": "Search for your program",
+    "cprog.empty": "No program found at this cégep.",
+    "cprog.noCegep": "Pick your cégep first.",
+    "cprog.count": "{n} programs offered",
+
+    "warn.estTitle": "An estimate, not your score",
+    "warn.estBody":
+      "Your R-score doesn't come from your grades alone — it also depends on how strong your group is in each course. Two students with 85% in two different classes do not get the same score.",
+    "warn.estBody2":
+      "Nobody can compute your real score without the group data only your cégep and the BCI hold. What follows is a ballpark, and the app will say so every time it shows it.",
+    "warn.estCta": "Understood, let's estimate",
+    "warn.estBack": "Actually, I have my real score",
+
+    "band.title": "What {score} means",
+    "band.yourBand": "YOUR RANGE",
+    "band.allBands": "The other ranges",
+    "band.disclaimer":
+      "There is no official classification of the R-score. These ranges are our reading of the admission cutoffs universities publish — not a judgement of you.",
+    "band.cta": "Continue",
+
+    "quiz.introTitle": "Already know where you're headed?",
+    "quiz.introBody":
+      "If so, skip straight ahead. If not, two quick questions and we'll suggest university programs that fit what interests you.",
+    "quiz.introKnow": "I already know",
+    "quiz.introTake": "Help me choose",
+    "quiz.domainsTitle": "What interests you?",
+    "quiz.domainsBody": "Pick everything that appeals. Nothing here is final.",
+    "quiz.uniTitle": "A university in mind?",
+    "quiz.uniBody": "Optional. Leave it blank to see every institution in our database.",
+    "quiz.uniAny": "No preference",
+    "quiz.resultsTitle": "Suggested programs",
+    "quiz.resultsBody": "{n} programs match your answers. Add the ones you're interested in.",
+    "quiz.resultsEmpty": "Nothing matched. Go back and widen your domains.",
+    "quiz.matchOn": "Matches",
+    "quiz.add": "Add",
+    "quiz.added": "Added",
+    "quiz.selected": "{n} target(s)",
+    "quiz.finish": "Finish",
+    "quiz.skip": "Skip this step",
+    "quiz.noCutoff":
+      "These programs come from each university's own directory. An R-score cutoff is shown only where a sourced figure exists.",
+
+    "account.required": "An account is required to continue.",
+    "account.recapTitle": "What we'll save",
+    "account.sentTitle": "Check your email",
+    "account.sentBody": "We sent a sign-in link to {email}. Open it on this device.",
+    "account.resend": "Resend the link",
+    "account.changeEmail": "Use a different email",
+    "account.sending": "Sending…",
+    "account.error": "Sending failed. Check the address and try again.",
+    "account.invalidEmail": "Enter a valid email address.",
 
     "dash.estimateTitle": "Current R-Score Estimate",
     "dash.estimateBasis": "Based on",

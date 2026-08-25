@@ -44,6 +44,67 @@ one needed before Phase 0's literal "blank deploy live at a real URL" check can 
 8. Deploy: `vercel link`, set the same three env vars in the Vercel project settings, deploy.
    Verify auth works against the live URL, not just localhost.
 
+## Required for the reworked onboarding flow
+
+The funnel (cégep → program → cote R → quiz → sign-up) reads its catalogue from the app bundle,
+so it works against an empty database. Two things still have to be applied before a signed-in
+student's answers can be stored:
+
+Both files are plain SQL. The dashboard path needs no CLI auth at all and is the shortest
+route; the CLI path needs `npx supabase login` and `npx supabase link --project-ref <ref>`
+first (the ref is the subdomain in `NEXT_PUBLIC_SUPABASE_URL`).
+
+1. **The migration.** `supabase/migrations/20260825120000_catalog_slugs_and_onboarding.sql` adds
+   the `catalog_slug` columns, widens `cegep_programs.type` to accept `special`, and adds the
+   slug columns plus resolver triggers on `student_profiles` / `student_targets`. Without it,
+   every profile write fails — the client sends slugs and the table only knows uuids.
+
+   Dashboard: SQL Editor → paste the file's contents → Run.
+
+   CLI (after `login` + `link`):
+
+   ```bash
+   npx supabase db push
+   ```
+
+2. **The catalogue seed.** `supabase/seed/catalog.sql` populates `cegeps`, `cegep_programs`,
+   `universities`, and `university_programs` from the scraped Quebec City data (11 cégeps, 150
+   programs, 7 universities, 198 university programs — 366 rows across four batched upserts in
+   one transaction).
+   It is idempotent: it upserts on `short_code` / `catalog_slug`, so replaying it after a data
+   refresh is safe.
+
+   Dashboard: SQL Editor → paste the file's contents → Run.
+
+   CLI (after `login` + `link`):
+
+   ```bash
+   npx supabase db query --linked -f supabase/seed/catalog.sql
+   ```
+
+   Note the subcommand is `db query`, not `db execute` — older docs and some CLI versions
+   differ here; `npx supabase db query --help` is authoritative for the version installed.
+
+   Until this runs, profile writes still succeed (the slug columns accept them) but the uuid
+   foreign keys stay null. The trigger backfills them on the next write once the rows exist.
+
+Verify both landed:
+
+```bash
+npx supabase db query --linked "select (select count(*) from cegeps) cegeps, (select count(*) from cegep_programs) programs, (select count(*) from university_programs) uni_programs;"
+```
+
+Regenerate the catalogue after editing `src/lib/data/raw/*.json`:
+
+```bash
+npm run build:catalog
+```
+
+That rewrites `src/lib/data/catalog.generated.ts`, `catalog-summaries.generated.ts`, and
+`supabase/seed/catalog.sql` together, so the bundle and the database never drift apart. Bump
+`REFERENCE_CATALOG_VERSION` in `src/lib/data/version.ts` when you do, or clients keep serving
+the previous bundle out of IndexedDB.
+
 ## Either way
 
 - Auth email templates and the magic-link redirect URL (Authentication → URL Configuration in

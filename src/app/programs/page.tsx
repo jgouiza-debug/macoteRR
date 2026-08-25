@@ -6,7 +6,8 @@ import { ChevronRight } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { AxisRow } from "@/components/rscore/AxisRow";
 import { SourceStamp } from "@/components/SourceStamp";
-import { UNIVERSITY_PROGRAMS, STUDENT_SAMPLE, type UniversityProgram } from "@/lib/sample-data";
+import { UNIVERSITY_PROGRAMS, type UniversityProgram } from "@/lib/sample-data";
+import { useStudentProfile } from "@/lib/profile/store";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import type { TranslationKey } from "@/lib/i18n/dictionary";
@@ -83,7 +84,10 @@ const ProgramRow = memo(function ProgramRow({
 export default function ProgramsPage() {
   const { t } = useLocale();
   const f = useFormat();
-  const score = STUDENT_SAMPLE.rScoreEstimated;
+  const { profile } = useStudentProfile();
+  // The funnel guarantees a score before this route is reachable; the fallback only covers
+  // the instant before localStorage hydrates on first client render.
+  const score = profile.rScore ?? 0;
   const [tier, setTier] = useState<Tier>("clears");
 
   const rows = useMemo(

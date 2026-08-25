@@ -9,16 +9,19 @@ export function ScreenShell({
   children,
   footer,
   backHref,
+  onBack,
   brand = false,
 }: {
   children: ReactNode;
   footer?: ReactNode;
   backHref?: string;
+  /** In-screen step-back, for funnels that walk several stages behind one URL. */
+  onBack?: () => void;
   brand?: boolean;
 }) {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-chalk">
-      <OnboardingTopBar backHref={backHref} brand={brand} />
+      <OnboardingTopBar backHref={backHref} onBack={onBack} brand={brand} />
       <main className="mx-auto flex w-full max-w-[430px] flex-1 flex-col px-5 pt-2">
         {children}
       </main>

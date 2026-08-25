@@ -12,7 +12,8 @@
     "promote:review": "tsx scripts/collectors/promote/promote-staging.ts review",
     "promote": "tsx scripts/collectors/promote/promote-staging.ts promote",
     "bench": "tsx scripts/benchmark/run-all.ts",
-    "test:rls": "tsx scripts/benchmark/test-rls.ts"
+    "test:rls": "tsx scripts/benchmark/test-rls.ts",
+    "build:catalog": "tsx scripts/data/build-catalog.ts"
   },
   "dependencies": {
     "@serwist/next": "^9.5.12",

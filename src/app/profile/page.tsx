@@ -2,23 +2,26 @@
 
 import Link from "next/link";
 import { AppShell } from "@/components/app-shell/AppShell";
-import { BURSARIES, CEGEPS, CEGEP_PROGRAMS, SESSIONS } from "@/lib/sample-data";
+import { BURSARIES, SESSIONS } from "@/lib/sample-data";
+import { findCegep, findCegepProgram } from "@/lib/data/catalog";
+import { resolveTargets } from "@/lib/data/targets";
 import { useStudentProfile } from "@/lib/profile/store";
 import { SELF_TAGS, tagLabel } from "@/lib/tags/taxonomy";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 export default function ProfilePage() {
   const { t, locale } = useLocale();
-  const { profile, toggleTag } = useStudentProfile();
+  const { profile, toggleTag, toggleTarget } = useStudentProfile();
+  const targets = resolveTargets(profile.targetUniversityProgramIds);
 
   const fields = [
     {
       label: t("prof.cegep"),
-      value: CEGEPS.find((c) => c.id === profile.cegepId)?.name ?? "—",
+      value: findCegep(profile.cegepId)?.name ?? "—",
     },
     {
       label: t("prof.program"),
-      value: CEGEP_PROGRAMS.find((p) => p.id === profile.cegepProgramId)?.name ?? "—",
+      value: findCegepProgram(profile.cegepProgramId)?.name ?? "—",
     },
     {
       label: t("prof.session"),
@@ -47,6 +50,58 @@ export default function ProfilePage() {
             </div>
           ))}
         </div>
+
+        <section className="flex flex-col gap-3 rounded border border-ink/12 bg-paper p-4 shadow-card">
+          <h2 className="font-display text-[17px] font-bold text-ink">{t("prof.targetsTitle")}</h2>
+          <p className="-mt-1 text-[12.5px] leading-relaxed text-ink/60">{t("prof.targetsHelp")}</p>
+
+          {targets.length === 0 ? (
+            <div className="flex flex-col items-start gap-2 pt-1">
+              <p className="text-[13px] text-ink/50">{t("prof.targetsEmpty")}</p>
+              <Link href="/programs" className="text-[14px] font-semibold text-ultramarine">
+                {t("prof.targetsAdd")}
+              </Link>
+            </div>
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {targets.map((target) => (
+                <li
+                  key={target.id}
+                  className="flex items-start justify-between gap-3 rounded border border-ink/12 px-3.5 py-3"
+                >
+                  <div className="min-w-0 flex-1">
+                    {target.hasDetailPage ? (
+                      <Link
+                        href={`/programs/${target.id}`}
+                        className="wrap-fr block text-[13.5px] font-semibold leading-snug text-ink underline-offset-2 hover:underline"
+                      >
+                        {target.name}
+                      </Link>
+                    ) : (
+                      <span className="wrap-fr block text-[13.5px] font-semibold leading-snug text-ink">
+                        {target.name}
+                      </span>
+                    )}
+                    <span className="mt-0.5 block text-[11.5px] text-ink/50">
+                      {target.institution}
+                      {target.cutoff !== null
+                        ? ` · ${t("common.seuil")} ${target.cutoff}`
+                        : ` · ${t("prof.noCutoff")}`}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => toggleTarget(target.id)}
+                    aria-label={`${t("prof.remove")} — ${target.name}`}
+                    className="flex h-8 flex-shrink-0 items-center rounded-full px-3 text-[12px] font-semibold text-ink/50 transition-colors active:bg-ink/8"
+                  >
+                    {t("prof.remove")}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
 
         <section className="flex flex-col gap-3 rounded border border-ink/12 bg-paper p-4 shadow-card">
           <div className="flex items-baseline justify-between gap-3">

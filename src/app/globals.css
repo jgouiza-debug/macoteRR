@@ -94,6 +94,25 @@ a {
   outline: none;
 }
 
+/**
+ * Fields whose wrapper already carries the focus affordance.
+ *
+ * The rule above is unlayered, so it outranks Tailwind's layered `focus-visible:outline-none`
+ * and a bare utility cannot switch it off. On a label-wrapped field that left two nested
+ * rectangles: the container's border, plus a second ring drawn inside it around the input.
+ *
+ * The ring is relocated, not removed — `.field-shell` below paints it on the wrapper, which
+ * is the element a sighted keyboard user reads as "the field" anyway.
+ */
+.field-shell:focus-within {
+  outline: 2px solid var(--color-ultramarine);
+  outline-offset: 2px;
+}
+
+.field-shell :is(input, textarea):focus-visible {
+  outline: none;
+}
+
 * {
   scrollbar-width: thin;
   scrollbar-color: color-mix(in srgb, var(--color-ink) 25%, transparent) transparent;

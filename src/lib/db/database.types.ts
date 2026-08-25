@@ -14,7 +14,7 @@ export type Json =
   | Json[];
 
 export type CegepSector = "public_french" | "public_english" | "private";
-export type CegepProgramType = "pre_university" | "technical";
+export type CegepProgramType = "pre_university" | "technical" | "special";
 export type AdmissionType =
   | "r_score_only"
   | "r_score_plus_interview"
@@ -35,6 +35,8 @@ export type BursaryCategory =
   | "event_based"
   | "other";
 export type BursaryDeadlineType = "fixed_date" | "recurring_annual" | "rolling";
+/** Which onboarding path produced the student's score. See src/lib/profile/store.ts. */
+export type RScoreStatus = "confirmed" | "estimated";
 export type DeadlineType =
   | "sracq_round"
   | "sram_round"
@@ -97,6 +99,7 @@ export type Database = {
           program_code: string | null;
           name: string;
           type: CegepProgramType;
+          catalog_slug: string | null;
           created_at: string | null;
         };
         Insert: {
@@ -105,6 +108,7 @@ export type Database = {
           program_code?: string | null;
           name: string;
           type: CegepProgramType;
+          catalog_slug?: string | null;
           created_at?: string | null;
         };
         Update: Partial<Database["public"]["Tables"]["cegep_programs"]["Insert"]>;
@@ -149,6 +153,7 @@ export type Database = {
           admission_type: AdmissionType;
           source_url: string;
           last_verified_at: string;
+          catalog_slug: string | null;
           created_at: string | null;
         };
         Insert: {
@@ -160,6 +165,7 @@ export type Database = {
           admission_type: AdmissionType;
           source_url: string;
           last_verified_at: string;
+          catalog_slug?: string | null;
           created_at?: string | null;
         };
         Update: Partial<Database["public"]["Tables"]["university_programs"]["Insert"]>;
@@ -358,8 +364,11 @@ export type Database = {
           user_id: string;
           cegep_id: string | null;
           cegep_program_id: string | null;
+          cegep_short_code: string | null;
+          cegep_program_slug: string | null;
           current_session: number | null;
           self_tags: string[] | null;
+          r_score_status: RScoreStatus | null;
           created_at: string | null;
           updated_at: string | null;
         };
@@ -367,8 +376,11 @@ export type Database = {
           user_id: string;
           cegep_id?: string | null;
           cegep_program_id?: string | null;
+          cegep_short_code?: string | null;
+          cegep_program_slug?: string | null;
           current_session?: number | null;
           self_tags?: string[] | null;
+          r_score_status?: RScoreStatus | null;
           created_at?: string | null;
           updated_at?: string | null;
         };
@@ -443,14 +455,16 @@ export type Database = {
         Row: {
           id: string;
           user_id: string;
-          university_program_id: string;
+          university_program_id: string | null;
+          catalog_slug: string | null;
           notes: string | null;
           created_at: string | null;
         };
         Insert: {
           id?: string;
           user_id: string;
-          university_program_id: string;
+          university_program_id?: string | null;
+          catalog_slug?: string | null;
           notes?: string | null;
           created_at?: string | null;
         };

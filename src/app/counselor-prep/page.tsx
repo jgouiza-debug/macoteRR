@@ -7,6 +7,7 @@ const PrintButton = dynamic(
   () => import("@/components/PrintButton").then((mod) => mod.PrintButton),
 );
 import { STUDENT_SAMPLE, UNIVERSITY_PROGRAMS, DASHBOARD_SAMPLE } from "@/lib/sample-data";
+import { findCegep, findCegepProgram } from "@/lib/data/catalog";
 import { formatScore, formatSignedScore } from "@/lib/format";
 
 const TARGET_PROGRAM_IDS = ["hec-baa", "poly-genie-logiciel"];
@@ -63,8 +64,11 @@ export default function CounselorPrepPage() {
         </header>
 
         <section className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-          <Field label="Cégep" value={STUDENT_SAMPLE.cegep.name} />
-          <Field label="Programme" value={STUDENT_SAMPLE.program.name} />
+          <Field label="Cégep" value={findCegep(STUDENT_SAMPLE.cegepShortCode)?.name ?? "—"} />
+          <Field
+            label="Programme"
+            value={findCegepProgram(STUDENT_SAMPLE.cegepProgramId)?.name ?? "—"}
+          />
           <Field label="Session" value={STUDENT_SAMPLE.session.labelFr} />
         </section>
 

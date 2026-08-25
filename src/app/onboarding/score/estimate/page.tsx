@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Info, Plus, X } from "lucide-react";
 import { ScreenShell, ScreenHeading } from "@/components/onboarding/ScreenShell";
+import { StepProgress } from "@/components/onboarding/StepProgress";
+import { useStudentProfile } from "@/lib/profile/store";
+import { currentSessionId } from "@/lib/sample-data";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { useFormat } from "@/lib/i18n/useFormat";
 
@@ -28,6 +31,7 @@ export default function EstimateScorePage() {
   const router = useRouter();
   const { t } = useLocale();
   const f = useFormat();
+  const { profile, update: saveProfile } = useStudentProfile();
   const [rows, setRows] = useState<Row[]>(INITIAL_ROWS);
 
   const grades = rows
@@ -54,9 +58,14 @@ export default function EstimateScorePage() {
           <button
             type="button"
             disabled={grades.length === 0}
-            onClick={() =>
-              router.push(`/onboarding/results?score=${estimate.toFixed(2)}&status=estimated`)
-            }
+            onClick={() => {
+              saveProfile({
+                rScore: Number(estimate.toFixed(2)),
+                rScoreStatus: "estimated",
+                currentSession: profile.currentSession ?? currentSessionId(),
+              });
+              router.push(`/onboarding/results?score=${estimate.toFixed(2)}&status=estimated`);
+            }}
             className="flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40"
           >
             {t("est.cta")}
@@ -64,6 +73,7 @@ export default function EstimateScorePage() {
         </div>
       }
     >
+      <StepProgress step="score" />
       <ScreenHeading title={t("est.title")} body={t("est.body")} />
 
       <div className="flex flex-col gap-2.5">

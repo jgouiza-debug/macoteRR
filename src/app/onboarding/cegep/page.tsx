@@ -2,80 +2,68 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Check } from "lucide-react";
 import { ScreenShell, ScreenHeading } from "@/components/onboarding/ScreenShell";
-import { CEGEPS } from "@/lib/sample-data";
+import { StepProgress } from "@/components/onboarding/StepProgress";
+import { SearchableList, type ListOption } from "@/components/onboarding/SearchableList";
+import { CATALOG_CEGEPS, programsForCegep } from "@/lib/data/catalog";
+import { useStudentProfile } from "@/lib/profile/store";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
+/**
+ * Step 1. Everything downstream is filtered by this answer, which is why it moved to the
+ * front of the funnel: picking a program before a cégep meant showing a student programs
+ * their school does not offer.
+ */
 export default function CegepPickerPage() {
   const router = useRouter();
-  const { t } = useLocale();
-  const [query, setQuery] = useState("");
-  const [selected, setSelected] = useState<string | null>(null);
+  const { t, locale } = useLocale();
+  const { profile, update } = useStudentProfile();
+  const [selected, setSelected] = useState<string | null>(profile.cegepId);
 
-  const filtered = useMemo(
-    () => CEGEPS.filter((c) => c.name.toLowerCase().includes(query.trim().toLowerCase())),
-    [query],
+  const options: ListOption[] = useMemo(
+    () =>
+      CATALOG_CEGEPS.map((cegep) => {
+        const count = programsForCegep(cegep.shortCode).length;
+        return {
+          id: cegep.shortCode,
+          label: cegep.name,
+          detail:
+            locale === "fr"
+              ? `${count} programme${count === 1 ? "" : "s"}`
+              : `${count} program${count === 1 ? "" : "s"}`,
+        };
+      }),
+    [locale],
   );
 
-  function choose(id: string) {
-    setSelected(id);
-    // Give the selected state a beat to paint before leaving, so the tap reads as confirmed.
-    window.setTimeout(() => router.push("/onboarding/account"), 180);
+  function choose(shortCode: string) {
+    setSelected(shortCode);
+
+    // Changing cégep invalidates the program below it — a slug is scoped to one school, so
+    // keeping it would carry a program the new cégep does not offer into the profile.
+    const patch =
+      profile.cegepId === shortCode
+        ? { cegepId: shortCode }
+        : { cegepId: shortCode, cegepProgramId: null };
+    update(patch);
+
+    // Let the selected state paint before leaving, so the tap reads as confirmed.
+    window.setTimeout(() => router.push("/onboarding/program"), 180);
   }
 
   return (
-    <ScreenShell
-      backHref="/onboarding/results"
-      footer={
-        <button
-          type="button"
-          onClick={() => router.push("/onboarding/account")}
-          className="h-12 w-full text-[14px] font-semibold text-ink/60"
-        >
-          {t("common.skip")}
-        </button>
-      }
-    >
+    <ScreenShell backHref="/">
+      <StepProgress step="cegep" />
       <ScreenHeading title={t("cegep.title")} body={t("cegep.body")} />
 
-      <div className="relative mb-3">
-        <Search className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink/40" />
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          aria-label={t("cegep.search")}
-          placeholder={t("cegep.search")}
-          autoComplete="off"
-          className="h-[52px] w-full rounded border border-ink/15 bg-paper pl-11 pr-4 text-[15px] text-ink outline-none transition-colors placeholder:text-ink/40 focus:border-[1.5px] focus:border-ultramarine"
-        />
-      </div>
-
-      <div role="listbox" aria-label={t("cegep.title")} className="flex flex-col gap-2.5 pb-4">
-        {filtered.map((cegep) => {
-          const isSelected = selected === cegep.id;
-          return (
-            <button
-              key={cegep.id}
-              type="button"
-              role="option"
-              aria-selected={isSelected}
-              onClick={() => choose(cegep.id)}
-              className={`flex min-h-[56px] items-center justify-between gap-3 rounded px-4 py-3 text-left text-[15px] transition-transform transition-colors active:scale-[0.99] ${
-                isSelected
-                  ? "border-[1.5px] border-ultramarine bg-ultramarine/[0.07] font-semibold text-ultramarine"
-                  : "border border-ink/15 bg-paper text-ink"
-              }`}
-            >
-              <span className="leading-snug">{cegep.name}</span>
-              {isSelected && <Check className="h-5 w-5 flex-shrink-0" />}
-            </button>
-          );
-        })}
-        {filtered.length === 0 && (
-          <p className="py-8 text-center text-[14px] text-ink/50">{t("cegep.empty")}</p>
-        )}
-      </div>
+      <SearchableList
+        options={options}
+        selectedId={selected}
+        onSelect={choose}
+        searchLabel={t("cegep.search")}
+        emptyLabel={t("cegep.empty")}
+        footerNote={t("cegep.count").replace("{n}", String(CATALOG_CEGEPS.length))}
+      />
     </ScreenShell>
   );
 }

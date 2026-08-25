@@ -12,7 +12,8 @@ import {
 import { AppShell } from "@/components/app-shell/AppShell";
 import { AxisRow } from "@/components/rscore/AxisRow";
 import { SourceStamp } from "@/components/SourceStamp";
-import { DASHBOARD_SAMPLE, DEADLINES } from "@/lib/sample-data";
+import { DASHBOARD_SAMPLE, DEADLINES, SESSIONS } from "@/lib/sample-data";
+import { useStudentProfile } from "@/lib/profile/store";
 import { classifySession, type ImpactBand } from "@/lib/rscore/impact";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
@@ -34,8 +35,8 @@ const IMPACT: Record<
 export default function DashboardPage() {
   const { t, locale } = useLocale();
   const f = useFormat();
+  const { profile } = useStudentProfile();
   const {
-    currentEstimate,
     currentSessionLabelFr,
     currentSessionLabelEn,
     confirmedSessions,
@@ -43,7 +44,20 @@ export default function DashboardPage() {
     goalProgram,
   } = DASHBOARD_SAMPLE;
 
-  const sessionLabel = locale === "fr" ? currentSessionLabelFr : currentSessionLabelEn;
+  // The headline number is the student's own, from onboarding. The course rows below it are
+  // still sample data — grade collection is not built yet — so this deliberately mixes real
+  // and illustrative rather than showing a stranger's score at the top of their dashboard.
+  const currentEstimate = profile.rScore ?? DASHBOARD_SAMPLE.currentEstimate;
+  const isConfirmed = profile.rScoreStatus === "confirmed";
+
+  const profileSession = SESSIONS.find((s) => s.id === profile.currentSession);
+  const sessionLabel = profileSession
+    ? locale === "fr"
+      ? profileSession.labelFr
+      : profileSession.labelEn
+    : locale === "fr"
+      ? currentSessionLabelFr
+      : currentSessionLabelEn;
   const goalName = locale === "fr" ? goalProgram.nameFr : goalProgram.nameEn;
   const needed = goalProgram.cutoff - currentEstimate;
 
@@ -67,13 +81,30 @@ export default function DashboardPage() {
           <p className="text-[12.5px] text-ink/50">
             {t("dash.estimateBasis")} {sessionLabel}.
           </p>
-          <div className="mt-4 flex min-w-[180px] flex-col items-center gap-1 rounded border border-dashed border-moss/60 px-5 py-3">
-            <span className="flex items-center gap-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-moss">
-              <TrendingUp className="h-3.5 w-3.5" />
-              {t("dash.estimated")}
+          {/* Guardrail #2: a confirmed score gets a solid frame and no "≈", an estimate keeps
+              the dashed frame and the approximation sign. The two must never look alike. */}
+          <div
+            className={`mt-4 flex min-w-[180px] flex-col items-center gap-1 rounded px-5 py-3 ${
+              isConfirmed
+                ? "border border-ultramarine/60"
+                : "border border-dashed border-moss/60"
+            }`}
+          >
+            <span
+              className={`flex items-center gap-1.5 text-[10.5px] font-semibold uppercase tracking-wider ${
+                isConfirmed ? "text-ultramarine" : "text-moss"
+              }`}
+            >
+              {isConfirmed ? (
+                <BadgeCheck className="h-3.5 w-3.5" />
+              ) : (
+                <TrendingUp className="h-3.5 w-3.5" />
+              )}
+              {isConfirmed ? t("dash.confirmed") : t("dash.estimated")}
             </span>
             <span className="font-display text-[40px] font-extrabold leading-none tracking-tight text-ultramarine tabular-nums">
-              ≈ {f.score(currentEstimate, 2)}
+              {isConfirmed ? "" : "≈ "}
+              {f.score(currentEstimate, 2)}
             </span>
           </div>
         </section>

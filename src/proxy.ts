@@ -4,18 +4,40 @@ import { NextResponse, type NextRequest } from "next/server";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
+/**
+ * Routes that require a signed-in student. Onboarding itself stays open — the funnel builds
+ * the profile that the account is created to hold, so gating it would be circular — but
+ * everything the funnel leads to is behind the session.
+ */
+const PROTECTED_PREFIXES = [
+  "/dashboard",
+  "/programs",
+  "/bursaries",
+  "/profile",
+  "/counselor-prep",
+];
+
+const SIGN_UP_PATH = "/onboarding/account";
+
+function isProtected(pathname: string) {
+  return PROTECTED_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+}
+
 export async function proxy(request: NextRequest) {
-  // No Supabase project configured yet (see docs/SETUP-CLOUD.md) — pass requests
-  // through unchanged instead of crashing every route. Safe to fail open TODAY
-  // because this proxy only refreshes the session cookie, it doesn't gate access
-  // yet. That safety argument stops holding the moment Phase 2 adds real route
-  // gating (e.g. `if (!user) redirect(...)`) to this same function -- at that
-  // point this early return would silently skip the redirect too. Revisit this
-  // branch when that gating logic is added; a deployed environment missing
-  // these vars is a misconfiguration worth surfacing loudly, not swallowing.
+  const { pathname } = request.nextUrl;
+
+  // Misconfiguration, not an anonymous visitor. Previously this failed open, which was safe
+  // only while the proxy did nothing but refresh a cookie. Now that it gates routes, failing
+  // open would silently serve protected pages to everyone, so protected paths bounce to
+  // sign-up and public ones still render.
   if (!supabaseUrl || !supabaseAnonKey) {
-    if (process.env.NODE_ENV === "production") {
-      console.error("proxy: NEXT_PUBLIC_SUPABASE_URL/ANON_KEY missing in production — see docs/SETUP-CLOUD.md");
+    console.error(
+      "proxy: NEXT_PUBLIC_SUPABASE_URL/ANON_KEY missing — see docs/SETUP-CLOUD.md",
+    );
+    if (isProtected(pathname)) {
+      return NextResponse.redirect(new URL(SIGN_UP_PATH, request.url));
     }
     return NextResponse.next();
   }
@@ -39,9 +61,23 @@ export async function proxy(request: NextRequest) {
     },
   });
 
-  // Refreshes the session cookie when expired; do not remove this call even
-  // though its return value is unused (Supabase SSR docs are explicit about this).
-  await supabase.auth.getUser();
+  // Refreshes the session cookie when expired; do not remove this call even though its
+  // return value is only used for the gate below (Supabase SSR docs are explicit about this).
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user && isProtected(pathname)) {
+    const redirectUrl = new URL(SIGN_UP_PATH, request.url);
+    // Remember where they were headed so the callback can finish the trip after sign-in.
+    redirectUrl.searchParams.set("next", pathname);
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  // A signed-in student landing back on sign-up has already finished the funnel.
+  if (user && pathname === SIGN_UP_PATH) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
 
   return response;
 }
