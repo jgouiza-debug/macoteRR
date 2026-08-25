@@ -32,7 +32,7 @@ export function LegalPage({ locale, path, content }: { locale: Locale; path: str
       </a>
       <SiteHeader locale={locale} path={path} />
 
-      <main id="main" className="mx-auto w-full max-w-[1120px] flex-1 px-5 py-6 md:px-10 md:py-10">
+      <main id="main" className="mx-auto w-full max-w-[1120px] flex-1 px-3 py-6 md:px-10 md:py-10">
         <div className="mx-auto max-w-[720px]">
           <div className="rounded-[3px] border border-border bg-paper p-4 text-[13px] leading-relaxed text-secondary">
             {draftBanner}

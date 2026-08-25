@@ -40,7 +40,7 @@ export function ContactPage({ locale }: { locale: Locale }) {
       </a>
       <SiteHeader locale={locale} path="/contact" />
 
-      <main id="main" className="mx-auto w-full max-w-[1120px] flex-1 px-5 py-6 md:px-10 md:py-10">
+      <main id="main" className="mx-auto w-full max-w-[1120px] flex-1 px-3 py-6 md:px-10 md:py-10">
         <div className="mx-auto max-w-[720px]">
           <h1 className="font-display text-[34px] font-extrabold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[42px]">
             {c.title}
@@ -76,7 +76,7 @@ export function ContactPage({ locale }: { locale: Locale }) {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder={c.form.namePlaceholder}
-                  className="rounded-[3px] border border-border bg-paper px-4 py-3 text-[16px] text-ink outline-none placeholder:text-secondary/60"
+                  className="rounded-[3px] border border-ink/50 bg-paper px-4 py-3 text-[16px] text-ink outline-none placeholder:text-secondary/60"
                 />
               </div>
 
@@ -94,7 +94,7 @@ export function ContactPage({ locale }: { locale: Locale }) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={c.form.emailPlaceholder}
-                  className="rounded-[3px] border border-border bg-paper px-4 py-3 text-[16px] text-ink outline-none placeholder:text-secondary/60"
+                  className="rounded-[3px] border border-ink/50 bg-paper px-4 py-3 text-[16px] text-ink outline-none placeholder:text-secondary/60"
                 />
               </div>
 
@@ -107,7 +107,7 @@ export function ContactPage({ locale }: { locale: Locale }) {
                   name="topic"
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
-                  className="rounded-[3px] border border-border bg-paper px-4 py-3 text-[16px] text-ink outline-none"
+                  className="rounded-[3px] border border-ink/50 bg-paper px-4 py-3 text-[16px] text-ink outline-none"
                 >
                   {c.form.topicOptions.map((o) => (
                     <option key={o.value} value={o.value}>
@@ -129,7 +129,7 @@ export function ContactPage({ locale }: { locale: Locale }) {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder={c.form.messagePlaceholder}
-                  className="resize-y rounded-[3px] border border-border bg-paper px-4 py-3 text-[16px] leading-relaxed text-ink outline-none placeholder:text-secondary/60"
+                  className="resize-y rounded-[3px] border border-ink/50 bg-paper px-4 py-3 text-[16px] leading-relaxed text-ink outline-none placeholder:text-secondary/60"
                 />
               </div>
 

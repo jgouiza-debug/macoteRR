@@ -12,6 +12,11 @@ import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 type Step = "program" | "future" | "specific" | "general" | "quiz";
 
+const DEC_GROUPS = [
+  { type: "pre_university" as const, labelKey: "goal.decPreUniversity" as const },
+  { type: "technical" as const, labelKey: "goal.decTechnical" as const },
+];
+
 export default function GoalPage() {
   const router = useRouter();
   const { t, locale } = useLocale();
@@ -22,6 +27,7 @@ export default function GoalPage() {
   const [targetIds, setTargetIds] = useState<string[]>(profile.targetUniversityProgramIds);
   const [interestIds, setInterestIds] = useState<InterestId[]>(profile.interestIds);
   const [query, setQuery] = useState("");
+  const [decQuery, setDecQuery] = useState("");
   const [quizIndex, setQuizIndex] = useState(0);
   const [quizPicks, setQuizPicks] = useState<InterestId[]>([]);
   const [fromQuiz, setFromQuiz] = useState(false);
@@ -35,6 +41,14 @@ export default function GoalPage() {
       : UNIVERSITY_PROGRAMS;
     return list;
   }, [query]);
+
+  const filteredDecs = useMemo(() => {
+    const q = decQuery.trim().toLowerCase();
+    if (!q) return CEGEP_PROGRAMS;
+    return CEGEP_PROGRAMS.filter(
+      (p) => p.name.toLowerCase().includes(q) || p.id.toLowerCase().includes(q),
+    );
+  }, [decQuery]);
 
   const matchedPrograms = useMemo(
     () =>
@@ -93,26 +107,60 @@ export default function GoalPage() {
         }
       >
         <ScreenHeading title={t("goal.programTitle")} body={t("goal.programBody")} />
-        <div className="flex flex-col gap-2.5">
-          {CEGEP_PROGRAMS.map((p) => {
-            const selected = cegepProgramId === p.id;
+
+        <div className="relative mb-3">
+          <Search className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink/40" />
+          <input
+            value={decQuery}
+            onChange={(e) => setDecQuery(e.target.value)}
+            aria-label={t("goal.searchDec")}
+            placeholder={t("goal.searchDec")}
+            autoComplete="off"
+            className="h-[52px] w-full rounded border border-ink/50 bg-paper pl-11 pr-4 text-[16px] text-ink outline-none transition-colors placeholder:text-ink/40 focus:border-[1.5px] focus:border-ultramarine"
+          />
+        </div>
+
+        <div className="flex flex-col gap-4 pb-4">
+          {DEC_GROUPS.map((group) => {
+            const items = filteredDecs.filter((p) => p.type === group.type);
+            if (items.length === 0) return null;
             return (
-              <button
-                key={p.id}
-                type="button"
-                aria-pressed={selected}
-                onClick={() => setCegepProgramId(p.id)}
-                className={`flex min-h-[56px] items-center justify-between gap-3 rounded border px-4 py-3 text-left text-[15px] font-semibold transition-transform active:scale-[0.99] ${
-                  selected
-                    ? "border-ultramarine bg-ultramarine/[0.07] text-ultramarine"
-                    : "border-ink/15 bg-paper text-ink"
-                }`}
-              >
-                {p.name}
-                {selected && <Check className="h-5 w-5 flex-shrink-0" />}
-              </button>
+              <div key={group.type} className="flex flex-col gap-2.5">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-ink/45">
+                  {t(group.labelKey)}
+                </p>
+                {items.map((p) => {
+                  const selected = cegepProgramId === p.id;
+                  return (
+                    <button
+                      key={p.id}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => setCegepProgramId(p.id)}
+                      className={`flex min-h-[56px] items-center justify-between gap-3 rounded border px-4 py-3 text-left transition-transform active:scale-[0.99] ${
+                        selected
+                          ? "border-ultramarine bg-ultramarine/[0.07]"
+                          : "border-ink/15 bg-paper"
+                      }`}
+                    >
+                      <span>
+                        <span
+                          className={`block text-[15px] font-semibold ${selected ? "text-ultramarine" : "text-ink"}`}
+                        >
+                          {p.name}
+                        </span>
+                        <span className="block text-[12px] tabular-nums text-ink/45">{p.id}</span>
+                      </span>
+                      {selected && <Check className="h-5 w-5 flex-shrink-0 text-ultramarine" />}
+                    </button>
+                  );
+                })}
+              </div>
             );
           })}
+          {filteredDecs.length === 0 && (
+            <p className="py-8 text-center text-[14px] text-ink/50">{t("goal.noDec")}</p>
+          )}
         </div>
       </ScreenShell>
     );

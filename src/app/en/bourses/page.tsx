@@ -1,17 +1,15 @@
-import type { Metadata } from "next";
 import { BoursesPage } from "@/components/marketing/BoursesPage";
 import { BOURSES_CONTENT } from "@/content/bourses";
+import { marketingMetadata } from "@/lib/i18n/marketing-metadata";
 
 const c = BOURSES_CONTENT.en;
 
-export const metadata: Metadata = {
+export const metadata = marketingMetadata({
+  locale: "en",
   title: c.metaTitle,
   description: c.metaDescription,
-  alternates: {
-    canonical: "/en/bourses",
-    languages: { fr: "/bourses", en: "/en/bourses" },
-  },
-};
+  path: "/bourses",
+});
 
 const JSON_LD = {
   "@context": "https://schema.org",

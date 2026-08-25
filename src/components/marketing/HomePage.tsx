@@ -26,7 +26,7 @@ export function HomePage({ locale }: { locale: Locale }) {
 
       <main
         id="main"
-        className="mx-auto flex w-full max-w-[1120px] flex-1 flex-col items-start justify-between gap-8 px-5 py-6 md:flex-row md:gap-12 md:px-10 md:py-10"
+        className="mx-auto flex w-full max-w-[1120px] flex-1 flex-col items-start justify-between gap-8 px-3 py-6 md:flex-row md:gap-12 md:px-10 md:py-10"
       >
         <div className="flex max-w-[560px] flex-1 flex-col">
           <h1 className="font-display text-[34px] font-extrabold leading-[1.1] tracking-[-0.04em] text-ink sm:text-[42px] md:text-[48px]">

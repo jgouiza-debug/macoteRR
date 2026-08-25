@@ -12,7 +12,7 @@ export function SiteHeader({ locale, path }: { locale: Locale; path: string }) {
 
   return (
     <header className="w-full bg-chalk pt-safe">
-      <div className="mx-auto flex h-14 w-full max-w-[1120px] items-center justify-between gap-6 px-5 md:px-10">
+      <div className="mx-auto flex h-14 w-full max-w-[1120px] items-center justify-between gap-6 px-3 md:px-10">
         <Link
           href={localeHref(locale, "/")}
           className="flex items-center gap-2 text-ink transition-opacity hover:opacity-90"

@@ -9,15 +9,25 @@ import { Logo } from "@/components/ui/Logo";
 import { LangToggle } from "@/components/ui/LangToggle";
 import { UNIVERSITY_PROGRAMS } from "@/lib/sample-data";
 import {
-  getCutoffRange,
-  compareToCutoffRange,
   formatRangeYears,
-  CUTOFF_STATUS_ORDER,
   CUTOFF_STATUS_LABEL_KEY,
   CUTOFF_STATUS_COLOR_CLASS,
 } from "@/lib/rscore/cutoff-range";
+import {
+  rankProgramsForStudent,
+  PREREQUISITE_STATUS_COLOR_CLASS,
+  type PrerequisiteCoverage,
+} from "@/lib/matching/program-eligibility";
+import { useStudentProfile } from "@/lib/profile/store";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import type { TranslationKey } from "@/lib/i18n/dictionary";
+
+const PREREQ_LABEL_KEY: Record<PrerequisiteCoverage, TranslationKey> = {
+  prerequisites_met: "prereq.met",
+  prerequisites_partial: "prereq.partial",
+  prerequisites_unknown: "prereq.unknown",
+};
 
 export function ResultsView({
   score,
@@ -28,11 +38,21 @@ export function ResultsView({
 }) {
   const { t, locale } = useLocale();
   const f = useFormat();
+  const { profile } = useStudentProfile();
 
-  const ranked = UNIVERSITY_PROGRAMS.map((program) => {
-    const range = getCutoffRange(program.cutoffHistory);
-    return { program, range, cutoffStatus: compareToCutoffRange(score, range) };
-  }).sort((a, b) => CUTOFF_STATUS_ORDER[a.cutoffStatus] - CUTOFF_STATUS_ORDER[b.cutoffStatus]);
+  // Two independent dimensions — the published-cutoff range and whether this student's DEC
+  // core covers the program's recorded prerequisites — ranked together but never blended
+  // into one "match score". See src/lib/matching/program-eligibility.ts.
+  const ranked = rankProgramsForStudent({
+    decProgramCode: profile.cegepProgramId,
+    rScore: score,
+    universityPrograms: UNIVERSITY_PROGRAMS,
+  }).map((row) => ({
+    program: row.program,
+    range: row.cutoff.range,
+    cutoffStatus: row.cutoff.status,
+    prereq: row.prerequisites,
+  }));
 
   const cleared = ranked.filter((r) => r.cutoffStatus === "above").length;
   // Anchors the hero chart on the first program with a verified range, so the headline
@@ -87,7 +107,7 @@ export function ResultsView({
         </section>
 
         <div className="overflow-hidden rounded border border-ink/12 bg-paper shadow-card">
-          {ranked.slice(0, 4).map(({ program, range, cutoffStatus }) => (
+          {ranked.slice(0, 4).map(({ program, range, cutoffStatus, prereq }) => (
             // SourceStamp renders its own <a>, so it stays a sibling of the row link —
             // an anchor inside an anchor is invalid HTML and breaks hydration.
             <div key={program.id} className="border-b border-ink/10 last:border-b-0">
@@ -110,6 +130,15 @@ export function ResultsView({
                   </span>
                 </div>
                 <AxisRow score={score} range={range} />
+                {/* Second, independent dimension — never blended with the cutoff status
+                    above. "unknown" means nobody has recorded this program's prerequisites,
+                    which is the current reality for most of them, and must never read as
+                    "you qualify". */}
+                <p
+                  className={`text-[11px] font-semibold ${PREREQUISITE_STATUS_COLOR_CLASS[prereq.status]}`}
+                >
+                  {t(PREREQ_LABEL_KEY[prereq.status])}
+                </p>
               </Link>
               <SourceStamp
                 date={program.lastVerifiedAt}

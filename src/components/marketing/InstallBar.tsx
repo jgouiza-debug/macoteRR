@@ -58,7 +58,7 @@ export function InstallBar({ locale }: { locale: Locale }) {
         visible ? "translate-y-0" : "translate-y-full"
       }`}
     >
-      <div className="mx-auto flex w-full max-w-[720px] items-center justify-between gap-4 border-t border-hairline bg-paper px-5 py-3.5 shadow-card">
+      <div className="mx-auto flex w-full max-w-[720px] items-center justify-between gap-4 border-t border-hairline bg-paper px-3 py-3.5 shadow-card">
         <p className="text-[13.5px] font-semibold text-ink">{mt(locale, "mkt.installBarHeading")}</p>
         <div className="flex items-center gap-3">
           <Link

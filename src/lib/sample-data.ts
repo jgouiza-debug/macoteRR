@@ -1,5 +1,6 @@
 import type { BursaryCriteria } from "@/lib/matching/match";
 import type { InterestId } from "@/lib/tags/interests";
+import { CEGEP_DEC_PROGRAMS } from "@/lib/data/cegep-catalog";
 // Illustrative sample data for the MVP UI. Shaped after docs/01-data-architecture.md so
 // wiring real Supabase queries in later phases is a drop-in swap, not a redesign.
 //
@@ -17,15 +18,23 @@ export const CEGEPS: Cegep[] = [
   { id: "osullivan-quebec", name: "Collège O'Sullivan de Québec", region: "Québec" },
 ];
 
-export type CegepProgram = { id: string; name: string };
+export type CegepProgram = { id: string; name: string; type: "pre_university" | "technical" };
 
-export const CEGEP_PROGRAMS: CegepProgram[] = [
-  { id: "sciences-nature", name: "Sciences de la nature" },
-  { id: "sciences-humaines", name: "Sciences humaines" },
-  { id: "arts-lettres", name: "Arts, lettres et communication" },
-  { id: "informatique", name: "Techniques de l'informatique" },
-  { id: "sciences-lettres-arts", name: "Sciences, lettres et arts" },
-];
+/**
+ * Derived from the real ministerial catalogue in src/lib/data/cegep-catalog.ts rather than
+ * hand-listed here, so `id` IS the ministerial code ("200.B0") — the same key
+ * src/lib/matching/program-eligibility.ts looks DECs up by. This closes the integration gap
+ * that module documents: profiles previously stored invented slugs ("sciences-nature") that
+ * resolved to no DEC, silently degrading every prerequisite answer to "unknown".
+ *
+ * Still a PARTIAL list (see the catalogue's header for exact counts) — never label it
+ * "all Quebec cégep programs" in UI copy.
+ */
+export const CEGEP_PROGRAMS: CegepProgram[] = CEGEP_DEC_PROGRAMS.map((p) => ({
+  id: p.code,
+  name: p.nameFr,
+  type: p.type,
+}));
 
 export type Session = { id: number; labelFr: string; labelEn: string };
 
@@ -247,7 +256,10 @@ export const BURSARIES: Bursary[] = [
     name: "Bourse d'excellence en sciences de la nature",
     sourceOrg: "Fondation du Cégep de Sainte-Foy",
     cegepId: "sainte-foy",
-    eligibleCegepPrograms: ["sciences-nature"],
+    // Ministerial DEC code, matching CEGEP_PROGRAMS[].id / StudentProfile.cegepProgramId.
+    // BursaryCriteria types this as plain string[], so a stale slug here would silently
+    // never match instead of failing to compile — see the check in scripts/checks/.
+    eligibleCegepPrograms: ["200.B0"],
     eligibleUniversityPrograms: null,
     minRScore: 27,
     minSession: null,

@@ -1,15 +1,55 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { BURSARIES, CEGEPS, CEGEP_PROGRAMS, SESSIONS } from "@/lib/sample-data";
 import { useStudentProfile } from "@/lib/profile/store";
 import { SELF_TAGS, tagLabel } from "@/lib/tags/taxonomy";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { createClient } from "@/lib/db/client";
 
 export default function ProfilePage() {
+  const router = useRouter();
   const { t, locale } = useLocale();
   const { profile, toggleTag } = useStudentProfile();
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState(false);
+
+  async function handleDelete() {
+    setDeleting(true);
+    setDeleteError(false);
+
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      const results = await Promise.all([
+        supabase.from("student_profiles").delete().eq("user_id", user.id),
+        supabase.from("student_r_score_confirmations").delete().eq("user_id", user.id),
+        supabase.from("student_targets").delete().eq("user_id", user.id),
+        supabase.from("student_course_grades").delete().eq("user_id", user.id),
+      ]);
+      if (results.some((r) => r.error)) {
+        setDeleting(false);
+        setDeleteError(true);
+        return;
+      }
+      await supabase.auth.signOut();
+    }
+
+    try {
+      window.localStorage.removeItem("macote.profile");
+      window.localStorage.removeItem("macote.mutation_outbox");
+    } catch {
+      /* storage blocked — nothing local to clear */
+    }
+    router.push("/");
+  }
 
   const fields = [
     {
@@ -105,6 +145,44 @@ export default function ProfilePage() {
         >
           {locale === "fr" ? "Préparer ma rencontre" : "Prepare my meeting"}
         </Link>
+
+        <section className="flex flex-col gap-2 rounded border border-ember/30 bg-ember/[0.04] p-4">
+          <h2 className="text-[14px] font-semibold text-ink">{t("account.deleteTitle")}</h2>
+          <p className="text-[12.5px] leading-relaxed text-ink/60">{t("account.deleteBody")}</p>
+
+          {deleteError && (
+            <p className="text-[12.5px] text-ember">{t("account.deleteError")}</p>
+          )}
+
+          {confirmingDelete ? (
+            <div className="mt-1 flex gap-2">
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={deleting}
+                className="flex h-11 flex-1 items-center justify-center rounded-full bg-ember text-[13.5px] font-semibold text-paper transition-transform active:scale-[0.98] disabled:opacity-50"
+              >
+                {t("account.deleteConfirm")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirmingDelete(false)}
+                disabled={deleting}
+                className="flex h-11 flex-1 items-center justify-center rounded-full border border-ink/20 text-[13.5px] font-semibold text-ink transition-transform active:scale-[0.98]"
+              >
+                {t("account.deleteCancel")}
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setConfirmingDelete(true)}
+              className="mt-1 w-fit text-[13px] font-semibold text-ember"
+            >
+              {t("account.deleteTitle")}
+            </button>
+          )}
+        </section>
       </div>
     </AppShell>
   );

@@ -33,7 +33,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
 
   return (
     <footer className="w-full border-t border-hairline bg-chalk pb-safe">
-      <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-6 px-5 py-8 md:px-10">
+      <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-6 px-3 py-8 md:px-10">
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
           <div className="col-span-2 flex flex-col gap-2.5 sm:col-span-1">
             <Link href={localeHref(locale, "/")} className="flex items-center gap-2 text-ink">

@@ -21,7 +21,7 @@ export function CoteRPage({ locale }: { locale: Locale }) {
       </a>
       <SiteHeader locale={locale} path="/cote-r" />
 
-      <main id="main" className="mx-auto w-full max-w-[1120px] flex-1 px-5 py-6 md:px-10 md:py-10">
+      <main id="main" className="mx-auto w-full max-w-[1120px] flex-1 px-3 py-6 md:px-10 md:py-10">
         <div className="mx-auto max-w-[720px]">
           <h1 className="font-display text-[34px] font-extrabold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[42px]">
             {c.title}

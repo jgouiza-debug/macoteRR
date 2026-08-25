@@ -1,17 +1,15 @@
-import type { Metadata } from "next";
 import { LegalPage } from "@/components/marketing/LegalPage";
 import { TERMS_CONTENT } from "@/content/conditions";
+import { marketingMetadata } from "@/lib/i18n/marketing-metadata";
 
 const c = TERMS_CONTENT.fr;
 
-export const metadata: Metadata = {
+export const metadata = marketingMetadata({
+  locale: "fr",
   title: c.metaTitle,
   description: c.metaDescription,
-  alternates: {
-    canonical: "/conditions",
-    languages: { fr: "/conditions", en: "/en/conditions" },
-  },
-};
+  path: "/conditions",
+});
 
 export default function Page() {
   return <LegalPage locale="fr" path="/conditions" content={c} />;

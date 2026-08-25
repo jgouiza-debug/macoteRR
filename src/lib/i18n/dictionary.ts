@@ -22,6 +22,9 @@ export const DICTIONARY = {
     "cutoff.figureType.average": "Moyenne",
     "cutoff.figureType.range_low": "Bas de fourchette",
     "cutoff.figureType.range_high": "Haut de fourchette",
+    "prereq.met": "Préalables couverts",
+    "prereq.partial": "Préalables manquants",
+    "prereq.unknown": "Préalables non recensés",
 
     "nav.dashboard": "Ma cote",
     "nav.programs": "Programmes",
@@ -102,6 +105,10 @@ export const DICTIONARY = {
     "goal.quizResultBody": "Basé sur tes réponses. Choisis les programmes qui t'intéressent, ou ignore-les.",
     "goal.selectedCount": "{n} sélectionné(s)",
     "goal.skipStep": "Je ne sais pas encore",
+    "goal.searchDec": "Cherche ton programme ou son code (ex : 200.B0)",
+    "goal.noDec": "Aucun programme trouvé. Ce catalogue est partiel.",
+    "goal.decPreUniversity": "Préuniversitaire",
+    "goal.decTechnical": "Technique",
 
     "account.title": "Garde ta progression",
     "account.body":
@@ -275,6 +282,9 @@ export const DICTIONARY = {
     "cutoff.figureType.average": "Average",
     "cutoff.figureType.range_low": "Range low",
     "cutoff.figureType.range_high": "Range high",
+    "prereq.met": "Prerequisites covered",
+    "prereq.partial": "Prerequisites missing",
+    "prereq.unknown": "Prerequisites not recorded",
 
     "nav.dashboard": "Dashboard",
     "nav.programs": "Programs",
@@ -355,6 +365,10 @@ export const DICTIONARY = {
     "goal.quizResultBody": "Based on your answers. Pick the programs you're interested in, or skip.",
     "goal.selectedCount": "{n} selected",
     "goal.skipStep": "I don't know yet",
+    "goal.searchDec": "Search your program or its code (e.g. 200.B0)",
+    "goal.noDec": "No program found. This catalogue is partial.",
+    "goal.decPreUniversity": "Pre-university",
+    "goal.decTechnical": "Technical",
 
     "account.title": "Keep your progress",
     "account.body":
