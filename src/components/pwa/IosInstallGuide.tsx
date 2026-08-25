@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { Capacitor } from "@capacitor/core";
 import { Share, PlusSquare, Check, X } from "lucide-react";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
@@ -14,6 +15,9 @@ export function IosInstallGuide() {
   useEffect(() => {
     // Only run in client browser
     if (typeof window === "undefined") return;
+
+    // Already the native app shell — "add to home screen" makes no sense here.
+    if (Capacitor.isNativePlatform()) return;
 
     // Check if running on iOS (iPhone / iPad / iPod)
     const userAgent = window.navigator.userAgent.toLowerCase();
@@ -60,7 +64,7 @@ export function IosInstallGuide() {
       className="fixed inset-0 z-50 flex items-end justify-center bg-ink/40 p-0 backdrop-blur-sm transition-opacity sm:items-center sm:p-4"
     >
       <div
-        className="flex max-h-[90vh] w-full max-w-[440px] flex-col overflow-y-auto rounded-t-2xl border border-ink/12 bg-paper p-6 pb-safe shadow-overlay transition-transform duration-200 ease-out sm:rounded-2xl"
+        className="flex max-h-[90vh] w-full max-w-[440px] flex-col overflow-y-auto rounded-t-2xl border border-ink/12 bg-paper p-6 pb-safe shadow-overlay transition-transform duration-250 ease-arrival sm:rounded-2xl"
       >
         {/* Header with App Icon and Close button */}
         <div className="flex items-start justify-between gap-4">

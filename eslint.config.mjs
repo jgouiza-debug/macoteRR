@@ -22,6 +22,12 @@ const eslintConfig = defineConfig([
     // Serwist's generated, bundled service worker (built from src/app/sw.ts).
     "public/sw.js",
     "public/swe-worker-*.js",
+    // Native Xcode project (Capacitor) — vendored Pods and a synced copy of public/, not source.
+    "ios/**",
+    // Unrelated local scratch project with a Python venv. It's gitignored, but flat config
+    // doesn't read .gitignore, and linting the bundled Playwright JS in there crashes ESLint
+    // outright with "Invalid string length".
+    "scraper/**",
   ]),
 ]);
 

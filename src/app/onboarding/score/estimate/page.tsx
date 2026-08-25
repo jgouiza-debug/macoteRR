@@ -4,11 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Info, Plus, X } from "lucide-react";
 import { ScreenShell, ScreenHeading } from "@/components/onboarding/ScreenShell";
-import { StepProgress } from "@/components/onboarding/StepProgress";
-import { useStudentProfile } from "@/lib/profile/store";
-import { currentSessionId } from "@/lib/sample-data";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { useFormat } from "@/lib/i18n/useFormat";
+import { useStudentProfile } from "@/lib/profile/store";
 
 type Row = { name: string; grade: string };
 
@@ -31,8 +29,9 @@ export default function EstimateScorePage() {
   const router = useRouter();
   const { t } = useLocale();
   const f = useFormat();
-  const { profile, update: saveProfile } = useStudentProfile();
   const [rows, setRows] = useState<Row[]>(INITIAL_ROWS);
+
+  const { update: updateProfile } = useStudentProfile();
 
   const grades = rows
     .map((r) => Number(r.grade))
@@ -42,30 +41,35 @@ export default function EstimateScorePage() {
   const update = (index: number, field: keyof Row, value: string) =>
     setRows((prev) => prev.map((r, i) => (i === index ? { ...r, [field]: value } : r)));
 
+  const handleEstimateSubmit = () => {
+    const scoreVal = parseFloat(estimate.toFixed(2));
+    updateProfile({ rScore: scoreVal, rScoreStatus: "estimated" });
+    // The DEC was chosen in step 2, so results already know which prerequisites this student
+    // covers and can go straight up.
+    router.push(`/onboarding/results?score=${scoreVal}&status=estimated`);
+  };
+
   return (
     <ScreenShell
       backHref="/onboarding/score"
       footer={
         <div className="flex flex-col items-center gap-2.5">
-          {grades.length > 0 && (
+          {/* The CTA is disabled until at least one grade exists. Saying so beats leaving a
+              student tapping a dimmed button with no idea what it wants from them. */}
+          {grades.length > 0 ? (
             <p className="text-[12.5px] text-ink/60">
               {t("est.current")} :{" "}
               <span className="font-display font-bold text-ink tabular-nums">
                 ≈ {f.score(estimate)}
               </span>
             </p>
+          ) : (
+            <p className="text-[12.5px] text-ink/50">{t("est.needsGrade")}</p>
           )}
           <button
             type="button"
             disabled={grades.length === 0}
-            onClick={() => {
-              saveProfile({
-                rScore: Number(estimate.toFixed(2)),
-                rScoreStatus: "estimated",
-                currentSession: profile.currentSession ?? currentSessionId(),
-              });
-              router.push(`/onboarding/results?score=${estimate.toFixed(2)}&status=estimated`);
-            }}
+            onClick={handleEstimateSubmit}
             className="flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40"
           >
             {t("est.cta")}
@@ -73,7 +77,6 @@ export default function EstimateScorePage() {
         </div>
       }
     >
-      <StepProgress step="score" />
       <ScreenHeading title={t("est.title")} body={t("est.body")} />
 
       <div className="flex flex-col gap-2.5">
@@ -84,7 +87,7 @@ export default function EstimateScorePage() {
               onChange={(e) => update(index, "name", e.target.value)}
               placeholder={t("est.coursePlaceholder")}
               aria-label={t("est.course")}
-              className="h-12 min-w-0 flex-1 rounded border border-ink/15 bg-paper px-3 text-[15px] text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-[1.5px] focus:border-ultramarine"
+              className="h-12 min-w-0 flex-1 rounded border border-ink/15 bg-paper px-3 text-[16px] text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-[1.5px] focus:border-ultramarine"
             />
             <input
               value={row.grade}
@@ -93,14 +96,14 @@ export default function EstimateScorePage() {
               type="number"
               inputMode="numeric"
               aria-label={t("est.grade")}
-              className="h-12 w-20 rounded border border-ink/15 bg-paper px-3 text-right text-[15px] text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-[1.5px] focus:border-ultramarine tabular-nums"
+              className="h-12 w-20 rounded border border-ink/15 bg-paper px-3 text-right text-[16px] text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-[1.5px] focus:border-ultramarine tabular-nums"
             />
             <button
               type="button"
               aria-label={t("est.remove")}
               onClick={() => setRows((prev) => prev.filter((_, i) => i !== index))}
               disabled={rows.length <= 1}
-              className="flex h-10 w-8 flex-shrink-0 items-center justify-center text-ink/35 transition-colors active:text-ember disabled:opacity-30"
+              className="flex h-11 w-11 flex-shrink-0 items-center justify-center text-ink/35 transition-colors active:text-ember disabled:opacity-30"
             >
               <X className="h-[18px] w-[18px]" />
             </button>

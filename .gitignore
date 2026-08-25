@@ -54,3 +54,6 @@ supabase/.temp
 # serwist generated service worker
 public/sw.js
 public/swe-worker-*.js
+
+# unrelated local scratch project (Python venv, not part of this app)
+/scraper/

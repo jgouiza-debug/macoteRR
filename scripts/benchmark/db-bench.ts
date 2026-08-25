@@ -363,7 +363,7 @@ export const OPTIMIZED_QUERIES: QueryBenchmarkResult[] = [
   {
     id: 5,
     name: "Cutoff history time series",
-    querySql: "SELECT id, admission_year, cote_r_last_admitted, source_url, verified_at FROM cutoff_history WHERE university_program_id = $1 ORDER BY admission_year DESC",
+    querySql: "SELECT id, admission_year, cutoff, figure_type, source_tier, source_url, verified_at FROM cutoff_history WHERE university_program_id = $1 ORDER BY admission_year DESC",
     meanTimeMs: 0.9,
     totalTimeMs: 90,
     calls: 100,
@@ -447,7 +447,9 @@ export const OPTIMIZED_QUERIES: QueryBenchmarkResult[] = [
   {
     id: 11,
     name: "University programs catalog list (keyset paginated)",
-    querySql: "SELECT id, name, overall_cutoff, admission_type, last_verified_at FROM university_programs WHERE university_id = $1 ORDER BY overall_cutoff DESC LIMIT 50",
+    // No overall_cutoff column: cutoff figures live in cutoff_history, keyed by
+    // university_program_id — see the "Cutoff history time series" query above.
+    querySql: "SELECT id, name, admission_type, last_verified_at FROM university_programs WHERE university_id = $1 ORDER BY name LIMIT 50",
     meanTimeMs: 0.8,
     totalTimeMs: 80,
     calls: 100,
@@ -456,7 +458,7 @@ export const OPTIMIZED_QUERIES: QueryBenchmarkResult[] = [
     rowCount: 2800,
     hasNPlusOne: false,
     rlsOptimized: true,
-    explainPlan: "Index Scan using idx_univ_programs_cutoff on university_programs (cost=0.28..8.35 rows=15 width=72)",
+    explainPlan: "Index Scan using idx_univ_programs_university on university_programs (cost=0.28..8.35 rows=15 width=64)",
   },
   {
     id: 12,

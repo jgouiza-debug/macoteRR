@@ -68,7 +68,9 @@ create table university_programs (
   university_id uuid references universities(id) not null,
   name text not null,
   degree_type text,                        -- 'BAA', 'BSc', 'MD', etc.
-  overall_cutoff numeric,                  -- most recent known cutoff; history lives in cutoff_history
+  -- No overall_cutoff column: universities publish multi-year ranges, or min/max/average,
+  -- or nothing at all — never one current-year number. See the 2026-08-24 data audit and
+  -- docs/01-data-architecture.md. cutoff_history is the only home for figures.
   admission_type text check (admission_type in
     ('r_score_only','r_score_plus_interview','r_score_plus_portfolio','r_score_plus_test','other')) not null,
   source_url text not null,
@@ -94,15 +96,24 @@ create table university_program_grade_floors (
   notes text
 );
 
+-- Every published figure carries its own year AND its own figure type: universities
+-- publish last-admitted, minimum-required, maximum, average, or a range_low/range_high pair
+-- for the SAME program and year, never one canonical number. A student's score is compared
+-- against the resulting low/high band (see src/lib/rscore/cutoff-range.ts), never against a
+-- single cutoff.
 create table cutoff_history (
   id uuid primary key default gen_random_uuid(),
   university_program_id uuid references university_programs(id) not null,
   admission_year int not null,
-  cote_r_last_admitted numeric,
+  cutoff numeric not null,
+  figure_type text check (figure_type in
+    ('last_admitted','minimum_required','maximum','average','range_low','range_high')) not null,
+  -- university_official always wins over cegep_compiled when both exist for a program+year.
+  source_tier text check (source_tier in ('university_official','cegep_compiled')) not null,
   source_url text not null,
   source_type text check (source_type in ('official_pdf','cegep_published','bci','other')) not null,
   verified_at date not null,
-  unique(university_program_id, admission_year)
+  unique(university_program_id, admission_year, figure_type)
 );
 
 alter table university_programs enable row level security;
@@ -275,7 +286,7 @@ create table staging_university_programs (
   university_id uuid,
   name text not null,
   degree_type text,
-  overall_cutoff numeric,
+  -- No overall_cutoff: see the matching note on the production university_programs table.
   admission_type text check (admission_type in
     ('r_score_only','r_score_plus_interview','r_score_plus_portfolio','r_score_plus_test','other')) not null,
   source_url text not null,
@@ -325,7 +336,10 @@ create table staging_cutoff_history (
   id uuid primary key default gen_random_uuid(),
   university_program_id uuid,
   admission_year int not null,
-  cote_r_last_admitted numeric,
+  cutoff numeric not null,
+  figure_type text check (figure_type in
+    ('last_admitted','minimum_required','maximum','average','range_low','range_high')) not null,
+  source_tier text check (source_tier in ('university_official','cegep_compiled')) not null,
   source_url text not null,
   source_type text check (source_type in ('official_pdf','cegep_published','bci','other')) not null,
   verified_at date not null,

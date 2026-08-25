@@ -7,7 +7,7 @@ export function Footer({ stackAboveBottomNav = false }: { stackAboveBottomNav?: 
 
   return (
     <footer
-      className={`mt-auto w-full border-t border-ink/10 bg-chalk px-5 py-7 text-center ${
+      className={`mt-auto w-full border-t border-ink/10 bg-shell px-5 py-7 text-center ${
         stackAboveBottomNav ? "mb-16 md:mb-0" : ""
       }`}
     >

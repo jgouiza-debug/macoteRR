@@ -23,6 +23,17 @@ export type AdmissionType =
   | "other";
 export type GradeFloorType = "course_cote_r_floor" | "course_percentage_floor";
 export type CutoffSourceType = "official_pdf" | "cegep_published" | "bci" | "other";
+// No single "current cutoff": universities publish multi-year ranges, min/max/average, or
+// nothing at all. Every cutoff_history row carries both of these. See the 2026-08-24 data
+// audit and docs/01-data-architecture.md.
+export type CutoffFigureType =
+  | "last_admitted"
+  | "minimum_required"
+  | "maximum"
+  | "average"
+  | "range_low"
+  | "range_high";
+export type CutoffSourceTier = "university_official" | "cegep_compiled";
 export type BursaryCategory =
   | "financial_need"
   | "academic_merit"
@@ -149,7 +160,6 @@ export type Database = {
           university_id: string;
           name: string;
           degree_type: string | null;
-          overall_cutoff: number | null;
           admission_type: AdmissionType;
           source_url: string;
           last_verified_at: string;
@@ -161,7 +171,6 @@ export type Database = {
           university_id: string;
           name: string;
           degree_type?: string | null;
-          overall_cutoff?: number | null;
           admission_type: AdmissionType;
           source_url: string;
           last_verified_at: string;
@@ -251,7 +260,9 @@ export type Database = {
           id: string;
           university_program_id: string;
           admission_year: number;
-          cote_r_last_admitted: number | null;
+          cutoff: number;
+          figure_type: CutoffFigureType;
+          source_tier: CutoffSourceTier;
           source_url: string;
           source_type: CutoffSourceType;
           verified_at: string;
@@ -260,7 +271,9 @@ export type Database = {
           id?: string;
           university_program_id: string;
           admission_year: number;
-          cote_r_last_admitted?: number | null;
+          cutoff: number;
+          figure_type: CutoffFigureType;
+          source_tier: CutoffSourceTier;
           source_url: string;
           source_type: CutoffSourceType;
           verified_at: string;
@@ -365,7 +378,7 @@ export type Database = {
           cegep_id: string | null;
           cegep_program_id: string | null;
           cegep_short_code: string | null;
-          cegep_program_slug: string | null;
+          cegep_program_code: string | null;
           current_session: number | null;
           self_tags: string[] | null;
           r_score_status: RScoreStatus | null;
@@ -377,7 +390,7 @@ export type Database = {
           cegep_id?: string | null;
           cegep_program_id?: string | null;
           cegep_short_code?: string | null;
-          cegep_program_slug?: string | null;
+          cegep_program_code?: string | null;
           current_session?: number | null;
           self_tags?: string[] | null;
           r_score_status?: RScoreStatus | null;
@@ -503,7 +516,6 @@ export type Database = {
         university_id: string | null;
         name: string;
         degree_type: string | null;
-        overall_cutoff: number | null;
         admission_type: AdmissionType;
         source_url: string;
         last_verified_at: string;
@@ -525,7 +537,9 @@ export type Database = {
       staging_cutoff_history: StagingTable<{
         university_program_id: string | null;
         admission_year: number;
-        cote_r_last_admitted: number | null;
+        cutoff: number;
+        figure_type: CutoffFigureType;
+        source_tier: CutoffSourceTier;
         source_url: string;
         source_type: CutoffSourceType;
         verified_at: string;

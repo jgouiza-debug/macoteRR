@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { ResultsView } from "@/components/rscore/ResultsView";
 
 export default async function OnboardingResultsPage({
@@ -8,18 +9,12 @@ export default async function OnboardingResultsPage({
   const params = await searchParams;
   const parsed = Number(params.score?.replace(",", "."));
 
-  // No score in the URL means the student jumped straight here; the score step owns that
-  // number, so send them to it rather than inventing a figure to render.
-  if (!Number.isFinite(parsed) || parsed <= 0) {
-    const { redirect } = await import("next/navigation");
-    redirect("/onboarding/score");
-  }
+  // No usable score in the URL means this page was reached out of order. Send the student
+  // back to enter one rather than falling back to STUDENT_SAMPLE's 32,4 — which rendered a
+  // full results screen, headline included, for a number that was never theirs.
+  if (!Number.isFinite(parsed) || parsed <= 0) redirect("/onboarding/score");
 
   return (
-    <ResultsView
-      score={parsed}
-      status={params.status === "confirmed" ? "confirmed" : "estimated"}
-      onboarding
-    />
+    <ResultsView score={parsed} status={params.status === "confirmed" ? "confirmed" : "estimated"} />
   );
 }

@@ -1,27 +1,59 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/app-shell/AppShell";
-import { BURSARIES, SESSIONS } from "@/lib/sample-data";
-import { findCegep, findCegepProgram } from "@/lib/data/catalog";
-import { resolveTargets } from "@/lib/data/targets";
-import { useStudentProfile } from "@/lib/profile/store";
+import { BURSARIES, CEGEPS, CEGEP_PROGRAMS, SESSIONS } from "@/lib/sample-data";
+import { useStudentProfile, resetProfile } from "@/lib/profile/store";
 import { SELF_TAGS, tagLabel } from "@/lib/tags/taxonomy";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { createClient } from "@/lib/db/client";
 
 export default function ProfilePage() {
+  const router = useRouter();
   const { t, locale } = useLocale();
-  const { profile, toggleTag, toggleTarget } = useStudentProfile();
-  const targets = resolveTargets(profile.targetUniversityProgramIds);
+  const { profile, toggleTag } = useStudentProfile();
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState(false);
+
+  async function handleDelete() {
+    setDeleting(true);
+    setDeleteError(false);
+
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      const results = await Promise.all([
+        supabase.from("student_profiles").delete().eq("user_id", user.id),
+        supabase.from("student_r_score_confirmations").delete().eq("user_id", user.id),
+        supabase.from("student_targets").delete().eq("user_id", user.id),
+        supabase.from("student_course_grades").delete().eq("user_id", user.id),
+      ]);
+      if (results.some((r) => r.error)) {
+        setDeleting(false);
+        setDeleteError(true);
+        return;
+      }
+      await supabase.auth.signOut();
+    }
+
+    resetProfile();
+    router.push("/onboarding");
+  }
 
   const fields = [
     {
       label: t("prof.cegep"),
-      value: findCegep(profile.cegepId)?.name ?? "—",
+      value: CEGEPS.find((c) => c.id === profile.cegepId)?.name ?? "—",
     },
     {
       label: t("prof.program"),
-      value: findCegepProgram(profile.cegepProgramId)?.name ?? "—",
+      value: CEGEP_PROGRAMS.find((p) => p.id === profile.cegepProgramId)?.name ?? "—",
     },
     {
       label: t("prof.session"),
@@ -50,58 +82,6 @@ export default function ProfilePage() {
             </div>
           ))}
         </div>
-
-        <section className="flex flex-col gap-3 rounded border border-ink/12 bg-paper p-4 shadow-card">
-          <h2 className="font-display text-[17px] font-bold text-ink">{t("prof.targetsTitle")}</h2>
-          <p className="-mt-1 text-[12.5px] leading-relaxed text-ink/60">{t("prof.targetsHelp")}</p>
-
-          {targets.length === 0 ? (
-            <div className="flex flex-col items-start gap-2 pt-1">
-              <p className="text-[13px] text-ink/50">{t("prof.targetsEmpty")}</p>
-              <Link href="/programs" className="text-[14px] font-semibold text-ultramarine">
-                {t("prof.targetsAdd")}
-              </Link>
-            </div>
-          ) : (
-            <ul className="flex flex-col gap-2">
-              {targets.map((target) => (
-                <li
-                  key={target.id}
-                  className="flex items-start justify-between gap-3 rounded border border-ink/12 px-3.5 py-3"
-                >
-                  <div className="min-w-0 flex-1">
-                    {target.hasDetailPage ? (
-                      <Link
-                        href={`/programs/${target.id}`}
-                        className="wrap-fr block text-[13.5px] font-semibold leading-snug text-ink underline-offset-2 hover:underline"
-                      >
-                        {target.name}
-                      </Link>
-                    ) : (
-                      <span className="wrap-fr block text-[13.5px] font-semibold leading-snug text-ink">
-                        {target.name}
-                      </span>
-                    )}
-                    <span className="mt-0.5 block text-[11.5px] text-ink/50">
-                      {target.institution}
-                      {target.cutoff !== null
-                        ? ` · ${t("common.seuil")} ${target.cutoff}`
-                        : ` · ${t("prof.noCutoff")}`}
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => toggleTarget(target.id)}
-                    aria-label={`${t("prof.remove")} — ${target.name}`}
-                    className="flex h-8 flex-shrink-0 items-center rounded-full px-3 text-[12px] font-semibold text-ink/50 transition-colors active:bg-ink/8"
-                  >
-                    {t("prof.remove")}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
 
         <section className="flex flex-col gap-3 rounded border border-ink/12 bg-paper p-4 shadow-card">
           <div className="flex items-baseline justify-between gap-3">
@@ -160,6 +140,44 @@ export default function ProfilePage() {
         >
           {locale === "fr" ? "Préparer ma rencontre" : "Prepare my meeting"}
         </Link>
+
+        <section className="flex flex-col gap-2 rounded border border-ember/30 bg-ember/[0.04] p-4">
+          <h2 className="text-[14px] font-semibold text-ink">{t("account.deleteTitle")}</h2>
+          <p className="text-[12.5px] leading-relaxed text-ink/60">{t("account.deleteBody")}</p>
+
+          {deleteError && (
+            <p className="text-[12.5px] text-ember">{t("account.deleteError")}</p>
+          )}
+
+          {confirmingDelete ? (
+            <div className="mt-1 flex gap-2">
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={deleting}
+                className="flex h-11 flex-1 items-center justify-center rounded-full bg-ember text-[13.5px] font-semibold text-paper transition-transform active:scale-[0.98] disabled:opacity-50"
+              >
+                {t("account.deleteConfirm")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirmingDelete(false)}
+                disabled={deleting}
+                className="flex h-11 flex-1 items-center justify-center rounded-full border border-ink/20 text-[13.5px] font-semibold text-ink transition-transform active:scale-[0.98]"
+              >
+                {t("account.deleteCancel")}
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setConfirmingDelete(true)}
+              className="mt-1 w-fit text-[13px] font-semibold text-ember"
+            >
+              {t("account.deleteTitle")}
+            </button>
+          )}
+        </section>
       </div>
     </AppShell>
   );

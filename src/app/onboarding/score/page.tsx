@@ -5,29 +5,28 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronRight, TriangleAlert } from "lucide-react";
 import { ScreenShell, ScreenHeading } from "@/components/onboarding/ScreenShell";
-import { StepProgress } from "@/components/onboarding/StepProgress";
 import { Sheet } from "@/components/ui/Sheet";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
-/**
- * Step 3. "Help me estimate it" does not go straight to the estimator: it opens a warning
- * first, because an estimate is the one number in this product that cannot be sourced. The
- * student has to read why before they can see a figure they might otherwise take as fact.
- */
 export default function KnowYourScorePage() {
   const { t } = useLocale();
   const router = useRouter();
+  // "Help me estimate it" does not go straight to the estimator: an estimate is the one
+  // number in this product that cannot be sourced, so the student reads why before they see
+  // a figure they might otherwise take as fact.
   const [warningOpen, setWarningOpen] = useState(false);
 
   return (
     <ScreenShell backHref="/onboarding/program">
-      <StepProgress step="score" />
       <ScreenHeading title={t("bif.title")} body={t("bif.body")} />
 
       <div className="flex flex-col gap-3">
         <Link
           href="/onboarding/score/confirm"
-          className="flex min-h-[64px] items-center justify-between gap-3 rounded border-[1.5px] border-ultramarine bg-ultramarine/[0.07] px-4 py-3.5 text-[15px] font-semibold text-ultramarine transition-transform active:scale-[0.99]"
+          // No ultramarine tint fill here: `border-ultramarine bg-ultramarine/[0.07]` is what
+          // "selected" looks like in the DEC picker, so reusing it for merely "recommended"
+          // made this read as a choice already made. Border + text carry the emphasis instead.
+          className="flex min-h-[64px] items-center justify-between gap-3 rounded border-[1.5px] border-ultramarine bg-paper px-4 py-3.5 text-[15px] font-semibold text-ultramarine transition-transform active:scale-[0.99]"
         >
           {t("bif.yes")}
           <ChevronRight className="h-5 w-5 flex-shrink-0" />
@@ -79,7 +78,9 @@ export default function KnowYourScorePage() {
         <p className="mt-3.5 text-[13.5px] leading-relaxed text-ink/65">{t("warn.estBody2")}</p>
       </Sheet>
 
-      <div className="mt-auto flex justify-center py-8">
+      {/* Not mt-auto: that consumed all the free space and stranded the two choices at the
+          top of the screen, defeating ScreenShell's vertical centring. */}
+      <div className="flex justify-center pt-8">
         <Link
           href="/programs"
           className="max-w-[220px] text-center text-[14px] font-semibold leading-snug text-ultramarine"

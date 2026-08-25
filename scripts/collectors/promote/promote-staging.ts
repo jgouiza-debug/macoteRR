@@ -93,7 +93,8 @@ const CONFIGS: PromotionConfig[] = [
     productionTable: "university_programs",
     naturalKey: (r) => `${r.university_id}:${r.name}`,
     toProductionRow: (r, today) => ({ ...stripPipelineColumns(r), last_verified_at: today }),
-    flagIfLargeChange: flagCoteRJump("overall_cutoff"),
+    // No cutoff figure lives on this table anymore — see the staging_cutoff_history config
+    // below, which is where cutoff jumps actually get flagged now.
   },
   {
     stagingTable: "staging_university_program_prerequisites",
@@ -115,9 +116,11 @@ const CONFIGS: PromotionConfig[] = [
   {
     stagingTable: "staging_cutoff_history",
     productionTable: "cutoff_history",
-    naturalKey: (r) => `${r.university_program_id}:${r.admission_year}`,
+    // Same program+year can carry several figure_types (last_admitted, average, maximum...) —
+    // the key must include figure_type or distinct figures collide into "the same" row.
+    naturalKey: (r) => `${r.university_program_id}:${r.admission_year}:${r.figure_type}`,
     toProductionRow: (r, today) => ({ ...stripPipelineColumns(r), verified_at: today }),
-    flagIfLargeChange: flagCoteRJump("cote_r_last_admitted"),
+    flagIfLargeChange: flagCoteRJump("cutoff"),
   },
   {
     stagingTable: "staging_bursaries",

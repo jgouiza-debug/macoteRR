@@ -12,10 +12,11 @@
 --      entries (Tremplin DEC and friends) that are neither pre-university nor technical.
 --      Dropping them would silently hide real programs from real students.
 --
---   3. `student_profiles` gains slug columns plus a resolver trigger. Onboarding runs before
---      the catalogue is guaranteed seeded, and the uuid FKs would reject the insert. The slug
---      columns always accept the write; the trigger backfills the FK the moment a matching
---      catalogue row exists. Guardrail #3 still holds — nothing here is financial.
+--   3. `student_profiles` gains natural-key columns plus a resolver trigger. Onboarding runs
+--      before the catalogue is guaranteed seeded, and the uuid FKs would reject the insert.
+--      The natural keys (cegep short_code + ministerial DEC code) always accept the write;
+--      the trigger backfills the FKs the moment matching catalogue rows exist. Guardrail #3
+--      still holds — nothing here is financial.
 
 -- 1 ------------------------------------------------------------------------
 
@@ -36,7 +37,10 @@ alter table cegep_programs add constraint cegep_programs_type_check
 -- 3 ------------------------------------------------------------------------
 
 alter table student_profiles add column if not exists cegep_short_code text;
-alter table student_profiles add column if not exists cegep_program_slug text;
+-- The ministerial DEC code ('200.B0'), which is what the client keys programs by and what
+-- src/lib/matching/program-eligibility.ts matches curriculum against. NOT a per-cegep slug:
+-- a DEC code is province-wide, and the same code at two cegeps is the same program.
+alter table student_profiles add column if not exists cegep_program_code text;
 
 -- R-score status the student arrived with. The official, self-reported number keeps living
 -- in student_r_score_confirmations; this only records which path onboarding took so the UI
@@ -55,8 +59,13 @@ begin
     select id into new.cegep_id from cegeps where short_code = new.cegep_short_code;
   end if;
 
-  if new.cegep_program_slug is not null and new.cegep_program_id is null then
-    select id into new.cegep_program_id from cegep_programs where catalog_slug = new.cegep_program_slug;
+  -- Scoped to the student's own cegep: one ministerial code is offered by several of them,
+  -- and the row we want is the offering at their school.
+  if new.cegep_program_code is not null and new.cegep_program_id is null and new.cegep_id is not null then
+    select id into new.cegep_program_id
+      from cegep_programs
+     where cegep_id = new.cegep_id and program_code = new.cegep_program_code
+     limit 1;
   end if;
 
   new.updated_at := now();

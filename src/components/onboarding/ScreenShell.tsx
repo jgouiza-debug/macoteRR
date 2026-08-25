@@ -9,20 +9,20 @@ export function ScreenShell({
   children,
   footer,
   backHref,
-  onBack,
   brand = false,
 }: {
   children: ReactNode;
   footer?: ReactNode;
   backHref?: string;
-  /** In-screen step-back, for funnels that walk several stages behind one URL. */
-  onBack?: () => void;
   brand?: boolean;
 }) {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-chalk">
-      <OnboardingTopBar backHref={backHref} onBack={onBack} brand={brand} />
-      <main className="mx-auto flex w-full max-w-[430px] flex-1 flex-col px-5 pt-2">
+      <OnboardingTopBar backHref={backHref} brand={brand} />
+      {/* justify-center pulls short funnel screens (two choices, one input) into the optical
+          centre instead of stranding them at the top above ~900px of empty chalk. Long
+          screens overflow past centre and scroll normally, so this costs them nothing. */}
+      <main className="mx-auto flex w-full max-w-[430px] flex-1 flex-col justify-center px-5 pt-2">
         {children}
       </main>
       {footer && (

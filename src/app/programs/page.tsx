@@ -1,44 +1,41 @@
 "use client";
 
-import { useMemo, useState, memo } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore, memo } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { AxisRow } from "@/components/rscore/AxisRow";
 import { SourceStamp } from "@/components/SourceStamp";
 import { UNIVERSITY_PROGRAMS, type UniversityProgram } from "@/lib/sample-data";
+import {
+  getCutoffRange,
+  compareToCutoffRange,
+  formatRangeYears,
+  CUTOFF_STATUS_ORDER,
+  CUTOFF_STATUS_LABEL_KEY,
+  CUTOFF_STATUS_COLOR_CLASS,
+  type CutoffRange,
+  type CutoffStatus,
+} from "@/lib/rscore/cutoff-range";
 import { useStudentProfile } from "@/lib/profile/store";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
-import type { TranslationKey } from "@/lib/i18n/dictionary";
 
-type Tier = "clears" | "close" | "far";
-
-const TIER_LABEL: Record<Tier, TranslationKey> = {
-  clears: "plist.clears",
-  close: "plist.close",
-  far: "plist.far",
-};
-
-const TIERS: Tier[] = ["clears", "close", "far"];
-
-function tierOf(diff: number): Tier {
-  if (diff >= 0) return "clears";
-  if (diff >= -1.5) return "close";
-  return "far";
-}
+const TIERS: CutoffStatus[] = ["above", "inside", "below", "unknown"];
 
 const ProgramRow = memo(function ProgramRow({
   program,
-  diff,
-  rowTier,
+  range,
+  cutoffStatus,
   score,
 }: {
   program: UniversityProgram;
-  diff: number;
-  rowTier: Tier;
+  range: CutoffRange | null;
+  cutoffStatus: CutoffStatus;
   score: number;
 }) {
+  const { t } = useLocale();
   const f = useFormat();
 
   return (
@@ -52,25 +49,26 @@ const ProgramRow = memo(function ProgramRow({
             <h2 className="text-[13.5px] font-semibold leading-snug text-ink">
               {program.name}
             </h2>
-            <p className="mt-0.5 text-[11.5px] text-ink/50">{program.institution}</p>
+            <p className="mt-0.5 text-[11.5px] text-ink/50">
+              {program.institution} ·{" "}
+              {range ? `${t("common.seuil")} ${formatRangeYears(range)}` : t("cutoff.unverified")}
+            </p>
           </div>
           <div className="flex items-center gap-1.5 text-right">
             <div>
               <div className="text-[13px] font-semibold text-ink tabular-nums">
-                {f.score(program.overallCutoff)}
+                {range ? `${f.score(range.low)}–${f.score(range.high)}` : "—"}
               </div>
               <div
-                className={`text-[11.5px] font-semibold tabular-nums ${
-                  rowTier === "far" ? "text-ember" : "text-moss"
-                }`}
+                className={`text-[10.5px] font-bold uppercase tracking-wide ${CUTOFF_STATUS_COLOR_CLASS[cutoffStatus]}`}
               >
-                {f.signedScore(diff)}
+                {t(CUTOFF_STATUS_LABEL_KEY[cutoffStatus])}
               </div>
             </div>
             <ChevronRight className="h-4 w-4 flex-shrink-0 text-ink/30" />
           </div>
         </div>
-        <AxisRow score={score} cutoff={program.overallCutoff} />
+        <AxisRow score={score} range={range} />
       </Link>
       <SourceStamp
         date={program.lastVerifiedAt}
@@ -82,25 +80,41 @@ const ProgramRow = memo(function ProgramRow({
 });
 
 export default function ProgramsPage() {
+  const router = useRouter();
   const { t } = useLocale();
   const f = useFormat();
+  // The student's OWN score, not STUDENT_SAMPLE — this screen was showing a hardcoded
+  // "≈ 32,4" to every visitor while /dashboard showed their real confirmed number.
   const { profile } = useStudentProfile();
-  // The funnel guarantees a score before this route is reachable; the fallback only covers
-  // the instant before localStorage hydrates on first client render.
-  const score = profile.rScore ?? 0;
-  const [tier, setTier] = useState<Tier>("clears");
+  const [tier, setTier] = useState<CutoffStatus>("above");
+
+  // Same hydration-safe pattern as /dashboard: the first client render matches the server
+  // snapshot (rScore: null) before correcting to the real localStorage value.
+  const hydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+
+  useEffect(() => {
+    if (hydrated && profile.rScore === null) router.replace("/onboarding");
+  }, [hydrated, profile.rScore, router]);
+
+  const score = profile.rScore;
 
   const rows = useMemo(
     () =>
-      UNIVERSITY_PROGRAMS.map((program) => {
-        const diff = score - program.overallCutoff;
-        return { program, diff, tier: tierOf(diff) };
-      }).sort((a, b) => b.diff - a.diff),
+      score === null
+        ? []
+        : UNIVERSITY_PROGRAMS.map((program) => {
+            const range = getCutoffRange(program.cutoffHistory);
+            return { program, range, tier: compareToCutoffRange(score, range) };
+          }).sort((a, b) => CUTOFF_STATUS_ORDER[a.tier] - CUTOFF_STATUS_ORDER[b.tier]),
     [score],
   );
 
-  const counts: Record<Tier, number> = useMemo(() => {
-    const res: Record<Tier, number> = { clears: 0, close: 0, far: 0 };
+  const counts: Record<CutoffStatus, number> = useMemo(() => {
+    const res: Record<CutoffStatus, number> = { above: 0, inside: 0, below: 0, unknown: 0 };
     for (const row of rows) res[row.tier] += 1;
     return res;
   }, [rows]);
@@ -110,17 +124,34 @@ export default function ProgramsPage() {
     [rows, tier],
   );
 
+  if (!hydrated || score === null) {
+    return (
+      <AppShell>
+        <div className="mx-auto flex w-full max-w-[480px] flex-col items-center gap-4 px-4 py-16 text-center">
+          <p className="text-[14px] text-ink/60">{t("dash.noEstimate")}</p>
+          <Link
+            href="/onboarding"
+            className="flex h-12 items-center justify-center rounded-full bg-ultramarine px-6 text-[14px] font-semibold text-paper shadow-card"
+          >
+            {t("dash.startOnboarding")}
+          </Link>
+        </div>
+      </AppShell>
+    );
+  }
+
   return (
     <AppShell rScore={score}>
       <div className="mx-auto flex w-full max-w-[480px] flex-col gap-5 px-4 py-6">
         <div className="rounded border border-ink/12 bg-paper px-4 py-3.5 shadow-card">
           <p className="text-[12px] text-ink/55">{t("plist.calcWith")}</p>
           <p className="mt-0.5 font-display text-[24px] font-bold text-ink tabular-nums">
-            ≈ {f.score(score)}
+            {profile.rScoreStatus !== "confirmed" && "≈ "}
+            {f.score(score)}
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-2.5">
+        <div className="grid grid-cols-4 gap-2">
           {TIERS.map((option) => {
             const active = tier === option;
             return (
@@ -129,17 +160,17 @@ export default function ProgramsPage() {
                 type="button"
                 onClick={() => setTier(option)}
                 aria-pressed={active}
-                className={`flex flex-col items-center justify-center gap-0.5 rounded px-2 py-3 text-center transition-transform active:scale-[0.97] ${
+                className={`flex flex-col items-center justify-center gap-0.5 rounded px-1.5 py-3 text-center transition-transform active:scale-[0.97] ${
                   active
                     ? "bg-ultramarine text-paper shadow-card"
                     : "border border-ink/15 bg-paper text-ink/60"
                 }`}
               >
-                <span className="font-display text-[22px] font-bold tabular-nums">
+                <span className="font-display text-[20px] font-bold tabular-nums">
                   {counts[option]}
                 </span>
-                <span className="text-[11px] font-semibold leading-tight">
-                  {t(TIER_LABEL[option])}
+                <span className="text-[10px] font-semibold leading-tight">
+                  {t(CUTOFF_STATUS_LABEL_KEY[option])}
                 </span>
               </button>
             );
@@ -150,12 +181,12 @@ export default function ProgramsPage() {
           {filtered.length === 0 && (
             <p className="p-6 text-center text-[13px] text-ink/50">{t("plist.empty")}</p>
           )}
-          {filtered.map(({ program, diff, tier: rowTier }) => (
+          {filtered.map(({ program, range, tier: rowTier }) => (
             <ProgramRow
               key={program.id}
               program={program}
-              diff={diff}
-              rowTier={rowTier}
+              range={range}
+              cutoffStatus={rowTier}
               score={score}
             />
           ))}

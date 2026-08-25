@@ -10,8 +10,8 @@ export function BottomNav() {
   const { t } = useLocale();
 
   return (
-    <nav className="fixed bottom-0 z-50 w-full border-t border-ink/10 bg-paper pb-safe md:hidden">
-      <div className="flex h-16 items-stretch justify-around px-2">
+    <nav className="fixed bottom-0 z-50 w-full border-t border-ink/10 bg-shell pb-safe md:hidden">
+      <div className="flex h-12 items-stretch justify-around px-2">
         {NAV_ITEMS.map((item) => {
           const active = pathname.startsWith(item.href);
           return (
@@ -19,11 +19,11 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               aria-current={active ? "page" : undefined}
-              className={`flex w-full flex-col items-center justify-center gap-1 text-[10px] font-semibold uppercase tracking-wide transition-transform active:scale-95 ${
-                active ? "text-ultramarine" : "text-ink/45"
+              className={`flex w-full flex-col items-center justify-center gap-0.5 text-[10px] font-semibold uppercase tracking-wide transition-transform active:scale-95 ${
+                active ? "text-ultramarine" : "text-secondary"
               }`}
             >
-              <item.icon className="h-[22px] w-[22px]" />
+              <item.icon className="h-[18px] w-[18px]" />
               {t(item.labelKey)}
             </Link>
           );

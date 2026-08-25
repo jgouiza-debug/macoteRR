@@ -6,10 +6,10 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "MaCote",
     description:
       "Suis ta cote R, vois ce que tes programmes cibles exigent, et trouve les bourses auxquelles tu es admissible.",
-    start_url: "/",
+    start_url: "/app",
     display: "standalone",
     background_color: "#E7E9E0",
-    theme_color: "#2B4CF5",
+    theme_color: "#E7E9E0",
     lang: "fr-CA",
     icons: [
       {
@@ -25,16 +25,10 @@ export default function manifest(): MetadataRoute.Manifest {
         purpose: "any",
       },
       {
-        src: "/icons/icon-512.png",
+        src: "/icons/icon-512-maskable.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",
-      },
-      {
-        src: "/icons/icon.svg",
-        sizes: "any",
-        type: "image/svg+xml",
-        purpose: "any",
       },
     ],
   };

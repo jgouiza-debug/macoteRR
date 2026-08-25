@@ -3,22 +3,21 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ScreenShell } from "@/components/onboarding/ScreenShell";
-import { StepProgress } from "@/components/onboarding/StepProgress";
-import { useStudentProfile } from "@/lib/profile/store";
-import { currentSessionId } from "@/lib/sample-data";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { useStudentProfile } from "@/lib/profile/store";
 
 export default function ConfirmScorePage() {
   const router = useRouter();
   const { t } = useLocale();
-  const { profile, update } = useStudentProfile();
-  const [value, setValue] = useState(
-    profile.rScore !== null ? String(profile.rScore).replace(".", ",") : "",
-  );
+  const { update } = useStudentProfile();
+  // Starts EMPTY. It used to default to "28,4", which meant a student could tap straight
+  // through and get results for a number that was never theirs — in a product whose whole
+  // premise is not showing people figures they can't trust.
+  const [value, setValue] = useState("");
   const [touched, setTouched] = useState(false);
 
   const numeric = Number(value.replace(",", "."));
-  const isValid = value.trim().length > 0 && Number.isFinite(numeric) && numeric >= 15 && numeric <= 50;
+  const isValid = Number.isFinite(numeric) && numeric >= 15 && numeric <= 50;
   const showError = touched && value.length > 0 && !isValid;
 
   function submit() {
@@ -26,13 +25,9 @@ export default function ConfirmScorePage() {
       setTouched(true);
       return;
     }
-
-    update({
-      rScore: numeric,
-      rScoreStatus: "confirmed",
-      currentSession: profile.currentSession ?? currentSessionId(),
-    });
-
+    update({ rScore: numeric, rScoreStatus: "confirmed" });
+    // The DEC was chosen in step 2, so results already know which prerequisites this student
+    // covers and can go straight up.
     router.push(`/onboarding/results?score=${numeric}&status=confirmed`);
   }
 
@@ -49,24 +44,21 @@ export default function ConfirmScorePage() {
           >
             {t("entry.cta")}
           </button>
+          <span className="text-[12px] text-ink/50">{t("entry.noAccount")}</span>
         </div>
       }
     >
-      <StepProgress step="score" />
-
       <h1 className="mb-6 pt-3 font-display text-[27px] font-bold leading-[1.15] tracking-tight text-ink">
         {t("entry.title")}
       </h1>
 
-      {/*
-        One field, one box. The label and the number share a single bordered container and
-        the input's own focus ring is suppressed — the container's border colour already
-        carries focus, and letting both render drew a second rectangle inside the first.
-      */}
       <label
         htmlFor="cote-r-input"
-        className={`field-shell flex cursor-text flex-col gap-1 rounded border-[1.5px] bg-paper px-4 py-3.5 transition-colors focus-within:border-ultramarine ${
-          showError ? "border-ember" : "border-ink/20"
+        // field-shell: the global :focus-visible rule is unlayered, so it outranks Tailwind's
+        // outline utilities and drew a second rectangle inside this one. The class moves the
+        // focus ring onto the wrapper instead of removing it. See globals.css.
+        className={`field-shell flex cursor-text flex-col gap-1 rounded border-[1.5px] bg-paper px-4 py-3.5 transition-colors ${
+          showError ? "border-ember" : "border-ultramarine"
         }`}
       >
         <span className="text-[11px] font-medium text-ink/50">{t("entry.label")}</span>
@@ -82,7 +74,7 @@ export default function ConfirmScorePage() {
           placeholder="28,4"
           aria-invalid={showError}
           aria-describedby="cote-r-help"
-          className="w-full bg-transparent font-display text-[40px] font-bold leading-tight tracking-tight text-ink outline-none placeholder:text-ink/25 tabular-nums focus:outline-none focus-visible:outline-none"
+          className="w-full bg-transparent font-display text-[40px] font-bold leading-tight tracking-tight text-ink outline-none tabular-nums placeholder:text-ink/20"
         />
       </label>
 

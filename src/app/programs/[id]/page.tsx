@@ -15,7 +15,5 @@ export default async function ProgramDetailPage({
   const program = UNIVERSITY_PROGRAMS.find((p) => p.id === id);
   if (!program) notFound();
 
-  // The score is per-student and lives in the local-first profile, so ProgramDetail
-  // reads it client-side rather than having it baked into this statically-rendered page.
   return <ProgramDetail program={program} />;
 }

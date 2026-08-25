@@ -1,13 +1,40 @@
 import type { BursaryCriteria } from "@/lib/matching/match";
+import type { InterestId } from "@/lib/tags/interests";
+import { CEGEP_DEC_PROGRAMS } from "@/lib/data/cegep-catalog";
 // Illustrative sample data for the MVP UI. Shaped after docs/01-data-architecture.md so
 // wiring real Supabase queries in later phases is a drop-in swap, not a redesign.
 //
 // Guardrail #1 (docs/00-BUILD-PROMPT.md): every displayed figure carries `sourceUrl` and
 // `lastVerifiedAt`. Do not add a numeric field here without both.
 
-// Cégeps and cégep programs used to be stubbed here. They now come from the real scraped
-// catalogue in src/lib/data/catalog.ts (11 schools, 150 programs) — import CATALOG_CEGEPS /
-// programsForCegep from there rather than reintroducing a placeholder list.
+export type Cegep = { id: string; name: string; region: string };
+
+export const CEGEPS: Cegep[] = [
+  { id: "sainte-foy", name: "Cégep de Sainte-Foy", region: "Québec" },
+  { id: "limoilou", name: "Cégep Limoilou", region: "Québec" },
+  { id: "garneau", name: "Cégep Garneau", region: "Québec" },
+  { id: "champlain-st-lawrence", name: "Cégep Champlain St. Lawrence", region: "Québec" },
+  { id: "merici", name: "Collège Mérici", region: "Québec" },
+  { id: "osullivan-quebec", name: "Collège O'Sullivan de Québec", region: "Québec" },
+];
+
+export type CegepProgram = { id: string; name: string; type: "pre_university" | "technical" };
+
+/**
+ * Derived from the real ministerial catalogue in src/lib/data/cegep-catalog.ts rather than
+ * hand-listed here, so `id` IS the ministerial code ("200.B0") — the same key
+ * src/lib/matching/program-eligibility.ts looks DECs up by. This closes the integration gap
+ * that module documents: profiles previously stored invented slugs ("sciences-nature") that
+ * resolved to no DEC, silently degrading every prerequisite answer to "unknown".
+ *
+ * Still a PARTIAL list (see the catalogue's header for exact counts) — never label it
+ * "all Quebec cégep programs" in UI copy.
+ */
+export const CEGEP_PROGRAMS: CegepProgram[] = CEGEP_DEC_PROGRAMS.map((p) => ({
+  id: p.code,
+  name: p.nameFr,
+  type: p.type,
+}));
 
 export type Session = { id: number; labelFr: string; labelEn: string };
 
@@ -20,37 +47,45 @@ export const SESSIONS: Session[] = [
   { id: 6, labelFr: "Hiver 2027", labelEn: "Winter 2027" },
 ];
 
-/**
- * Which session we are in today, resolved against SESSIONS above.
- *
- * Onboarding does not ask — a student knows their cégep and their program, but "which
- * session number am I in" is product jargon, and the calendar already answers it. Winter
- * runs January–May and Fall runs August–December; the gap between them resolves forward to
- * the session about to start, which is what a student filling this in during the summer
- * means. Falls back to the last known session once SESSIONS runs out.
- */
-export function currentSessionId(now: Date = new Date()): number {
-  const year = now.getFullYear();
-  const isWinter = now.getMonth() <= 5; // Jan–Jun → the winter session of this year
-  const label = isWinter ? `Hiver ${year}` : `Automne ${year}`;
-  return SESSIONS.find((s) => s.labelFr === label)?.id ?? SESSIONS[SESSIONS.length - 1].id;
-}
-
 export type PrerequisiteStatus = "met" | "missing" | "in_progress";
+
+/**
+ * No single "current cutoff" per program: universities publish multi-year ranges, or
+ * min/max/average, or nothing at all, and the freshest official figures often run several
+ * years behind the current admission cycle. See docs/01-data-architecture.md. Every entry
+ * carries its own year and figure type; src/lib/rscore/cutoff-range.ts turns a set of these
+ * into a low/high range, never a single point.
+ */
+export type CutoffFigureType =
+  | "last_admitted"
+  | "minimum_required"
+  | "maximum"
+  | "average"
+  | "range_low"
+  | "range_high";
+export type CutoffSourceTier = "university_official" | "cegep_compiled";
+export type CutoffEntry = {
+  year: number;
+  cutoff: number;
+  figureType: CutoffFigureType;
+  sourceTier: CutoffSourceTier;
+};
 
 export type UniversityProgram = {
   id: string;
   name: string;
   institution: string;
   description: string;
-  overallCutoff: number;
+  /** Category tags for onboarding/interest matching — a manual classification, not a sourced figure. */
+  interestIds: InterestId[];
   cohortLabel: string;
   courseFloor?: { course: string; minGrade: number; note: string };
   placementRate?: { value: number; note: string };
   professionalOrders?: { codes: string[]; note: string };
   sourceUrl: string;
   lastVerifiedAt: string;
-  cutoffHistory: { year: number; cutoff: number }[];
+  /** Empty until a primary source is verified — never filled with a guessed figure. */
+  cutoffHistory: CutoffEntry[];
   prerequisites: { name: string; status: PrerequisiteStatus }[];
 };
 
@@ -63,13 +98,11 @@ export const UNIVERSITY_PROGRAMS: UniversityProgram[] = [
     institution: "HEC Montréal",
     description:
       "Programme reconnu internationalement, alliant la théorie de gestion rigoureuse à la pratique, préparant à des rôles de direction dans un contexte mondial.",
-    overallCutoff: 27.5,
+    interestIds: ["business"],
     cohortLabel: "Cohorte automne 2026",
-    courseFloor: {
-      course: "Mathématiques",
-      minGrade: 26.5,
-      note: "Cote R minimale exigée dans les préalables de mathématiques.",
-    },
+    // No published cote R on HEC's own admission page as of this verification — the
+    // previous 27,5 / 26,5 figures could not be re-confirmed from a primary source and
+    // have been dropped rather than shipped unverified. See the 2026-08-24 data audit.
     placementRate: {
       value: 96,
       note: "En emploi ou aux études supérieures dans les 6 mois suivant la diplomation.",
@@ -78,13 +111,9 @@ export const UNIVERSITY_PROGRAMS: UniversityProgram[] = [
       codes: ["CPA", "CRHA", "CFA"],
       note: "Ordres et titres professionnels que rejoignent couramment les diplômés du BAA.",
     },
-    sourceUrl: "https://www.hec.ca/programmes/baccalaureats/baccalaureat-administration-affaires/",
-    lastVerifiedAt: "2026-03-03",
-    cutoffHistory: [
-      { year: 2024, cutoff: 26.8 },
-      { year: 2025, cutoff: 27.1 },
-      { year: 2026, cutoff: 27.5 },
-    ],
+    sourceUrl: "https://www.hec.ca/programmes/baccalaureats/baa/demande-admission",
+    lastVerifiedAt: "2026-08-24",
+    cutoffHistory: [],
     prerequisites: [
       { name: "Calcul différentiel", status: "met" },
       { name: "Calcul intégral", status: "met" },
@@ -97,8 +126,10 @@ export const UNIVERSITY_PROGRAMS: UniversityProgram[] = [
     institution: "Polytechnique Montréal",
     description:
       "Formation d'ingénieur agréée couvrant la conception, l'architecture et la vérification des systèmes logiciels à grande échelle.",
-    overallCutoff: 28.0,
+    interestIds: ["tech_eng"],
     cohortLabel: "Cohorte automne 2026",
+    // Polytechnique's admission-statistics page didn't return readable per-program figures
+    // during the 2026-08-24 verification pass — dropped rather than shipped unverified.
     placementRate: {
       value: 94,
       note: "En emploi ou aux études supérieures dans les 6 mois suivant la diplomation.",
@@ -107,13 +138,9 @@ export const UNIVERSITY_PROGRAMS: UniversityProgram[] = [
       codes: ["OIQ"],
       note: "Le titre d'ingénieur au Québec est réservé et encadré par l'Ordre des ingénieurs.",
     },
-    sourceUrl: "https://www.polymtl.ca/futur/",
-    lastVerifiedAt: "2026-02-12",
-    cutoffHistory: [
-      { year: 2024, cutoff: 27.6 },
-      { year: 2025, cutoff: 27.8 },
-      { year: 2026, cutoff: 28.0 },
-    ],
+    sourceUrl: "https://www.polymtl.ca/admission/baccalaureat/conditions-dadmission-au-baccalaureat/statistiques-dadmission",
+    lastVerifiedAt: "2026-08-24",
+    cutoffHistory: [],
     prerequisites: [
       { name: "Calcul différentiel", status: "met" },
       { name: "Calcul intégral", status: "met" },
@@ -126,18 +153,20 @@ export const UNIVERSITY_PROGRAMS: UniversityProgram[] = [
     institution: "Université de Montréal",
     description:
       "Baccalauréat en droit civil québécois, menant au Barreau ou à la Chambre des notaires après la formation professionnelle.",
-    overallCutoff: 31.5,
+    interestIds: ["law_social"],
     cohortLabel: "Cohorte automne 2026",
     professionalOrders: {
       codes: ["Barreau", "Notaires"],
       note: "Ordres professionnels accessibles après la formation professionnelle requise.",
     },
-    sourceUrl: "https://admission.umontreal.ca/",
-    lastVerifiedAt: "2026-01-18",
+    sourceUrl: "https://admission.umontreal.ca/statistiques-dadmission-cote-r/",
+    lastVerifiedAt: "2026-08-24",
+    // UdeM publishes low/high/average across admitted cégep-basis candidates, not one
+    // number. Automne 2024 cohort, as of 2024-07-11.
     cutoffHistory: [
-      { year: 2024, cutoff: 31.0 },
-      { year: 2025, cutoff: 31.2 },
-      { year: 2026, cutoff: 31.5 },
+      { year: 2024, cutoff: 31.505, figureType: "last_admitted", sourceTier: "university_official" },
+      { year: 2024, cutoff: 33.168, figureType: "average", sourceTier: "university_official" },
+      { year: 2024, cutoff: 38.058, figureType: "maximum", sourceTier: "university_official" },
     ],
     prerequisites: [],
   },
@@ -147,10 +176,12 @@ export const UNIVERSITY_PROGRAMS: UniversityProgram[] = [
     institution: "Université Laval",
     description:
       "Étude du vivant, de la génétique aux écosystèmes, avec une forte composante de laboratoire et de terrain.",
-    overallCutoff: 24.5,
+    interestIds: ["science", "environment"],
     cohortLabel: "Cohorte automne 2026",
+    // Not a limited-enrolment ("contingenté") program in Laval's own cote-R table — no
+    // competitive cutoff to publish. Re-check if that changes.
     sourceUrl: "https://www.ulaval.ca/etudes/programmes",
-    lastVerifiedAt: "2026-03-03",
+    lastVerifiedAt: "2026-08-24",
     cutoffHistory: [],
     prerequisites: [],
   },
@@ -160,14 +191,16 @@ export const UNIVERSITY_PROGRAMS: UniversityProgram[] = [
     institution: "Université Laval",
     description:
       "Conception et gestion des infrastructures : structures, transport, ressources hydriques et géotechnique.",
-    overallCutoff: 26.0,
+    interestIds: ["tech_eng", "environment"],
     cohortLabel: "Cohorte automne 2026",
+    // Not a limited-enrolment ("contingenté") program in Laval's own cote-R table — no
+    // competitive cutoff to publish. Re-check if that changes.
     professionalOrders: {
       codes: ["OIQ"],
       note: "Le titre d'ingénieur au Québec est réservé et encadré par l'Ordre des ingénieurs.",
     },
     sourceUrl: "https://www.ulaval.ca/etudes/programmes",
-    lastVerifiedAt: "2026-03-03",
+    lastVerifiedAt: "2026-08-24",
     cutoffHistory: [],
     prerequisites: [],
   },
@@ -177,15 +210,20 @@ export const UNIVERSITY_PROGRAMS: UniversityProgram[] = [
     institution: "Université Laval",
     description:
       "Formation clinique menant à l'exercice infirmier, avec stages en milieu hospitalier dès la première année.",
-    overallCutoff: 28.5,
+    interestIds: ["health"],
     cohortLabel: "Cohorte automne 2026",
     professionalOrders: {
       codes: ["OIIQ"],
       note: "L'exercice infirmier au Québec est réservé aux membres de l'Ordre.",
     },
-    sourceUrl: "https://www.ulaval.ca/etudes/programmes",
-    lastVerifiedAt: "2026-03-03",
-    cutoffHistory: [],
+    sourceUrl: "https://www.ulaval.ca/sites/default/files/futurs-etudiants/IPC_2024-2025-WEB.pdf",
+    lastVerifiedAt: "2026-08-24",
+    // Laval's own IPC table, "CRC" column (cote de rendement au collégial — cégep-basis
+    // candidates), Automne 2023, updated 2023-08-15. No CRU/university-transfer row here:
+    // this app is cégep-only.
+    cutoffHistory: [
+      { year: 2023, cutoff: 26.529, figureType: "last_admitted", sourceTier: "university_official" },
+    ],
     prerequisites: [],
   },
 ];
@@ -218,7 +256,10 @@ export const BURSARIES: Bursary[] = [
     name: "Bourse d'excellence en sciences de la nature",
     sourceOrg: "Fondation du Cégep de Sainte-Foy",
     cegepId: "sainte-foy",
-    eligibleCegepPrograms: ["sainte-foy-200-b1"],
+    // Ministerial DEC code, matching CEGEP_PROGRAMS[].id / StudentProfile.cegepProgramId.
+    // BursaryCriteria types this as plain string[], so a stale slug here would silently
+    // never match instead of failing to compile — see the check in scripts/checks/.
+    eligibleCegepPrograms: ["200.B0"],
     eligibleUniversityPrograms: null,
     minRScore: 27,
     minSession: null,
@@ -333,15 +374,9 @@ export const DEADLINES: Deadline[] = [
   },
 ];
 
-/**
- * Illustrative student used by screens that still render sample content (the counselor
- * prep sheet, the program detail preview). Real screens read src/lib/profile/store.ts;
- * the cégep and program here are named against the real catalogue so nothing renders a
- * school or program that does not exist.
- */
 export const STUDENT_SAMPLE = {
-  cegepShortCode: "sainte-foy",
-  cegepProgramId: "sainte-foy-200-b1",
+  cegep: CEGEPS[0],
+  program: CEGEP_PROGRAMS[0],
   session: SESSIONS[4],
   rScoreEstimated: 32.4,
 };
@@ -380,11 +415,17 @@ export const DASHBOARD_SAMPLE = {
       groupAverage: 78,
     },
   ],
+  // Reuses UNIVERSITY_PROGRAMS' real udem-droit figures rather than a separate fabricated
+  // single-cutoff mock — see the 2026-08-24 data audit on why one current number is wrong here.
   goalProgram: {
-    nameFr: "Médecine (UdeM)",
-    nameEn: "Medicine (UdeM)",
-    cutoff: 33.5,
-    sourceUrl: "https://admission.umontreal.ca/",
-    lastVerifiedAt: "2026-01-18",
+    nameFr: "Droit (UdeM)",
+    nameEn: "Law (UdeM)",
+    cutoffHistory: [
+      { year: 2024, cutoff: 31.505, figureType: "last_admitted" as const, sourceTier: "university_official" as const },
+      { year: 2024, cutoff: 33.168, figureType: "average" as const, sourceTier: "university_official" as const },
+      { year: 2024, cutoff: 38.058, figureType: "maximum" as const, sourceTier: "university_official" as const },
+    ],
+    sourceUrl: "https://admission.umontreal.ca/statistiques-dadmission-cote-r/",
+    lastVerifiedAt: "2026-08-24",
   },
 };
