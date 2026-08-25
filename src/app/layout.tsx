@@ -2,10 +2,11 @@ import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Instrument_Sans } from "next/font/google";
 import { LocaleProvider } from "@/lib/i18n/LocaleProvider";
 import { IosInstallGuide } from "@/components/pwa/IosInstallGuide";
+import { SITE_URL } from "@/lib/site-config";
 import "./globals.css";
 
 const bricolage = Bricolage_Grotesque({
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
   variable: "--font-bricolage",
   display: "swap",
   preload: true,
@@ -13,7 +14,7 @@ const bricolage = Bricolage_Grotesque({
 });
 
 const instrument = Instrument_Sans({
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
   variable: "--font-instrument",
   display: "swap",
   preload: true,
@@ -21,7 +22,7 @@ const instrument = Instrument_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://macote.xyz"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "MaCote",
     template: "MaCote - %s",

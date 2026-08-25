@@ -4,10 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ScreenShell } from "@/components/onboarding/ScreenShell";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { useStudentProfile } from "@/lib/profile/store";
 
 export default function ConfirmScorePage() {
   const router = useRouter();
   const { t } = useLocale();
+  const { update } = useStudentProfile();
   const [value, setValue] = useState("28,4");
   const [touched, setTouched] = useState(false);
 
@@ -20,7 +22,10 @@ export default function ConfirmScorePage() {
       setTouched(true);
       return;
     }
-    router.push(`/onboarding/results?score=${numeric}&status=confirmed`);
+    update({ rScore: numeric, rScoreStatus: "confirmed" });
+    // Program first, then results: which DEC you're in determines which university
+    // prerequisites you actually cover, so results can't be honest without it.
+    router.push(`/onboarding/program?score=${numeric}&status=confirmed`);
   }
 
   return (

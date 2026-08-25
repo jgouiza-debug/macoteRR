@@ -54,7 +54,15 @@ export default function GoalPage() {
 
   function finish() {
     update({ cegepProgramId, targetUniversityProgramIds: targetIds, interestIds });
-    router.push("/onboarding/account");
+    // Score/status come from the profile (already saved by the confirm/estimate step), not
+    // from a query param — reading searchParams here would force this route out of static
+    // prerendering for no benefit.
+    const { rScore, rScoreStatus } = profile;
+    router.push(
+      rScore !== null
+        ? `/onboarding/results?score=${rScore}&status=${rScoreStatus ?? "estimated"}`
+        : "/onboarding/results",
+    );
   }
 
   function answerQuiz(interest: InterestId) {
@@ -72,7 +80,7 @@ export default function GoalPage() {
   if (step === "program") {
     return (
       <ScreenShell
-        backHref="/onboarding/cegep"
+        backHref="/onboarding/score"
         footer={
           <button
             type="button"

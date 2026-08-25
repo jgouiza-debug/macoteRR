@@ -4,6 +4,8 @@ import { useCallback, useSyncExternalStore, useEffect } from "react";
 import type { SelfTagId } from "@/lib/tags/taxonomy";
 import type { InterestId } from "@/lib/tags/interests";
 import { idbSet } from "@/lib/data/indexed-db";
+import { createClient } from "@/lib/db/client";
+import { syncProfileToServer } from "./sync";
 
 /**
  * Local-first student profile with optimistic updates and offline mutation queue.
@@ -38,13 +40,13 @@ const STORAGE_KEY = "macote.profile";
 const OUTBOX_KEY = "macote.mutation_outbox";
 
 export const DEFAULT_PROFILE: StudentProfile = {
-  cegepId: "sainte-foy",
-  cegepProgramId: "sciences-nature",
-  currentSession: 5,
-  rScore: 32.4,
-  rScoreStatus: "estimated",
-  selfTags: ["volunteering"],
-  targetUniversityProgramIds: ["hec-baa"],
+  cegepId: null,
+  cegepProgramId: null,
+  currentSession: null,
+  rScore: null,
+  rScoreStatus: null,
+  selfTags: [],
+  targetUniversityProgramIds: [],
   interestIds: [],
 };
 
@@ -126,6 +128,14 @@ async function flushOutbox() {
   }
 
   const pending = outbox.filter((m) => m.status === "pending" || m.status === "failed");
+  if (pending.length === 0) return;
+
+  // Local session check, no network round-trip — guests (no account) have nothing to push
+  // yet, matching "no account required" by design; only signed-in devices sync.
+  const supabase = createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   for (const mutation of pending) {
     mutation.status = "processing";
@@ -133,8 +143,9 @@ async function flushOutbox() {
     saveOutbox();
 
     try {
-      // Simulate / execute server synchronization write
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      if (session) {
+        await syncProfileToServer(supabase, session.user.id, read());
+      }
       mutation.status = "completed";
       outbox = outbox.filter((m) => m.id !== mutation.id);
       saveOutbox();
@@ -160,12 +171,28 @@ if (typeof window !== "undefined") {
   });
 }
 
+/**
+ * Pushes the current local profile up regardless of outbox state — covers the moment right
+ * after signing in, when everything already synced as a no-op guest and there's nothing
+ * queued, but a server row still needs to exist for the now-authenticated user.
+ */
+export async function syncNow() {
+  if (typeof navigator === "undefined" || !navigator.onLine) return;
+  const supabase = createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) return;
+  await syncProfileToServer(supabase, session.user.id, read());
+}
+
 export function useStudentProfile() {
   const profile = useSyncExternalStore(subscribe, read, readServer);
 
   useEffect(() => {
     // Initial sync check on mount
     flushOutbox().catch(() => {});
+    syncNow().catch(() => {});
   }, []);
 
   // Optimistic by construction: local state updates and renders before anything else.

@@ -1,29 +1,44 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ScreenShell, ScreenHeading } from "@/components/onboarding/ScreenShell";
+import { createClient } from "@/lib/db/client";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function AccountPage() {
-  const router = useRouter();
   const { t } = useLocale();
   const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   const isValid = EMAIL_PATTERN.test(email.trim());
 
-  // TODO(phase-2): swap for supabase.auth.signInWithOtp once a project is linked
-  // (docs/SETUP-CLOUD.md). Until then this mirrors the rest of the sample-data prototype.
-  function submit() {
-    if (!isValid) return;
-    router.push("/dashboard");
+  async function submit() {
+    if (!isValid || status === "sending") return;
+    setStatus("sending");
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOtp({
+      email: email.trim(),
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+    });
+    setStatus(error ? "error" : "sent");
+  }
+
+  if (status === "sent") {
+    return (
+      <ScreenShell backHref="/onboarding/cegep">
+        <ScreenHeading
+          title={t("account.checkEmailTitle")}
+          body={t("account.checkEmailBody").replace("{email}", email.trim())}
+        />
+      </ScreenShell>
+    );
   }
 
   return (
-    <ScreenShell backHref="/onboarding/program">
+    <ScreenShell backHref="/onboarding/cegep">
       <ScreenHeading title={t("account.title")} body={t("account.body")} />
 
       <label
@@ -44,13 +59,17 @@ export default function AccountPage() {
         />
       </label>
 
+      {status === "error" && (
+        <p className="mt-2 text-[12.5px] text-ember">{t("account.sendError")}</p>
+      )}
+
       <button
         type="button"
         onClick={submit}
-        disabled={!isValid}
+        disabled={!isValid || status === "sending"}
         className="mt-4 flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40"
       >
-        {t("account.create")}
+        {status === "sending" ? t("account.sending") : t("account.create")}
       </button>
 
       <Link
@@ -65,13 +84,6 @@ export default function AccountPage() {
       </p>
       <p className="mt-2 text-center text-[12px] leading-relaxed text-ink/50">
         {t("account.noPassword")}
-      </p>
-
-      <p className="mt-auto py-8 text-center text-[13px] text-ink/60">
-        {t("account.haveAccount")}{" "}
-        <Link href="/dashboard" className="font-semibold text-ultramarine">
-          {t("account.signIn")}
-        </Link>
       </p>
     </ScreenShell>
   );

@@ -1,7 +1,10 @@
 "use client";
 
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { mt } from "@/lib/i18n/marketing-copy";
+import type { Locale, TranslationKey } from "@/lib/i18n/dictionary";
 import { CopyLinkControl } from "./CopyLinkControl";
+import { SITE_DOMAIN } from "@/lib/site-config";
 
 export type DetectionState =
   | "inapp" // State 1 & 3: In-app browser or iOS non-Safari
@@ -12,12 +15,16 @@ export type DetectionState =
 
 interface InstallCardProps {
   state: DetectionState;
+  /** Marketing pages pass their URL-driven locale here instead of relying on the app's
+   *  client-side toggle, so /en never shows French install copy. */
+  locale?: Locale;
   onInstallClick?: () => void;
   onContinueInBrowser?: () => void;
 }
 
-export function InstallCard({ state, onInstallClick, onContinueInBrowser }: InstallCardProps) {
-  const { t } = useLocale();
+export function InstallCard({ state, locale, onInstallClick, onContinueInBrowser }: InstallCardProps) {
+  const { t: contextT } = useLocale();
+  const t = (key: TranslationKey) => (locale ? mt(locale, key) : contextT(key));
 
   return (
     <div className="w-full max-w-[440px] rounded-[3px] border border-border bg-paper p-6 md:p-8 shadow-card flex flex-col gap-6">
@@ -31,7 +38,7 @@ export function InstallCard({ state, onInstallClick, onContinueInBrowser }: Inst
             {t("install.inAppBody")}
           </p>
           <div className="mt-2">
-            <CopyLinkControl onContinueWithoutInstall={onContinueInBrowser} showNoteCaption={true} />
+            <CopyLinkControl locale={locale} onContinueWithoutInstall={onContinueInBrowser} showNoteCaption={true} />
           </div>
         </div>
       )}
@@ -179,7 +186,7 @@ export function InstallCard({ state, onInstallClick, onContinueInBrowser }: Inst
             <div className="w-48 h-48 bg-paper p-2 rounded-[3px] border border-hairline flex items-center justify-center">
               {/* Build-time generated SVG QR Code */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/qr-code.svg" alt="QR code vers macote.xyz" className="w-full h-full object-contain" />
+              <img src="/qr-code.svg" alt={`QR code vers ${SITE_DOMAIN}`} className="w-full h-full object-contain" />
             </div>
             <p className="mt-3 text-[13px] text-center text-secondary font-medium">
               {t("install.desktopQRCaption")}

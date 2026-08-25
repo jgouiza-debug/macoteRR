@@ -3,11 +3,11 @@ import { HomePage } from "@/components/marketing/HomePage";
 import { SITE_URL } from "@/lib/site-config";
 
 export const metadata: Metadata = {
-  title: { absolute: "MaCote — Ta cote R, sur ton écran d'accueil" },
+  title: { absolute: "MaCote — Your R-score, on your home screen" },
   description:
-    "Suis ta cote R, vois ce que tes programmes cibles exigent, et trouve les bourses auxquelles tu es admissible — gratuit, pour les étudiants de cégep.",
+    "Track your R-score, see what your target programs actually require, and find bursaries you qualify for — free, for cégep students.",
   alternates: {
-    canonical: "/",
+    canonical: "/en",
     languages: { fr: "/", en: "/en" },
   },
 };
@@ -18,17 +18,17 @@ const JSON_LD = {
   name: "MaCote",
   applicationCategory: "EducationApplication",
   operatingSystem: "iOS, Android, Web",
-  url: SITE_URL,
+  url: `${SITE_URL}/en`,
   offers: { "@type": "Offer", price: "0", priceCurrency: "CAD" },
   description:
-    "Suis ta cote R, vois ce que tes programmes cibles exigent, et trouve les bourses auxquelles tu es admissible.",
+    "Track your R-score, see what your target programs actually require, and find bursaries you qualify for.",
 };
 
 export default function Page() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }} />
-      <HomePage locale="fr" />
+      <HomePage locale="en" />
     </>
   );
 }

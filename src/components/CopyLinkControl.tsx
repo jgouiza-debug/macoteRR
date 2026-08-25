@@ -2,17 +2,22 @@
 
 import { useState } from "react";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { mt } from "@/lib/i18n/marketing-copy";
+import type { Locale, TranslationKey } from "@/lib/i18n/dictionary";
+import { SITE_URL, SITE_DOMAIN } from "@/lib/site-config";
 
 interface CopyLinkControlProps {
+  locale?: Locale;
   onContinueWithoutInstall?: () => void;
   showNoteCaption?: boolean;
 }
 
-export function CopyLinkControl({ onContinueWithoutInstall, showNoteCaption = true }: CopyLinkControlProps) {
-  const { t } = useLocale();
+export function CopyLinkControl({ locale, onContinueWithoutInstall, showNoteCaption = true }: CopyLinkControlProps) {
+  const { t: contextT } = useLocale();
+  const t = (key: TranslationKey) => (locale ? mt(locale, key) : contextT(key));
   const [copied, setCopied] = useState(false);
-  const displayUrl = "macote.xyz";
-  const fullUrl = "https://macote.xyz";
+  const displayUrl = SITE_DOMAIN;
+  const fullUrl = SITE_URL;
 
   const handleCopy = async () => {
     try {
@@ -44,7 +49,7 @@ export function CopyLinkControl({ onContinueWithoutInstall, showNoteCaption = tr
           onClick={handleCopy}
           className="text-ultramarine font-semibold text-[14px] hover:underline focus-visible:outline-none ml-2 shrink-0"
         >
-          {copied ? t("install.copied") : "Copier"}
+          {copied ? t("install.copied") : t("install.copyShort")}
         </button>
       </div>
 

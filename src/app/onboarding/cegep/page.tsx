@@ -24,7 +24,7 @@ export default function CegepPickerPage() {
     setSelected(id);
     update({ cegepId: id });
     // Give the selected state a beat to paint before leaving, so the tap reads as confirmed.
-    window.setTimeout(() => router.push("/onboarding/program"), 180);
+    window.setTimeout(() => router.push("/onboarding/account"), 180);
   }
 
   return (
@@ -33,7 +33,7 @@ export default function CegepPickerPage() {
       footer={
         <button
           type="button"
-          onClick={() => router.push("/onboarding/program")}
+          onClick={() => router.push("/onboarding/account")}
           className="h-12 w-full text-[14px] font-semibold text-ink/60"
         >
           {t("common.skip")}
