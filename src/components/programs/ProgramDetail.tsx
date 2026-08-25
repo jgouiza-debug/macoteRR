@@ -8,17 +8,16 @@ import { BottomNav } from "@/components/app-shell/BottomNav";
 import { DistributionCurve } from "@/components/rscore/DistributionCurve";
 import { SourceStamp } from "@/components/SourceStamp";
 import { AddTargetButton } from "./AddTargetButton";
+import { useStudentProfile } from "@/lib/profile/store";
+import {
+  evaluatePrerequisites,
+  findDecCoreCourses,
+} from "@/lib/matching/program-eligibility";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
-import type { CutoffFigureType, PrerequisiteStatus, UniversityProgram } from "@/lib/sample-data";
+import type { CutoffFigureType, UniversityProgram } from "@/lib/sample-data";
 import { getCutoffRange, formatRangeYears } from "@/lib/rscore/cutoff-range";
 import type { TranslationKey } from "@/lib/i18n/dictionary";
-
-const STATUS: Record<PrerequisiteStatus, { key: TranslationKey; className: string }> = {
-  met: { key: "prog.met", className: "bg-moss/10 text-moss" },
-  missing: { key: "prog.missing", className: "bg-ember/10 text-ember" },
-  in_progress: { key: "prog.inProgress", className: "bg-ink/8 text-ink/60" },
-};
 
 const FIGURE_TYPE_KEY: Record<CutoffFigureType, TranslationKey> = {
   last_admitted: "cutoff.figureType.last_admitted",
@@ -29,17 +28,21 @@ const FIGURE_TYPE_KEY: Record<CutoffFigureType, TranslationKey> = {
   range_high: "cutoff.figureType.range_high",
 };
 
-export function ProgramDetail({
-  program,
-  score,
-}: {
-  program: UniversityProgram;
-  score: number;
-}) {
+export function ProgramDetail({ program }: { program: UniversityProgram }) {
   const { t } = useLocale();
+  // The student's own score, read here rather than passed in: the route is statically
+  // prerendered, so a server-supplied score could only ever be a hardcoded sample one —
+  // which is exactly what this page used to show every visitor.
+  const { profile } = useStudentProfile();
+  const score = profile.rScore;
   const f = useFormat();
   const range = getCutoffRange(program.cutoffHistory);
   const rangeLabel = range ? `${t("common.seuil")} ${formatRangeYears(range)}` : t("cutoff.unverified");
+  const prereqByName = new Map(
+    evaluatePrerequisites(findDecCoreCourses(profile.cegepProgramId), program).reasons
+      .filter((r) => r.name)
+      .map((r) => [r.name as string, r.kind]),
+  );
 
   return (
     <div className="flex min-h-[100dvh] flex-col bg-chalk pb-16 md:pb-0">
@@ -84,17 +87,21 @@ export function ProgramDetail({
                 {t("prog.yourPosition")}
               </p>
               <p className="font-display text-[26px] font-bold leading-tight text-ultramarine tabular-nums">
-                {f.score(score)}
+                {score === null ? "—" : f.score(score)}
               </p>
             </div>
           </div>
 
-          <DistributionCurve
-            score={score}
-            range={range}
-            youLabel={t("common.toi")}
-            rangeLabel={rangeLabel}
-          />
+          {score === null ? (
+            <p className="py-6 text-center text-[12.5px] text-ink/50">{t("prog.noScoreYet")}</p>
+          ) : (
+            <DistributionCurve
+              score={score}
+              range={range}
+              youLabel={t("common.toi")}
+              rangeLabel={rangeLabel}
+            />
+          )}
           <SourceStamp
             date={program.lastVerifiedAt}
             href={program.sourceUrl}
@@ -151,9 +158,26 @@ export function ProgramDetail({
             <h2 className="mb-1 text-[14px] font-semibold text-ink">
               {t("prog.prerequisites")}
             </h2>
+            {/* Coverage is DERIVED from the student's DEC core, not read from
+                `prerequisites[].status` — that field is a hard-coded, student-relative value
+                in sample-data tied to no real transcript, so rendering it told every visitor
+                the same fictional student's progress. "Pas au tronc commun" is a statement
+                about two catalogues, not a claim the student hasn't taken the course. */}
             <ul className="flex flex-col">
               {program.prerequisites.map((req) => {
-                const status = STATUS[req.status];
+                const covered = prereqByName.get(req.name);
+                const label =
+                  covered === "prereq_covered"
+                    ? t("prog.inDecCore")
+                    : covered === "prereq_not_in_core"
+                      ? t("prog.notInDecCore")
+                      : t("prog.decCoreUnknown");
+                const cls =
+                  covered === "prereq_covered"
+                    ? "bg-moss/10 text-moss"
+                    : covered === "prereq_not_in_core"
+                      ? "bg-ember/10 text-ember"
+                      : "bg-ink/8 text-ink/60";
                 return (
                   <li
                     key={req.name}
@@ -161,9 +185,9 @@ export function ProgramDetail({
                   >
                     <span className="text-[13.5px] text-ink">{req.name}</span>
                     <span
-                      className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${status.className}`}
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${cls}`}
                     >
-                      {t(status.key)}
+                      {label}
                     </span>
                   </li>
                 );

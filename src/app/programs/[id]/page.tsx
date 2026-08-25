@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { ProgramDetail } from "@/components/programs/ProgramDetail";
-import { UNIVERSITY_PROGRAMS, STUDENT_SAMPLE } from "@/lib/sample-data";
+import { UNIVERSITY_PROGRAMS } from "@/lib/sample-data";
 
 export function generateStaticParams() {
   return UNIVERSITY_PROGRAMS.map((program) => ({ id: program.id }));
@@ -15,5 +15,5 @@ export default async function ProgramDetailPage({
   const program = UNIVERSITY_PROGRAMS.find((p) => p.id === id);
   if (!program) notFound();
 
-  return <ProgramDetail program={program} score={STUDENT_SAMPLE.rScoreEstimated} />;
+  return <ProgramDetail program={program} />;
 }
