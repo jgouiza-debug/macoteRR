@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { BURSARIES, CEGEPS, CEGEP_PROGRAMS, SESSIONS } from "@/lib/sample-data";
-import { useStudentProfile } from "@/lib/profile/store";
+import { useStudentProfile, resetProfile } from "@/lib/profile/store";
 import { SELF_TAGS, tagLabel } from "@/lib/tags/taxonomy";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { createClient } from "@/lib/db/client";
@@ -42,13 +42,8 @@ export default function ProfilePage() {
       await supabase.auth.signOut();
     }
 
-    try {
-      window.localStorage.removeItem("macote.profile");
-      window.localStorage.removeItem("macote.mutation_outbox");
-    } catch {
-      /* storage blocked — nothing local to clear */
-    }
-    router.push("/");
+    resetProfile();
+    router.push("/onboarding");
   }
 
   const fields = [

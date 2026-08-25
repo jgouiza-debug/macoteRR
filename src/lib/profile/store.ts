@@ -176,6 +176,23 @@ if (typeof window !== "undefined") {
  * after signing in, when everything already synced as a no-op guest and there's nothing
  * queued, but a server row still needs to exist for the now-authenticated user.
  */
+/**
+ * Wipes the local profile back to a fresh guest state: clears the outbox, clears storage,
+ * and — critically — clears the in-memory `cache` and notifies subscribers. Without this,
+ * a raw `localStorage.removeItem` leaves the module-level cache holding the old profile, so
+ * every mounted component keeps rendering the deleted account until a hard reload.
+ */
+export function resetProfile() {
+  outbox = [];
+  try {
+    window.localStorage.removeItem(STORAGE_KEY);
+    window.localStorage.removeItem(OUTBOX_KEY);
+  } catch {
+    /* storage blocked — nothing local to clear */
+  }
+  write(DEFAULT_PROFILE);
+}
+
 export async function syncNow() {
   if (typeof navigator === "undefined" || !navigator.onLine) return;
   const supabase = createClient();
