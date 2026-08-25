@@ -4,37 +4,31 @@
   --font-display: var(--font-bricolage);
   --font-sans: var(--font-instrument);
 
-  /* Chalk & paper: the physical metaphor behind every surface in MaCote. */
+  /* Precise MaCote palette */
   --color-chalk: #e7e9e0;
   --color-paper: #fbfbf8;
   --color-ink: #17181a;
+  --color-secondary: #5a5d53;
+  --color-hairline: #d3d6ca;
+  --color-border: #c9ccc0;
   --color-ultramarine: #2b4cf5;
+  --color-pressed: #1e39c4;
   --color-moss: #12795a;
-  --color-ember: #9e4a18;
 
-  /* Structure (cards/fields) is softly rounded; actions stay pill via rounded-full. */
-  --radius-DEFAULT: 10px;
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 18px;
+  /* Geometry: Structure is square (3px), actions are pill (full). Nothing between. */
+  --radius-DEFAULT: 3px;
+  --radius-sm: 3px;
+  --radius-md: 3px;
+  --radius-lg: 3px;
+  --radius-xl: 3px;
 
-  --shadow-card: 0 1px 2px rgba(23, 24, 26, 0.06);
-  --shadow-overlay: 0 1px 2px rgba(23, 24, 26, 0.06), 0 10px 24px -10px rgba(23, 24, 26, 0.16);
+  /* Elevation specification */
+  --shadow-card: 0 1px 2px rgba(23, 24, 26, 0.06), 0 10px 24px -10px rgba(23, 24, 26, 0.16);
 }
 
 :root {
   --background: var(--color-chalk);
   --foreground: var(--color-ink);
-
-  /* Motion scale. Arrivals use the same curve everywhere; exits run ~70% of entrance. */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --dur-tap: 120ms;
-  --dur-move: 180ms;
-  --dur-enter: 250ms;
-  --dur-authored: 600ms;
-
-  /* Hairlines resolve to one physical pixel on high-DPI screens (set below). */
   --hairline: 1px;
 }
 
@@ -45,41 +39,44 @@
 }
 
 html {
-  /* Keep iOS from re-flowing type on orientation change. */
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  background-color: var(--color-chalk);
+  color: var(--color-ink);
 }
 
 body {
-  background: var(--color-chalk);
+  background-color: var(--color-chalk);
   color: var(--color-ink);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  /* Kill the grey flash on tap so buttons feel native rather than web-y. */
   -webkit-tap-highlight-color: transparent;
-  overscroll-behavior-y: none;
 }
 
-h1,
-h2,
-h3,
-h4 {
-  font-family: var(--font-display), var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+h1, h2, h3, h4 {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
 }
 
-/* --- Browser surfaces the design would otherwise leave at defaults --- */
+/* Big heading tracking rule */
+h1 {
+  letter-spacing: -0.04em;
+}
 
+h2, h3, h4 {
+  letter-spacing: -0.03em;
+}
+
+/* Browser surfaces styling */
 ::selection {
-  background: color-mix(in srgb, var(--color-ultramarine) 18%, transparent);
+  background: color-mix(in srgb, var(--color-ultramarine) 20%, transparent);
   color: var(--color-ink);
 }
 
-input,
-textarea {
+input, textarea {
   caret-color: var(--color-ultramarine);
 }
 
 a {
-  text-underline-offset: 0.18em;
+  text-underline-offset: 0.25em;
   text-decoration-thickness: from-font;
 }
 
@@ -89,148 +86,31 @@ a {
   border-radius: 2px;
 }
 
-/* Never remove the ring — only relocate it. */
 :focus:not(:focus-visible) {
   outline: none;
 }
 
-* {
-  scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--color-ink) 25%, transparent) transparent;
-}
-
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--color-ink) 22%, transparent);
-  border-radius: 999px;
-  border: 3px solid transparent;
-  background-clip: content-box;
-}
-
-button,
-a,
-input,
-select,
-[role="option"] {
+/* Touch targets */
+button, a, input {
   touch-action: manipulation;
 }
 
-/* Anything under 16px triggers iOS Safari's auto-zoom on focus. */
-input,
-textarea,
-select {
-  font-size: max(16px, 1rem);
+/* iOS notch/Dynamic Island + home-indicator clearance. Every sticky/fixed header and footer
+   in the app relies on these — without them content sits under the status bar. */
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
 }
 
-/* The single authored moment: the curve draws itself once per account.
-   stroke-dashoffset is a documented exception to the transform/opacity rule — it is the
-   only way to trace a path, it runs on one element, and it plays exactly once. */
-.curve-draw .curve-line {
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
-  animation: curve-trace var(--dur-authored) var(--ease-out) forwards;
-}
-
-.curve-draw .curve-area,
-.curve-draw .curve-marker {
-  opacity: 0;
-  animation: curve-settle var(--dur-enter) var(--ease-out) forwards;
-  animation-delay: calc(var(--dur-authored) * 0.7);
-}
-
-@keyframes curve-trace {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes curve-settle {
-  from {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-
-  /* Reduced motion still gets the finished picture, never a stalled half-drawn curve. */
-  .curve-draw .curve-line {
-    stroke-dasharray: none;
-    stroke-dashoffset: 0;
-  }
-
-  .curve-draw .curve-area,
-  .curve-draw .curve-marker {
-    opacity: 1;
-  }
 }
 
-@layer utilities {
-  .tabular-nums {
-    font-variant-numeric: tabular-nums;
-  }
-
-  .shadow-card {
-    box-shadow: var(--shadow-card);
-  }
-
-  .shadow-overlay {
-    box-shadow: var(--shadow-overlay);
-  }
-
-  .pt-safe {
-    padding-top: env(safe-area-inset-top);
-  }
-
-  .pb-safe {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-
-  .scroll-momentum {
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-  }
-
-  /* One physical pixel, not one blurry CSS pixel. */
-  .hairline {
-    border-width: var(--hairline);
-  }
-
-  .hairline-b {
-    border-bottom-width: var(--hairline);
-  }
-
-  .hairline-t {
-    border-top-width: var(--hairline);
-  }
-
-  .ease-arrival {
-    transition-timing-function: var(--ease-out);
-  }
-
-  /* French does not truncate — it wraps. */
-  .wrap-fr {
-    overflow-wrap: break-word;
-    hyphens: none;
-  }
-}

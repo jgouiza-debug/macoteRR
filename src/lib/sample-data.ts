@@ -1,4 +1,5 @@
 import type { BursaryCriteria } from "@/lib/matching/match";
+import type { InterestId } from "@/lib/tags/interests";
 // Illustrative sample data for the MVP UI. Shaped after docs/01-data-architecture.md so
 // wiring real Supabase queries in later phases is a drop-in swap, not a redesign.
 //
@@ -39,19 +40,43 @@ export const SESSIONS: Session[] = [
 
 export type PrerequisiteStatus = "met" | "missing" | "in_progress";
 
+/**
+ * No single "current cutoff" per program: universities publish multi-year ranges, or
+ * min/max/average, or nothing at all, and the freshest official figures often run several
+ * years behind the current admission cycle. See docs/01-data-architecture.md. Every entry
+ * carries its own year and figure type; src/lib/rscore/cutoff-range.ts turns a set of these
+ * into a low/high range, never a single point.
+ */
+export type CutoffFigureType =
+  | "last_admitted"
+  | "minimum_required"
+  | "maximum"
+  | "average"
+  | "range_low"
+  | "range_high";
+export type CutoffSourceTier = "university_official" | "cegep_compiled";
+export type CutoffEntry = {
+  year: number;
+  cutoff: number;
+  figureType: CutoffFigureType;
+  sourceTier: CutoffSourceTier;
+};
+
 export type UniversityProgram = {
   id: string;
   name: string;
   institution: string;
   description: string;
-  overallCutoff: number;
+  /** Category tags for onboarding/interest matching — a manual classification, not a sourced figure. */
+  interestIds: InterestId[];
   cohortLabel: string;
   courseFloor?: { course: string; minGrade: number; note: string };
   placementRate?: { value: number; note: string };
   professionalOrders?: { codes: string[]; note: string };
   sourceUrl: string;
   lastVerifiedAt: string;
-  cutoffHistory: { year: number; cutoff: number }[];
+  /** Empty until a primary source is verified — never filled with a guessed figure. */
+  cutoffHistory: CutoffEntry[];
   prerequisites: { name: string; status: PrerequisiteStatus }[];
 };
 
@@ -64,13 +89,11 @@ export const UNIVERSITY_PROGRAMS: UniversityProgram[] = [
     institution: "HEC Montréal",
     description:
       "Programme reconnu internationalement, alliant la théorie de gestion rigoureuse à la pratique, préparant à des rôles de direction dans un contexte mondial.",
-    overallCutoff: 27.5,
+    interestIds: ["business"],
     cohortLabel: "Cohorte automne 2026",
-    courseFloor: {
-      course: "Mathématiques",
-      minGrade: 26.5,
-      note: "Cote R minimale exigée dans les préalables de mathématiques.",
-    },
+    // No published cote R on HEC's own admission page as of this verification — the
+    // previous 27,5 / 26,5 figures could not be re-confirmed from a primary source and
+    // have been dropped rather than shipped unverified. See the 2026-08-24 data audit.
     placementRate: {
       value: 96,
       note: "En emploi ou aux études supérieures dans les 6 mois suivant la diplomation.",
@@ -79,13 +102,9 @@ export const UNIVERSITY_PROGRAMS: UniversityProgram[] = [
       codes: ["CPA", "CRHA", "CFA"],
       note: "Ordres et titres professionnels que rejoignent couramment les diplômés du BAA.",
     },
-    sourceUrl: "https://www.hec.ca/programmes/baccalaureats/baccalaureat-administration-affaires/",
-    lastVerifiedAt: "2026-03-03",
-    cutoffHistory: [
-      { year: 2024, cutoff: 26.8 },
-      { year: 2025, cutoff: 27.1 },
-      { year: 2026, cutoff: 27.5 },
-    ],
+    sourceUrl: "https://www.hec.ca/programmes/baccalaureats/baa/demande-admission",
+    lastVerifiedAt: "2026-08-24",
+    cutoffHistory: [],
     prerequisites: [
       { name: "Calcul différentiel", status: "met" },
       { name: "Calcul intégral", status: "met" },
@@ -98,8 +117,10 @@ export const UNIVERSITY_PROGRAMS: UniversityProgram[] = [
     institution: "Polytechnique Montréal",
     description:
       "Formation d'ingénieur agréée couvrant la conception, l'architecture et la vérification des systèmes logiciels à grande échelle.",
-    overallCutoff: 28.0,
+    interestIds: ["tech_eng"],
     cohortLabel: "Cohorte automne 2026",
+    // Polytechnique's admission-statistics page didn't return readable per-program figures
+    // during the 2026-08-24 verification pass — dropped rather than shipped unverified.
     placementRate: {
       value: 94,
       note: "En emploi ou aux études supérieures dans les 6 mois suivant la diplomation.",
@@ -108,13 +129,9 @@ export const UNIVERSITY_PROGRAMS: UniversityProgram[] = [
       codes: ["OIQ"],
       note: "Le titre d'ingénieur au Québec est réservé et encadré par l'Ordre des ingénieurs.",
     },
-    sourceUrl: "https://www.polymtl.ca/futur/",
-    lastVerifiedAt: "2026-02-12",
-    cutoffHistory: [
-      { year: 2024, cutoff: 27.6 },
-      { year: 2025, cutoff: 27.8 },
-      { year: 2026, cutoff: 28.0 },
-    ],
+    sourceUrl: "https://www.polymtl.ca/admission/baccalaureat/conditions-dadmission-au-baccalaureat/statistiques-dadmission",
+    lastVerifiedAt: "2026-08-24",
+    cutoffHistory: [],
     prerequisites: [
       { name: "Calcul différentiel", status: "met" },
       { name: "Calcul intégral", status: "met" },
@@ -127,18 +144,20 @@ export const UNIVERSITY_PROGRAMS: UniversityProgram[] = [
     institution: "Université de Montréal",
     description:
       "Baccalauréat en droit civil québécois, menant au Barreau ou à la Chambre des notaires après la formation professionnelle.",
-    overallCutoff: 31.5,
+    interestIds: ["law_social"],
     cohortLabel: "Cohorte automne 2026",
     professionalOrders: {
       codes: ["Barreau", "Notaires"],
       note: "Ordres professionnels accessibles après la formation professionnelle requise.",
     },
-    sourceUrl: "https://admission.umontreal.ca/",
-    lastVerifiedAt: "2026-01-18",
+    sourceUrl: "https://admission.umontreal.ca/statistiques-dadmission-cote-r/",
+    lastVerifiedAt: "2026-08-24",
+    // UdeM publishes low/high/average across admitted cégep-basis candidates, not one
+    // number. Automne 2024 cohort, as of 2024-07-11.
     cutoffHistory: [
-      { year: 2024, cutoff: 31.0 },
-      { year: 2025, cutoff: 31.2 },
-      { year: 2026, cutoff: 31.5 },
+      { year: 2024, cutoff: 31.505, figureType: "last_admitted", sourceTier: "university_official" },
+      { year: 2024, cutoff: 33.168, figureType: "average", sourceTier: "university_official" },
+      { year: 2024, cutoff: 38.058, figureType: "maximum", sourceTier: "university_official" },
     ],
     prerequisites: [],
   },
@@ -148,10 +167,12 @@ export const UNIVERSITY_PROGRAMS: UniversityProgram[] = [
     institution: "Université Laval",
     description:
       "Étude du vivant, de la génétique aux écosystèmes, avec une forte composante de laboratoire et de terrain.",
-    overallCutoff: 24.5,
+    interestIds: ["science", "environment"],
     cohortLabel: "Cohorte automne 2026",
+    // Not a limited-enrolment ("contingenté") program in Laval's own cote-R table — no
+    // competitive cutoff to publish. Re-check if that changes.
     sourceUrl: "https://www.ulaval.ca/etudes/programmes",
-    lastVerifiedAt: "2026-03-03",
+    lastVerifiedAt: "2026-08-24",
     cutoffHistory: [],
     prerequisites: [],
   },
@@ -161,14 +182,16 @@ export const UNIVERSITY_PROGRAMS: UniversityProgram[] = [
     institution: "Université Laval",
     description:
       "Conception et gestion des infrastructures : structures, transport, ressources hydriques et géotechnique.",
-    overallCutoff: 26.0,
+    interestIds: ["tech_eng", "environment"],
     cohortLabel: "Cohorte automne 2026",
+    // Not a limited-enrolment ("contingenté") program in Laval's own cote-R table — no
+    // competitive cutoff to publish. Re-check if that changes.
     professionalOrders: {
       codes: ["OIQ"],
       note: "Le titre d'ingénieur au Québec est réservé et encadré par l'Ordre des ingénieurs.",
     },
     sourceUrl: "https://www.ulaval.ca/etudes/programmes",
-    lastVerifiedAt: "2026-03-03",
+    lastVerifiedAt: "2026-08-24",
     cutoffHistory: [],
     prerequisites: [],
   },
@@ -178,15 +201,20 @@ export const UNIVERSITY_PROGRAMS: UniversityProgram[] = [
     institution: "Université Laval",
     description:
       "Formation clinique menant à l'exercice infirmier, avec stages en milieu hospitalier dès la première année.",
-    overallCutoff: 28.5,
+    interestIds: ["health"],
     cohortLabel: "Cohorte automne 2026",
     professionalOrders: {
       codes: ["OIIQ"],
       note: "L'exercice infirmier au Québec est réservé aux membres de l'Ordre.",
     },
-    sourceUrl: "https://www.ulaval.ca/etudes/programmes",
-    lastVerifiedAt: "2026-03-03",
-    cutoffHistory: [],
+    sourceUrl: "https://www.ulaval.ca/sites/default/files/futurs-etudiants/IPC_2024-2025-WEB.pdf",
+    lastVerifiedAt: "2026-08-24",
+    // Laval's own IPC table, "CRC" column (cote de rendement au collégial — cégep-basis
+    // candidates), Automne 2023, updated 2023-08-15. No CRU/university-transfer row here:
+    // this app is cégep-only.
+    cutoffHistory: [
+      { year: 2023, cutoff: 26.529, figureType: "last_admitted", sourceTier: "university_official" },
+    ],
     prerequisites: [],
   },
 ];
@@ -375,11 +403,17 @@ export const DASHBOARD_SAMPLE = {
       groupAverage: 78,
     },
   ],
+  // Reuses UNIVERSITY_PROGRAMS' real udem-droit figures rather than a separate fabricated
+  // single-cutoff mock — see the 2026-08-24 data audit on why one current number is wrong here.
   goalProgram: {
-    nameFr: "Médecine (UdeM)",
-    nameEn: "Medicine (UdeM)",
-    cutoff: 33.5,
-    sourceUrl: "https://admission.umontreal.ca/",
-    lastVerifiedAt: "2026-01-18",
+    nameFr: "Droit (UdeM)",
+    nameEn: "Law (UdeM)",
+    cutoffHistory: [
+      { year: 2024, cutoff: 31.505, figureType: "last_admitted" as const, sourceTier: "university_official" as const },
+      { year: 2024, cutoff: 33.168, figureType: "average" as const, sourceTier: "university_official" as const },
+      { year: 2024, cutoff: 38.058, figureType: "maximum" as const, sourceTier: "university_official" as const },
+    ],
+    sourceUrl: "https://admission.umontreal.ca/statistiques-dadmission-cote-r/",
+    lastVerifiedAt: "2026-08-24",
   },
 };

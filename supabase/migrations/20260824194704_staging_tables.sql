@@ -56,7 +56,7 @@ create table staging_university_programs (
   university_id uuid,
   name text not null,
   degree_type text,
-  overall_cutoff numeric,
+  -- No overall_cutoff: see the matching note on the production university_programs table.
   admission_type text check (admission_type in
     ('r_score_only','r_score_plus_interview','r_score_plus_portfolio','r_score_plus_test','other')) not null,
   source_url text not null,
@@ -106,7 +106,10 @@ create table staging_cutoff_history (
   id uuid primary key default gen_random_uuid(),
   university_program_id uuid,
   admission_year int not null,
-  cote_r_last_admitted numeric,
+  cutoff numeric not null,
+  figure_type text check (figure_type in
+    ('last_admitted','minimum_required','maximum','average','range_low','range_high')) not null,
+  source_tier text check (source_tier in ('university_official','cegep_compiled')) not null,
   source_url text not null,
   source_type text check (source_type in ('official_pdf','cegep_published','bci','other')) not null,
   verified_at date not null,

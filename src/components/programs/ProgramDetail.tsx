@@ -10,13 +10,23 @@ import { SourceStamp } from "@/components/SourceStamp";
 import { AddTargetButton } from "./AddTargetButton";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
-import type { PrerequisiteStatus, UniversityProgram } from "@/lib/sample-data";
+import type { CutoffFigureType, PrerequisiteStatus, UniversityProgram } from "@/lib/sample-data";
+import { getCutoffRange, formatRangeYears } from "@/lib/rscore/cutoff-range";
 import type { TranslationKey } from "@/lib/i18n/dictionary";
 
 const STATUS: Record<PrerequisiteStatus, { key: TranslationKey; className: string }> = {
   met: { key: "prog.met", className: "bg-moss/10 text-moss" },
   missing: { key: "prog.missing", className: "bg-ember/10 text-ember" },
   in_progress: { key: "prog.inProgress", className: "bg-ink/8 text-ink/60" },
+};
+
+const FIGURE_TYPE_KEY: Record<CutoffFigureType, TranslationKey> = {
+  last_admitted: "cutoff.figureType.last_admitted",
+  minimum_required: "cutoff.figureType.minimum_required",
+  maximum: "cutoff.figureType.maximum",
+  average: "cutoff.figureType.average",
+  range_low: "cutoff.figureType.range_low",
+  range_high: "cutoff.figureType.range_high",
 };
 
 export function ProgramDetail({
@@ -28,7 +38,8 @@ export function ProgramDetail({
 }) {
   const { t } = useLocale();
   const f = useFormat();
-  const clears = score >= program.overallCutoff;
+  const range = getCutoffRange(program.cutoffHistory);
+  const rangeLabel = range ? `${t("common.seuil")} ${formatRangeYears(range)}` : t("cutoff.unverified");
 
   return (
     <div className="flex min-h-[100dvh] flex-col bg-chalk pb-16 md:pb-0">
@@ -80,10 +91,9 @@ export function ProgramDetail({
 
           <DistributionCurve
             score={score}
-            cutoff={program.overallCutoff}
-            clears={clears}
+            range={range}
             youLabel={t("common.toi")}
-            cutoffLabel={t("common.seuil")}
+            rangeLabel={rangeLabel}
           />
           <SourceStamp
             date={program.lastVerifiedAt}
@@ -162,42 +172,37 @@ export function ProgramDetail({
           </section>
         )}
 
-        {program.cutoffHistory.length > 0 && (
-          <section className="rounded border border-ink/12 bg-paper p-4 shadow-card">
-            <h2 className="mb-3 text-[14px] font-semibold text-ink">
-              {t("prog.cutoffHistory")}
-            </h2>
-            <div className="flex items-center justify-between">
-              {program.cutoffHistory.map((entry, i) => {
-                const isLast = i === program.cutoffHistory.length - 1;
-                return (
-                  <div key={entry.year} className="flex flex-1 items-center last:flex-none">
-                    <div className="flex flex-col items-center">
-                      <span
-                        className={`text-[11.5px] ${isLast ? "font-bold text-ultramarine" : "text-ink/50"}`}
-                      >
-                        {entry.year}
-                      </span>
-                      <span
-                        className={`text-[13.5px] font-semibold tabular-nums ${
-                          isLast ? "text-ultramarine" : "text-ink"
-                        }`}
-                      >
-                        {f.score(entry.cutoff)}
-                      </span>
-                    </div>
-                    {!isLast && <div className="mx-2 h-px flex-1 bg-ink/12" />}
-                  </div>
-                );
-              })}
-            </div>
-            <SourceStamp
-              date={program.lastVerifiedAt}
-              href={program.sourceUrl}
-              className="mt-3"
-            />
-          </section>
-        )}
+        <section className="rounded border border-ink/12 bg-paper p-4 shadow-card">
+          <h2 className="mb-3 text-[14px] font-semibold text-ink">
+            {t("prog.cutoffHistory")}
+          </h2>
+          {program.cutoffHistory.length > 0 ? (
+            <ul className="flex flex-col">
+              {[...program.cutoffHistory]
+                .sort((a, b) => a.year - b.year)
+                .map((entry) => (
+                  <li
+                    key={`${entry.year}-${entry.figureType}`}
+                    className="flex items-center justify-between gap-3 border-b border-ink/10 py-2.5 last:border-b-0"
+                  >
+                    <span className="text-[12.5px] text-ink/60">
+                      {entry.year} · {t(FIGURE_TYPE_KEY[entry.figureType])}
+                    </span>
+                    <span className="text-[13.5px] font-semibold tabular-nums text-ink">
+                      {f.score(entry.cutoff)}
+                    </span>
+                  </li>
+                ))}
+            </ul>
+          ) : (
+            <p className="text-[12.5px] leading-relaxed text-ink/50">{t("cutoff.noDataYet")}</p>
+          )}
+          <SourceStamp
+            date={program.lastVerifiedAt}
+            href={program.sourceUrl}
+            className="mt-3"
+          />
+        </section>
 
         {program.professionalOrders && (
           <section className="rounded border border-ink/12 bg-paper p-4 shadow-card">

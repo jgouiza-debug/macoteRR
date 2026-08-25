@@ -14,6 +14,13 @@ import { AxisRow } from "@/components/rscore/AxisRow";
 import { SourceStamp } from "@/components/SourceStamp";
 import { DASHBOARD_SAMPLE, DEADLINES } from "@/lib/sample-data";
 import { classifySession, type ImpactBand } from "@/lib/rscore/impact";
+import {
+  getCutoffRange,
+  compareToCutoffRange,
+  formatRangeYears,
+  CUTOFF_STATUS_LABEL_KEY,
+  CUTOFF_STATUS_COLOR_CLASS,
+} from "@/lib/rscore/cutoff-range";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import type { TranslationKey } from "@/lib/i18n/dictionary";
@@ -45,7 +52,8 @@ export default function DashboardPage() {
 
   const sessionLabel = locale === "fr" ? currentSessionLabelFr : currentSessionLabelEn;
   const goalName = locale === "fr" ? goalProgram.nameFr : goalProgram.nameEn;
-  const needed = goalProgram.cutoff - currentEstimate;
+  const goalRange = getCutoffRange(goalProgram.cutoffHistory);
+  const goalStatus = compareToCutoffRange(currentEstimate, goalRange);
 
   // Local arithmetic over three rows with memoization — never a network round-trip.
   const impacts = useMemo(
@@ -195,22 +203,22 @@ export default function DashboardPage() {
           <div className="flex items-baseline justify-between gap-3 text-[13.5px]">
             <span className="font-semibold text-ink">{goalName}</span>
             <span className="text-ink/55 tabular-nums">
-              {t("dash.cutoff")} : {f.score(goalProgram.cutoff)}
+              {goalRange
+                ? `${t("cutoff.publishedRange")} ${formatRangeYears(goalRange)} : ${f.score(goalRange.low)}–${f.score(goalRange.high)}`
+                : t("cutoff.unverified")}
             </span>
           </div>
 
           {/* Position on the distribution, never a progress bar: a cote R is a rank in a
               cohort, and a bar would read the gap as a failure to fill. */}
-          <AxisRow score={currentEstimate} cutoff={goalProgram.cutoff} />
+          <AxisRow score={currentEstimate} range={goalRange} />
 
           <div className="flex justify-between text-[11.5px] text-ink/55 tabular-nums">
             <span>
               {t("dash.yourEst")} : ≈ {f.score(currentEstimate)}
             </span>
-            <span>
-              {needed > 0
-                ? `${t("dash.gap")} : ${f.score(needed)}`
-                : t("dash.reached")}
+            <span className={`font-semibold ${CUTOFF_STATUS_COLOR_CLASS[goalStatus]}`}>
+              {t(CUTOFF_STATUS_LABEL_KEY[goalStatus])}
             </span>
           </div>
           <SourceStamp date={goalProgram.lastVerifiedAt} href={goalProgram.sourceUrl} />

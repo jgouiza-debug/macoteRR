@@ -8,6 +8,7 @@ import { performance } from "node:perf_hooks";
 import { classifySession } from "../../src/lib/rscore/impact";
 import { matchBursaries } from "../../src/lib/matching/match";
 import { BURSARIES, UNIVERSITY_PROGRAMS, type UniversityProgram } from "../../src/lib/sample-data";
+import { getCutoffRange, compareToCutoffRange, CUTOFF_STATUS_ORDER } from "../../src/lib/rscore/cutoff-range";
 import { DEFAULT_PROFILE } from "../../src/lib/profile/store";
 
 export type MetricResult = {
@@ -160,22 +161,24 @@ export function benchProgramListFilter(iterations = 200): MetricResult {
     programs.push({
       ...base,
       id: `${base.id}-${i}`,
-      overallCutoff: 22 + (i % 14) * 0.9,
+      cutoffHistory: [
+        { year: 2024, cutoff: 22 + (i % 14) * 0.9, figureType: "last_admitted", sourceTier: "university_official" },
+      ],
     });
   }
 
   for (let i = 0; i < iterations; i++) {
     const t0 = performance.now();
 
-    // Map, diff calculation, tier categorization, and sort
+    // Map, range lookup, status categorization, and sort — same helpers the programs list uses.
     const rows = programs.map((p) => {
-      const diff = score - p.overallCutoff;
-      const tier = diff >= 0 ? "clears" : diff >= -1.5 ? "close" : "far";
-      return { program: p, diff, tier };
-    }).sort((a, b) => b.diff - a.diff);
+      const range = getCutoffRange(p.cutoffHistory);
+      const tier = compareToCutoffRange(score, range);
+      return { program: p, range, tier };
+    }).sort((a, b) => CUTOFF_STATUS_ORDER[a.tier] - CUTOFF_STATUS_ORDER[b.tier]);
 
     // Tier filtering
-    const targetTier = i % 3 === 0 ? "clears" : i % 3 === 1 ? "close" : "far";
+    const targetTier = i % 3 === 0 ? "above" : i % 3 === 1 ? "inside" : "below";
     void rows.filter((r) => r.tier === targetTier);
 
     simulateCpuBurn(1.5); // 4x DOM update simulation

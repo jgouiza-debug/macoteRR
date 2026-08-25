@@ -74,7 +74,7 @@ export default function EstimateScorePage() {
               onChange={(e) => update(index, "name", e.target.value)}
               placeholder={t("est.coursePlaceholder")}
               aria-label={t("est.course")}
-              className="h-12 min-w-0 flex-1 rounded border border-ink/15 bg-paper px-3 text-[15px] text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-[1.5px] focus:border-ultramarine"
+              className="h-12 min-w-0 flex-1 rounded border border-ink/15 bg-paper px-3 text-[16px] text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-[1.5px] focus:border-ultramarine"
             />
             <input
               value={row.grade}
@@ -83,7 +83,7 @@ export default function EstimateScorePage() {
               type="number"
               inputMode="numeric"
               aria-label={t("est.grade")}
-              className="h-12 w-20 rounded border border-ink/15 bg-paper px-3 text-right text-[15px] text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-[1.5px] focus:border-ultramarine tabular-nums"
+              className="h-12 w-20 rounded border border-ink/15 bg-paper px-3 text-right text-[16px] text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-[1.5px] focus:border-ultramarine tabular-nums"
             />
             <button
               type="button"

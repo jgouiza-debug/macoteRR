@@ -65,7 +65,7 @@ Next.js + TypeScript + Tailwind + Supabase project wired up, PWA manifest config
 **Done when:** a blank deploy is live at a real URL and auth (email or magic link) works against a test account.
 
 ### Phase 1: Schema and pilot data
-Run every migration from `01-data-architecture.md`. Stand up the collector scaffolding from `02-scraping-collection-plan.md`, staging tables included. Manually compile and verify Sainte-Foy's program profiles, cutoffs, and bursaries through the full staging-to-production pipeline, using the numbers already sourced in the market research doc (HEC's BAA prerequisites and floors, Sainte-Foy's bursary totals) as the seed set.
+Run every migration from `01-data-architecture.md`. Stand up the collector scaffolding from `02-scraping-collection-plan.md`, staging tables included. Manually compile and verify Sainte-Foy's program profiles, cutoffs, and bursaries through the full staging-to-production pipeline. The 2026-08-24 data audit found the market research doc's HEC BAA figures (27,5 overall / 26,5 math floor) unverifiable against HEC's current admission page — re-verify from a primary source before reusing them as a seed; Sainte-Foy's bursary totals are unaffected.
 **Done when:** querying production tables for Sainte-Foy returns real, source-linked rows for at least 5 to 10 university programs and Sainte-Foy's bursary list, and the staging-to-production promotion step has been exercised at least once by a human, not just written.
 
 ### Phase 2: Core profile and R-score engine
@@ -73,8 +73,8 @@ Student auth, profile (cegep, program, session), manual course/grade entry, and 
 **Done when:** a test student can enter grades, confirm an official cote R, and see a clearly-labeled projected estimate for a hypothetical next session that is visually distinct from the confirmed number.
 
 ### Phase 3: Program profiles and reverse lookup
-The screen for "cutoff, prerequisites, and grade floors for a target program," built against Phase 1's real data, plus the reverse view: every program a student already qualifies for today given their current score and completed prerequisites.
-**Done when:** a test student targeting HEC's BAA sees both the 27.5 overall cutoff and the separate 26.5 math floor called out distinctly, sourced and dated, and the reverse-lookup view returns a correct, real list for that same student.
+The screen for "published cutoff range, prerequisites, and grade floors for a target program," built against Phase 1's real data, plus the reverse view: every program a student already qualifies for today given their current score and completed prerequisites.
+**Done when:** a test student targeting a verified program (e.g. UdeM's Droit) sees the published low/high cutoff range with its admission year, called out distinctly and sourced, and the reverse-lookup view returns a correct, real list for that same student. Never a single current-year cutoff number — see the 2026-08-24 data audit and `src/lib/rscore/cutoff-range.ts`.
 
 ### Phase 4: Bursary directory and matching
 Build per `03-bursary-matching-system.md` exactly: the three-tier matching query, the "why this matched" chips, self-tags in the profile screen.

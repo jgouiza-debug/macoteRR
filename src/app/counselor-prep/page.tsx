@@ -7,7 +7,8 @@ const PrintButton = dynamic(
   () => import("@/components/PrintButton").then((mod) => mod.PrintButton),
 );
 import { STUDENT_SAMPLE, UNIVERSITY_PROGRAMS, DASHBOARD_SAMPLE } from "@/lib/sample-data";
-import { formatScore, formatSignedScore } from "@/lib/format";
+import { formatScore } from "@/lib/format";
+import { getCutoffRange, compareToCutoffRange, formatRangeYears } from "@/lib/rscore/cutoff-range";
 
 const TARGET_PROGRAM_IDS = ["hec-baa", "poly-genie-logiciel"];
 
@@ -98,15 +99,24 @@ export default function CounselorPrepPage() {
             <thead>
               <tr className="border-b border-ink/15 text-[10.5px] font-semibold uppercase tracking-wider text-ink/50">
                 <th className="py-2">Programme</th>
-                <th className="py-2">Seuil</th>
-                <th className="py-2 text-right">Écart</th>
+                <th className="py-2">Cotes publiées</th>
                 <th className="py-2 text-right">Statut</th>
               </tr>
             </thead>
             <tbody>
               {targets.map((program) => {
-                const diff = score - program.overallCutoff;
-                const clears = diff >= 0;
+                const range = getCutoffRange(program.cutoffHistory);
+                const status = compareToCutoffRange(score, range);
+                const label =
+                  status === "above"
+                    ? "Au-dessus"
+                    : status === "inside"
+                      ? "Dans la fourchette"
+                      : status === "below"
+                        ? "En dessous"
+                        : "Non vérifié";
+                const color =
+                  status === "above" ? "text-moss" : status === "below" ? "text-ember" : status === "inside" ? "text-ultramarine" : "text-ink/40";
                 return (
                   <tr key={program.id} className="border-b border-ink/10">
                     <td className="py-3">
@@ -115,27 +125,18 @@ export default function CounselorPrepPage() {
                       <SourceStamp date={program.lastVerifiedAt} href={program.sourceUrl} />
                     </td>
                     <td className="py-3 tabular-nums text-ink/70">
-                      {formatScore(program.overallCutoff, "fr")}
-                    </td>
-                    <td
-                      className={`py-3 text-right font-semibold tabular-nums ${
-                        clears ? "text-moss" : "text-ember"
-                      }`}
-                    >
-                      {formatSignedScore(diff, "fr")}
+                      {range
+                        ? `${formatScore(range.low, "fr")}–${formatScore(range.high, "fr")} (${formatRangeYears(range)})`
+                        : "—"}
                     </td>
                     <td className="py-3 text-right">
-                      <span
-                        className={`inline-flex items-center gap-1 text-[11.5px] font-semibold ${
-                          clears ? "text-moss" : "text-ember"
-                        }`}
-                      >
-                        {clears ? (
+                      <span className={`inline-flex items-center gap-1 text-[11.5px] font-semibold ${color}`}>
+                        {status === "above" ? (
                           <CheckCircle2 className="h-4 w-4" />
                         ) : (
                           <TriangleAlert className="h-4 w-4" />
                         )}
-                        {clears ? "Seuil atteint" : "Sous le seuil"}
+                        {label}
                       </span>
                     </td>
                   </tr>

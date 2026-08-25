@@ -17,6 +17,8 @@ import type {
   BursaryCategory,
   BursaryDeadlineType,
   CegepProgramType,
+  CutoffFigureType,
+  CutoffSourceTier,
   CutoffSourceType,
   GradeFloorType,
 } from "@/lib/db/database.types";
@@ -34,7 +36,6 @@ type CutoffsFile = {
     university_short_code: string;
     name: string;
     degree_type: string | null;
-    overall_cutoff: number | null;
     admission_type: AdmissionType;
     source_url: string;
     last_verified_at: string;
@@ -48,7 +49,9 @@ type CutoffsFile = {
     }[];
     cutoff_history: {
       admission_year: number;
-      cote_r_last_admitted: number | null;
+      cutoff: number;
+      figure_type: CutoffFigureType;
+      source_tier: CutoffSourceTier;
       source_url: string;
       source_type: CutoffSourceType;
       verified_at: string;
@@ -144,7 +147,9 @@ async function main() {
   const allHistoryRows: Array<{
     university_program_id: string;
     admission_year: number;
-    cote_r_last_admitted: number | null;
+    cutoff: number;
+    figure_type: CutoffFigureType;
+    source_tier: CutoffSourceTier;
     source_url: string;
     source_type: CutoffSourceType;
     verified_at: string;
@@ -173,7 +178,6 @@ async function main() {
           university_id: university.id,
           name: program.name,
           degree_type: program.degree_type,
-          overall_cutoff: program.overall_cutoff,
           admission_type: program.admission_type,
           source_url: program.source_url,
           last_verified_at: program.last_verified_at,
@@ -236,7 +240,9 @@ async function main() {
         allHistoryRows.push({
           university_program_id: stagingProgram.id,
           admission_year: entry.admission_year,
-          cote_r_last_admitted: entry.cote_r_last_admitted,
+          cutoff: entry.cutoff,
+          figure_type: entry.figure_type,
+          source_tier: entry.source_tier,
           source_url: entry.source_url,
           source_type: entry.source_type,
           verified_at: entry.verified_at,

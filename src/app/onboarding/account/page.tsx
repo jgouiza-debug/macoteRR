@@ -23,7 +23,7 @@ export default function AccountPage() {
   }
 
   return (
-    <ScreenShell backHref="/onboarding/cegep">
+    <ScreenShell backHref="/onboarding/program">
       <ScreenHeading title={t("account.title")} body={t("account.body")} />
 
       <label

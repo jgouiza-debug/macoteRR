@@ -22,6 +22,8 @@ const eslintConfig = defineConfig([
     // Serwist's generated, bundled service worker (built from src/app/sw.ts).
     "public/sw.js",
     "public/swe-worker-*.js",
+    // Native Xcode project (Capacitor) — vendored Pods and a synced copy of public/, not source.
+    "ios/**",
   ]),
 ]);
 

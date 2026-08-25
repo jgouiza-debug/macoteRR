@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { Capacitor } from "@capacitor/core";
 import { Share, PlusSquare, Check, X } from "lucide-react";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
@@ -14,6 +15,9 @@ export function IosInstallGuide() {
   useEffect(() => {
     // Only run in client browser
     if (typeof window === "undefined") return;
+
+    // Already the native app shell — "add to home screen" makes no sense here.
+    if (Capacitor.isNativePlatform()) return;
 
     // Check if running on iOS (iPhone / iPad / iPod)
     const userAgent = window.navigator.userAgent.toLowerCase();

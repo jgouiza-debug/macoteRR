@@ -2,6 +2,7 @@
 
 import { useCallback, useSyncExternalStore, useEffect } from "react";
 import type { SelfTagId } from "@/lib/tags/taxonomy";
+import type { InterestId } from "@/lib/tags/interests";
 import { idbSet } from "@/lib/data/indexed-db";
 
 /**
@@ -21,6 +22,7 @@ export type StudentProfile = {
   rScoreStatus: "confirmed" | "estimated" | null;
   selfTags: SelfTagId[];
   targetUniversityProgramIds: string[];
+  interestIds: InterestId[];
 };
 
 export type MutationRecord = {
@@ -43,6 +45,7 @@ export const DEFAULT_PROFILE: StudentProfile = {
   rScoreStatus: "estimated",
   selfTags: ["volunteering"],
   targetUniversityProgramIds: ["hec-baa"],
+  interestIds: [],
 };
 
 const listeners = new Set<() => void>();

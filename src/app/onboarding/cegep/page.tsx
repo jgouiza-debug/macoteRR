@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 import { Search, Check } from "lucide-react";
 import { ScreenShell, ScreenHeading } from "@/components/onboarding/ScreenShell";
 import { CEGEPS } from "@/lib/sample-data";
+import { useStudentProfile } from "@/lib/profile/store";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 export default function CegepPickerPage() {
   const router = useRouter();
   const { t } = useLocale();
+  const { update } = useStudentProfile();
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -20,8 +22,9 @@ export default function CegepPickerPage() {
 
   function choose(id: string) {
     setSelected(id);
+    update({ cegepId: id });
     // Give the selected state a beat to paint before leaving, so the tap reads as confirmed.
-    window.setTimeout(() => router.push("/onboarding/account"), 180);
+    window.setTimeout(() => router.push("/onboarding/program"), 180);
   }
 
   return (
@@ -30,7 +33,7 @@ export default function CegepPickerPage() {
       footer={
         <button
           type="button"
-          onClick={() => router.push("/onboarding/account")}
+          onClick={() => router.push("/onboarding/program")}
           className="h-12 w-full text-[14px] font-semibold text-ink/60"
         >
           {t("common.skip")}
@@ -47,7 +50,7 @@ export default function CegepPickerPage() {
           aria-label={t("cegep.search")}
           placeholder={t("cegep.search")}
           autoComplete="off"
-          className="h-[52px] w-full rounded border border-ink/15 bg-paper pl-11 pr-4 text-[15px] text-ink outline-none transition-colors placeholder:text-ink/40 focus:border-[1.5px] focus:border-ultramarine"
+          className="h-[52px] w-full rounded border border-ink/15 bg-paper pl-11 pr-4 text-[16px] text-ink outline-none transition-colors placeholder:text-ink/40 focus:border-[1.5px] focus:border-ultramarine"
         />
       </div>
 
