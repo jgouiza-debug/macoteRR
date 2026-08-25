@@ -15,7 +15,10 @@ export default function KnowYourScorePage() {
       <div className="flex flex-col gap-3">
         <Link
           href="/onboarding/score/confirm"
-          className="flex min-h-[64px] items-center justify-between gap-3 rounded border-[1.5px] border-ultramarine bg-ultramarine/[0.07] px-4 py-3.5 text-[15px] font-semibold text-ultramarine transition-transform active:scale-[0.99]"
+          // No ultramarine tint fill here: `border-ultramarine bg-ultramarine/[0.07]` is what
+          // "selected" looks like in the DEC picker, so reusing it for merely "recommended"
+          // made this read as a choice already made. Border + text carry the emphasis instead.
+          className="flex min-h-[64px] items-center justify-between gap-3 rounded border-[1.5px] border-ultramarine bg-paper px-4 py-3.5 text-[15px] font-semibold text-ultramarine transition-transform active:scale-[0.99]"
         >
           {t("bif.yes")}
           <ChevronRight className="h-5 w-5 flex-shrink-0" />
@@ -30,7 +33,9 @@ export default function KnowYourScorePage() {
         </Link>
       </div>
 
-      <div className="mt-auto flex justify-center py-8">
+      {/* Not mt-auto: that consumed all the free space and stranded the two choices at the
+          top of the screen, defeating ScreenShell's vertical centring. */}
+      <div className="flex justify-center pt-8">
         <Link
           href="/programs"
           className="max-w-[220px] text-center text-[14px] font-semibold leading-snug text-ultramarine"

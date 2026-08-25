@@ -77,6 +77,7 @@ export const DICTIONARY = {
     "est.addCourse": "Ajouter un cours",
     "est.remove": "Supprimer ce cours",
     "est.current": "Estimation actuelle",
+    "est.needsGrade": "Entre au moins une note pour continuer.",
     "est.cta": "Estimer ma cote",
     "est.caveat":
       "Ceci est une estimation approximative. Ta vraie cote R dépend de la force de ton groupe, une donnée que seuls les cégeps et le BCI possèdent.",
@@ -131,6 +132,8 @@ export const DICTIONARY = {
     "account.deleteError": "Impossible de supprimer le compte. Réessaie dans un instant.",
 
     "dash.estimateTitle": "Estimation actuelle de ta cote R",
+    "dash.confirmedTitle": "Ta cote R confirmée",
+    "dash.yourScore": "Ta cote",
     "dash.estimateBasis": "Basée sur la session",
     "dash.estimated": "ESTIMATION",
     "dash.confirmed": "CONFIRMÉE",
@@ -146,6 +149,8 @@ export const DICTIONARY = {
     "dash.low": "FAIBLE",
     "dash.importantDates": "Dates importantes",
     "dash.tomorrow": "DEMAIN",
+    "dash.today": "AUJOURD'HUI",
+    "dash.inDays": "DANS {n} JOURS",
     "dash.programGoal": "Objectifs programme",
     "dash.noGoals": "Aucun programme ciblé pour l'instant.",
     "dash.addGoal": "Explorer les programmes",
@@ -337,6 +342,7 @@ export const DICTIONARY = {
     "est.addCourse": "Add a course",
     "est.remove": "Remove this course",
     "est.current": "Current estimate",
+    "est.needsGrade": "Enter at least one grade to continue.",
     "est.cta": "Estimate my score",
     "est.caveat":
       "This is a rough estimate. Your real R-score depends on the strength of your group — data only cégeps and the BCI hold.",
@@ -391,6 +397,8 @@ export const DICTIONARY = {
     "account.deleteError": "Couldn't delete the account. Try again in a moment.",
 
     "dash.estimateTitle": "Current R-Score Estimate",
+    "dash.confirmedTitle": "Your confirmed R-score",
+    "dash.yourScore": "Your score",
     "dash.estimateBasis": "Based on",
     "dash.estimated": "ESTIMATED",
     "dash.confirmed": "CONFIRMED",
@@ -406,6 +414,8 @@ export const DICTIONARY = {
     "dash.low": "LOW",
     "dash.importantDates": "Important Dates",
     "dash.tomorrow": "TOMORROW",
+    "dash.today": "TODAY",
+    "dash.inDays": "IN {n} DAYS",
     "dash.programGoal": "Program goals",
     "dash.noGoals": "No target programs yet.",
     "dash.addGoal": "Explore programs",

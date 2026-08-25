@@ -3,7 +3,7 @@
 import { useEffect, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { CalendarDays, TrendingUp } from "lucide-react";
+import { BadgeCheck, CalendarDays, TrendingUp } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { AxisRow } from "@/components/rscore/AxisRow";
 import { SourceStamp } from "@/components/SourceStamp";
@@ -18,6 +18,18 @@ import {
 } from "@/lib/rscore/cutoff-range";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+
+/** Highlight a deadline in ember only when it's genuinely imminent. */
+const URGENT_WITHIN_DAYS = 14;
+
+/** Whole days from today to an ISO date, comparing calendar days in local time. */
+function daysUntil(iso: string): number | null {
+  const target = new Date(`${iso}T00:00:00`);
+  if (Number.isNaN(target.getTime())) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return Math.round((target.getTime() - today.getTime()) / 86_400_000);
+}
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -55,6 +67,7 @@ export default function DashboardPage() {
     );
   }
 
+  const isConfirmed = profile.rScoreStatus === "confirmed";
   const cegep = CEGEPS.find((c) => c.id === profile.cegepId);
   const cegepProgram = CEGEP_PROGRAMS.find((p) => p.id === profile.cegepProgramId);
   const targets = UNIVERSITY_PROGRAMS.filter((p) => profile.targetUniversityProgramIds.includes(p.id));
@@ -64,20 +77,34 @@ export default function DashboardPage() {
       <div className="mx-auto flex w-full max-w-[480px] flex-col gap-7 px-4 py-6">
         <section className="flex flex-col items-center gap-1 rounded border border-ink/12 bg-paper px-5 py-6 text-center shadow-card">
           <h1 className="font-display text-[17px] font-bold text-ink">
-            {t("dash.estimateTitle")}
+            {/* The heading has to track the actual status: it read "Estimation actuelle"
+                above a badge saying CONFIRMÉE, which is exactly the confirmed-vs-estimated
+                ambiguity this product treats as non-negotiable. */}
+            {t(isConfirmed ? "dash.confirmedTitle" : "dash.estimateTitle")}
           </h1>
           {(cegep || cegepProgram) && (
             <p className="text-[12.5px] text-ink/50">
               {[cegep?.name, cegepProgram?.name].filter(Boolean).join(" · ")}
             </p>
           )}
-          <div className="mt-4 flex min-w-[180px] flex-col items-center gap-1 rounded border border-dashed border-moss/60 px-5 py-3">
+          {/* Dashed frame + ≈ + trending icon are the "this is an estimate" tell. A
+              confirmed score is a fact from the student's cégep and gets a solid frame and a
+              check, so the two can never be mistaken for each other at a glance. */}
+          <div
+            className={`mt-4 flex min-w-[180px] flex-col items-center gap-1 rounded border px-5 py-3 ${
+              isConfirmed ? "border-moss/60" : "border-dashed border-moss/60"
+            }`}
+          >
             <span className="flex items-center gap-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-moss">
-              <TrendingUp className="h-3.5 w-3.5" />
-              {t(profile.rScoreStatus === "confirmed" ? "dash.confirmed" : "dash.estimated")}
+              {isConfirmed ? (
+                <BadgeCheck className="h-3.5 w-3.5" />
+              ) : (
+                <TrendingUp className="h-3.5 w-3.5" />
+              )}
+              {t(isConfirmed ? "dash.confirmed" : "dash.estimated")}
             </span>
             <span className="font-display text-[40px] font-extrabold leading-none tracking-tight text-ultramarine tabular-nums">
-              {profile.rScoreStatus === "estimated" && "≈ "}
+              {!isConfirmed && "≈ "}
               {f.score(profile.rScore, 2)}
             </span>
           </div>
@@ -119,7 +146,7 @@ export default function DashboardPage() {
 
                   <div className="flex justify-between text-[11.5px] text-ink/55 tabular-nums">
                     <span>
-                      {t("dash.yourEst")} : {profile.rScoreStatus === "estimated" && "≈ "}
+                      {t(isConfirmed ? "dash.yourScore" : "dash.yourEst")} : {!isConfirmed && "≈ "}
                       {f.score(profile.rScore as number)}
                     </span>
                     <span className={`font-semibold ${CUTOFF_STATUS_COLOR_CLASS[status]}`}>
@@ -139,20 +166,34 @@ export default function DashboardPage() {
             {t("dash.importantDates")}
           </h2>
           <ul className="relative flex flex-col gap-5 before:absolute before:bottom-2 before:left-[5px] before:top-2 before:w-px before:bg-ink/12">
-            {DEADLINES.map((d) => (
+            {DEADLINES.map((d) => {
+              // Urgency is DERIVED from today's date, not read from a hardcoded `urgent`
+              // flag — that flag was rendering "13 novembre — DEMAIN" in August. Telling a
+              // student a deadline is tomorrow when it is months away is worse than silence.
+              const days = daysUntil(d.dateIso);
+              const isSoon = days !== null && days >= 0 && days <= URGENT_WITHIN_DAYS;
+              const relative =
+                days === null || !isSoon
+                  ? null
+                  : days === 0
+                    ? t("dash.today")
+                    : days === 1
+                      ? t("dash.tomorrow")
+                      : t("dash.inDays").replace("{n}", String(days));
+              return (
               <li key={d.id} className="relative pl-6">
                 <span
                   className={`absolute left-0 top-1 h-2.5 w-2.5 rounded-full ring-4 ring-paper ${
-                    d.urgent ? "bg-ember" : "bg-ultramarine"
+                    isSoon ? "bg-ember" : "bg-ultramarine"
                   }`}
                 />
                 <div
                   className={`text-[11.5px] font-semibold ${
-                    d.urgent ? "text-ember" : "text-ink/50"
+                    isSoon ? "text-ember" : "text-ink/50"
                   }`}
                 >
                   {f.date(d.dateIso)}
-                  {d.urgent && ` — ${t("dash.tomorrow")}`}
+                  {relative && ` — ${relative}`}
                 </div>
                 <div className="mt-0.5 text-[14px] font-semibold text-ink">
                   {locale === "fr" ? d.titleFr : d.titleEn}
@@ -166,7 +207,8 @@ export default function DashboardPage() {
                   className="mt-1"
                 />
               </li>
-            ))}
+              );
+            })}
           </ul>
         </section>
       </div>

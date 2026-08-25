@@ -10,7 +10,10 @@ export default function ConfirmScorePage() {
   const router = useRouter();
   const { t } = useLocale();
   const { update } = useStudentProfile();
-  const [value, setValue] = useState("28,4");
+  // Starts EMPTY. It used to default to "28,4", which meant a student could tap straight
+  // through and get results for a number that was never theirs — in a product whose whole
+  // premise is not showing people figures they can't trust.
+  const [value, setValue] = useState("");
   const [touched, setTouched] = useState(false);
 
   const numeric = Number(value.replace(",", "."));
@@ -64,9 +67,11 @@ export default function ConfirmScorePage() {
           onKeyDown={(e) => e.key === "Enter" && submit()}
           inputMode="decimal"
           autoComplete="off"
+          autoFocus
+          placeholder="28,4"
           aria-invalid={showError}
           aria-describedby="cote-r-help"
-          className="w-full bg-transparent font-display text-[40px] font-bold leading-tight tracking-tight text-ink outline-none tabular-nums"
+          className="w-full bg-transparent font-display text-[40px] font-bold leading-tight tracking-tight text-ink outline-none tabular-nums placeholder:text-ink/20"
         />
       </label>
 

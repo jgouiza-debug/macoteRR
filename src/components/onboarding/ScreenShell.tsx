@@ -19,7 +19,10 @@ export function ScreenShell({
   return (
     <div className="flex min-h-[100dvh] flex-col bg-chalk">
       <OnboardingTopBar backHref={backHref} brand={brand} />
-      <main className="mx-auto flex w-full max-w-[430px] flex-1 flex-col px-5 pt-2">
+      {/* justify-center pulls short funnel screens (two choices, one input) into the optical
+          centre instead of stranding them at the top above ~900px of empty chalk. Long
+          screens overflow past centre and scroll normally, so this costs them nothing. */}
+      <main className="mx-auto flex w-full max-w-[430px] flex-1 flex-col justify-center px-5 pt-2">
         {children}
       </main>
       {footer && (

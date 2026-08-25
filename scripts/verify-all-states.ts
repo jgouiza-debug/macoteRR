@@ -85,8 +85,12 @@ async function main() {
   // Dispatch beforeinstallprompt event
   await page4.evaluate(() => {
     const event = new CustomEvent("beforeinstallprompt", { cancelable: true });
-    (event as any).prompt = async () => {};
-    (event as any).userChoice = Promise.resolve({ outcome: "accepted", platform: "web" });
+    const installEvent = event as Event & {
+      prompt: () => Promise<void>;
+      userChoice: Promise<{ outcome: string; platform: string }>;
+    };
+    installEvent.prompt = async () => {};
+    installEvent.userChoice = Promise.resolve({ outcome: "accepted", platform: "web" });
     window.dispatchEvent(event);
   });
   await page4.waitForTimeout(300);
@@ -118,7 +122,7 @@ async function main() {
         dispatchEvent: () => true,
       }),
     });
-    (navigator as any).standalone = true;
+    (navigator as Navigator & { standalone?: boolean }).standalone = true;
   });
   await page5.goto(TARGET_URL, { waitUntil: "networkidle" });
   await page5.screenshot({

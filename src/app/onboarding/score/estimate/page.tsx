@@ -54,13 +54,17 @@ export default function EstimateScorePage() {
       backHref="/onboarding/score"
       footer={
         <div className="flex flex-col items-center gap-2.5">
-          {grades.length > 0 && (
+          {/* The CTA is disabled until at least one grade exists. Saying so beats leaving a
+              student tapping a dimmed button with no idea what it wants from them. */}
+          {grades.length > 0 ? (
             <p className="text-[12.5px] text-ink/60">
               {t("est.current")} :{" "}
               <span className="font-display font-bold text-ink tabular-nums">
                 ≈ {f.score(estimate)}
               </span>
             </p>
+          ) : (
+            <p className="text-[12.5px] text-ink/50">{t("est.needsGrade")}</p>
           )}
           <button
             type="button"
@@ -99,7 +103,7 @@ export default function EstimateScorePage() {
               aria-label={t("est.remove")}
               onClick={() => setRows((prev) => prev.filter((_, i) => i !== index))}
               disabled={rows.length <= 1}
-              className="flex h-10 w-8 flex-shrink-0 items-center justify-center text-ink/35 transition-colors active:text-ember disabled:opacity-30"
+              className="flex h-11 w-11 flex-shrink-0 items-center justify-center text-ink/35 transition-colors active:text-ember disabled:opacity-30"
             >
               <X className="h-[18px] w-[18px]" />
             </button>
