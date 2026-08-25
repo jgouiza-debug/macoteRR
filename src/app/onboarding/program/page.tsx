@@ -2,11 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Check, ChevronRight } from "lucide-react";
+import { Search, Check, ChevronRight, ExternalLink } from "lucide-react";
 import { ScreenShell, ScreenHeading } from "@/components/onboarding/ScreenShell";
 import { CEGEP_PROGRAMS, UNIVERSITY_PROGRAMS } from "@/lib/sample-data";
 import { INTERESTS, type InterestId } from "@/lib/tags/interests";
 import { INTEREST_QUIZ, tallyInterests } from "@/lib/matching/interest-quiz";
+import { suggestUniversityProgramsForCegepProgram } from "@/lib/matching/program-suggestions";
 import { useStudentProfile } from "@/lib/profile/store";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
@@ -31,6 +32,12 @@ export default function GoalPage() {
   const [quizIndex, setQuizIndex] = useState(0);
   const [quizPicks, setQuizPicks] = useState<InterestId[]>([]);
   const [fromQuiz, setFromQuiz] = useState(false);
+
+  const selectedDec = CEGEP_PROGRAMS.find((p) => p.id === cegepProgramId);
+  const catalogSuggestions = useMemo(
+    () => (selectedDec ? suggestUniversityProgramsForCegepProgram(selectedDec.name, 5) : []),
+    [selectedDec],
+  );
 
   const filteredPrograms = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -214,6 +221,36 @@ export default function GoalPage() {
             <ChevronRight className="h-5 w-5 flex-shrink-0" />
           </button>
         </div>
+
+        {catalogSuggestions.length > 0 && (
+          <div className="mt-6 flex flex-col gap-2.5">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-ink/45">
+              {t("goal.catalogSuggestions")}
+            </p>
+            {catalogSuggestions.map(({ item, sharedWords }) => (
+              <a
+                key={`${item.institution}-${item.programName}`}
+                href={item.sourceUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="flex items-start justify-between gap-3 rounded border border-ink/15 bg-paper px-4 py-3 text-left transition-transform active:scale-[0.99]"
+              >
+                <span>
+                  <span className="block text-[13.5px] font-semibold text-ink">
+                    {item.programName}
+                  </span>
+                  <span className="block text-[11.5px] text-ink/50">
+                    {item.institution} · {t("goal.matchedOn")} {sharedWords.join(", ")}
+                  </span>
+                </span>
+                <ExternalLink className="mt-0.5 h-4 w-4 flex-shrink-0 text-ink/40" />
+              </a>
+            ))}
+            <p className="text-[11px] leading-relaxed text-ink/45">
+              {t("goal.catalogSuggestionsCaveat")}
+            </p>
+          </div>
+        )}
       </ScreenShell>
     );
   }

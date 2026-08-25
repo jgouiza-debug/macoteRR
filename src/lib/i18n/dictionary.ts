@@ -110,6 +110,10 @@ export const DICTIONARY = {
     "goal.noDec": "Aucun programme trouvé. Ce catalogue est partiel.",
     "goal.decPreUniversity": "Préuniversitaire",
     "goal.decTechnical": "Technique",
+    "goal.catalogSuggestions": "Programmes universitaires liés à ce DEC",
+    "goal.matchedOn": "lien :",
+    "goal.catalogSuggestionsCaveat":
+      "Suggestions basées sur les mots des titres de programmes, pas une évaluation d'admissibilité. Vérifie chaque programme sur le site de l'université.",
 
     "account.title": "Garde ta progression",
     "account.body":
@@ -379,6 +383,10 @@ export const DICTIONARY = {
     "goal.noDec": "No program found. This catalogue is partial.",
     "goal.decPreUniversity": "Pre-university",
     "goal.decTechnical": "Technical",
+    "goal.catalogSuggestions": "University programs related to this DEC",
+    "goal.matchedOn": "matched on:",
+    "goal.catalogSuggestionsCaveat":
+      "Suggestions based on shared words in program titles, not an eligibility assessment. Verify each program on the university's site.",
 
     "account.title": "Keep your progress",
     "account.body":

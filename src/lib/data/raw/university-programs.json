@@ -1,0 +1,827 @@
+[
+    {
+        "university_name": "Université de Montréal",
+        "programs": [
+            {
+                "program_name": "Aménagement",
+                "url": "https://admission.umontreal.ca/programmes/amenagement/"
+            },
+            {
+                "program_name": "Arts et musique",
+                "url": "https://admission.umontreal.ca/programmes/arts-et-musique/"
+            },
+            {
+                "program_name": "Communication",
+                "url": "https://admission.umontreal.ca/programmes/communication/"
+            },
+            {
+                "program_name": "Droit",
+                "url": "https://admission.umontreal.ca/programmes/droit/"
+            },
+            {
+                "program_name": "Économie et politique",
+                "url": "https://admission.umontreal.ca/programmes/economie-et-politique/"
+            },
+            {
+                "program_name": "Enseignement et sciences de l'éducation",
+                "url": "https://admission.umontreal.ca/programmes/enseignement-et-education/"
+            },
+            {
+                "program_name": "Environnement et développement durable",
+                "url": "https://admission.umontreal.ca/programmes/environnement-et-developpement-durable/"
+            },
+            {
+                "program_name": "Lettres et langues",
+                "url": "https://admission.umontreal.ca/programmes/lettres-et-langues/"
+            },
+            {
+                "program_name": "Programmes individualisés",
+                "url": "https://admission.umontreal.ca/programmes/individualises/"
+            },
+            {
+                "program_name": "Sciences de l'administration et gestion",
+                "url": "https://admission.umontreal.ca/programmes/sciences-de-ladministration-et-gestion/"
+            },
+            {
+                "program_name": "Sciences de la santé",
+                "url": "https://admission.umontreal.ca/programmes/sciences-de-la-sante/"
+            },
+            {
+                "program_name": "Sciences de la vie",
+                "url": "https://admission.umontreal.ca/programmes/sciences-de-la-vie/"
+            },
+            {
+                "program_name": "Sciences humaines",
+                "url": "https://admission.umontreal.ca/programmes/sciences-humaines/"
+            },
+            {
+                "program_name": "Sciences pures et sciences appliquées",
+                "url": "https://admission.umontreal.ca/programmes/sciences-pures-et-sciences-appliquees/"
+            },
+            {
+                "program_name": "Sciences sociales",
+                "url": "https://admission.umontreal.ca/programmes/sciences-sociales/"
+            },
+            {
+                "program_name": "Sciences sociales : intervention",
+                "url": "https://admission.umontreal.ca/programmes/sciences-sociales-intervention/"
+            },
+            {
+                "program_name": "Technologies de l'information et des communications",
+                "url": "https://admission.umontreal.ca/programmes/technologie-de-linformation-et-des-communications/"
+            },
+            {
+                "program_name": "Théologie et sciences des religions",
+                "url": "https://admission.umontreal.ca/programmes/theologie-et-sciences-des-religions/"
+            },
+            {
+                "program_name": "Sciences de l’administration et gestion",
+                "url": "https://admission.umontreal.ca/programmes/sciences-de-ladministration-et-gestion/"
+            },
+            {
+                "program_name": "Technologies de l’information et des communications",
+                "url": "https://admission.umontreal.ca/programmes/technologie-de-linformation-et-des-communications/"
+            }
+        ]
+    },
+    {
+        "university_name": "Concordia University",
+        "programs": [
+            {
+                "program_name": "Undergraduate Calendar",
+                "url": "https://www.concordia.ca/academics/undergraduate/calendar.html"
+            },
+            {
+                "program_name": "Accountancy (BComm)",
+                "url": "https://www.concordia.ca/academics/undergraduate/accountancy.html"
+            },
+            {
+                "program_name": "View program details",
+                "url": "https://www.concordia.ca/academics/undergraduate/etudes-francaises.html"
+            },
+            {
+                "program_name": "Accountancy (Cert)",
+                "url": "https://www.concordia.ca/academics/undergraduate/accountancy-cert.html"
+            },
+            {
+                "program_name": "Acting for the Theatre (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/acting-theatre.html"
+            },
+            {
+                "program_name": "Actuarial Mathematics (BA, BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/actuarial-mathematics.html"
+            },
+            {
+                "program_name": "Actuarial Mathematics/Finance (BA, BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/actuarial-mathematics-finance.html"
+            },
+            {
+                "program_name": "Adult Education (Cert)",
+                "url": "https://www.concordia.ca/academics/undergraduate/adult-education.html"
+            },
+            {
+                "program_name": "Aerospace Engineering (BEng)",
+                "url": "https://www.concordia.ca/academics/undergraduate/aerospace-engineering.html"
+            },
+            {
+                "program_name": "Anthropology (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/anthropology.html"
+            },
+            {
+                "program_name": "Anthropology and Sociology (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/anthropology-and-sociology.html"
+            },
+            {
+                "program_name": "Art Education â Visual Arts (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/art-education.html"
+            },
+            {
+                "program_name": "Art History (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/art-history.html"
+            },
+            {
+                "program_name": "Art History and Film Studies (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/art-history-filmstudiesbfa.html"
+            },
+            {
+                "program_name": "Art History and Studio Art (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/art-history-studio-art.html"
+            },
+            {
+                "program_name": "Arts and Science (Cert)",
+                "url": "https://www.concordia.ca/academics/undergraduate/arts-science.html"
+            },
+            {
+                "program_name": "Assurance, Fraud Prevention and Investigative Services",
+                "url": "https://www.concordia.ca/academics/undergraduate/assurance-fraud-prevention.html"
+            },
+            {
+                "program_name": "Athletic Therapy (BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/athletic-therapy.html"
+            },
+            {
+                "program_name": "Biochemistry (BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/biochemistry.html"
+            },
+            {
+                "program_name": "Biology (BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/biology.html"
+            },
+            {
+                "program_name": "Biophysics",
+                "url": "https://www.concordia.ca/academics/undergraduate/biophysics.html"
+            },
+            {
+                "program_name": "Black and African Diaspora Studies in the Canadian Context (Cert)",
+                "url": "https://www.concordia.ca/academics/undergraduate/black-african-diaspora-studies.html"
+            },
+            {
+                "program_name": "Building Engineering (BEng)",
+                "url": "https://www.concordia.ca/academics/undergraduate/building-engineering.html"
+            },
+            {
+                "program_name": "Business Analytics (BComm)",
+                "url": "https://www.concordia.ca/academics/undergraduate/business-analytics.html"
+            },
+            {
+                "program_name": "Business Studies (Cert)",
+                "url": "https://www.concordia.ca/academics/undergraduate/business-studies.html"
+            },
+            {
+                "program_name": "Business Technology Management (BComm)",
+                "url": "https://www.concordia.ca/academics/undergraduate/business-technology-management.html"
+            },
+            {
+                "program_name": "Cell and Molecular Biology (BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/cell-molecular-biology.html"
+            },
+            {
+                "program_name": "Ceramics (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/ceramics.html"
+            },
+            {
+                "program_name": "Chemical Engineering (BEng)",
+                "url": "https://www.concordia.ca/academics/undergraduate/chemical-engineering.html"
+            },
+            {
+                "program_name": "Chemistry (BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/chemistry.html"
+            },
+            {
+                "program_name": "Child Studies (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/child-studies.html"
+            },
+            {
+                "program_name": "Civil Engineering (BEng)",
+                "url": "https://www.concordia.ca/academics/undergraduate/civil-engineering.html"
+            },
+            {
+                "program_name": "Classics (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/classics.html"
+            },
+            {
+                "program_name": "Communication and Cultural Studies (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/communication-cultural-studies.html"
+            },
+            {
+                "program_name": "Communication Studies (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/communication-studies.html"
+            },
+            {
+                "program_name": "Community and Organizational Leadership (Cert)",
+                "url": "https://www.concordia.ca/academics/undergraduate/community-organizational-leadership.html"
+            },
+            {
+                "program_name": "Community, Public Affairs and Policy Studies (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/community-public-affairs-policy-studies.html"
+            },
+            {
+                "program_name": "Computation Arts (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/computation-arts.html"
+            },
+            {
+                "program_name": "Computation Arts - Computer Science (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/comp-arts-computer-science.html"
+            },
+            {
+                "program_name": "Computational Physics (Microprogram)",
+                "url": "https://www.concordia.ca/academics/undergraduate/computational-physics.html"
+            },
+            {
+                "program_name": "Computer Engineering (BEng)",
+                "url": "https://www.concordia.ca/academics/undergraduate/computer-engineering.html"
+            },
+            {
+                "program_name": "Computer Science",
+                "url": "https://www.concordia.ca/academics/undergraduate/computer-science-minor.html"
+            },
+            {
+                "program_name": "Computer Science (BCompSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/computer-science.html"
+            },
+            {
+                "program_name": "Computer Science - Computation Arts (BCompSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/computer-science-comp-arts.html"
+            },
+            {
+                "program_name": "Contemporary Dance (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/contemporary-dance.html"
+            },
+            {
+                "program_name": "Creative Writing (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/creative-writing.html"
+            },
+            {
+                "program_name": "Cybersecurity (BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/cybersecurity.html"
+            },
+            {
+                "program_name": "Cybersecurity Engineering (BEng)",
+                "url": "https://www.concordia.ca/academics/undergraduate/cybersecurity-engineering.html"
+            },
+            {
+                "program_name": "Data Intelligence",
+                "url": "https://www.concordia.ca/academics/undergraduate/data-intelligence.html"
+            },
+            {
+                "program_name": "Data Science (BA/BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/arts-science-data-science.html"
+            },
+            {
+                "program_name": "Data Science (BCompSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/computer-science-data-science.html"
+            },
+            {
+                "program_name": "Design (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/design.html"
+            },
+            {
+                "program_name": "Diversity and the Contemporary World",
+                "url": "https://www.concordia.ca/academics/undergraduate/diversity-contemporary-world.html"
+            },
+            {
+                "program_name": "Early Childhood and Elementary Education (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/early-childhood-elementary-education.html"
+            },
+            {
+                "program_name": "Ecology (BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/ecology.html"
+            },
+            {
+                "program_name": "Economic Policy (Microprogram)",
+                "url": "https://www.concordia.ca/academics/undergraduate/economic-policy.html"
+            },
+            {
+                "program_name": "Economics (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/economics.html"
+            },
+            {
+                "program_name": "Economics (BComm)",
+                "url": "https://www.concordia.ca/academics/undergraduate/economics-jmsb.html"
+            },
+            {
+                "program_name": "Education",
+                "url": "https://www.concordia.ca/academics/undergraduate/education.html"
+            },
+            {
+                "program_name": "Electrical Engineering (BEng)",
+                "url": "https://www.concordia.ca/academics/undergraduate/electrical-engineering.html"
+            },
+            {
+                "program_name": "Electroacoustic Studies (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/electroacoustic-studies.html"
+            },
+            {
+                "program_name": "English and Creative Writing (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/english-and-creativewriting.html"
+            },
+            {
+                "program_name": "English and History (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/english-and-history.html"
+            },
+            {
+                "program_name": "English Literature (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/english-literature.html"
+            },
+            {
+                "program_name": "Entrepreneurship",
+                "url": "https://www.concordia.ca/academics/undergraduate/entrepreneurship.html"
+            },
+            {
+                "program_name": "Environmental and Sustainability Science (BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/environmental-science.html"
+            },
+            {
+                "program_name": "Environmental Geography (BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/environmental-geography.html"
+            },
+            {
+                "program_name": "Ethics and Values",
+                "url": "https://www.concordia.ca/academics/undergraduate/ethics-values.html"
+            },
+            {
+                "program_name": "Exercise Science (BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/exercise-science.html"
+            },
+            {
+                "program_name": "Family Life Education (Cert)",
+                "url": "https://www.concordia.ca/academics/undergraduate/family-life-education.html"
+            },
+            {
+                "program_name": "Fibres and Material Practices (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/fibres-material-practices.html"
+            },
+            {
+                "program_name": "Film and Moving Image Studies (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/film-studies.html"
+            },
+            {
+                "program_name": "Film Animation (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/film-animation.html"
+            },
+            {
+                "program_name": "Film Production (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/film-production.html"
+            },
+            {
+                "program_name": "Finance (BComm)",
+                "url": "https://www.concordia.ca/academics/undergraduate/finance.html"
+            },
+            {
+                "program_name": "Financial Reporting",
+                "url": "https://www.concordia.ca/academics/undergraduate/financial-reporting.html"
+            },
+            {
+                "program_name": "First Peoples Studies (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/first-peoples-studies.html"
+            },
+            {
+                "program_name": "Foundations for Business (Cert)",
+                "url": "https://www.concordia.ca/academics/undergraduate/foundations-for-Business.html"
+            },
+            {
+                "program_name": "French Studies (Ãtudes franÃ§aises) (BA, Cert)",
+                "url": "https://www.concordia.ca/academics/undergraduate/french-studies.html"
+            },
+            {
+                "program_name": "Fundamentals of Digital Filmmaking (Microprogram)",
+                "url": "https://www.concordia.ca/academics/undergraduate/digital-filmmaking-fundamentals.html"
+            },
+            {
+                "program_name": "Game Design",
+                "url": "https://www.concordia.ca/academics/undergraduate/game-design.html"
+            },
+            {
+                "program_name": "Geospatial Technologies (Cert)",
+                "url": "https://www.concordia.ca/academics/undergraduate/geospatial-technologies.html"
+            },
+            {
+                "program_name": "German Studies",
+                "url": "https://www.concordia.ca/academics/undergraduate/german-minor.html"
+            },
+            {
+                "program_name": "Health and Life Sciences (BCompSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/health-life-sciences.html"
+            },
+            {
+                "program_name": "History (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/history.html"
+            },
+            {
+                "program_name": "Human Environment (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/human-environment.html"
+            },
+            {
+                "program_name": "Human Relations (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/human-relations.html"
+            },
+            {
+                "program_name": "Human Resource Management (BComm)",
+                "url": "https://www.concordia.ca/academics/undergraduate/human-resource-management.html"
+            },
+            {
+                "program_name": "Human Rights Studies",
+                "url": "https://www.concordia.ca/academics/undergraduate/human-rights.html"
+            },
+            {
+                "program_name": "Immigration Studies (Cert)",
+                "url": "https://www.concordia.ca/academics/undergraduate/immigration-studies.html"
+            },
+            {
+                "program_name": "Indigenous Bridging Program (BComm)",
+                "url": "https://www.concordia.ca/academics/undergraduate/indigenous-bridging-bcomm.html"
+            },
+            {
+                "program_name": "Indigenous Bridging Program (BEng)",
+                "url": "https://www.concordia.ca/academics/undergraduate/indigenous-bridging-beng.html"
+            },
+            {
+                "program_name": "Indigenous Bridging Program (BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/indigenous-bridging-bsc.html"
+            },
+            {
+                "program_name": "Indigenous Bridging Program (Journalism BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/indigenous-bridging-journalism.html"
+            },
+            {
+                "program_name": "Indigenous Bridging Program (Psychology BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/indigenous-bridging-psychology.html"
+            },
+            {
+                "program_name": "Indigenous Land-Based Education (Microprogram)",
+                "url": "https://www.concordia.ca/academics/undergraduate/indigenous-land-based-education.html"
+            },
+            {
+                "program_name": "Industrial Engineering (BEng)",
+                "url": "https://www.concordia.ca/academics/undergraduate/industrial-engineering.html"
+            },
+            {
+                "program_name": "Information Systems Audit and Risk Management",
+                "url": "https://www.concordia.ca/academics/undergraduate/infosys-audit-risk-management.html"
+            },
+            {
+                "program_name": "Innovation Mindset (Microprogram)",
+                "url": "https://www.concordia.ca/academics/undergraduate/innovation-mindset.html"
+            },
+            {
+                "program_name": "Interdisciplinary Studies in Sexuality (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/sexuality.html"
+            },
+            {
+                "program_name": "Intermedia (Video, Performance and Electronic Arts) (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/intermedia.html"
+            },
+            {
+                "program_name": "International Business (BComm)",
+                "url": "https://www.concordia.ca/academics/undergraduate/international-business.html"
+            },
+            {
+                "program_name": "Irish Studies (BA, Cert)",
+                "url": "https://www.concordia.ca/academics/undergraduate/irish-studies.html"
+            },
+            {
+                "program_name": "Israel Studies",
+                "url": "https://www.concordia.ca/academics/undergraduate/israel-studies.html"
+            },
+            {
+                "program_name": "Italian (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/italian.html"
+            },
+            {
+                "program_name": "Jazz Studies (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/jazz-studies.html"
+            },
+            {
+                "program_name": "Jewish Studies (Microprogram)",
+                "url": "https://www.concordia.ca/academics/undergraduate/jewish-studies.html"
+            },
+            {
+                "program_name": "Journalism (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/journalism.html"
+            },
+            {
+                "program_name": "Judaic Studies (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/judaic-studies.html"
+            },
+            {
+                "program_name": "Kinesiology and Clinical Exercise Physiology (BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/clinical-exercise-physiology.html"
+            },
+            {
+                "program_name": "Law and Society",
+                "url": "https://www.concordia.ca/academics/undergraduate/law-society.html"
+            },
+            {
+                "program_name": "Liberal Arts (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/liberal-arts.html"
+            },
+            {
+                "program_name": "Linguistics (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/linguistics.html"
+            },
+            {
+                "program_name": "Management (BComm)",
+                "url": "https://www.concordia.ca/academics/undergraduate/management.html"
+            },
+            {
+                "program_name": "Marketing (BComm)",
+                "url": "https://www.concordia.ca/academics/undergraduate/marketing.html"
+            },
+            {
+                "program_name": "Mathematical and Computational Finance (BA, BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/mathematical-computational-finance.html"
+            },
+            {
+                "program_name": "Mathematics and Statistics (BA, BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/mathematics-statistics.html"
+            },
+            {
+                "program_name": "Mechanical Engineering (BEng)",
+                "url": "https://www.concordia.ca/academics/undergraduate/mechanical-engineering.html"
+            },
+            {
+                "program_name": "Modern Arabic Language and Culture (Cert)",
+                "url": "https://www.concordia.ca/academics/undergraduate/modern-arabic.html"
+            },
+            {
+                "program_name": "Modern Chinese Language and Culture (Cert)",
+                "url": "https://www.concordia.ca/academics/undergraduate/modern-chinese.html"
+            },
+            {
+                "program_name": "Multidisciplinary Studies in Science",
+                "url": "https://www.concordia.ca/academics/undergraduate/multidisciplinary-studies.html"
+            },
+            {
+                "program_name": "Music (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/music.html"
+            },
+            {
+                "program_name": "Neuroscience (BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/neuroscience.html"
+            },
+            {
+                "program_name": "Painting and Drawing (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/painting-drawing.html"
+            },
+            {
+                "program_name": "Pastoral Care (Cert)",
+                "url": "https://www.concordia.ca/academics/undergraduate/pastoral-care.html"
+            },
+            {
+                "program_name": "Performance Creation (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/performance-creation.html"
+            },
+            {
+                "program_name": "Philosophy (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/philosophy.html"
+            },
+            {
+                "program_name": "Photography (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/photography.html"
+            },
+            {
+                "program_name": "Physics (BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/physics.html"
+            },
+            {
+                "program_name": "Political Science (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/political-science.html"
+            },
+            {
+                "program_name": "Print Media (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/print-media.html"
+            },
+            {
+                "program_name": "Professional Writing",
+                "url": "https://www.concordia.ca/academics/undergraduate/professional-writing.html"
+            },
+            {
+                "program_name": "Psychology (BA, BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/psychology.html"
+            },
+            {
+                "program_name": "Pure and Applied Mathematics (BA, BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/pure-and-applied-mathematics.html"
+            },
+            {
+                "program_name": "Quantitative Finance and Insurance",
+                "url": "https://www.concordia.ca/academics/undergraduate/quantitative-finance-insurance.html"
+            },
+            {
+                "program_name": "Real Estate",
+                "url": "https://www.concordia.ca/academics/undergraduate/real-estate.html"
+            },
+            {
+                "program_name": "Recreation and Leisure Studies (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/leisure-studies.html"
+            },
+            {
+                "program_name": "Religions and Cultures (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/religion.html"
+            },
+            {
+                "program_name": "Religious, Cultural and Ethnic Literacy (Microprogram)",
+                "url": "https://www.concordia.ca/academics/undergraduate/religious-cultural-ethnic-literacy.html"
+            },
+            {
+                "program_name": "Scenography (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/scenography.html"
+            },
+            {
+                "program_name": "Science and Technology (Cert)",
+                "url": "https://www.concordia.ca/academics/undergraduate/science-technology.html"
+            },
+            {
+                "program_name": "Science Foundations (Cert)",
+                "url": "https://www.concordia.ca/academics/undergraduate/science-foundations.html"
+            },
+            {
+                "program_name": "Science Journalism",
+                "url": "https://www.concordia.ca/academics/undergraduate/science-journalism.html"
+            },
+            {
+                "program_name": "Screenwriting and Film Producing (Microprogram)",
+                "url": "https://www.concordia.ca/academics/undergraduate/screenwriting-film-producing.html"
+            },
+            {
+                "program_name": "Sculpture (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/sculpture.html"
+            },
+            {
+                "program_name": "Sociology (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/sociology.html"
+            },
+            {
+                "program_name": "Software Engineering (BEng)",
+                "url": "https://www.concordia.ca/academics/undergraduate/software-engineering.html"
+            },
+            {
+                "program_name": "Songwriting and Music Production (Microprogram)",
+                "url": "https://www.concordia.ca/academics/undergraduate/songwriting-music-production.html"
+            },
+            {
+                "program_name": "Southern Asia Studies (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/southern-asia-studies.html"
+            },
+            {
+                "program_name": "Spanish, Hispanic Cultures and Literatures (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/spanish.html"
+            },
+            {
+                "program_name": "Statistics (BA, BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/statistics.html"
+            },
+            {
+                "program_name": "Studio Art (BFA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/studio-art.html"
+            },
+            {
+                "program_name": "Supply Chain Operations Management (BComm)",
+                "url": "https://www.concordia.ca/academics/undergraduate/supply-chain-operations-management.html"
+            },
+            {
+                "program_name": "Sustainability Principles (Microprogram)",
+                "url": "https://www.concordia.ca/academics/undergraduate/sustainability-principles.html"
+            },
+            {
+                "program_name": "Sustainability Studies",
+                "url": "https://www.concordia.ca/academics/undergraduate/sustainability-studies.html"
+            },
+            {
+                "program_name": "Systems and Information Biology (BSc)",
+                "url": "https://www.concordia.ca/academics/undergraduate/systems-information-biology.html"
+            },
+            {
+                "program_name": "Teaching English as a Second Language (Cert)",
+                "url": "https://www.concordia.ca/academics/undergraduate/tesl-cert.html"
+            },
+            {
+                "program_name": "Teaching English as a Second Language (TESL) (BEd)",
+                "url": "https://www.concordia.ca/academics/undergraduate/teaching-english-second-language.html"
+            },
+            {
+                "program_name": "Theatre",
+                "url": "https://www.concordia.ca/academics/undergraduate/theatre-minor.html"
+            },
+            {
+                "program_name": "Theological Studies (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/theological-studies.html"
+            },
+            {
+                "program_name": "Therapeutic Recreation (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/therapeutic-recreation.html"
+            },
+            {
+                "program_name": "Traduction (Translation) (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/translation.html"
+            },
+            {
+                "program_name": "Urban Studies (BA)",
+                "url": "https://www.concordia.ca/academics/undergraduate/urban-planning-urban-studies.html"
+            },
+            {
+                "program_name": "Web Design and User Interface (Microprogram)",
+                "url": "https://www.concordia.ca/academics/undergraduate/web-design-user-interface.html"
+            },
+            {
+                "program_name": "Women's Studies (BA, Cert)",
+                "url": "https://www.concordia.ca/academics/undergraduate/womens-studies.html"
+            },
+            {
+                "program_name": "Ãtudes franÃ§aises (French Studies) (BA, Cert)",
+                "url": "https://www.concordia.ca/academics/undergraduate/etudes-francaises.html"
+            }
+        ]
+    },
+    {
+        "university_name": "McGill University",
+        "programs": [
+            {
+                "program_name": "Computer Science (BSc)",
+                "url": "https://www.mcgill.ca/study/faculties/science/undergraduate/programs/bachelor-science-bsc-major-computer-science"
+            },
+            {
+                "program_name": "Software Engineering (BSE)",
+                "url": "https://www.mcgill.ca/study/faculties/engineering/undergraduate/programs/bachelor-software-engineering-bse-software-engineering"
+            },
+            {
+                "program_name": "Mechanical Engineering (BEng)",
+                "url": "https://www.mcgill.ca/study/faculties/engineering/undergraduate/programs/bachelor-engineering-beng-mechanical-engineering"
+            },
+            {
+                "program_name": "Desautels Faculty of Management (BCom)",
+                "url": "https://www.mcgill.ca/desautels/programs/bcom"
+            },
+            {
+                "program_name": "Medicine (MDCM)",
+                "url": "https://www.mcgill.ca/medadmissions/programs/mdcm"
+            },
+            {
+                "program_name": "Law (BCL/JD)",
+                "url": "https://www.mcgill.ca/law/bcl-jd"
+            }
+        ]
+    },
+    {
+        "university_name": "Université Laval",
+        "programs": [
+            {
+                "program_name": "Baccalauréat en informatique",
+                "url": "https://www.ulaval.ca/les-etudes/programmes/repertoire/details/baccalaureat-en-informatique-ba.html"
+            },
+            {
+                "program_name": "Baccalauréat en génie logiciel",
+                "url": "https://www.ulaval.ca/les-etudes/programmes/repertoire/details/baccalaureat-en-genie-logiciel-bing.html"
+            },
+            {
+                "program_name": "Doctorat de premier cycle en médecine",
+                "url": "https://www.ulaval.ca/les-etudes/programmes/repertoire/details/doctorat-de-premier-cycle-en-medecine-md.html"
+            },
+            {
+                "program_name": "Baccalauréat en droit",
+                "url": "https://www.ulaval.ca/les-etudes/programmes/repertoire/details/baccalaureat-en-droit-ll-b.html"
+            }
+        ]
+    },
+    {
+        "university_name": "Université du Québec à Montréal (UQAM)",
+        "programs": [
+            {
+                "program_name": "Baccalauréat en informatique et génie logiciel",
+                "url": "https://etudier.uqam.ca/programme?code=7825"
+            },
+            {
+                "program_name": "Baccalauréat en administration",
+                "url": "https://etudier.uqam.ca/programme?code=7314"
+            },
+            {
+                "program_name": "Baccalauréat en psychologie",
+                "url": "https://etudier.uqam.ca/programme?code=7356"
+            },
+            {
+                "program_name": "Baccalauréat en droit",
+                "url": "https://etudier.uqam.ca/programme?code=7308"
+            }
+        ]
+    }
+]
