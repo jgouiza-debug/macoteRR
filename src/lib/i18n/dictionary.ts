@@ -68,6 +68,25 @@ export const DICTIONARY = {
     "prof.tagsNoFinance": "Aucune donnée financière n'est demandée, ici ou ailleurs.",
     "prof.tagsCount": "{n} sélectionnée(s)",
     "prof.unlocks": "Débloque {n} bourse(s)",
+    "prof.notifications": "Notifications et alertes",
+
+    "notif.title": "Notifications",
+    "notif.subtitle": "Reste au courant, sans le bruit.",
+    "notif.framing":
+      "On t'écrit seulement quand une bourse que tu débloques apparaît, ou qu'une échéance que tu suis approche. Rien d'autre.",
+    "notif.deadlinesTitle": "Rappels d'échéances",
+    "notif.deadlinesDesc":
+      "Pour tes programmes cibles et les bourses à ta portée (à 14 jours et 3 jours).",
+    "notif.cutoffsTitle": "Mises à jour des seuils",
+    "notif.cutoffsDesc":
+      "Dès qu'un seuil officiel d'admission change pour l'un de tes programmes cibles.",
+    "notif.bursariesTitle": "Nouvelles bourses débloquées",
+    "notif.bursariesDesc":
+      "Un récapitulatif hebdomadaire si de nouvelles bourses deviennent accessibles.",
+    "notif.gradesTitle": "Période des notes de session",
+    "notif.gradesDesc":
+      "Un rappel en fin de session (décembre et avril) pour mettre à jour ta cote.",
+    "notif.saveSuccess": "Préférences enregistrées",
 
     "landing.title": "Ta cote R, et ce qu'elle t'ouvre vraiment.",
     "landing.body":
@@ -132,8 +151,8 @@ export const DICTIONARY = {
     "goal.generalBody": "Choisis-en un ou plusieurs.",
     "goal.matchesTitle": "Programmes qui matchent",
     "goal.quizQuestionOf": "Question {n} sur {total}",
-    "goal.quizResultTitle": "Voici ce qui te ressemble",
-    "goal.quizResultBody": "Basé sur tes réponses. Choisis les programmes qui t'intéressent, ou ignore-les.",
+    "goal.quizResultTitle": "Programmes associés à tes sélections",
+    "goal.quizResultBody": "Basé sur tes choix. Choisis les programmes qui t'intéressent, ou ignore-les.",
     "goal.selectedCount": "{n} sélectionné(s)",
     "goal.skipStep": "Je ne sais pas encore",
     "goal.searchDec": "Cherche ton programme ou son code (ex : 200.B0)",
@@ -378,6 +397,25 @@ export const DICTIONARY = {
     "prof.tagsNoFinance": "No financial information is ever requested, here or anywhere else.",
     "prof.tagsCount": "{n} selected",
     "prof.unlocks": "Unlocks {n} bursary/ies",
+    "prof.notifications": "Notifications & alerts",
+
+    "notif.title": "Notifications",
+    "notif.subtitle": "Stay informed, without the noise.",
+    "notif.framing":
+      "We only message you when a bursary you unlock appears, or when a deadline you follow is approaching. Nothing else.",
+    "notif.deadlinesTitle": "Deadline reminders",
+    "notif.deadlinesDesc":
+      "For your target programs and bursaries within reach (at 14 days and 3 days).",
+    "notif.cutoffsTitle": "Cutoff updates",
+    "notif.cutoffsDesc":
+      "Whenever an official admission cutoff changes for one of your target programs.",
+    "notif.bursariesTitle": "New matching bursaries",
+    "notif.bursariesDesc":
+      "A weekly digest if new bursaries become accessible.",
+    "notif.gradesTitle": "Session grade posting window",
+    "notif.gradesDesc":
+      "A reminder at the end of the session (December and April) to update your score.",
+    "notif.saveSuccess": "Preferences saved",
 
     "landing.title": "Your R-score, and what it actually opens up.",
     "landing.body":
@@ -442,8 +480,8 @@ export const DICTIONARY = {
     "goal.generalBody": "Pick one or more.",
     "goal.matchesTitle": "Programs that match",
     "goal.quizQuestionOf": "Question {n} of {total}",
-    "goal.quizResultTitle": "Here's what fits you",
-    "goal.quizResultBody": "Based on your answers. Pick the programs you're interested in, or skip.",
+    "goal.quizResultTitle": "Programs associated with your selections",
+    "goal.quizResultBody": "Based on your selections. Pick the programs you're interested in, or skip.",
     "goal.selectedCount": "{n} selected",
     "goal.skipStep": "I don't know yet",
     "goal.searchDec": "Search your program or its code (e.g. 200.B0)",

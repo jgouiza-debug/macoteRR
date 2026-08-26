@@ -42,7 +42,7 @@ const ProgramRow = memo(function ProgramRow({
     <div className="border-b border-ink/10 last:border-b-0">
       <Link
         href={`/programs/${program.id}`}
-        className="flex flex-col gap-2.5 px-4 pb-2 pt-4 active:bg-chalk/60"
+        className="flex flex-col gap-2.5 px-4 pb-2 pt-4 transition-all duration-150 hover:bg-chalk/30 active:bg-chalk/60 active:scale-[0.99]"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1">
@@ -65,7 +65,7 @@ const ProgramRow = memo(function ProgramRow({
                 {t(CUTOFF_STATUS_LABEL_KEY[cutoffStatus])}
               </div>
             </div>
-            <ChevronRight className="h-4 w-4 flex-shrink-0 text-ink/30" />
+            <ChevronRight className="h-4 w-4 flex-shrink-0 text-ink/30 transition-transform group-hover:translate-x-0.5" />
           </div>
         </div>
         <AxisRow score={score} range={range} />
@@ -160,10 +160,10 @@ export default function ProgramsPage() {
                 type="button"
                 onClick={() => setTier(option)}
                 aria-pressed={active}
-                className={`flex flex-col items-center justify-center gap-0.5 rounded px-1.5 py-3 text-center transition-transform active:scale-[0.97] ${
+                className={`flex flex-col items-center justify-center gap-0.5 rounded px-1.5 py-3 text-center tap-spring ${
                   active
-                    ? "bg-ultramarine text-paper shadow-card"
-                    : "border border-ink/15 bg-paper text-ink/60"
+                    ? "bg-ultramarine text-paper shadow-card scale-[1.02]"
+                    : "border border-ink/15 bg-paper text-ink/60 hover:border-ink/30"
                 }`}
               >
                 <span className="font-display text-[20px] font-bold tabular-nums">

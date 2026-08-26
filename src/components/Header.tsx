@@ -26,10 +26,10 @@ export function Header() {
         {/* Navigation & Language Toggle */}
         <div className="flex items-center gap-6 text-[14px] font-medium text-secondary">
           <div className="hidden sm:flex items-center gap-5">
-            <Link href="/privacy" className="hover:text-ink transition-colors">
+            <Link href="/confidentialite" className="inline-flex min-h-[48px] items-center hover:text-ink transition-colors">
               {t("prog.privacy")}
             </Link>
-            <Link href="/terms" className="hover:text-ink transition-colors">
+            <Link href="/conditions" className="inline-flex min-h-[48px] items-center hover:text-ink transition-colors">
               {t("prog.terms")}
             </Link>
           </div>
@@ -38,7 +38,7 @@ export function Header() {
           <button
             type="button"
             onClick={() => setLocale(locale === "fr" ? "en" : "fr")}
-            className="flex items-center gap-1 text-[13px] font-bold text-ink px-2.5 py-1 rounded-[3px] border border-border bg-paper hover:bg-chalk transition-colors focus-visible:outline-none"
+            className="flex min-h-[48px] items-center justify-center gap-1 text-[13px] font-bold text-ink px-3 py-1.5 rounded-[3px] border border-border bg-paper hover:bg-chalk transition-colors focus-visible:outline-none active:scale-[0.98]"
             aria-label={`Switch language to ${locale === "fr" ? "English" : "Français"}`}
           >
             <span className={locale === "fr" ? "text-ultramarine" : "text-secondary"}>FR</span>

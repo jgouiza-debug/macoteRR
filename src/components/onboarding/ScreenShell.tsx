@@ -10,17 +10,19 @@ export function ScreenShell({
   children,
   footer,
   backHref,
+  onBack,
   brand = false,
 }: {
   children: ReactNode;
   footer?: ReactNode;
   backHref?: string;
+  onBack?: () => void;
   brand?: boolean;
 }) {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-chalk">
       <InAppBrowserBanner />
-      <OnboardingTopBar backHref={backHref} brand={brand} />
+      <OnboardingTopBar backHref={backHref} onBack={onBack} brand={brand} />
       {/* justify-center pulls short funnel screens (two choices, one input) into the optical
           centre instead of stranding them at the top above ~900px of empty chalk. Long
           screens overflow past centre and scroll normally, so this costs them nothing. */}

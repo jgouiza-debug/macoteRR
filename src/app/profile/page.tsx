@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Bell, ChevronRight } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { BURSARIES, CEGEPS, CEGEP_PROGRAMS, SESSIONS } from "@/lib/sample-data";
 import { useStudentProfile, resetProfile } from "@/lib/profile/store";
@@ -107,10 +108,10 @@ export default function ProfilePage() {
                     type="button"
                     aria-pressed={selected}
                     onClick={() => toggleTag(tag.id)}
-                    className={`flex min-h-[48px] items-center gap-2 rounded-full border px-4 text-[13px] font-semibold transition-colors active:scale-[0.98] ${
+                    className={`flex min-h-[48px] items-center gap-2 rounded-full border px-4 text-[13px] font-semibold tap-spring ${
                       selected
-                        ? "border-ultramarine bg-ultramarine text-paper"
-                        : "border-ink/20 bg-paper text-ink/70"
+                        ? "border-ultramarine bg-ultramarine text-paper shadow-sm"
+                        : "border-ink/20 bg-paper text-ink/70 hover:border-ink/40"
                     }`}
                   >
                     {tagLabel(tag.id, locale)}
@@ -135,11 +136,33 @@ export default function ProfilePage() {
         </section>
 
         <Link
-          href="/counselor-prep"
-          className="flex h-14 w-full items-center justify-center rounded-full border border-ink/25 bg-paper text-[15px] font-semibold text-ink transition-transform active:scale-[0.98]"
+          href="/profile/notifications"
+          className="flex min-h-[56px] items-center justify-between gap-3 rounded border border-ink/12 bg-paper px-4 py-3.5 shadow-card tap-spring hover:shadow-overlay"
         >
-          {locale === "fr" ? "Préparer ma rencontre" : "Prepare my meeting"}
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-ultramarine/[0.08] text-ultramarine">
+              <Bell className="h-4 w-4" />
+            </div>
+            <div>
+              <span className="block text-[14px] font-semibold text-ink">
+                {t("notif.title")}
+              </span>
+              <span className="block text-[11.5px] text-ink/50">
+                {t("notif.subtitle")}
+              </span>
+            </div>
+          </div>
+          <ChevronRight className="h-5 w-5 text-ink/40" />
         </Link>
+
+        <div className="flex flex-col gap-3">
+          <Link
+            href="/counselor-prep"
+            className="flex h-14 w-full items-center justify-center rounded-full border border-ink/25 bg-paper text-[15px] font-semibold text-ink transition-transform active:scale-[0.98]"
+          >
+            {locale === "fr" ? "Préparer ma rencontre" : "Prepare my meeting"}
+          </Link>
+        </div>
 
         <section className="flex flex-col gap-2 rounded border border-ember/30 bg-ember/[0.04] p-4">
           <h2 className="text-[14px] font-semibold text-ink">{t("account.deleteTitle")}</h2>
@@ -155,7 +178,7 @@ export default function ProfilePage() {
                 type="button"
                 onClick={handleDelete}
                 disabled={deleting}
-                className="flex h-11 flex-1 items-center justify-center rounded-full bg-ember text-[13.5px] font-semibold text-paper transition-transform active:scale-[0.98] disabled:opacity-50"
+                className="flex h-12 flex-1 items-center justify-center rounded-full bg-ember text-[13.5px] font-semibold text-paper transition-transform active:scale-[0.98] disabled:opacity-50"
               >
                 {t("account.deleteConfirm")}
               </button>
@@ -163,7 +186,7 @@ export default function ProfilePage() {
                 type="button"
                 onClick={() => setConfirmingDelete(false)}
                 disabled={deleting}
-                className="flex h-11 flex-1 items-center justify-center rounded-full border border-ink/20 text-[13.5px] font-semibold text-ink transition-transform active:scale-[0.98]"
+                className="flex h-12 flex-1 items-center justify-center rounded-full border border-ink/20 text-[13.5px] font-semibold text-ink transition-transform active:scale-[0.98]"
               >
                 {t("account.deleteCancel")}
               </button>
@@ -172,7 +195,7 @@ export default function ProfilePage() {
             <button
               type="button"
               onClick={() => setConfirmingDelete(true)}
-              className="mt-1 w-fit text-[13px] font-semibold text-ember"
+              className="mt-1 inline-flex min-h-[48px] items-center text-[13px] font-semibold text-ember"
             >
               {t("account.deleteTitle")}
             </button>

@@ -51,7 +51,7 @@ export function ProgramDetail({ program }: { program: UniversityProgram }) {
           <Link
             href="/programs"
             aria-label={t("common.back")}
-            className="-ml-2 flex h-10 w-10 items-center justify-center rounded-full text-ink transition-colors active:bg-ink/10"
+            className="-ml-2 flex min-h-[48px] min-w-[48px] items-center justify-center rounded-full text-ink transition-colors active:bg-ink/10"
           >
             <ChevronLeft className="h-6 w-6" />
           </Link>
@@ -250,7 +250,7 @@ export function ProgramDetail({ program }: { program: UniversityProgram }) {
         )}
 
         <div className="mt-2">
-          <AddTargetButton />
+          <AddTargetButton programId={program.id} />
         </div>
 
         <footer className="mt-6 flex flex-col items-center gap-2 border-t border-ink/10 pt-6 text-center">
@@ -259,15 +259,15 @@ export function ProgramDetail({ program }: { program: UniversityProgram }) {
           </span>
           <p className="text-[11px] leading-relaxed text-ink/50">{t("prog.disclaimer")}</p>
           <div className="mt-1 flex flex-wrap justify-center gap-4 text-[11px] font-medium text-ink/50">
-            <a href="#" className="underline-offset-2 hover:underline">
+            <Link href="/conditions" className="inline-flex min-h-[44px] items-center underline-offset-2 hover:underline">
               {t("prog.terms")}
-            </a>
-            <a href="#" className="underline-offset-2 hover:underline">
+            </Link>
+            <Link href="/confidentialite" className="inline-flex min-h-[44px] items-center underline-offset-2 hover:underline">
               {t("prog.privacy")}
-            </a>
-            <a href="#" className="underline-offset-2 hover:underline">
+            </Link>
+            <Link href="/accessibilite" className="inline-flex min-h-[44px] items-center underline-offset-2 hover:underline">
               {t("prog.dataPolicy")}
-            </a>
+            </Link>
           </div>
         </footer>
       </main>

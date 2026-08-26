@@ -1,41 +1,61 @@
 "use client";
 
-import { R_MAX, R_MEAN, R_MIN, R_SIGMA, clampScore } from "@/lib/rscore/scale";
+import { useEffect, useRef, useState } from "react";
+import { clampScore, R_MAX, R_MIN } from "@/lib/rscore/scale";
 import { compareToCutoffRange, type CutoffRange } from "@/lib/rscore/cutoff-range";
 
-// Geometry is expressed in a fixed viewBox and rendered with the default
-// (uniform) preserveAspectRatio, so the marker stays a true circle at every width.
-// Marker coordinates come from the same curve function that draws the path, which
-// is what keeps the dot sitting exactly on the line instead of near it.
-const VIEW_W = 320;
-const VIEW_H = 168;
-const PAD_X = 14;
-const BASELINE = 140;
-const AMPLITUDE = 104;
+const VIEW_W = 312;
+const VIEW_H = 130;
+const BASELINE_Y = 98;
 
-const MU = R_MEAN;
-const SIGMA = R_SIGMA;
-const PLOT_W = VIEW_W - PAD_X * 2;
+export const BELL_CURVE_PATH =
+  "M0,98 C62,98 86,96 106,76 C122,60 138,30 156,30 C174,30 190,60 206,76 C226,96 250,98 312,98";
 
-function xFor(r: number): number {
-  return PAD_X + ((clampScore(r) - R_MIN) / (R_MAX - R_MIN)) * PLOT_W;
+export const BELL_AREA_PATH = `${BELL_CURVE_PATH} L312,98 L0,98 Z`;
+
+type CubicSegment = {
+  p0: [number, number];
+  p1: [number, number];
+  p2: [number, number];
+  p3: [number, number];
+};
+
+const BEZIER_SEGMENTS: CubicSegment[] = [
+  { p0: [0, 98], p1: [62, 98], p2: [86, 96], p3: [106, 76] },
+  { p0: [106, 76], p1: [122, 60], p2: [138, 30], p3: [156, 30] },
+  { p0: [156, 30], p1: [174, 30], p2: [190, 60], p3: [206, 76] },
+  { p0: [206, 76], p1: [226, 96], p2: [250, 98], p3: [312, 98] },
+];
+
+function sampleCubic(p0: number, p1: number, p2: number, p3: number, t: number): number {
+  const mt = 1 - t;
+  return mt * mt * mt * p0 + 3 * mt * mt * t * p1 + 3 * mt * t * t * p2 + t * t * t * p3;
 }
 
-function yFor(r: number): number {
-  const z = (clampScore(r) - MU) / SIGMA;
-  return BASELINE - AMPLITUDE * Math.exp(-(z * z) / 2);
+export function xForScore(score: number): number {
+  const clamped = clampScore(score);
+  return ((clamped - R_MIN) / (R_MAX - R_MIN)) * VIEW_W;
 }
 
-function buildCurvePath(): string {
-  const points: string[] = [];
-  for (let r = R_MIN; r <= R_MAX + 0.001; r += 0.2) {
-    points.push(`${xFor(r).toFixed(2)},${yFor(r).toFixed(2)}`);
+export function yForX(targetX: number): number {
+  const x = Math.max(0, Math.min(VIEW_W, targetX));
+  const seg =
+    BEZIER_SEGMENTS.find((s) => x >= s.p0[0] && x <= s.p3[0]) ??
+    (x <= 0 ? BEZIER_SEGMENTS[0] : BEZIER_SEGMENTS[BEZIER_SEGMENTS.length - 1]);
+
+  let low = 0;
+  let high = 1;
+  let t = 0.5;
+  for (let i = 0; i < 16; i++) {
+    t = (low + high) / 2;
+    const curX = sampleCubic(seg.p0[0], seg.p1[0], seg.p2[0], seg.p3[0], t);
+    if (curX < x) low = t;
+    else high = t;
   }
-  return `M${points.join("L")}`;
+  return sampleCubic(seg.p0[1], seg.p1[1], seg.p2[1], seg.p3[1], t);
 }
 
-const CURVE_PATH = buildCurvePath();
-const AREA_PATH = `${CURVE_PATH}L${xFor(R_MAX).toFixed(2)},${BASELINE}L${xFor(R_MIN).toFixed(2)},${BASELINE}Z`;
+const REVEAL_STORAGE_KEY = "macote.has_seen_curve_reveal";
 
 export function DistributionCurve({
   score,
@@ -49,102 +69,221 @@ export function DistributionCurve({
   range: CutoffRange | null;
   caption?: string;
   youLabel?: string;
-  /** Fully composed by the caller (locale + year formatting), e.g. "seuil 2020–2022". */
+  /** Fully composed by the caller (locale + year formatting), e.g. "seuil 2020–2022" or "seuil 28,5". */
   rangeLabel: string;
 }) {
   const status = compareToCutoffRange(score, range);
   const markerColor =
-    status === "above" ? "var(--color-moss)" : status === "below" ? "var(--color-ember)" : status === "inside" ? "var(--color-ultramarine)" : "var(--color-ink)";
+    status === "above"
+      ? "var(--color-moss)"
+      : status === "below"
+        ? "var(--color-ember)"
+        : status === "inside"
+          ? "var(--color-moss)"
+          : "var(--color-ultramarine)";
 
-  const xScore = xFor(score);
-  const yScore = yFor(score);
-  const xLow = range ? xFor(range.low) : xFor(score);
-  const xHigh = range ? xFor(range.high) : xFor(score);
-  const xBandCenter = (xLow + xHigh) / 2;
-  const bandTop = range ? Math.min(yFor(range.low), yFor(range.high)) - 6 : BASELINE - 6;
+  const xScore = xForScore(score);
+  const yScore = yForX(xScore);
 
-  // Flip the label to the inside edge near a boundary so it can never be clipped.
-  const labelOnRight = xScore < VIEW_W - 70;
-  const labelX = labelOnRight ? xScore + 12 : xScore - 12;
+  const xCutoff = range ? xForScore((range.low + range.high) / 2) : null;
+  const yCutoff = xCutoff !== null ? yForX(xCutoff) : null;
+
+  const labelOnRight = xScore < VIEW_W - 75;
+  const labelX = labelOnRight ? xScore + 10 : xScore - 10;
+  const labelAnchor = labelOnRight ? "start" : "end";
+
+  const pathRef = useRef<SVGPathElement>(null);
+  const [shouldAnimate, setShouldAnimate] = useState(false);
+  const [pathLength, setPathLength] = useState(340);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // Accessibility check: skip animation under prefers-reduced-motion
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
+
+    // Run exactly once per account
+    const hasSeen = localStorage.getItem(REVEAL_STORAGE_KEY) === "1";
+    if (!hasSeen) {
+      if (pathRef.current) {
+        try {
+          const len = pathRef.current.getTotalLength();
+          if (len > 0) setPathLength(len);
+        } catch {
+          /* ignore measurement failure */
+        }
+      }
+      setShouldAnimate(true);
+      try {
+        localStorage.setItem(REVEAL_STORAGE_KEY, "1");
+      } catch {
+        /* ignore storage failure */
+      }
+    }
+  }, []);
+
+  const formattedScore = score.toFixed(1).replace(".", ",");
+  const studentFullLabel = `${youLabel}, ${formattedScore}`;
 
   return (
-    <figure className="m-0 flex w-full flex-col gap-3">
-      <svg
-        viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
-        className="h-auto w-full"
-        role="img"
-        aria-label={`${youLabel} ${score.toFixed(1).replace(".", ",")}, ${rangeLabel}`}
-      >
-        <path d={AREA_PATH} fill="var(--color-ink)" fillOpacity="0.04" />
-        <path
-          d={CURVE_PATH}
-          fill="none"
-          stroke="var(--color-ink)"
-          strokeOpacity="0.5"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-
-        <line
-          x1={PAD_X}
-          x2={VIEW_W - PAD_X}
-          y1={BASELINE}
-          y2={BASELINE}
-          stroke="var(--color-ink)"
-          strokeOpacity="0.18"
-          strokeWidth="1"
-        />
-
-        {range ? (
-          <rect
-            x={Math.min(xLow, xHigh)}
-            y={bandTop}
-            width={Math.max(Math.abs(xHigh - xLow), 2)}
-            height={BASELINE - bandTop}
-            fill="var(--color-ink)"
-            fillOpacity="0.08"
-          />
-        ) : (
-          <line
-            x1={xBandCenter}
-            x2={xBandCenter}
-            y1={bandTop}
-            y2={BASELINE}
-            stroke="var(--color-ink)"
-            strokeOpacity="0.35"
-            strokeDasharray="2 3"
-            strokeWidth="1.25"
-          />
-        )}
-        <text
-          x={xBandCenter}
-          y={BASELINE + 16}
-          textAnchor="middle"
-          fill="var(--color-ink)"
-          fillOpacity="0.55"
-          fontSize="11.5"
+    <figure className="m-0 flex w-full flex-col gap-2.5">
+      <div className="w-full rounded border border-ink/12 bg-paper px-3 pb-3 pt-3.5 shadow-card">
+        <svg
+          viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
+          className="h-auto w-full overflow-visible"
+          role="img"
+          aria-label={`${studentFullLabel} — ${rangeLabel}`}
         >
-          {rangeLabel}
-        </text>
+          {shouldAnimate && (
+            <style>{`
+              @keyframes curveDrawAnim {
+                0% { stroke-dashoffset: ${pathLength}; }
+                100% { stroke-dashoffset: 0; }
+              }
+              @keyframes cutoffFadeAnim {
+                0% { opacity: 0; }
+                100% { opacity: 1; }
+              }
+              @keyframes markerGrowAnim {
+                0% { opacity: 0; transform: scaleY(0.96); }
+                100% { opacity: 1; transform: scaleY(1); }
+              }
+              @keyframes markerPopAnim {
+                0% { opacity: 0; transform: scale(0.96); }
+                100% { opacity: 1; transform: scale(1); }
+              }
+            `}</style>
+          )}
 
-        <g>
-          <circle cx={xScore} cy={yScore} r="8" fill="var(--color-paper)" />
-          <circle cx={xScore} cy={yScore} r="5.5" fill={markerColor} />
-          <text
-            x={labelX}
-            y={yScore + 4}
-            textAnchor={labelOnRight ? "start" : "end"}
-            fill={markerColor}
-            fontSize="12.5"
-            fontWeight="700"
-          >
-            {youLabel}
-          </text>
-        </g>
-      </svg>
+          {/* Background area under the bell curve (7% ink opacity) */}
+          <path d={BELL_AREA_PATH} fill="var(--color-ink)" fillOpacity="0.07" />
+
+          {/* Static Baseline (1px, 30% ink opacity) */}
+          <line
+            x1={0}
+            y1={BASELINE_Y}
+            x2={VIEW_W}
+            y2={BASELINE_Y}
+            stroke="var(--color-ink)"
+            strokeOpacity="0.30"
+            strokeWidth="1"
+          />
+
+          {/* Bell Curve Stroke (1.5px, round cap, animated 0-520ms) */}
+          <path
+            ref={pathRef}
+            d={BELL_CURVE_PATH}
+            fill="none"
+            stroke="var(--color-ink)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            style={
+              shouldAnimate
+                ? {
+                    strokeDasharray: pathLength,
+                    strokeDashoffset: pathLength,
+                    animation: "curveDrawAnim 520ms cubic-bezier(0.16, 1, 0.3, 1) forwards",
+                  }
+                : undefined
+            }
+          />
+
+          {/* Cutoff mark (1.5px dashed vertical line + label, faded in 0-250ms) */}
+          {xCutoff !== null && yCutoff !== null && (
+            <g
+              style={
+                shouldAnimate
+                  ? {
+                      opacity: 0,
+                      animation: "cutoffFadeAnim 250ms cubic-bezier(0.16, 1, 0.3, 1) forwards",
+                    }
+                  : undefined
+              }
+            >
+              <line
+                x1={xCutoff}
+                y1={BASELINE_Y}
+                x2={xCutoff}
+                y2={yCutoff}
+                stroke="var(--color-ink)"
+                strokeOpacity="0.8"
+                strokeWidth="1.5"
+                strokeDasharray="3 3"
+              />
+              <text
+                x={xCutoff - 4}
+                y={BASELINE_Y + 14}
+                textAnchor="end"
+                fill="var(--color-secondary)"
+                fontSize="11"
+                fontFamily="var(--font-sans), sans-serif"
+                className="tabular-nums"
+              >
+                {rangeLabel.startsWith("seuil") ? rangeLabel : `seuil ${rangeLabel}`}
+              </text>
+            </g>
+          )}
+
+          {/* Student Mark (2px solid line + 5.5px circle + label, animated 280-600ms) */}
+          <g>
+            {/* Growing vertical stem */}
+            <line
+              x1={xScore}
+              y1={BASELINE_Y}
+              x2={xScore}
+              y2={yScore}
+              stroke={markerColor}
+              strokeWidth="2"
+              style={
+                shouldAnimate
+                  ? {
+                      opacity: 0,
+                      transformOrigin: `${xScore}px ${BASELINE_Y}px`,
+                      animation:
+                        "markerGrowAnim 320ms cubic-bezier(0.16, 1, 0.3, 1) 280ms forwards",
+                    }
+                  : undefined
+              }
+            />
+
+            {/* Dot + Label popping in at the same moment stem reaches the curve */}
+            <g
+              style={
+                shouldAnimate
+                  ? {
+                      opacity: 0,
+                      transformOrigin: `${xScore}px ${yScore}px`,
+                      animation:
+                        "markerPopAnim 320ms cubic-bezier(0.16, 1, 0.3, 1) 280ms forwards",
+                    }
+                  : undefined
+              }
+            >
+              {/* Paper backing ring for crisp contrast */}
+              <circle cx={xScore} cy={yScore} r="7" fill="var(--color-paper)" />
+              {/* 5.5px filled dot */}
+              <circle cx={xScore} cy={yScore} r="5.5" fill={markerColor} />
+
+              <text
+                x={labelX}
+                y={yScore + 4}
+                textAnchor={labelAnchor}
+                fill={markerColor}
+                fontSize="12"
+                fontWeight="600"
+                fontFamily="var(--font-sans), sans-serif"
+                className="tabular-nums"
+              >
+                {studentFullLabel}
+              </text>
+            </g>
+          </g>
+        </svg>
+      </div>
 
       {caption && (
-        <figcaption className="border-t border-ink/10 pt-3 text-center text-[11px] leading-relaxed text-ink/50">
+        <figcaption className="text-center text-[11px] leading-relaxed text-ink/50">
           {caption}
         </figcaption>
       )}

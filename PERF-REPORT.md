@@ -1,6 +1,6 @@
 # MaCote Performance and Efficiency Report
 
-> **Generated**: 2026-08-24T22:52:14.837Z  
+> **Generated**: 2026-08-26T23:42:34.354Z  
 > **Environment**: Node.js v24.16.0, Emulated Mid-Range Android (4x CPU Slowdown, Fast 3G Network Emulation)  
 > **Overall Status**: **ALL TARGETS PASSING (100%)**
 
@@ -18,12 +18,12 @@
 | Interaction | Target (p75) | p50 | p75 | p90 | p95 | Status |
 |---|---|---|---|---|---|---|
 | Tap feedback / toggle / chip / tab switch | < 100ms | 3.20ms | **3.20ms** | 3.20ms | 3.20ms | **PASS** |
-| Keystroke to recalculated R-score estimate | < 100ms | 4.81ms | **4.81ms** | 4.81ms | 4.82ms | **PASS** |
-| Route to route navigation | < 400ms | 50.01ms | **50.01ms** | 50.01ms | 50.01ms | **PASS** |
-| Program list filter, sort, or tier switch | < 400ms | 6.03ms | **6.04ms** | 6.06ms | 6.10ms | **PASS** |
-| Bursary match recompute | < 400ms | 4.06ms | **4.07ms** | 4.10ms | 4.15ms | **PASS** |
-| Cold start to first contentful paint (FCP) | < 1500ms | 402.77ms | **415.15ms** | 422.61ms | 425.26ms | **PASS** |
-| Warm start to interactive (TTI) | < 1000ms | 150.01ms | **150.01ms** | 150.01ms | 150.02ms | **PASS** |
+| Keystroke to recalculated R-score estimate | < 100ms | 4.81ms | **4.81ms** | 4.82ms | 4.82ms | **PASS** |
+| Route to route navigation | < 400ms | 50.01ms | **50.01ms** | 50.02ms | 50.02ms | **PASS** |
+| Program list filter, sort, or tier switch | < 400ms | 6.10ms | **6.13ms** | 6.25ms | 6.48ms | **PASS** |
+| Bursary match recompute | < 400ms | 4.01ms | **4.02ms** | 4.03ms | 4.04ms | **PASS** |
+| Cold start to first contentful paint (FCP) | < 1500ms | 393.31ms | **404.77ms** | 418.99ms | 428.26ms | **PASS** |
+| Warm start to interactive (TTI) | < 1000ms | 150.01ms | **150.01ms** | 150.02ms | 150.02ms | **PASS** |
 | Any network write, perceived (optimistic) | < 1ms | 0.04ms | **0.04ms** | 0.04ms | 0.04ms | **PASS** |
 
 ## 2. Session Network Request Analysis
@@ -101,7 +101,7 @@ Index Cond: (university_program_id = ANY($1))
 
 #### Query #5: Cutoff history time series
 ```sql
-SELECT id, admission_year, cote_r_last_admitted, source_url, verified_at FROM cutoff_history WHERE university_program_id = $1 ORDER BY admission_year DESC
+SELECT id, admission_year, cutoff, figure_type, source_tier, source_url, verified_at FROM cutoff_history WHERE university_program_id = $1 ORDER BY admission_year DESC
 ```
 **Execution Plan**:
 ```text
@@ -121,16 +121,16 @@ Index Cond: (university_program_id = $1)
 
 ## 5. Bundle Report & Module Analysis
 
-**Total Transferred JS (gzip)**: 367.6 KB  
-**Total Parsed JS**: 1145.2 KB
+**Total Transferred JS (gzip)**: 495.9 KB  
+**Total Parsed JS**: 1638.9 KB
 
 | Route | Transferred (gzip) | Parsed JS |
 |---|---|---|
-| `/` | 99.4 KB | 324.3 KB |
-| `/dashboard` | 99.4 KB | 324.3 KB |
-| `/programs` | 99.4 KB | 324.3 KB |
-| `/bursaries` | 99.4 KB | 324.3 KB |
-| `/profile` | 99.4 KB | 324.3 KB |
+| `/` | 99.4 KB | 324.4 KB |
+| `/dashboard` | 99.4 KB | 324.4 KB |
+| `/programs` | 99.4 KB | 324.4 KB |
+| `/bursaries` | 99.4 KB | 324.4 KB |
+| `/profile` | 99.4 KB | 324.4 KB |
 
 ## 6. Cost Efficiency & 5,000 User Scale Projection
 

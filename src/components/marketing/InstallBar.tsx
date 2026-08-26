@@ -60,10 +60,10 @@ export function InstallBar({ locale }: { locale: Locale }) {
     >
       <div className="mx-auto flex w-full max-w-[720px] items-center justify-between gap-4 border-t border-hairline bg-paper px-3 py-3.5 shadow-card">
         <p className="text-[13.5px] font-semibold text-ink">{mt(locale, "mkt.installBarHeading")}</p>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <Link
             href={localeHref(locale, "/")}
-            className="flex h-10 items-center justify-center rounded-full bg-ultramarine px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-pressed active:bg-pressed"
+            className="flex min-h-[48px] items-center justify-center rounded-full bg-ultramarine px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-pressed active:bg-pressed active:scale-[0.98]"
           >
             {mt(locale, "mkt.installBarCta")}
           </Link>
@@ -71,7 +71,7 @@ export function InstallBar({ locale }: { locale: Locale }) {
             type="button"
             onClick={dismiss}
             aria-label={mt(locale, "mkt.installBarDismiss")}
-            className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-secondary transition-colors hover:text-ink"
+            className="-mr-1 flex min-h-[48px] min-w-[48px] flex-shrink-0 items-center justify-center rounded-full text-secondary transition-colors hover:text-ink active:bg-ink/10"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
               <line x1="18" y1="6" x2="6" y2="18" />

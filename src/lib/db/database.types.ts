@@ -55,6 +55,13 @@ export type DeadlineType =
   | "withdrawal_no_penalty"
   | "other";
 export type ReviewStatus = "pending" | "flagged" | "approved" | "rejected";
+export type NotificationCategory =
+  | "deadline_reminder"
+  | "cutoff_update"
+  | "new_bursary_match"
+  | "grade_window"
+  | "counselor_season";
+export type NotificationSubjectType = "bursary" | "university_program" | "deadline";
 
 export type Database = {
   public: {
@@ -490,6 +497,84 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      notification_preferences: {
+        Row: {
+          user_id: string;
+          deadline_reminders: boolean;
+          cutoff_updates: boolean;
+          new_bursary_matches: boolean;
+          grade_window_reminders: boolean;
+          updated_at: string | null;
+        };
+        Insert: {
+          user_id: string;
+          deadline_reminders?: boolean;
+          cutoff_updates?: boolean;
+          new_bursary_matches?: boolean;
+          grade_window_reminders?: boolean;
+          updated_at?: string | null;
+        };
+        Update: Partial<Database["public"]["Tables"]["notification_preferences"]["Insert"]>;
+        Relationships: [];
+      };
+      notification_events: {
+        Row: {
+          id: string;
+          user_id: string;
+          category: NotificationCategory;
+          subject_type: NotificationSubjectType;
+          subject_id: string;
+          payload: Json | null;
+          scheduled_for: string;
+          sent_at: string | null;
+          dedupe_key: string;
+          created_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          category: NotificationCategory;
+          subject_type: NotificationSubjectType;
+          subject_id: string;
+          payload?: Json | null;
+          scheduled_for: string;
+          sent_at?: string | null;
+          dedupe_key: string;
+          created_at?: string | null;
+        };
+        Update: Partial<Database["public"]["Tables"]["notification_events"]["Insert"]>;
+        Relationships: [];
+      };
+      generic_program_profiles: {
+        Row: {
+          id: string;
+          program_code: string;
+          name: string;
+          description: string;
+          profils: Json;
+          typical_courses: string[] | null;
+          leads_to_program_categories: string[] | null;
+          factual_career_examples: string[] | null;
+          source_url: string;
+          last_verified_at: string;
+          created_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          program_code: string;
+          name: string;
+          description: string;
+          profils?: Json;
+          typical_courses?: string[] | null;
+          leads_to_program_categories?: string[] | null;
+          factual_career_examples?: string[] | null;
+          source_url: string;
+          last_verified_at: string;
+          created_at?: string | null;
+        };
+        Update: Partial<Database["public"]["Tables"]["generic_program_profiles"]["Insert"]>;
+        Relationships: [];
       };
       // Staging mirrors (see docs/02-scraping-collection-plan.md's pipeline architecture).
       // One per scraped/compiled production table in clusters 2-5; not defined by name in

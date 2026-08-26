@@ -96,7 +96,7 @@ export function IosInstallGuide() {
             type="button"
             onClick={handleTemporaryClose}
             aria-label={t("common.back")}
-            className="-mr-1 -mt-1 flex h-10 w-10 items-center justify-center rounded-full text-ink/40 transition-colors hover:text-ink active:bg-ink/10"
+            className="-mr-1 -mt-1 flex min-h-[48px] min-w-[48px] items-center justify-center rounded-full text-ink/40 transition-colors hover:text-ink active:bg-ink/10"
           >
             <X className="h-5 w-5" />
           </button>
@@ -166,7 +166,7 @@ export function IosInstallGuide() {
           <button
             type="button"
             onClick={handleTemporaryClose}
-            className="flex h-10 w-full items-center justify-center text-[13px] font-medium text-ink/50 transition-colors hover:text-ink"
+            className="flex min-h-[48px] w-full items-center justify-center text-[13px] font-medium text-ink/50 transition-colors hover:text-ink active:scale-[0.99]"
           >
             {t("pwa.later")}
           </button>

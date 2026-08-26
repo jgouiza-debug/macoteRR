@@ -61,7 +61,7 @@ export function InAppBrowserBanner() {
             <button
               type="button"
               onClick={() => escapeToRealBrowser()}
-              className="mt-2.5 flex h-10 items-center justify-center rounded-full bg-ink px-4 text-[13px] font-semibold text-paper transition-transform active:scale-[0.98]"
+              className="mt-2.5 flex min-h-[48px] items-center justify-center rounded-full bg-ink px-4 text-[13px] font-semibold text-paper transition-transform active:scale-[0.98]"
             >
               {t("inapp.openAndroid")}
             </button>
@@ -72,7 +72,7 @@ export function InAppBrowserBanner() {
               <button
                 type="button"
                 onClick={copyLink}
-                className="mt-2.5 flex h-10 items-center gap-1.5 rounded-full border border-ink/25 px-4 text-[13px] font-semibold text-ink transition-transform active:scale-[0.98]"
+                className="mt-2.5 flex min-h-[48px] items-center gap-1.5 rounded-full border border-ink/25 px-4 text-[13px] font-semibold text-ink transition-transform active:scale-[0.98]"
               >
                 {copied ? <Check className="h-4 w-4 text-moss" /> : <Copy className="h-4 w-4" />}
                 {copied ? t("inapp.copied") : t("inapp.copyLink")}
@@ -85,7 +85,7 @@ export function InAppBrowserBanner() {
           type="button"
           onClick={() => setDismissed(true)}
           aria-label={t("common.close")}
-          className="-mr-1 -mt-1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-ink/40 transition-colors active:bg-ink/10"
+          className="-mr-1 -mt-1 flex min-h-[48px] min-w-[48px] flex-shrink-0 items-center justify-center rounded-full text-ink/40 transition-colors active:bg-ink/10"
         >
           <X className="h-[18px] w-[18px]" />
         </button>

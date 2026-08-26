@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { BadgeCheck, CalendarDays, TrendingUp } from "lucide-react";
+import { BadgeCheck, CalendarDays, TrendingUp, Info } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { AxisRow } from "@/components/rscore/AxisRow";
 import { SourceStamp } from "@/components/SourceStamp";
+import { RScoreBandSheet } from "@/components/rscore/RScoreBandSheet";
 import { CEGEPS, CEGEP_PROGRAMS, UNIVERSITY_PROGRAMS, DEADLINES } from "@/lib/sample-data";
 import { useStudentProfile } from "@/lib/profile/store";
 import {
@@ -36,6 +37,7 @@ export default function DashboardPage() {
   const { t, locale } = useLocale();
   const f = useFormat();
   const { profile } = useStudentProfile();
+  const [bandOpen, setBandOpen] = useState(false);
 
   // useSyncExternalStore's first client render matches the server snapshot (rScore: null)
   // before correcting to the real localStorage value on hydration — wait for that correction
@@ -90,9 +92,12 @@ export default function DashboardPage() {
           {/* Dashed frame + ≈ + trending icon are the "this is an estimate" tell. A
               confirmed score is a fact from the student's cégep and gets a solid frame and a
               check, so the two can never be mistaken for each other at a glance. */}
-          <div
-            className={`mt-4 flex min-w-[180px] flex-col items-center gap-1 rounded border px-5 py-3 ${
-              isConfirmed ? "border-moss/60" : "border-dashed border-moss/60"
+          <button
+            type="button"
+            onClick={() => setBandOpen(true)}
+            aria-label={t(isConfirmed ? "dash.confirmedTitle" : "dash.estimateTitle")}
+            className={`mt-4 flex min-w-[180px] flex-col items-center gap-1 rounded border px-5 py-3.5 shadow-sm tap-spring hover:shadow-card active:scale-[0.97] ${
+              isConfirmed ? "border-moss/60 bg-moss/[0.02]" : "border-dashed border-moss/60 bg-paper"
             }`}
           >
             <span className="flex items-center gap-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-moss">
@@ -107,7 +112,11 @@ export default function DashboardPage() {
               {!isConfirmed && "≈ "}
               {f.score(profile.rScore, 2)}
             </span>
-          </div>
+            <span className="mt-1 flex items-center gap-1 text-[11px] font-medium text-ink/45">
+              <Info className="h-3 w-3" />
+              {t("common.seuil")}
+            </span>
+          </button>
         </section>
 
         <section className="flex flex-col gap-4 rounded border border-ink/12 bg-paper p-4 shadow-card">
@@ -129,30 +138,35 @@ export default function DashboardPage() {
               const goalName = program.name;
               return (
                 <div key={program.id} className="flex flex-col gap-2 border-t border-ink/10 pt-4 first:border-t-0 first:pt-0">
-                  <div className="flex items-baseline justify-between gap-3 text-[13.5px]">
-                    <span className="font-semibold text-ink">
-                      {goalName} · {program.institution}
-                    </span>
-                    <span className="text-ink/55 tabular-nums">
-                      {range
-                        ? `${t("cutoff.publishedRange")} ${formatRangeYears(range)} : ${f.score(range.low)}–${f.score(range.high)}`
-                        : t("cutoff.unverified")}
-                    </span>
-                  </div>
+                  <Link
+                    href={`/programs/${program.id}`}
+                    className="flex flex-col gap-2 rounded p-2.5 -mx-2.5 transition-all duration-150 hover:bg-chalk/40 active:bg-chalk/70 active:scale-[0.99]"
+                  >
+                    <div className="flex items-baseline justify-between gap-3 text-[13.5px]">
+                      <span className="font-semibold text-ink">
+                        {goalName} · {program.institution}
+                      </span>
+                      <span className="text-ink/55 tabular-nums">
+                        {range
+                          ? `${t("cutoff.publishedRange")} ${formatRangeYears(range)} : ${f.score(range.low)}–${f.score(range.high)}`
+                          : t("cutoff.unverified")}
+                      </span>
+                    </div>
 
-                  {/* Position on the distribution, never a progress bar: a cote R is a rank in a
-                      cohort, and a bar would read the gap as a failure to fill. */}
-                  <AxisRow score={profile.rScore as number} range={range} />
+                    {/* Position on the distribution, never a progress bar: a cote R is a rank in a
+                        cohort, and a bar would read the gap as a failure to fill. */}
+                    <AxisRow score={profile.rScore as number} range={range} />
 
-                  <div className="flex justify-between text-[11.5px] text-ink/55 tabular-nums">
-                    <span>
-                      {t(isConfirmed ? "dash.yourScore" : "dash.yourEst")} : {!isConfirmed && "≈ "}
-                      {f.score(profile.rScore as number)}
-                    </span>
-                    <span className={`font-semibold ${CUTOFF_STATUS_COLOR_CLASS[status]}`}>
-                      {t(CUTOFF_STATUS_LABEL_KEY[status])}
-                    </span>
-                  </div>
+                    <div className="flex justify-between text-[11.5px] text-ink/55 tabular-nums">
+                      <span>
+                        {t(isConfirmed ? "dash.yourScore" : "dash.yourEst")} : {!isConfirmed && "≈ "}
+                        {f.score(profile.rScore as number)}
+                      </span>
+                      <span className={`font-semibold ${CUTOFF_STATUS_COLOR_CLASS[status]}`}>
+                        {t(CUTOFF_STATUS_LABEL_KEY[status])}
+                      </span>
+                    </div>
+                  </Link>
                   <SourceStamp date={program.lastVerifiedAt} href={program.sourceUrl} />
                 </div>
               );
@@ -212,6 +226,12 @@ export default function DashboardPage() {
           </ul>
         </section>
       </div>
+
+      <RScoreBandSheet
+        score={profile.rScore}
+        open={bandOpen}
+        onClose={() => setBandOpen(false)}
+      />
     </AppShell>
   );
 }

@@ -105,7 +105,7 @@ export default function EstimateScorePage() {
               aria-label={t("est.remove")}
               onClick={() => setRows((prev) => prev.filter((_, i) => i !== index))}
               disabled={rows.length <= 1}
-              className="flex h-11 w-11 flex-shrink-0 items-center justify-center text-ink/35 transition-colors active:text-ember disabled:opacity-30"
+              className="flex min-h-[48px] min-w-[48px] flex-shrink-0 items-center justify-center text-ink/35 transition-colors active:text-ember disabled:opacity-30"
             >
               <X className="h-[18px] w-[18px]" />
             </button>
@@ -116,7 +116,7 @@ export default function EstimateScorePage() {
       <button
         type="button"
         onClick={() => setRows((prev) => [...prev, { name: "", grade: "" }])}
-        className="mt-3 flex w-fit items-center gap-1.5 text-[14px] font-semibold text-ultramarine"
+        className="mt-3 flex min-h-[48px] w-fit items-center gap-1.5 text-[14px] font-semibold text-ultramarine active:scale-[0.98]"
       >
         <Plus className="h-[18px] w-[18px]" />
         {t("est.addCourse")}

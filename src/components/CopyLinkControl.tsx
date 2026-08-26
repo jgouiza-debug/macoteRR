@@ -47,7 +47,7 @@ export function CopyLinkControl({ locale, onContinueWithoutInstall, showNoteCapt
         <button
           type="button"
           onClick={handleCopy}
-          className="text-ultramarine font-semibold text-[14px] hover:underline focus-visible:outline-none ml-2 shrink-0"
+          className="text-ultramarine font-semibold text-[14px] hover:underline focus-visible:outline-none ml-2 shrink-0 min-h-[44px] inline-flex items-center active:scale-[0.98]"
         >
           {copied ? t("install.copied") : t("install.copyShort")}
         </button>
@@ -57,14 +57,14 @@ export function CopyLinkControl({ locale, onContinueWithoutInstall, showNoteCapt
       <button
         type="button"
         onClick={handleCopy}
-        className="w-full h-14 rounded-full bg-ultramarine hover:bg-pressed active:bg-pressed text-paper text-[16px] font-semibold transition-colors shadow-card flex items-center justify-center gap-2 focus-visible:outline-none"
+        className="w-full h-14 rounded-full bg-ultramarine hover:bg-pressed active:bg-pressed text-paper text-[16px] font-semibold tap-spring shadow-card flex items-center justify-center gap-2 focus-visible:outline-none"
       >
         {copied ? (
           <>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="animate-pop-in" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="20 6 9 17 4 12" />
             </svg>
-            <span>{t("install.copied")}</span>
+            <span className="animate-pop-in">{t("install.copied")}</span>
           </>
         ) : (
           <span>{t("install.inAppButton")}</span>
@@ -80,7 +80,7 @@ export function CopyLinkControl({ locale, onContinueWithoutInstall, showNoteCapt
             onContinueWithoutInstall();
           }
         }}
-        className="text-ultramarine font-semibold text-[15px] hover:underline transition-colors py-2 text-center focus-visible:outline-none"
+        className="text-ultramarine font-semibold text-[15px] hover:underline transition-colors py-2 text-center focus-visible:outline-none min-h-[48px] inline-flex items-center justify-center active:scale-[0.99]"
       >
         {t("install.inAppSecondary")}
       </a>

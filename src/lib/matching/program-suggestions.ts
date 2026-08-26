@@ -1,40 +1,38 @@
 import { CEGEP_PROGRAM_CATALOG, type CegepProgramSummary } from "@/lib/data/cegep-programs-catalog";
 import { UNIVERSITY_PROGRAM_CATALOG, type UniversityProgramListing } from "@/lib/data/university-programs-catalog";
+import { getGenericProgramProfile, type GenericProgramProfile } from "@/lib/data/generic-program-profiles";
 
 /**
  * Broad-catalog program suggestions: cégep ↔ university programs whose NAMES share
  * significant words ("informatique" in both "Techniques de l'informatique" and "Baccalauréat
- * en informatique et génie logiciel"). This is deliberately NOT the same thing as
- * src/lib/matching/program-eligibility.ts's prerequisite-coverage check — that module compares
- * verified curricula and can say "met" / "partial" / "unknown". This one has no curriculum
- * data to compare (see cegep-programs-catalog.ts's header) and only ever answers "these two
- * program names appear to be about the same field" — a discovery aid, not an eligibility
- * signal. `sharedWords` is returned specifically so a caller can show its work ("matched on:
- * informatique") rather than presenting a bare ranked list as if it were a computed score.
+ * en informatique et génie logiciel"), or connected through ministerial generic profiles
+ * (e.g. Sciences humaines 300.A0 -> Administration, Droit, Psychologie).
+ *
+ * EXPLAINABILITY PRINCIPLE:
+ * Deliberately NOT a predictive fit score or recommendation engine (Code des professions,
+ * art. 37.1). Every suggestion includes its factual match rationale (`sharedWords` or `matchChip`)
+ * showing *why* it appears ("matched on: informatique", "Profil : Administration").
  */
 
 const STOPWORDS = new Set([
   "de", "des", "du", "la", "le", "les", "et", "en", "au", "aux", "un", "une",
-  "pour", "dans", "sur", "avec", "aux", "the", "and", "of", "in", "for",
+  "pour", "dans", "sur", "avec", "the", "and", "of", "in", "for", "baccalaureat", "maitrise", "certificat",
 ]);
 
 /**
- * Closed synonym groups for common c\u00e9gep-name / university-name mismatches a bare token
- * overlap misses entirely \u2014 a technical DEC's "Techniques juridiques" and a university's
- * "Droit" share zero words otherwise. Same philosophy as program-eligibility.ts's alias
- * table: explicit and closed, not fuzzy or substring matching. Not exhaustive \u2014 expand as
- * real gaps turn up, don't try to pre-guess every field's vocabulary.
+ * Closed synonym groups for common cégep-name / university-name connections.
  */
 const SYNONYM_GROUPS: string[][] = [
   ["droit", "juridiques", "juridique", "law"],
   ["infirmiers", "infirmieres", "infirmier", "infirmiere", "soins", "nursing"],
-  ["gestion", "administration", "affaires", "management", "business"],
+  ["gestion", "administration", "affaires", "management", "business", "commerce", "comptabilite"],
   ["genie", "ingenierie", "engineering"],
-  ["comptabilite", "comptable", "accounting"],
-  ["sante", "medicale", "medical", "medecine"],
+  ["sante", "medicale", "medical", "medecine", "dentaire", "pharmacie"],
   ["education", "enseignement", "pedagogie", "teaching"],
-  ["arts", "lettres", "litterature", "communication"],
-  ["informatique", "logiciel", "software", "computing"],
+  ["arts", "lettres", "litterature", "communication", "journalisme"],
+  ["informatique", "logiciel", "software", "computing", "donnees"],
+  ["psychologie", "psychoeducation", "social", "sociologie"],
+  ["biologie", "biochimie", "chimie", "physique", "science"],
 ];
 
 const SYNONYM_OF = new Map<string, string[]>();
@@ -58,22 +56,58 @@ function tokenize(name: string): Set<string> {
   return expanded;
 }
 
-export type ProgramSuggestion<T> = { item: T; sharedWords: string[] };
+export type ProgramSuggestion<T> = {
+  item: T;
+  sharedWords: string[];
+  matchChip?: string;
+};
 
 function suggest<T>(
   sourceName: string,
   catalog: readonly T[],
   nameOf: (item: T) => string,
   limit: number,
+  profile?: GenericProgramProfile,
 ): ProgramSuggestion<T>[] {
   const sourceWords = tokenize(sourceName);
-  if (sourceWords.size === 0) return [];
+
+  // If a generic profile exists (e.g. 300.A0 or 200.B0), include profile keywords
+  const profileWords = new Map<string, string>(); // word -> profile reason
+  if (profile) {
+    for (const p of profile.profils) {
+      const pWords = tokenize(p.name);
+      for (const w of pWords) {
+        profileWords.set(w, `Profil : ${p.name.split(" ")[0]}`);
+      }
+    }
+  }
+
+  if (sourceWords.size === 0 && profileWords.size === 0) return [];
 
   const scored = catalog
-    .map((item) => ({
-      item,
-      sharedWords: [...tokenize(nameOf(item))].filter((word) => sourceWords.has(word)),
-    }))
+    .map((item) => {
+      const itemWords = tokenize(nameOf(item));
+      const sharedWords = [...itemWords].filter(
+        (word) => sourceWords.has(word) || profileWords.has(word),
+      );
+
+      let matchChip: string | undefined;
+      for (const word of sharedWords) {
+        if (profileWords.has(word)) {
+          matchChip = profileWords.get(word);
+          break;
+        }
+      }
+      if (!matchChip && sharedWords.length > 0) {
+        matchChip = `Programme : ${sourceName.split(" ")[0]}`;
+      }
+
+      return {
+        item,
+        sharedWords,
+        matchChip,
+      };
+    })
     .filter((row) => row.sharedWords.length > 0);
 
   scored.sort((a, b) => b.sharedWords.length - a.sharedWords.length);
@@ -83,13 +117,26 @@ function suggest<T>(
 export function suggestUniversityProgramsForCegepProgram(
   cegepProgramName: string,
   limit = 8,
+  programCode?: string | null,
 ): ProgramSuggestion<UniversityProgramListing>[] {
-  return suggest(cegepProgramName, UNIVERSITY_PROGRAM_CATALOG, (p) => p.programName, limit);
+  const profile = programCode ? getGenericProgramProfile(programCode) : undefined;
+  return suggest(
+    cegepProgramName,
+    UNIVERSITY_PROGRAM_CATALOG,
+    (p) => p.programName,
+    limit,
+    profile,
+  );
 }
 
 export function suggestCegepProgramsForUniversityProgram(
   universityProgramName: string,
   limit = 8,
 ): ProgramSuggestion<CegepProgramSummary>[] {
-  return suggest(universityProgramName, CEGEP_PROGRAM_CATALOG, (p) => p.programName, limit);
+  return suggest(
+    universityProgramName,
+    CEGEP_PROGRAM_CATALOG,
+    (p) => p.programName,
+    limit,
+  );
 }

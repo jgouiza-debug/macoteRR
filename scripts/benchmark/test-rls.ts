@@ -23,6 +23,8 @@ export function verifyRlsPolicies(): { results: RlsVerificationResult[]; allPass
     { table: "student_course_grades", policy: "own grades only" },
     { table: "student_r_score_confirmations", policy: "own confirmations only" },
     { table: "student_targets", policy: "own targets only" },
+    { table: "notification_preferences", policy: "own prefs only" },
+    { table: "notification_events", policy: "own events only" },
   ];
 
   // Test simulation verifying RLS SQL predicates
@@ -65,7 +67,7 @@ async function main() {
     console.log(`| \`${r.table}\` | "${r.policyName}" | Blocked | Blocked | Blocked | **${r.status}** |`);
   }
 
-  console.log("\nRLS Verification:", allPassed ? "ALL 4 POLICIES STRICTLY ENFORCED (PASS)" : "FAIL");
+  console.log(`\nRLS Verification: ${allPassed ? `ALL ${results.length} POLICIES STRICTLY ENFORCED (PASS)` : "FAIL"}`);
 
   if (!allPassed) {
     process.exitCode = 1;

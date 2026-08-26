@@ -77,7 +77,7 @@ export function CegepContactForm({ labels }: { labels: PourLesCegepsContactLabel
 
       <button
         type="submit"
-        className="mt-1 flex h-11 items-center justify-center self-start rounded-full bg-ultramarine px-6 text-[14px] font-semibold text-paper transition-colors hover:bg-pressed active:bg-pressed"
+        className="mt-1 flex h-12 min-h-[48px] items-center justify-center self-start rounded-full bg-ultramarine px-6 text-[14px] font-semibold text-paper transition-[transform,background-color] hover:bg-pressed active:bg-pressed active:scale-[0.98]"
       >
         {labels.submitLabel}
       </button>

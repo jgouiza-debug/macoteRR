@@ -19,12 +19,16 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               aria-current={active ? "page" : undefined}
-              className={`flex w-full flex-col items-center justify-center gap-0.5 text-[10px] font-semibold uppercase tracking-wide transition-transform active:scale-95 ${
-                active ? "text-ultramarine" : "text-secondary"
+              className={`flex w-full flex-col items-center justify-center gap-0.5 text-[10px] uppercase tracking-wide transition-all duration-150 active:scale-90 ${
+                active ? "text-ultramarine" : "text-secondary hover:text-ink"
               }`}
             >
-              <item.icon className="h-[18px] w-[18px]" />
-              {t(item.labelKey)}
+              <item.icon
+                className={`h-[18px] w-[18px] transition-transform duration-200 ${
+                  active ? "scale-110 stroke-[2.4]" : "stroke-[1.8]"
+                }`}
+              />
+              <span className={active ? "font-bold" : "font-semibold"}>{t(item.labelKey)}</span>
             </Link>
           );
         })}

@@ -9,6 +9,8 @@ import { decOfferingsAtCegep, findCegepInstitution } from "@/lib/data/cegep-inst
 import { INTERESTS, type InterestId } from "@/lib/tags/interests";
 import { INTEREST_QUIZ, tallyInterests } from "@/lib/matching/interest-quiz";
 import { suggestUniversityProgramsForCegepProgram } from "@/lib/matching/program-suggestions";
+import { getGenericProgramProfile } from "@/lib/data/generic-program-profiles";
+import { DecProgramProfileCard } from "@/components/programs/DecProgramProfileCard";
 import { useStudentProfile } from "@/lib/profile/store";
 import { useOnboardingGuard } from "@/lib/profile/onboarding";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
@@ -56,8 +58,19 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
   const decOfferings = useMemo(() => decOfferingsAtCegep(profile.cegepId), [profile.cegepId]);
 
   const selectedDec = decOfferings.find((p) => p.programCode === cegepProgramId);
+  const genericProfile = useMemo(
+    () => getGenericProgramProfile(selectedDec?.programCode || cegepProgramId || ""),
+    [selectedDec, cegepProgramId],
+  );
   const catalogSuggestions = useMemo(
-    () => (selectedDec ? suggestUniversityProgramsForCegepProgram(selectedDec.programName, 5) : []),
+    () =>
+      selectedDec
+        ? suggestUniversityProgramsForCegepProgram(
+            selectedDec.programName,
+            5,
+            selectedDec.programCode,
+          )
+        : [],
     [selectedDec],
   );
 
@@ -204,9 +217,13 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
   }
 
   if (step === "future") {
+    const resultsHref =
+      profile.rScore !== null
+        ? `/onboarding/results?score=${profile.rScore}&status=${profile.rScoreStatus ?? "confirmed"}`
+        : "/onboarding/score";
     return (
       <ScreenShell
-        backHref="/onboarding/program"
+        backHref={resultsHref}
         footer={
           <button
             type="button"
@@ -252,12 +269,21 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
           </button>
         </div>
 
+        {selectedDec?.programCode && genericProfile && (
+          <div className="mt-6">
+            <DecProgramProfileCard
+              programCode={selectedDec.programCode}
+              cegepShortCode={profile.cegepId}
+            />
+          </div>
+        )}
+
         {catalogSuggestions.length > 0 && (
           <div className="mt-6 flex flex-col gap-2.5">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-ink/45">
               {t("goal.catalogSuggestions")}
             </p>
-            {catalogSuggestions.map(({ item, sharedWords }) => (
+            {catalogSuggestions.map(({ item, sharedWords, matchChip }) => (
               <a
                 key={`${item.institution}-${item.programName}`}
                 href={item.sourceUrl}
@@ -269,9 +295,14 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
                   <span className="block text-[13.5px] font-semibold text-ink">
                     {item.programName}
                   </span>
-                  <span className="block text-[11.5px] text-ink/50">
+                  <span className="mt-0.5 block text-[11.5px] text-ink/50">
                     {item.institution} · {t("goal.matchedOn")} {sharedWords.join(", ")}
                   </span>
+                  {matchChip && (
+                    <span className="mt-1.5 inline-block rounded-full bg-ultramarine/[0.08] px-2 py-0.5 text-[10.5px] font-semibold text-ultramarine">
+                      {matchChip}
+                    </span>
+                  )}
                 </span>
                 <ExternalLink className="mt-0.5 h-4 w-4 flex-shrink-0 text-ink/40" />
               </a>
@@ -288,7 +319,12 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
   if (step === "quiz") {
     const question = INTEREST_QUIZ[quizIndex];
     return (
-      <ScreenShell backHref="/onboarding/program">
+      <ScreenShell
+        onBack={() => {
+          if (quizIndex > 0) setQuizIndex((i) => i - 1);
+          else setStep("future");
+        }}
+      >
         <p className="mb-2 text-[12px] font-semibold uppercase tracking-wide text-ink/45">
           {t("goal.quizQuestionOf").replace("{n}", String(quizIndex + 1)).replace("{total}", String(INTEREST_QUIZ.length))}
         </p>
@@ -313,7 +349,7 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
   if (step === "specific") {
     return (
       <ScreenShell
-        backHref="/onboarding/program"
+        onBack={() => setStep("future")}
         footer={
           <button
             type="button"
@@ -372,7 +408,10 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
   // step === "general"
   return (
     <ScreenShell
-      backHref="/onboarding/program"
+      onBack={() => {
+        if (fromQuiz) setStep("quiz");
+        else setStep("future");
+      }}
       footer={
         <button
           type="button"
@@ -396,7 +435,7 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
                 type="button"
                 aria-pressed={selected}
                 onClick={() => toggleInterest(interest.id)}
-                className={`flex min-h-[44px] items-center gap-2 rounded-full border px-4 text-[13px] font-semibold transition-colors active:scale-[0.98] ${
+                className={`flex min-h-[48px] items-center gap-2 rounded-full border px-4 text-[13px] font-semibold transition-colors active:scale-[0.98] ${
                   selected ? "border-ultramarine bg-ultramarine text-paper" : "border-ink/20 bg-paper text-ink/70"
                 }`}
               >
@@ -415,6 +454,15 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
           <div className="flex flex-col gap-2.5 pb-4">
             {matchedPrograms.map((p) => {
               const selected = targetIds.includes(p.id);
+              const matchingInterestLabels = p.interestIds
+                .filter((id) => interestIds.includes(id))
+                .map((id) =>
+                  locale === "fr"
+                    ? INTERESTS.find((i) => i.id === id)?.fr
+                    : INTERESTS.find((i) => i.id === id)?.en,
+                )
+                .filter(Boolean);
+
               return (
                 <button
                   key={p.id}
@@ -425,11 +473,25 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
                     selected ? "border-ultramarine bg-ultramarine/[0.07]" : "border-ink/15 bg-paper"
                   }`}
                 >
-                  <span>
-                    <span className={`block text-[15px] font-semibold ${selected ? "text-ultramarine" : "text-ink"}`}>
+                  <span className="flex-1">
+                    <span
+                      className={`block text-[15px] font-semibold ${selected ? "text-ultramarine" : "text-ink"}`}
+                    >
                       {p.name}
                     </span>
                     <span className="block text-[12.5px] text-ink/55">{p.institution}</span>
+                    {matchingInterestLabels.length > 0 && (
+                      <span className="mt-1.5 flex flex-wrap gap-1">
+                        {matchingInterestLabels.map((lbl) => (
+                          <span
+                            key={lbl}
+                            className="rounded-full bg-ink/[0.06] px-2 py-0.5 text-[10.5px] font-medium text-ink/70"
+                          >
+                            {lbl}
+                          </span>
+                        ))}
+                      </span>
+                    )}
                   </span>
                   {selected && <Check className="h-5 w-5 flex-shrink-0 text-ultramarine" />}
                 </button>

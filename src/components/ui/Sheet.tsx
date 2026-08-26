@@ -75,9 +75,9 @@ export function Sheet({
         // dialog box rather than its inner panel is a backdrop click.
         if (dismissible && event.target === ref.current) onClose();
       }}
-      className="m-0 max-h-[100dvh] w-full max-w-none bg-transparent p-0 backdrop:bg-ink/45 backdrop:backdrop-blur-[2px] sm:m-auto sm:max-w-[430px] sm:px-5"
+      className="m-0 max-h-[100dvh] w-full max-w-none bg-transparent p-0 backdrop:bg-ink/45 backdrop:backdrop-blur-[2px] backdrop:animate-backdrop-fade sm:m-auto sm:max-w-[430px] sm:px-5"
     >
-      <div className="fixed inset-x-0 bottom-0 flex max-h-[88dvh] flex-col overflow-hidden rounded-t-[18px] bg-paper shadow-overlay sm:static sm:max-h-[80dvh] sm:rounded-[18px]">
+      <div className="fixed inset-x-0 bottom-0 flex max-h-[88dvh] flex-col overflow-hidden rounded-t-[18px] bg-paper shadow-overlay animate-sheet-up sm:static sm:max-h-[80dvh] sm:rounded-[18px]">
         <div className="flex items-start justify-between gap-4 px-5 pb-2 pt-5">
           <h2
             id="sheet-title"
@@ -90,7 +90,7 @@ export function Sheet({
               type="button"
               onClick={onClose}
               aria-label={t("common.close")}
-              className="-mr-2 -mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-ink/45 transition-colors active:bg-ink/10"
+              className="-mr-2 -mt-1 flex min-h-[48px] min-w-[48px] flex-shrink-0 items-center justify-center rounded-full text-ink/45 transition-transform duration-150 hover:text-ink active:scale-90 active:bg-ink/10"
             >
               <X className="h-5 w-5" />
             </button>

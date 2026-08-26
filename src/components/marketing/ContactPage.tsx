@@ -51,7 +51,7 @@ export function ContactPage({ locale }: { locale: Locale }) {
             <p className="text-[13px] font-medium text-secondary">{c.directEmailLabel}</p>
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="mt-1 inline-block text-[16px] font-semibold text-ultramarine transition-colors hover:text-pressed"
+              className="mt-1 inline-flex min-h-[48px] items-center text-[16px] font-semibold text-ultramarine transition-colors hover:text-pressed"
             >
               {CONTACT_EMAIL}
             </a>
@@ -135,7 +135,7 @@ export function ContactPage({ locale }: { locale: Locale }) {
 
               <button
                 type="submit"
-                className="mt-2 flex h-12 items-center justify-center self-start rounded-full bg-ultramarine px-6 text-[15px] font-semibold text-paper transition-colors hover:bg-pressed active:bg-pressed"
+                className="mt-2 flex h-12 min-h-[48px] items-center justify-center self-start rounded-full bg-ultramarine px-6 text-[15px] font-semibold text-paper transition-[transform,background-color] hover:bg-pressed active:bg-pressed active:scale-[0.98]"
               >
                 {c.form.submitLabel}
               </button>
