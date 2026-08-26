@@ -10,6 +10,7 @@ import { INTERESTS, type InterestId } from "@/lib/tags/interests";
 import { INTEREST_QUIZ, tallyInterests } from "@/lib/matching/interest-quiz";
 import { suggestUniversityProgramsForCegepProgram } from "@/lib/matching/program-suggestions";
 import { useStudentProfile } from "@/lib/profile/store";
+import { useOnboardingGuard } from "@/lib/profile/onboarding";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 type Step = "program" | "future" | "specific" | "general" | "quiz";
@@ -34,6 +35,10 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
   const { profile, update } = useStudentProfile();
 
   const [step, setStep] = useState<Step>(startStep);
+
+  // The DEC step needs a cégep; the goal step needs a score as well. Mounting either
+  // without them let a student walk backwards into a screen the profile could not fill.
+  useOnboardingGuard(startStep === "program" ? "program" : "goal");
   const [cegepProgramId, setCegepProgramId] = useState<string | null>(profile.cegepProgramId);
   const [targetIds, setTargetIds] = useState<string[]>(profile.targetUniversityProgramIds);
   const [interestIds, setInterestIds] = useState<InterestId[]>(profile.interestIds);

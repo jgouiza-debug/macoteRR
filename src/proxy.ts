@@ -17,6 +17,14 @@ const PROTECTED_PREFIXES = [
   "/counselor-prep",
 ];
 
+/**
+ * Where a signed-out visitor is sent. Deliberately the funnel's entry point, not the sign-up
+ * screen: the proxy can only see cookies, so it knows there is no session but not whether the
+ * student has picked a cégep yet. /onboarding resolves that client-side and forwards to the
+ * first unfinished step, so a cold boot starts at the beginning instead of landing on the
+ * last screen of a funnel that was never run.
+ */
+const ONBOARDING_ENTRY = "/onboarding";
 const SIGN_UP_PATH = "/onboarding/account";
 
 function isProtected(pathname: string) {
@@ -37,7 +45,7 @@ export async function proxy(request: NextRequest) {
       "proxy: NEXT_PUBLIC_SUPABASE_URL/ANON_KEY missing — see docs/SETUP-CLOUD.md",
     );
     if (isProtected(pathname)) {
-      return NextResponse.redirect(new URL(SIGN_UP_PATH, request.url));
+      return NextResponse.redirect(new URL(ONBOARDING_ENTRY, request.url));
     }
     return NextResponse.next();
   }
@@ -68,7 +76,7 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (!user && isProtected(pathname)) {
-    const redirectUrl = new URL(SIGN_UP_PATH, request.url);
+    const redirectUrl = new URL(ONBOARDING_ENTRY, request.url);
     // Remember where they were headed so the callback can finish the trip after sign-in.
     redirectUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(redirectUrl);

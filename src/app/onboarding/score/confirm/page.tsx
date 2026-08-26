@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ScreenShell } from "@/components/onboarding/ScreenShell";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { useStudentProfile } from "@/lib/profile/store";
+import { useOnboardingGuard } from "@/lib/profile/onboarding";
 
 export default function ConfirmScorePage() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function ConfirmScorePage() {
   // premise is not showing people figures they can't trust.
   const [value, setValue] = useState("");
   const [touched, setTouched] = useState(false);
+  useOnboardingGuard("score");
 
   const numeric = Number(value.replace(",", "."));
   const isValid = Number.isFinite(numeric) && numeric >= 15 && numeric <= 50;

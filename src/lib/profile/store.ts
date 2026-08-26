@@ -90,6 +90,16 @@ function read(): StudentProfile {
   return cache;
 }
 
+/**
+ * The profile outside React, for code that runs before or without a render — the onboarding
+ * guards and the funnel's entry router. Returns DEFAULT_PROFILE on the server, where there is
+ * no localStorage to read.
+ */
+export function readProfile(): StudentProfile {
+  if (typeof window === "undefined") return DEFAULT_PROFILE;
+  return read();
+}
+
 function readServer(): StudentProfile {
   return DEFAULT_PROFILE;
 }

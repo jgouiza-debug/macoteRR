@@ -7,6 +7,7 @@ import { ScreenShell, ScreenHeading } from "@/components/onboarding/ScreenShell"
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useStudentProfile } from "@/lib/profile/store";
+import { useOnboardingGuard } from "@/lib/profile/onboarding";
 
 type Row = { name: string; grade: string };
 
@@ -30,6 +31,7 @@ export default function EstimateScorePage() {
   const { t } = useLocale();
   const f = useFormat();
   const [rows, setRows] = useState<Row[]>(INITIAL_ROWS);
+  useOnboardingGuard("score");
 
   const { update: updateProfile } = useStudentProfile();
 

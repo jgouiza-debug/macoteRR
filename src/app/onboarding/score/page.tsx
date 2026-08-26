@@ -7,6 +7,7 @@ import { ChevronRight, TriangleAlert } from "lucide-react";
 import { ScreenShell, ScreenHeading } from "@/components/onboarding/ScreenShell";
 import { Sheet } from "@/components/ui/Sheet";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { useOnboardingGuard } from "@/lib/profile/onboarding";
 
 export default function KnowYourScorePage() {
   const { t } = useLocale();
@@ -15,6 +16,8 @@ export default function KnowYourScorePage() {
   // number in this product that cannot be sourced, so the student reads why before they see
   // a figure they might otherwise take as fact.
   const [warningOpen, setWarningOpen] = useState(false);
+  // Needs a cégep and a DEC before a score means anything.
+  useOnboardingGuard("score");
 
   return (
     <ScreenShell backHref="/onboarding/program">

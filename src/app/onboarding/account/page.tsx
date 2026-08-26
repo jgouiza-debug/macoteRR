@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { ScreenShell, ScreenHeading } from "@/components/onboarding/ScreenShell";
 import { createClient } from "@/lib/db/client";
+import { authCallbackUrl } from "@/lib/auth/redirect";
+import { useOnboardingGuard } from "@/lib/profile/onboarding";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -16,6 +18,9 @@ export default function AccountPage() {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   /** The provider's own words. A generic "try again" hides rate limits and misconfiguration. */
   const [errorDetail, setErrorDetail] = useState<string | null>(null);
+  // The whole funnel must be behind them: this is where the local profile is attached
+  // to a real user, so a half-built one would persist gaps that are hard to spot later.
+  useOnboardingGuard("account");
 
   const isValid = EMAIL_PATTERN.test(email.trim());
 
@@ -35,13 +40,12 @@ export default function AccountPage() {
       // src/proxy.ts appends ?next= when it bounces someone off a gated route, so a student
       // who deep-linked to /bursaries lands back there instead of the dashboard.
       const requested = new URLSearchParams(window.location.search).get("next");
-      const next = requested?.startsWith("/") && !requested.startsWith("//") ? requested : "/dashboard";
 
       const send = supabase.auth.signInWithOtp({
         email: email.trim(),
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
-        },
+        // Not window.location.origin: inside the native shell that is localhost, which no
+        // mail client can reach. See src/lib/auth/redirect.ts.
+        options: { emailRedirectTo: authCallbackUrl(requested ?? "/dashboard") },
       });
 
       // A hung request is indistinguishable from a slow one from the outside, so cap it
