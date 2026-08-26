@@ -5,13 +5,24 @@ brand are reviewable in version control instead of only existing in a dashboard 
 
 ## Installing
 
-Supabase dashboard → **Authentication → Email Templates → Magic Link**.
+Supabase dashboard → **Authentication → Email Templates**.
 
-- **Subject:** `Ta connexion à MaCote / Your MaCote sign-in link`
-- **Body:** paste the whole of [`magic-link.html`](./magic-link.html)
+Paste [`magic-link.html`](./magic-link.html) into **BOTH** of these, with the subject
+`Ta connexion à MaCote / Your MaCote sign-in link`:
 
-The app only ever calls `signInWithOtp`, so Magic Link is the only template it uses. "Confirm
-signup" is not in the flow — with OTP, the first link both creates the user and signs them in.
+- **Confirm signup**
+- **Magic Link**
+
+Both, because `signInWithOtp` picks the template by whether the address already has an account:
+a new user gets **Confirm signup**, a returning one gets **Magic Link**. Filling in only Magic
+Link looks correct right up until you test it — every early sign-up is a new user, so every
+email comes from the template you did not touch, and Supabase's unbranded default ships instead.
+
+The same body works in both: `{{ .ConfirmationURL }}` is valid in each, and the copy reads
+correctly whether the account is being created or resumed.
+
+Strip the leading `<!-- ... -->` comment before pasting. It never renders, but it names internal
+file paths, and those should not travel to recipients.
 
 ## Also required, or the link will not work
 
