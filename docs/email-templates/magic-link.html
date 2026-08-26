@@ -2,59 +2,72 @@
   MaCote — Magic Link / Lien de connexion
   Paste into Supabase → Authentication → Email Templates → Magic Link (Body).
 
-  Constraints this template is written against, none of them optional:
+  BRANDING — this mirrors the app's own tokens (src/app/globals.css), not approximations:
+    chalk   #e7e9e0  ground            paper     #fbfbf8  card surface
+    ink     #17181a  primary text      secondary #5a5d53  muted text
+    hairline #d3d6ca rules and borders ultramarine #2b4cf5 accent / wordmark / actions
+  Geometry follows the app's rule verbatim — "structure is square (3px), actions are pill
+  (full), nothing between" — so the card is 3px and the button is fully rounded. Muted text
+  uses the real `secondary` value rather than a transparent ink, because the app does.
 
-  - Table layout and inline styles only. Gmail strips <style> blocks in some clients, Outlook
-    ignores flexbox and most modern CSS, and no email client guarantees external CSS. Every
-    rule that matters is on the element.
-  - No web fonts. Bricolage Grotesque and Instrument Sans are not available in mail clients, so
-    this uses a system stack that degrades predictably rather than a font that silently falls
-    back to Times.
-  - No images. The MaCote mark is a PNG in /public/brand, but images are blocked by default in
-    most clients, so the wordmark is set in type. That also keeps the email under every clipping
-    threshold — Gmail clips at ~102KB and appends a "View entire message" link that breaks the
-    single-action flow this email exists for.
-  - Bilingual in one send. Supabase templates have no locale variable, and the address is
-    collected before any language preference is stored, so French leads (the product's default,
-    and Quebec City's) with English underneath rather than guessing wrong half the time.
+  Type is Bricolage Grotesque (display) over Instrument Sans (body), same as the app, loaded
+  from Google Fonts. Apple Mail, iOS Mail and Samsung Mail honour that link; Gmail and Outlook
+  ignore it and fall back down the stack, which is why every font-family still ends in a
+  system sans. The wordmark is set in type in ultramarine to match src/components/ui/Logo.tsx.
 
-  Supabase variables available here: {{ .ConfirmationURL }}, {{ .Token }}, {{ .TokenHash }},
-  {{ .SiteURL }}, {{ .Email }}. This uses ConfirmationURL, which honours the emailRedirectTo the
-  app sends (src/lib/auth/redirect.ts), and .Token as the copy-paste fallback.
+  CLIENT CONSTRAINTS, none of them optional:
+  - Table layout, inline styles. Gmail strips <style> blocks, Outlook ignores modern CSS.
+  - The mark is a small PNG served from the site. Images are blocked by default in some
+    clients, so it carries alt text and the wordmark beside it is live text — the header still
+    reads as MaCote with images off.
+  - No large imagery: Gmail clips around 102KB and appends "View entire message", which would
+    bury the single action this email exists for.
+  - Bilingual in one send. Supabase templates have no locale variable and the address is
+    collected before any language preference exists, so French leads and English follows.
+
+  Supabase variables: {{ .ConfirmationURL }}, {{ .Token }}, {{ .TokenHash }}, {{ .SiteURL }},
+  {{ .Email }}. ConfirmationURL honours the emailRedirectTo the app sends — see
+  src/lib/auth/redirect.ts.
 -->
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Instrument+Sans:wght@400;600&display=swap" rel="stylesheet" />
+
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0;padding:0;background-color:#e7e9e0;">
   <tr>
     <td align="center" style="padding:32px 16px;">
 
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;background-color:#fbfbf8;border-radius:14px;border:1px solid rgba(23,24,26,0.10);">
-
-        <!-- Wordmark -->
+      <!-- Header: mark + wordmark, matching Logo.tsx (mark, then "MaCote" in ultramarine) -->
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;">
         <tr>
-          <td style="padding:28px 28px 0 28px;">
-            <span style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:19px;font-weight:700;letter-spacing:-0.3px;color:#17181a;">MaCote</span>
+          <td style="padding:0 4px 16px 4px;">
+            <img src="https://www.macote.xyz/brand/mark.png" width="31" height="24" alt="MaCote"
+                 style="display:inline-block;vertical-align:middle;width:31px;height:24px;border:0;" />
+            <span style="display:inline-block;vertical-align:middle;padding-left:8px;font-family:'Bricolage Grotesque','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:18px;font-weight:700;letter-spacing:-0.4px;color:#2b4cf5;">MaCote</span>
           </td>
         </tr>
+      </table>
 
-        <!-- Headline -->
+      <!-- Card: paper on chalk, 3px corners, hairline border, the app's card elevation -->
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;background-color:#fbfbf8;border-radius:3px;border:1px solid #d3d6ca;box-shadow:0 1px 2px rgba(23,24,26,0.06);">
+
         <tr>
-          <td style="padding:20px 28px 0 28px;">
-            <h1 style="margin:0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:25px;line-height:1.18;font-weight:700;letter-spacing:-0.5px;color:#17181a;">
+          <td style="padding:28px 28px 0 28px;">
+            <h1 style="margin:0;font-family:'Bricolage Grotesque','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:27px;line-height:1.15;font-weight:700;letter-spacing:-0.6px;color:#17181a;">
               Ta connexion à MaCote
             </h1>
-            <p style="margin:10px 0 0 0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:rgba(23,24,26,0.65);">
-              Touche le bouton ci-dessous pour te connecter. Aucun mot de passe à retenir.
+            <p style="margin:10px 0 0 0;font-family:'Instrument Sans','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#5a5d53;">
+              Touche le bouton pour te connecter. Pas de mot de passe à retenir.
             </p>
           </td>
         </tr>
 
-        <!-- Primary action -->
+        <!-- Action: pill, ultramarine, 56px tall — the app's primary button -->
         <tr>
           <td style="padding:24px 28px 0 28px;">
             <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
               <tr>
                 <td align="center" bgcolor="#2b4cf5" style="border-radius:999px;">
                   <a href="{{ .ConfirmationURL }}"
-                     style="display:block;padding:16px 24px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;color:#fbfbf8;text-decoration:none;border-radius:999px;">
+                     style="display:block;padding:18px 24px;font-family:'Instrument Sans','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;color:#fbfbf8;text-decoration:none;border-radius:999px;">
                     Me connecter
                   </a>
                 </td>
@@ -63,65 +76,60 @@
           </td>
         </tr>
 
-        <!-- Expiry + single-use, stated plainly so a stale tap is not a mystery -->
         <tr>
           <td style="padding:14px 28px 0 28px;">
-            <p style="margin:0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12.5px;line-height:1.6;color:rgba(23,24,26,0.50);">
+            <p style="margin:0;font-family:'Instrument Sans','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12.5px;line-height:1.6;color:#5a5d53;">
               Ce lien expire dans 1 heure et ne fonctionne qu'une seule fois. Ouvre-le sur l'appareil où tu veux utiliser MaCote.
             </p>
           </td>
         </tr>
 
-        <!-- Fallback: the button fails in text-only clients and some corporate filters rewrite it -->
+        <!-- Fallback link, for clients that strip buttons or rewrite them -->
         <tr>
           <td style="padding:20px 28px 0 28px;">
-            <p style="margin:0 0 6px 0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12.5px;line-height:1.6;color:rgba(23,24,26,0.50);">
-              Le bouton ne fonctionne pas? Copie ce lien dans ton navigateur :
+            <p style="margin:0 0 6px 0;font-family:'Instrument Sans','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12.5px;line-height:1.6;color:#5a5d53;">
+              Le bouton ne fonctionne pas? Copie ce lien :
             </p>
-            <p style="margin:0;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:11.5px;line-height:1.5;color:#2b4cf5;word-break:break-all;">
+            <p style="margin:0;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:11.5px;line-height:1.5;color:#2b4cf5;word-break:break-all;">
               {{ .ConfirmationURL }}
             </p>
           </td>
         </tr>
 
-        <!-- Divider -->
         <tr>
           <td style="padding:24px 28px 0 28px;">
-            <div style="height:1px;background-color:rgba(23,24,26,0.10);line-height:1px;font-size:0;">&nbsp;</div>
+            <div style="height:1px;background-color:#d3d6ca;line-height:1px;font-size:0;">&nbsp;</div>
           </td>
         </tr>
 
         <!-- English -->
         <tr>
-          <td style="padding:20px 28px 0 28px;">
-            <p style="margin:0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;line-height:1.6;color:rgba(23,24,26,0.55);">
-              <strong style="color:rgba(23,24,26,0.75);">English —</strong>
+          <td style="padding:20px 28px 28px 28px;">
+            <p style="margin:0;font-family:'Instrument Sans','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;line-height:1.6;color:#5a5d53;">
+              <strong style="color:#17181a;font-weight:600;">English —</strong>
               Tap <a href="{{ .ConfirmationURL }}" style="color:#2b4cf5;text-decoration:underline;">this link</a>
               to sign in to MaCote. It expires in 1 hour and works only once. Open it on the device you want to use MaCote on.
             </p>
           </td>
         </tr>
 
-        <!-- Didn't request this -->
+      </table>
+
+      <!-- Footer sits on the chalk ground, outside the card — same hierarchy as the app -->
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;">
         <tr>
-          <td style="padding:20px 28px 28px 28px;">
-            <p style="margin:0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:rgba(23,24,26,0.45);">
+          <td style="padding:18px 28px 0 28px;">
+            <p style="margin:0;font-family:'Instrument Sans','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#5a5d53;">
               Tu n'as pas demandé ce lien? Ignore ce courriel — aucun compte n'est créé tant que le lien n'est pas ouvert.
               <br />
-              Didn't request this? Ignore this email — no account is created until the link is opened.
+              Didn't request this? Ignore it — no account is created until the link is opened.
             </p>
           </td>
         </tr>
-
-      </table>
-
-      <!-- Footer. Guardrail #3: this product never asks for financial information, and saying -->
-      <!-- so in the one email it sends is where that promise is most load-bearing.            -->
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;">
         <tr>
-          <td style="padding:20px 28px 0 28px;" align="center">
-            <p style="margin:0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11.5px;line-height:1.6;color:rgba(23,24,26,0.45);">
-              MaCote — fait par un étudiant de cégep, pas par une école.
+          <td align="center" style="padding:18px 28px 0 28px;">
+            <p style="margin:0;font-family:'Instrument Sans','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11.5px;line-height:1.6;color:#5a5d53;">
+              Fait par un étudiant de cégep, pas par une école.
               <br />
               Aucune carte de crédit, aucune donnée financière, jamais.
             </p>
