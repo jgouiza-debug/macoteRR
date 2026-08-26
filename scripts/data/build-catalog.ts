@@ -347,9 +347,10 @@ lines.push(
 
 lines.push(
   "",
-  "-- cluster 3: university programs. The scrape carries names and links only — no cutoffs.",
-  "-- `overall_cutoff` stays null until a sourced number lands via the collector pipeline",
-  "-- (guardrail #1: no figure ships without source_url + last_verified_at).",
+  "-- cluster 3: university programs. The scrape carries names and links only — no figures.",
+  "-- There is deliberately no cutoff column to fill: universities publish multi-year ranges,",
+  "-- or min/max/average, never one canonical number, so every figure lives in cutoff_history",
+  "-- with its own year and figure type. See the 20260824194657 migration.",
 );
 
 lines.push(
@@ -359,7 +360,6 @@ lines.push(
       "university_id",
       "name",
       "degree_type",
-      "overall_cutoff",
       "admission_type",
       "source_url",
       "last_verified_at",
@@ -369,7 +369,6 @@ lines.push(
       u.programs.map((prog) => [
         `'${u.id}'`,
         sqlText(prog.name),
-        "null",
         "null",
         "'other'",
         sqlText(prog.url || u.websiteUrl),
