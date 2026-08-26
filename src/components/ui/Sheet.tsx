@@ -77,7 +77,7 @@ export function Sheet({
       }}
       className="m-0 max-h-[100dvh] w-full max-w-none bg-transparent p-0 backdrop:bg-ink/45 backdrop:backdrop-blur-[2px] sm:m-auto sm:max-w-[430px] sm:px-5"
     >
-      <div className="fixed inset-x-0 bottom-0 flex max-h-[88dvh] flex-col rounded-t-[18px] bg-paper shadow-overlay sm:static sm:max-h-[80dvh] sm:rounded-[14px]">
+      <div className="fixed inset-x-0 bottom-0 flex max-h-[88dvh] flex-col overflow-hidden rounded-t-[18px] bg-paper shadow-overlay sm:static sm:max-h-[80dvh] sm:rounded-[18px]">
         <div className="flex items-start justify-between gap-4 px-5 pb-2 pt-5">
           <h2
             id="sheet-title"
@@ -100,7 +100,7 @@ export function Sheet({
         <div className="scroll-momentum flex-1 overflow-y-auto px-5 pb-4">{children}</div>
 
         {footer && (
-          <div className="flex flex-col gap-2.5 border-t border-ink/10 px-5 pb-5 pt-4 pb-safe">
+          <div className="flex flex-col gap-2.5 border-t border-ink/10 px-5 pt-4 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] sm:pb-5">
             {footer}
           </div>
         )}

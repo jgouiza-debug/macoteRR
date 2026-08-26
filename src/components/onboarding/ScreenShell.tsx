@@ -28,7 +28,7 @@ export function ScreenShell({
         {children}
       </main>
       {footer && (
-        <div className="sticky bottom-0 mx-auto w-full max-w-[430px] bg-chalk/90 px-5 pb-5 pt-3 backdrop-blur-sm pb-safe">
+        <div className="sticky bottom-0 mx-auto w-full max-w-[430px] bg-chalk/90 px-5 pt-3 backdrop-blur-sm pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] sm:pb-5">
           {footer}
         </div>
       )}
