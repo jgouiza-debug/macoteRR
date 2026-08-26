@@ -36,6 +36,20 @@ file paths, and those should not travel to recipients.
 `src/lib/auth/redirect.ts` decides which of those the app asks for. It never sends the native
 shell's own origin, which is `localhost` inside Capacitor and unreachable from a mail client.
 
+## The 6-digit code is not decoration
+
+`{{ .Token }}` in the template is the primary sign-in path for the native app, not a fallback.
+
+Supabase's PKCE flow ties the emailed link to the client that *started* the sign-in, by way of
+a code verifier held in that client's storage. Tapping the link opens the system browser, which
+has no such verifier, so the exchange fails there — and the app, a separate WebView with its own
+storage, never learns anything happened. The student ends up signed in nowhere.
+
+A typed code has no hand-off: `verifyOtp` runs in the very client that asked for the code, so
+the session lands where the student actually is. Do not remove the code block from the template
+without first shipping Universal Links / App Links, which is the only other way to keep the
+link inside the app.
+
 ## Variables
 
 Supabase exposes `{{ .ConfirmationURL }}`, `{{ .Token }}`, `{{ .TokenHash }}`, `{{ .SiteURL }}`,

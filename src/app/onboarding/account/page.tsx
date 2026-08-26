@@ -9,6 +9,12 @@ import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+/** Where to land after sign-in: whatever the proxy asked for, else the dashboard. */
+function nextPath(): string {
+  const requested = new URLSearchParams(window.location.search).get("next");
+  return requested?.startsWith("/") && !requested.startsWith("//") ? requested : "/dashboard";
+}
+
 /** Supabase's own timeout is generous; a student staring at a spinner is not that patient. */
 const SEND_TIMEOUT_MS = 15_000;
 
@@ -18,6 +24,9 @@ export default function AccountPage() {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   /** The provider's own words. A generic "try again" hides rate limits and misconfiguration. */
   const [errorDetail, setErrorDetail] = useState<string | null>(null);
+  /** The 6-digit code from the email — the path that works when the link cannot. */
+  const [code, setCode] = useState("");
+  const [verifying, setVerifying] = useState(false);
   // The whole funnel must be behind them: this is where the local profile is attached
   // to a real user, so a half-built one would persist gaps that are hard to spot later.
   useOnboardingGuard("account");
@@ -75,6 +84,54 @@ export default function AccountPage() {
     }
   }
 
+  /**
+   * Completes sign-in with the emailed code instead of the link.
+   *
+   * This exists because the link cannot work from the native shell. Supabase's PKCE flow
+   * stores a code verifier in the client that STARTED the sign-in; the emailed link opens in
+   * the system browser, which has no such verifier, so the exchange fails there and the app —
+   * a separate WebView with its own storage — never learns anything happened. The student ends
+   * up signed in nowhere, having been bounced back through onboarding in a browser that has
+   * none of their answers.
+   *
+   * A typed code has no such hand-off: verification happens in the very client that asked for
+   * it, so the session lands where the student actually is. Deep links would also fix this and
+   * are worth doing later, but they need domain-association files and native config; this
+   * works today and on every platform.
+   */
+  async function verifyCode() {
+    const token = code.replace(/\D/g, "");
+    if (token.length !== 6 || verifying) return;
+
+    setVerifying(true);
+    setErrorDetail(null);
+
+    try {
+      const supabase = createClient();
+
+      // "email" covers the signup confirmation a first-time address gets; "magiclink" covers a
+      // returning one. Which template Supabase sent depends on whether the account already
+      // existed, and the client cannot know that, so try both rather than guess.
+      let result = await supabase.auth.verifyOtp({ email: email.trim(), token, type: "email" });
+      if (result.error) {
+        result = await supabase.auth.verifyOtp({ email: email.trim(), token, type: "magiclink" });
+      }
+
+      if (result.error) {
+        setErrorDetail(result.error.message);
+        return;
+      }
+
+      // Session is live in this client. Hard-navigate rather than router.push so the proxy
+      // re-runs with the new cookie and the app boots as a signed-in student.
+      window.location.assign(nextPath());
+    } catch (cause) {
+      setErrorDetail(cause instanceof Error ? cause.message : String(cause));
+    } finally {
+      setVerifying(false);
+    }
+  }
+
   if (status === "sent") {
     return (
       <ScreenShell backHref="/onboarding/goal">
@@ -83,7 +140,48 @@ export default function AccountPage() {
           body={t("account.checkEmailBody").replace("{email}", email.trim())}
         />
 
-        <div className="mt-6 flex flex-col gap-2.5">
+        {/* The code, not the link, is the primary path here. In the native shell the link
+            physically cannot complete sign-in — it opens the system browser, which lacks the
+            PKCE verifier this client holds — so leading with it would send most students down
+            the one route that fails. */}
+        <label
+          htmlFor="otp-input"
+          className="field-shell mt-6 flex cursor-text flex-col gap-1 rounded border border-ink/15 bg-paper px-4 py-3 transition-colors focus-within:border-[1.5px] focus-within:border-ultramarine"
+        >
+          <span className="text-[11px] font-medium text-ink/50">{t("account.codeLabel")}</span>
+          <input
+            id="otp-input"
+            value={code}
+            onChange={(e) => {
+              setCode(e.target.value.replace(/\D/g, "").slice(0, 6));
+              if (errorDetail) setErrorDetail(null);
+            }}
+            onKeyDown={(e) => e.key === "Enter" && void verifyCode()}
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            placeholder="000000"
+            maxLength={6}
+            aria-describedby="otp-error"
+            className="w-full bg-transparent font-display text-[28px] font-bold tracking-[0.18em] text-ink outline-none placeholder:text-ink/20 tabular-nums"
+          />
+        </label>
+
+        {errorDetail && (
+          <p id="otp-error" role="alert" className="mt-2 text-[12.5px] text-ember">
+            {errorDetail}
+          </p>
+        )}
+
+        <button
+          type="button"
+          onClick={() => void verifyCode()}
+          disabled={code.replace(/\D/g, "").length !== 6 || verifying}
+          className="mt-3 flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40"
+        >
+          {verifying ? t("account.verifying") : t("account.verify")}
+        </button>
+
+        <div className="mt-5 flex flex-col gap-2.5">
           <button
             type="button"
             onClick={() => void submit()}

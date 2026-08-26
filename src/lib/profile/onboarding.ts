@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/db/client";
 import { readProfile, type StudentProfile } from "./store";
 
 /**
@@ -73,14 +74,50 @@ export function useOnboardingGuard(step: OnboardingStep) {
   const router = useRouter();
 
   useEffect(() => {
-    const profile = readProfile();
-    const required = ONBOARDING_STEPS.slice(0, ONBOARDING_STEPS.indexOf(step));
+    let cancelled = false;
 
-    for (const earlier of required) {
-      if (!isSatisfied(earlier, profile)) {
-        router.replace(STEP_PATH[earlier]);
+    async function check() {
+      // A student who already has a session has finished this funnel, whatever the local
+      // storage of THIS browser happens to know. Without this, signing in on a second device
+      // — or in the system browser after tapping a link sent from the app — landed on an empty
+      // profile and the guard marched them back through onboarding they had already done.
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (cancelled) return;
+
+      if (user) {
+        router.replace("/dashboard");
         return;
       }
+
+      const profile = readProfile();
+      const required = ONBOARDING_STEPS.slice(0, ONBOARDING_STEPS.indexOf(step));
+
+      for (const earlier of required) {
+        if (!isSatisfied(earlier, profile)) {
+          router.replace(STEP_PATH[earlier]);
+          return;
+        }
+      }
     }
+
+    check().catch(() => {
+      // Offline or Supabase unreachable: fall back to the local-only check rather than
+      // trapping someone on a screen because a network call failed.
+      const profile = readProfile();
+      const required = ONBOARDING_STEPS.slice(0, ONBOARDING_STEPS.indexOf(step));
+      for (const earlier of required) {
+        if (!isSatisfied(earlier, profile)) {
+          router.replace(STEP_PATH[earlier]);
+          return;
+        }
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [step, router]);
 }
