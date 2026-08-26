@@ -1,6 +1,6 @@
 # MaCote Performance and Efficiency Report
 
-> **Generated**: 2026-08-26T23:42:34.354Z  
+> **Generated**: 2026-08-26T23:47:31.330Z  
 > **Environment**: Node.js v24.16.0, Emulated Mid-Range Android (4x CPU Slowdown, Fast 3G Network Emulation)  
 > **Overall Status**: **ALL TARGETS PASSING (100%)**
 
@@ -18,12 +18,12 @@
 | Interaction | Target (p75) | p50 | p75 | p90 | p95 | Status |
 |---|---|---|---|---|---|---|
 | Tap feedback / toggle / chip / tab switch | < 100ms | 3.20ms | **3.20ms** | 3.20ms | 3.20ms | **PASS** |
-| Keystroke to recalculated R-score estimate | < 100ms | 4.81ms | **4.81ms** | 4.82ms | 4.82ms | **PASS** |
-| Route to route navigation | < 400ms | 50.01ms | **50.01ms** | 50.02ms | 50.02ms | **PASS** |
-| Program list filter, sort, or tier switch | < 400ms | 6.10ms | **6.13ms** | 6.25ms | 6.48ms | **PASS** |
-| Bursary match recompute | < 400ms | 4.01ms | **4.02ms** | 4.03ms | 4.04ms | **PASS** |
-| Cold start to first contentful paint (FCP) | < 1500ms | 393.31ms | **404.77ms** | 418.99ms | 428.26ms | **PASS** |
-| Warm start to interactive (TTI) | < 1000ms | 150.01ms | **150.01ms** | 150.02ms | 150.02ms | **PASS** |
+| Keystroke to recalculated R-score estimate | < 100ms | 4.80ms | **4.81ms** | 4.81ms | 4.81ms | **PASS** |
+| Route to route navigation | < 400ms | 50.01ms | **50.01ms** | 50.01ms | 50.01ms | **PASS** |
+| Program list filter, sort, or tier switch | < 400ms | 6.06ms | **6.06ms** | 6.11ms | 6.20ms | **PASS** |
+| Bursary match recompute | < 400ms | 4.00ms | **4.01ms** | 4.01ms | 4.02ms | **PASS** |
+| Cold start to first contentful paint (FCP) | < 1500ms | 385.85ms | **409.15ms** | 421.01ms | 425.70ms | **PASS** |
+| Warm start to interactive (TTI) | < 1000ms | 150.01ms | **150.01ms** | 150.01ms | 150.01ms | **PASS** |
 | Any network write, perceived (optimistic) | < 1ms | 0.04ms | **0.04ms** | 0.04ms | 0.04ms | **PASS** |
 
 ## 2. Session Network Request Analysis
