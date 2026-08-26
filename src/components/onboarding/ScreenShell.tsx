@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { OnboardingTopBar } from "./OnboardingTopBar";
+import { InAppBrowserBanner } from "@/components/InAppBrowserBanner";
 
 /**
  * Single-column funnel screen. Uses 100dvh rather than 100vh so the layout tracks
@@ -18,6 +19,7 @@ export function ScreenShell({
 }) {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-chalk">
+      <InAppBrowserBanner />
       <OnboardingTopBar backHref={backHref} brand={brand} />
       {/* justify-center pulls short funnel screens (two choices, one input) into the optical
           centre instead of stranding them at the top above ~900px of empty chalk. Long

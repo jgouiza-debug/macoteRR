@@ -6,6 +6,13 @@ export const DICTIONARY = {
     "common.back": "Retour",
     "common.skip": "Passer",
     "common.close": "Fermer",
+    "inapp.title": "Ouvre MaCote dans ton navigateur",
+    "inapp.why":
+      "Tu es dans le navigateur intégré d'une autre app. Ta connexion n'y reste pas enregistrée, et « Ajouter à l'écran d'accueil » n'existe pas ici.",
+    "inapp.openAndroid": "Ouvrir dans le navigateur",
+    "inapp.stepsIos": "Touche ••• en haut à droite, puis « Ouvrir dans le navigateur ».",
+    "inapp.copyLink": "Copier le lien",
+    "inapp.copied": "Lien copié",
     "account.required": "Un compte est nécessaire pour continuer.",
 
     "cegep.count": "{n} cégeps de la région de Québec",
@@ -305,6 +312,13 @@ export const DICTIONARY = {
     "common.back": "Back",
     "common.skip": "Skip",
     "common.close": "Close",
+    "inapp.title": "Open MaCote in your browser",
+    "inapp.why":
+      "You're in another app's built-in browser. Your sign-in won't stick here, and \"Add to Home Screen\" doesn't exist in it.",
+    "inapp.openAndroid": "Open in browser",
+    "inapp.stepsIos": "Tap ••• at the top right, then \"Open in browser\".",
+    "inapp.copyLink": "Copy link",
+    "inapp.copied": "Link copied",
     "account.required": "An account is required to continue.",
 
     "cegep.count": "{n} cégeps in the Quebec City area",
