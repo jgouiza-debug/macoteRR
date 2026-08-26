@@ -18,6 +18,16 @@ function nextPath(): string {
 /** Supabase's own timeout is generous; a student staring at a spinner is not that patient. */
 const SEND_TIMEOUT_MS = 15_000;
 
+/**
+ * Supabase's email OTP length is a project setting, not a constant — Auth → Providers → Email
+ * exposes it and it ranges 6 to 10. Hardcoding 6 truncated longer codes on the way in and made
+ * every verification fail with a token the student had copied correctly.
+ */
+const OTP_MIN_LENGTH = 6;
+const OTP_MAX_LENGTH = 10;
+
+const digitsOf = (value: string) => value.replace(/\D/g, "");
+
 export default function AccountPage() {
   const { t } = useLocale();
   const [email, setEmail] = useState("");
@@ -100,8 +110,8 @@ export default function AccountPage() {
    * works today and on every platform.
    */
   async function verifyCode() {
-    const token = code.replace(/\D/g, "");
-    if (token.length !== 6 || verifying) return;
+    const token = digitsOf(code);
+    if (token.length < OTP_MIN_LENGTH || verifying) return;
 
     setVerifying(true);
     setErrorDetail(null);
@@ -153,14 +163,14 @@ export default function AccountPage() {
             id="otp-input"
             value={code}
             onChange={(e) => {
-              setCode(e.target.value.replace(/\D/g, "").slice(0, 6));
+              setCode(digitsOf(e.target.value).slice(0, OTP_MAX_LENGTH));
               if (errorDetail) setErrorDetail(null);
             }}
             onKeyDown={(e) => e.key === "Enter" && void verifyCode()}
             inputMode="numeric"
             autoComplete="one-time-code"
-            placeholder="000000"
-            maxLength={6}
+            placeholder="••••••"
+            maxLength={OTP_MAX_LENGTH}
             aria-describedby="otp-error"
             className="w-full bg-transparent font-display text-[28px] font-bold tracking-[0.18em] text-ink outline-none placeholder:text-ink/20 tabular-nums"
           />
@@ -175,7 +185,7 @@ export default function AccountPage() {
         <button
           type="button"
           onClick={() => void verifyCode()}
-          disabled={code.replace(/\D/g, "").length !== 6 || verifying}
+          disabled={digitsOf(code).length < OTP_MIN_LENGTH || verifying}
           className="mt-3 flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40"
         >
           {verifying ? t("account.verifying") : t("account.verify")}
