@@ -1,14 +1,17 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { BadgeCheck, CalendarDays, TrendingUp, Info } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { AxisRow } from "@/components/rscore/AxisRow";
-import { SourceStamp } from "@/components/SourceStamp";
 import { RScoreBandSheet } from "@/components/rscore/RScoreBandSheet";
+import { SourceStamp } from "@/components/SourceStamp";
 import { CEGEPS, CEGEP_PROGRAMS, UNIVERSITY_PROGRAMS } from "@/lib/sample-data";
+import { CEGEP_DEC_PROGRAMS } from "@/lib/data/cegep-catalog";
+import { CEGEP_PROGRAM_OFFERINGS } from "@/lib/data/cegep-programs-catalog";
+import { findCegepInstitution } from "@/lib/data/cegep-institutions";
 import { getDeadlinesForStudent } from "@/lib/data/important-dates";
 import { useStudentProfile } from "@/lib/profile/store";
 import {
@@ -23,6 +26,16 @@ import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 /** Highlight a deadline in ember only when it's genuinely imminent. */
 const URGENT_WITHIN_DAYS = 14;
+
+type DateFilter = "all" | "week" | "month" | "3months" | "year";
+
+const DATE_FILTERS: { id: DateFilter; labelFr: string; labelEn: string; maxDays: number | null }[] = [
+  { id: "all", labelFr: "Toutes", labelEn: "All", maxDays: null },
+  { id: "week", labelFr: "7 jours", labelEn: "Next week", maxDays: 7 },
+  { id: "month", labelFr: "30 jours", labelEn: "Next month", maxDays: 30 },
+  { id: "3months", labelFr: "3 mois", labelEn: "Next 3 months", maxDays: 90 },
+  { id: "year", labelFr: "Cette année", labelEn: "This year", maxDays: 365 },
+];
 
 /** Whole days from today to an ISO date, comparing calendar days in local time. */
 function daysUntil(iso: string): number | null {
@@ -39,6 +52,7 @@ export default function DashboardPage() {
   const f = useFormat();
   const { profile } = useStudentProfile();
   const [bandOpen, setBandOpen] = useState(false);
+  const [dateFilter, setDateFilter] = useState<DateFilter>("all");
 
   // useSyncExternalStore's first client render matches the server snapshot (rScore: null)
   // before correcting to the real localStorage value on hydration — wait for that correction
@@ -72,9 +86,29 @@ export default function DashboardPage() {
 
   const isConfirmed = profile.rScoreStatus === "confirmed";
   const hasScore = profile.rScore !== null;
-  const cegep = CEGEPS.find((c) => c.id === profile.cegepId);
-  const cegepProgram = CEGEP_PROGRAMS.find((p) => p.id === profile.cegepProgramId);
+  const cegepName =
+    CEGEPS.find((c) => c.id === profile.cegepId)?.name ??
+    (profile.cegepId ? findCegepInstitution(profile.cegepId)?.name : null);
+  const cegepProgramName =
+    CEGEP_PROGRAM_OFFERINGS.find((p) => p.programCode === profile.cegepProgramId)?.programName ??
+    CEGEP_DEC_PROGRAMS.find((p) => p.code === profile.cegepProgramId)?.nameFr ??
+    CEGEP_PROGRAMS.find((p) => p.id === profile.cegepProgramId)?.name ??
+    profile.cegepProgramId;
   const targets = UNIVERSITY_PROGRAMS.filter((p) => profile.targetUniversityProgramIds.includes(p.id));
+
+  const allDeadlines = useMemo(() => {
+    return getDeadlinesForStudent(profile.targetUniversityProgramIds);
+  }, [profile.targetUniversityProgramIds]);
+
+  const filteredDeadlines = useMemo(() => {
+    const filterDef = DATE_FILTERS.find((f) => f.id === dateFilter);
+    if (!filterDef || filterDef.maxDays === null) return allDeadlines;
+    const max = filterDef.maxDays;
+    return allDeadlines.filter((d) => {
+      const days = daysUntil(d.dateIso);
+      return days !== null && days >= 0 && days <= max;
+    });
+  }, [allDeadlines, dateFilter]);
 
   return (
     <AppShell rScore={profile.rScore}>
@@ -87,9 +121,9 @@ export default function DashboardPage() {
                 ? "Cheminement collégial (1ère session)"
                 : "College Pathway (1st Semester)"}
           </h1>
-          {(cegep || cegepProgram) && (
+          {(cegepName || cegepProgramName) && (
             <p className="text-[12.5px] text-ink/50">
-              {[cegep?.name, cegepProgram?.name].filter(Boolean).join(" · ")}
+              {[cegepName, cegepProgramName].filter(Boolean).join(" · ")}
             </p>
           )}
 
@@ -198,55 +232,92 @@ export default function DashboardPage() {
         </section>
 
         <section className="flex flex-col gap-4 rounded-xl border border-ink/12 bg-paper p-4 shadow-card">
-          <h2 className="flex items-center gap-2 font-display text-[17px] font-bold text-ink">
-            <CalendarDays className="h-[18px] w-[18px]" />
-            {t("dash.importantDates")}
-          </h2>
-          <ul className="relative flex flex-col gap-5 before:absolute before:bottom-2 before:left-[5px] before:top-2 before:w-px before:bg-ink/12">
-            {getDeadlinesForStudent(profile.targetUniversityProgramIds).map((d) => {
-              // Urgency is DERIVED from today's date, not read from a hardcoded `urgent`
-              // flag — that flag was rendering "13 novembre — DEMAIN" in August. Telling a
-              // student a deadline is tomorrow when it is months away is worse than silence.
-              const days = daysUntil(d.dateIso);
-              const isSoon = days !== null && days >= 0 && days <= URGENT_WITHIN_DAYS;
-              const relative =
-                days === null || !isSoon
-                  ? null
-                  : days === 0
-                    ? t("dash.today")
-                    : days === 1
-                      ? t("dash.tomorrow")
-                      : t("dash.inDays").replace("{n}", String(days));
-              return (
-              <li key={d.id} className="relative pl-6">
-                <span
-                  className={`absolute left-0 top-1 h-2.5 w-2.5 rounded-full ring-4 ring-paper ${
-                    isSoon ? "bg-ember" : "bg-ultramarine"
-                  }`}
-                />
-                <div
-                  className={`text-[11.5px] font-semibold ${
-                    isSoon ? "text-ember" : "text-ink/50"
-                  }`}
-                >
-                  {f.date(d.dateIso)}
-                  {relative && ` — ${relative}`}
-                </div>
-                <div className="mt-0.5 text-[14px] font-semibold text-ink">
-                  {locale === "fr" ? d.titleFr : d.titleEn}
-                </div>
-                <div className="text-[12.5px] leading-relaxed text-ink/55">
-                  {locale === "fr" ? d.detailFr : d.detailEn}
-                </div>
-                <SourceStamp
-                  date={d.lastVerifiedAt}
-                  href={d.sourceUrl}
-                  className="mt-1"
-                />
-              </li>
-              );
-            })}
-          </ul>
+          <div className="flex flex-col gap-2.5">
+            <div className="flex items-center justify-between">
+              <h2 className="flex items-center gap-2 font-display text-[17px] font-bold text-ink">
+                <CalendarDays className="h-[18px] w-[18px]" />
+                {t("dash.importantDates")}
+              </h2>
+              <span className="text-[12px] font-semibold text-ink/50 tabular-nums">
+                {filteredDeadlines.length} {locale === "fr" ? "date(s)" : "date(s)"}
+              </span>
+            </div>
+
+            {/* Filter buttons: Toutes, 7 jours, 30 jours, 3 mois, Cette année */}
+            <div className="flex flex-wrap gap-1.5">
+              {DATE_FILTERS.map((fItem) => {
+                const active = dateFilter === fItem.id;
+                return (
+                  <button
+                    key={fItem.id}
+                    type="button"
+                    onClick={() => setDateFilter(fItem.id)}
+                    className={`rounded-full px-2.5 py-1 text-[11px] font-semibold transition-all ${
+                      active
+                        ? "bg-ultramarine text-paper shadow-sm"
+                        : "border border-ink/15 bg-paper text-ink/65 hover:bg-chalk"
+                    }`}
+                  >
+                    {locale === "fr" ? fItem.labelFr : fItem.labelEn}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {filteredDeadlines.length === 0 ? (
+            <p className="py-6 text-center text-[13px] text-ink/50">
+              {locale === "fr"
+                ? "Aucune date dans cette période."
+                : "No upcoming dates in this timeframe."}
+            </p>
+          ) : (
+            <ul className="relative flex flex-col gap-5 before:absolute before:bottom-2 before:left-[5px] before:top-2 before:w-px before:bg-ink/12">
+              {filteredDeadlines.map((d) => {
+                // Urgency is DERIVED from today's date, not read from a hardcoded `urgent`
+                // flag — that flag was rendering "13 novembre — DEMAIN" in August. Telling a
+                // student a deadline is tomorrow when it is months away is worse than silence.
+                const days = daysUntil(d.dateIso);
+                const isSoon = days !== null && days >= 0 && days <= URGENT_WITHIN_DAYS;
+                const relative =
+                  days === null || !isSoon
+                    ? null
+                    : days === 0
+                      ? t("dash.today")
+                      : days === 1
+                        ? t("dash.tomorrow")
+                        : t("dash.inDays").replace("{n}", String(days));
+                return (
+                  <li key={d.id} className="relative pl-6">
+                    <span
+                      className={`absolute left-0 top-1 h-2.5 w-2.5 rounded-full ring-4 ring-paper ${
+                        isSoon ? "bg-ember" : "bg-ultramarine"
+                      }`}
+                    />
+                    <div
+                      className={`text-[11.5px] font-semibold ${
+                        isSoon ? "text-ember" : "text-ink/50"
+                      }`}
+                    >
+                      {f.date(d.dateIso)}
+                      {relative && ` — ${relative}`}
+                    </div>
+                    <div className="mt-0.5 text-[14px] font-semibold text-ink">
+                      {locale === "fr" ? d.titleFr : d.titleEn}
+                    </div>
+                    <div className="text-[12.5px] leading-relaxed text-ink/55">
+                      {locale === "fr" ? d.detailFr : d.detailEn}
+                    </div>
+                    <SourceStamp
+                      date={d.lastVerifiedAt}
+                      href={d.sourceUrl}
+                      className="mt-1"
+                    />
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </section>
       </div>
 

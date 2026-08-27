@@ -241,16 +241,16 @@ export default function ProgramsPage() {
                   type="button"
                   onClick={() => setTier(tier === option ? "all" : option)}
                   aria-pressed={active}
-                  className={`flex flex-col items-center justify-center gap-0.5 rounded-xl px-1.5 py-2.5 text-center tap-spring transition-transform ${
+                  className={`flex h-[76px] flex-col items-center justify-between rounded-xl px-1.5 py-2.5 text-center tap-spring transition-transform ${
                     active
                       ? "bg-ultramarine text-paper shadow-card scale-[1.02]"
                       : "border border-ink/15 bg-paper text-ink/60 hover:border-ink/30"
                   }`}
                 >
-                  <span className="font-display text-[18px] font-bold tabular-nums">
+                  <span className="font-display text-[20px] font-bold tabular-nums leading-none">
                     {counts[option]}
                   </span>
-                  <span className="text-[10px] font-semibold leading-tight">
+                  <span className="text-[10px] font-semibold leading-tight line-clamp-2">
                     {t(CUTOFF_STATUS_LABEL_KEY[option])}
                   </span>
                 </button>

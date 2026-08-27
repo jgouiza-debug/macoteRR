@@ -213,11 +213,56 @@ export async function syncNow() {
   await syncProfileToServer(supabase, session.user.id, read());
 }
 
+export async function fetchProfileFromServer() {
+  if (typeof window === "undefined" || !navigator.onLine) return;
+  try {
+    const supabase = createClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session) return;
+
+    const [profileRes, confirmRes, targetsRes] = await Promise.all([
+      supabase.from("student_profiles").select("*").eq("user_id", session.user.id).maybeSingle(),
+      supabase
+        .from("student_r_score_confirmations")
+        .select("*")
+        .eq("user_id", session.user.id)
+        .order("session", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      supabase.from("student_targets").select("catalog_slug").eq("user_id", session.user.id),
+    ]);
+
+    if (profileRes.data) {
+      const p = profileRes.data;
+      const current = read();
+      const serverProfile: StudentProfile = {
+        cegepId: p.cegep_short_code ?? current.cegepId,
+        cegepProgramId: p.cegep_program_code ?? current.cegepProgramId,
+        currentSession: p.current_session ?? current.currentSession,
+        rScore: confirmRes.data?.official_cote_r ?? current.rScore,
+        rScoreStatus:
+          (p.r_score_status as "confirmed" | "estimated" | null) ?? current.rScoreStatus,
+        selfTags: (p.self_tags as SelfTagId[]) ?? current.selfTags,
+        targetUniversityProgramIds: targetsRes.data && targetsRes.data.length > 0
+          ? targetsRes.data.map((t) => t.catalog_slug).filter((slug): slug is string => Boolean(slug))
+          : current.targetUniversityProgramIds,
+        interestIds: current.interestIds,
+      };
+      write(serverProfile);
+    }
+  } catch {
+    /* server fetch failed or offline */
+  }
+}
+
 export function useStudentProfile() {
   const profile = useSyncExternalStore(subscribe, read, readServer);
 
   useEffect(() => {
-    // Initial sync check on mount
+    // Initial sync and server load check on mount
+    fetchProfileFromServer().catch(() => {});
     flushOutbox().catch(() => {});
     syncNow().catch(() => {});
   }, []);

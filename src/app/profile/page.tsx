@@ -7,6 +7,7 @@ import { Bell, ChevronRight, LogOut, GraduationCap, Edit3 } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { BURSARIES, CEGEPS, CEGEP_PROGRAMS, SESSIONS, UNIVERSITY_PROGRAMS } from "@/lib/sample-data";
 import { CEGEP_DEC_PROGRAMS } from "@/lib/data/cegep-catalog";
+import { CEGEP_PROGRAM_OFFERINGS } from "@/lib/data/cegep-programs-catalog";
 import { findCegepInstitution } from "@/lib/data/cegep-institutions";
 import { useStudentProfile, resetProfile } from "@/lib/profile/store";
 import { SELF_TAGS, tagLabel } from "@/lib/tags/taxonomy";
@@ -66,8 +67,10 @@ export default function ProfilePage() {
     "—";
 
   const programName =
-    CEGEP_PROGRAMS.find((p) => p.id === profile.cegepProgramId)?.name ??
+    CEGEP_PROGRAM_OFFERINGS.find((p) => p.programCode === profile.cegepProgramId)?.programName ??
     CEGEP_DEC_PROGRAMS.find((p) => p.code === profile.cegepProgramId)?.nameFr ??
+    CEGEP_PROGRAMS.find((p) => p.id === profile.cegepProgramId)?.name ??
+    profile.cegepProgramId ??
     "—";
 
   const sessionLabel =
@@ -249,10 +252,19 @@ export default function ProfilePage() {
         <div className="flex flex-col gap-3">
           <Link
             href="/counselor-prep"
-            className="flex h-14 w-full items-center justify-center rounded-full border border-ink/25 bg-paper text-[15px] font-semibold text-ink transition-transform active:scale-[0.98]"
+            className="flex h-14 w-full items-center justify-center rounded-full border border-ink/25 bg-paper text-[15px] font-semibold text-ink transition-transform active:scale-[0.98] shadow-sm hover:bg-chalk"
           >
             {locale === "fr" ? "Préparer ma rencontre" : "Prepare my meeting"}
           </Link>
+          <button
+            type="button"
+            onClick={handleLogout}
+            disabled={loggingOut}
+            className="flex h-14 w-full items-center justify-center gap-2 rounded-full border border-ink/20 bg-paper text-[15px] font-semibold text-ink shadow-sm transition-transform active:scale-[0.98] hover:bg-chalk disabled:opacity-50"
+          >
+            <LogOut className="h-4 w-4 text-ink/70" />
+            <span>{t("account.logout")}</span>
+          </button>
         </div>
 
         <section className="flex flex-col gap-2 rounded-xl border border-ember/30 bg-ember/[0.04] p-4">
