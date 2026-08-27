@@ -17,7 +17,7 @@ export function AppShell({
     <div className="flex min-h-screen flex-col bg-chalk">
       <InAppBrowserBanner />
       <TopNav rScore={rScore} />
-      <main className="flex-1 pt-13 pb-20 md:pb-0">{children}</main>
+      <main className="flex-1 pt-11 pb-[54px] md:pb-0">{children}</main>
       {footer && <Footer stackAboveBottomNav />}
       <BottomNav />
     </div>
