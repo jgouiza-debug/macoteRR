@@ -3,15 +3,14 @@
 import { useEffect, useState, useSyncExternalStore, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { BadgeCheck, CalendarDays, TrendingUp, Info } from "lucide-react";
+import { CalendarDays, TrendingUp, Info } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { AxisRow } from "@/components/rscore/AxisRow";
 import { RScoreBandSheet } from "@/components/rscore/RScoreBandSheet";
 import { SourceStamp } from "@/components/SourceStamp";
 import { CEGEPS, CEGEP_PROGRAMS, UNIVERSITY_PROGRAMS } from "@/lib/sample-data";
 import { CEGEP_DEC_PROGRAMS } from "@/lib/data/cegep-catalog";
-import { CEGEP_PROGRAM_OFFERINGS } from "@/lib/data/cegep-programs-catalog";
-import { findCegepInstitution } from "@/lib/data/cegep-institutions";
+import { findCegepInstitution, findDecProgramName } from "@/lib/data/cegep-institutions";
 import { getDeadlinesForStudent } from "@/lib/data/important-dates";
 import { useStudentProfile } from "@/lib/profile/store";
 import {
@@ -107,8 +106,11 @@ export default function DashboardPage() {
   const cegepName =
     CEGEPS.find((c) => c.id === profile.cegepId)?.name ??
     (profile.cegepId ? findCegepInstitution(profile.cegepId)?.name : null);
+  // findDecProgramName, not a raw === on programCode: the offerings catalogue stores "200B1"
+  // and the profile stores "200.B1", so the direct compare never hit and the dashboard showed
+  // the bare ministerial code where the programme's name belongs.
   const cegepProgramName =
-    CEGEP_PROGRAM_OFFERINGS.find((p) => p.programCode === profile.cegepProgramId)?.programName ??
+    findDecProgramName(profile.cegepProgramId) ??
     CEGEP_DEC_PROGRAMS.find((p) => p.code === profile.cegepProgramId)?.nameFr ??
     CEGEP_PROGRAMS.find((p) => p.id === profile.cegepProgramId)?.name ??
     profile.cegepProgramId;
@@ -140,15 +142,16 @@ export default function DashboardPage() {
                 isConfirmed ? "border-moss/60 bg-moss/[0.02]" : "border-dashed border-moss/60 bg-paper"
               }`}
             >
-              <span className="flex items-center gap-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-moss">
-                {isConfirmed ? (
-                  <BadgeCheck className="h-3.5 w-3.5" />
-                ) : (
+              {/* Only the estimate is badged now. "CONFIRMÉE" restated the heading directly
+                  above it and boxed the number in for no gain; "ESTIMÉE" earns its place,
+                  because an estimate must never be mistakable for the cégep's own figure. */}
+              {!isConfirmed && (
+                <span className="flex items-center gap-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-moss">
                   <TrendingUp className="h-3.5 w-3.5" />
-                )}
-                {t(isConfirmed ? "dash.confirmed" : "dash.estimated")}
-              </span>
-              <span className="font-display text-[40px] font-extrabold leading-none tracking-tight text-ultramarine tabular-nums">
+                  {t("dash.estimated")}
+                </span>
+              )}
+              <span className="font-display text-[46px] font-extrabold leading-none tracking-tight text-ultramarine tabular-nums">
                 {!isConfirmed && "≈ "}
                 {f.score(profile.rScore as number, 2)}
               </span>
