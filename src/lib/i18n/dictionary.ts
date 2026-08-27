@@ -17,7 +17,6 @@ export const DICTIONARY = {
     "welcome.title": "Bienvenue sur MaCote.",
     "welcome.body": "Ta cote R, ce qu'elle t'ouvre, et les bourses de ton cégep. On commence.",
     "welcome.cta": "Commencer",
-    "account.continueWithApple": "Continuer avec Apple",
     "account.continueWithGoogle": "Continuer avec Google",
     "account.orWithEmail": "ou avec ton adresse courriel",
 
@@ -352,7 +351,6 @@ export const DICTIONARY = {
     "welcome.title": "Welcome to MaCote.",
     "welcome.body": "Your R-score, the doors it opens, and bursaries at your CEGEP. Let's begin.",
     "welcome.cta": "Get started",
-    "account.continueWithApple": "Continue with Apple",
     "account.continueWithGoogle": "Continue with Google",
     "account.orWithEmail": "or with your email address",
 

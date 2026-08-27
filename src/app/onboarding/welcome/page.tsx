@@ -17,11 +17,16 @@ export default function WelcomePage() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setPrefersReducedMotion(
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-      );
-    }
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    // Subscribed rather than read once: the preference can change mid-session (iOS exposes it
+    // in Control Center), and a one-shot read would keep animating for someone who just asked
+    // the system to stop. Subscribing is also what the lint rule is asking for — an effect
+    // should sync with an external system, not just push a value into state on mount.
+    const sync = () => setPrefersReducedMotion(query.matches);
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
   }, []);
 
   function handleStart() {
