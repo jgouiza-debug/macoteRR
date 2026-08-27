@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ScreenShell, ScreenHeading } from "@/components/onboarding/ScreenShell";
 import { createClient } from "@/lib/db/client";
 import { authCallbackUrl } from "@/lib/auth/redirect";
@@ -40,6 +40,35 @@ export default function AccountPage() {
   // The whole funnel must be behind them: this is where the local profile is attached
   // to a real user, so a half-built one would persist gaps that are hard to spot later.
   useOnboardingGuard("account");
+
+  // Fix backtrack bug: when user swipes back or returns from OAuth redirect / bfcache,
+  // ensure the status immediately resets from "sending" to "idle" so buttons are never stuck.
+  useEffect(() => {
+    const handlePageShow = () => {
+      setStatus("idle");
+      setVerifying(false);
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        setStatus((prev) => (prev === "sending" ? "idle" : prev));
+      }
+    };
+
+    const handleFocus = () => {
+      setStatus((prev) => (prev === "sending" ? "idle" : prev));
+    };
+
+    window.addEventListener("pageshow", handlePageShow);
+    document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      window.removeEventListener("pageshow", handlePageShow);
+      document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, []);
 
   const isValid = EMAIL_PATTERN.test(email.trim());
 
@@ -214,6 +243,12 @@ export default function AccountPage() {
   async function signInWithOAuth(provider: "google") {
     setStatus("sending");
     setErrorDetail(null);
+
+    // Safety timeout: if OAuth doesn't navigate away within 8 seconds, unlock the button
+    const safetyTimer = setTimeout(() => {
+      setStatus((prev) => (prev === "sending" ? "idle" : prev));
+    }, 8000);
+
     try {
       const supabase = createClient();
       const requested = new URLSearchParams(window.location.search).get("next");
@@ -221,13 +256,19 @@ export default function AccountPage() {
         provider,
         options: {
           redirectTo: authCallbackUrl(requested ?? "/dashboard"),
+          queryParams: {
+            prompt: "select_account",
+            access_type: "offline",
+          },
         },
       });
       if (error) {
+        clearTimeout(safetyTimer);
         setStatus("error");
         setErrorDetail(error.message);
       }
     } catch (cause) {
+      clearTimeout(safetyTimer);
       setStatus("error");
       setErrorDetail(
         cause instanceof Error ? cause.message : String(cause),
