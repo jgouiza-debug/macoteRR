@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, memo } from "react";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
@@ -131,7 +131,7 @@ function amountLabel(bursary: Bursary, amount: (v: number) => string): string | 
   return min === max ? amount(min) : `${amount(min)} – ${amount(max)}`;
 }
 
-function BursaryCard({
+const BursaryCard = memo(function BursaryCard({
   match,
   reasonText,
   amountLabel,
@@ -151,7 +151,7 @@ function BursaryCard({
   ].filter(Boolean) as string[];
 
   return (
-    <article className="flex flex-col gap-3 rounded border border-ink/12 bg-paper p-4 shadow-card">
+    <article className="flex flex-col gap-3 rounded border border-ink/12 bg-paper p-4 shadow-card [content-visibility:auto] [contain-intrinsic-size:0_180px]">
       <div className="flex items-start justify-between gap-3">
         <h3 className="flex-1 text-[14px] font-semibold leading-snug text-ink">{bursary.name}</h3>
         {amountLabel && (
@@ -188,7 +188,7 @@ function BursaryCard({
             href={bursary.applicationUrl}
             target="_blank"
             rel="noreferrer noopener"
-            className="inline-flex min-h-[44px] items-center gap-1 text-[13px] font-semibold text-ultramarine"
+            className="inline-flex min-h-[48px] items-center gap-1 text-[13px] font-semibold text-ultramarine tap-spring active:scale-[0.98]"
           >
             {t("burs.apply")}
             {/* Kept deliberately: warns the student they are leaving the app. */}
@@ -207,4 +207,4 @@ function BursaryCard({
       <SourceStamp date={bursary.lastVerifiedAt} href={bursary.sourceUrl} />
     </article>
   );
-}
+});

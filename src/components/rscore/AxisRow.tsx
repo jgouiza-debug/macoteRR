@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { scorePercent } from "@/lib/rscore/scale";
 import { compareToCutoffRange, type CutoffRange } from "@/lib/rscore/cutoff-range";
 
@@ -6,10 +7,23 @@ import { compareToCutoffRange, type CutoffRange } from "@/lib/rscore/cutoff-rang
  * list-row counterpart to DistributionCurve. Shares its domain so positions stay consistent.
  * `range` is null when nothing is verified yet: renders a hatched placeholder, no claim.
  */
-export function AxisRow({ score, range }: { score: number; range: CutoffRange | null }) {
+export const AxisRow = memo(function AxisRow({
+  score,
+  range,
+}: {
+  score: number;
+  range: CutoffRange | null;
+}) {
   const scoreLeft = scorePercent(score);
   const status = compareToCutoffRange(score, range);
-  const dotColor = status === "above" ? "bg-moss" : status === "below" ? "bg-ember" : status === "inside" ? "bg-ultramarine" : "bg-ink/30";
+  const dotColor =
+    status === "above"
+      ? "bg-moss"
+      : status === "below"
+        ? "bg-ember"
+        : status === "inside"
+          ? "bg-ultramarine"
+          : "bg-ink/30";
 
   return (
     <div className="relative h-3 w-full">
@@ -34,4 +48,4 @@ export function AxisRow({ score, range }: { score: number; range: CutoffRange | 
       />
     </div>
   );
-}
+});

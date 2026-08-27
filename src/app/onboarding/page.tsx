@@ -5,20 +5,26 @@ import { useRouter } from "next/navigation";
 import { firstIncompletePath } from "@/lib/profile/onboarding";
 import { readProfile } from "@/lib/profile/store";
 
+const WELCOME_STORAGE_KEY = "macote.has_seen_welcome";
+
 /**
  * The funnel's entry point, and the target src/proxy.ts sends signed-out visitors to.
  *
- * It routes to the first step the student has not finished rather than a fixed screen. A
- * brand-new user gets the cégep picker; someone who dropped out at the score step resumes
- * there instead of re-answering. Both matter because /app (the PWA start_url and the
- * Capacitor entry) lands here via /dashboard, so this is what a cold boot actually hits.
- *
- * Client-side by necessity: progress lives in localStorage, which the proxy cannot read.
+ * It routes to the welcome screen on very first visit, or to the first incomplete step.
  */
 export default function OnboardingIndex() {
   const router = useRouter();
 
   useEffect(() => {
+    try {
+      const hasSeen = localStorage.getItem(WELCOME_STORAGE_KEY) === "1";
+      if (!hasSeen) {
+        router.replace("/onboarding/welcome");
+        return;
+      }
+    } catch {
+      /* ignore storage failure */
+    }
     router.replace(firstIncompletePath(readProfile()));
   }, [router]);
 

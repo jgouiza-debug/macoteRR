@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 import { clampScore, R_MAX, R_MIN } from "@/lib/rscore/scale";
 import { compareToCutoffRange, type CutoffRange } from "@/lib/rscore/cutoff-range";
 
@@ -57,7 +57,7 @@ export function yForX(targetX: number): number {
 
 const REVEAL_STORAGE_KEY = "macote.has_seen_curve_reveal";
 
-export function DistributionCurve({
+export const DistributionCurve = memo(function DistributionCurve({
   score,
   range,
   caption,
@@ -127,7 +127,7 @@ export function DistributionCurve({
   const studentFullLabel = `${youLabel}, ${formattedScore}`;
 
   return (
-    <figure className="m-0 flex w-full flex-col gap-2.5">
+    <figure className="m-0 flex w-full flex-col gap-2.5 [content-visibility:auto] [contain-intrinsic-size:0_160px]">
       <div className="w-full rounded border border-ink/12 bg-paper px-3 pb-3 pt-3.5 shadow-card">
         <svg
           viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
@@ -289,4 +289,4 @@ export function DistributionCurve({
       )}
     </figure>
   );
-}
+});

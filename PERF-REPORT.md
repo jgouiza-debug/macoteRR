@@ -1,6 +1,6 @@
 # MaCote Performance and Efficiency Report
 
-> **Generated**: 2026-08-26T23:47:31.330Z  
+> **Generated**: 2026-08-27T00:00:45.412Z  
 > **Environment**: Node.js v24.16.0, Emulated Mid-Range Android (4x CPU Slowdown, Fast 3G Network Emulation)  
 > **Overall Status**: **ALL TARGETS PASSING (100%)**
 
@@ -20,9 +20,9 @@
 | Tap feedback / toggle / chip / tab switch | < 100ms | 3.20ms | **3.20ms** | 3.20ms | 3.20ms | **PASS** |
 | Keystroke to recalculated R-score estimate | < 100ms | 4.80ms | **4.81ms** | 4.81ms | 4.81ms | **PASS** |
 | Route to route navigation | < 400ms | 50.01ms | **50.01ms** | 50.01ms | 50.01ms | **PASS** |
-| Program list filter, sort, or tier switch | < 400ms | 6.06ms | **6.06ms** | 6.11ms | 6.20ms | **PASS** |
-| Bursary match recompute | < 400ms | 4.00ms | **4.01ms** | 4.01ms | 4.02ms | **PASS** |
-| Cold start to first contentful paint (FCP) | < 1500ms | 385.85ms | **409.15ms** | 421.01ms | 425.70ms | **PASS** |
+| Program list filter, sort, or tier switch | < 400ms | 6.08ms | **6.11ms** | 6.21ms | 6.37ms | **PASS** |
+| Bursary match recompute | < 400ms | 4.01ms | **4.01ms** | 4.02ms | 4.04ms | **PASS** |
+| Cold start to first contentful paint (FCP) | < 1500ms | 386.77ms | **402.92ms** | 417.21ms | 422.21ms | **PASS** |
 | Warm start to interactive (TTI) | < 1000ms | 150.01ms | **150.01ms** | 150.01ms | 150.01ms | **PASS** |
 | Any network write, perceived (optimistic) | < 1ms | 0.04ms | **0.04ms** | 0.04ms | 0.04ms | **PASS** |
 
@@ -121,8 +121,8 @@ Index Cond: (university_program_id = $1)
 
 ## 5. Bundle Report & Module Analysis
 
-**Total Transferred JS (gzip)**: 495.9 KB  
-**Total Parsed JS**: 1638.9 KB
+**Total Transferred JS (gzip)**: 496.3 KB  
+**Total Parsed JS**: 1639.8 KB
 
 | Route | Transferred (gzip) | Parsed JS |
 |---|---|---|

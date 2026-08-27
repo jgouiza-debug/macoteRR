@@ -14,6 +14,12 @@ export const DICTIONARY = {
     "inapp.copyLink": "Copier le lien",
     "inapp.copied": "Lien copié",
     "account.required": "Un compte est nécessaire pour continuer.",
+    "welcome.title": "Bienvenue sur MaCote.",
+    "welcome.body": "Ta cote R, ce qu'elle t'ouvre, et les bourses de ton cégep. On commence.",
+    "welcome.cta": "Commencer",
+    "account.continueWithApple": "Continuer avec Apple",
+    "account.continueWithGoogle": "Continuer avec Google",
+    "account.orWithEmail": "ou avec ton adresse courriel",
 
     "cegep.count": "{n} cégeps de la région de Québec",
 
@@ -343,6 +349,12 @@ export const DICTIONARY = {
     "inapp.copyLink": "Copy link",
     "inapp.copied": "Link copied",
     "account.required": "An account is required to continue.",
+    "welcome.title": "Welcome to MaCote.",
+    "welcome.body": "Your R-score, the doors it opens, and bursaries at your CEGEP. Let's begin.",
+    "welcome.cta": "Get started",
+    "account.continueWithApple": "Continue with Apple",
+    "account.continueWithGoogle": "Continue with Google",
+    "account.orWithEmail": "or with your email address",
 
     "cegep.count": "{n} cégeps in the Quebec City area",
 

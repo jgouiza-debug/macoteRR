@@ -39,10 +39,10 @@ const ProgramRow = memo(function ProgramRow({
   const f = useFormat();
 
   return (
-    <div className="border-b border-ink/10 last:border-b-0">
+    <div className="border-b border-ink/10 last:border-b-0 [content-visibility:auto] [contain-intrinsic-size:0_110px]">
       <Link
         href={`/programs/${program.id}`}
-        className="flex flex-col gap-2.5 px-4 pb-2 pt-4 transition-all duration-150 hover:bg-chalk/30 active:bg-chalk/60 active:scale-[0.99]"
+        className="flex flex-col gap-2.5 px-4 pb-2 pt-4 transition-[transform,background-color] duration-150 hover:bg-chalk/30 active:bg-chalk/60 active:scale-[0.99]"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1">

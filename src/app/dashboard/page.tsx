@@ -96,7 +96,7 @@ export default function DashboardPage() {
             type="button"
             onClick={() => setBandOpen(true)}
             aria-label={t(isConfirmed ? "dash.confirmedTitle" : "dash.estimateTitle")}
-            className={`mt-4 flex min-w-[180px] flex-col items-center gap-1 rounded border px-5 py-3.5 shadow-sm tap-spring hover:shadow-card active:scale-[0.97] ${
+            className={`mt-4 flex min-w-[180px] flex-col items-center gap-1 rounded border px-5 py-3.5 shadow-sm tap-spring active:scale-[0.97] ${
               isConfirmed ? "border-moss/60 bg-moss/[0.02]" : "border-dashed border-moss/60 bg-paper"
             }`}
           >
@@ -140,7 +140,7 @@ export default function DashboardPage() {
                 <div key={program.id} className="flex flex-col gap-2 border-t border-ink/10 pt-4 first:border-t-0 first:pt-0">
                   <Link
                     href={`/programs/${program.id}`}
-                    className="flex flex-col gap-2 rounded p-2.5 -mx-2.5 transition-all duration-150 hover:bg-chalk/40 active:bg-chalk/70 active:scale-[0.99]"
+                    className="flex flex-col gap-2 rounded p-2.5 -mx-2.5 transition-[transform,background-color] duration-150 hover:bg-chalk/40 active:bg-chalk/70 active:scale-[0.99]"
                   >
                     <div className="flex items-baseline justify-between gap-3 text-[13.5px]">
                       <span className="font-semibold text-ink">

@@ -19,7 +19,7 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               aria-current={active ? "page" : undefined}
-              className={`flex w-full flex-col items-center justify-center gap-0.5 text-[10px] uppercase tracking-wide transition-all duration-150 active:scale-90 ${
+              className={`flex w-full flex-col items-center justify-center gap-0.5 text-[10px] uppercase tracking-wide transition-[transform,color] duration-150 active:scale-90 ${
                 active ? "text-ultramarine" : "text-secondary hover:text-ink"
               }`}
             >
