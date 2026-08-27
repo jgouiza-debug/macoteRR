@@ -15,7 +15,7 @@ import { useStudentProfile } from "@/lib/profile/store";
 import { useOnboardingGuard } from "@/lib/profile/onboarding";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
-type Step = "program" | "future" | "specific" | "general" | "quiz";
+type Step = "program" | "profile_picker" | "future" | "specific" | "general" | "quiz";
 
 const DEC_GROUPS = [
   { category: "Programme préuniversitaire" as const, labelKey: "goal.decPreUniversity" as const },
@@ -42,6 +42,7 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
   // without them let a student walk backwards into a screen the profile could not fill.
   useOnboardingGuard(startStep === "program" ? "program" : "goal");
   const [cegepProgramId, setCegepProgramId] = useState<string | null>(profile.cegepProgramId);
+  const [selectedProfileId, setSelectedProfileId] = useState<string | null>(null);
   const [targetIds, setTargetIds] = useState<string[]>(profile.targetUniversityProgramIds);
   const [interestIds, setInterestIds] = useState<InterestId[]>(profile.interestIds);
   const [query, setQuery] = useState("");
@@ -58,6 +59,37 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
   const decOfferings = useMemo(() => decOfferingsAtCegep(profile.cegepId), [profile.cegepId]);
 
   const selectedDec = decOfferings.find((p) => p.programCode === cegepProgramId);
+
+  const isSH = Boolean(
+    cegepProgramId?.startsWith("300") ||
+      selectedDec?.programName.toLowerCase().includes("humaines") ||
+      selectedDec?.programName.toLowerCase().includes("social"),
+  );
+  const isSN = Boolean(
+    cegepProgramId?.startsWith("200") ||
+      selectedDec?.programName.toLowerCase().includes("nature") ||
+      selectedDec?.programName.toLowerCase().includes("natural"),
+  );
+
+  const activeProfiles = useMemo(() => {
+    if (isSH) {
+      return [
+        { id: "admin_gestion", titleKey: "goal.shAdmin" as const, descKey: "goal.shAdminDesc" as const },
+        { id: "individu_psycho", titleKey: "goal.shPsycho" as const, descKey: "goal.shPsychoDesc" as const },
+        { id: "monde_societe", titleKey: "goal.shMonde" as const, descKey: "goal.shMondeDesc" as const },
+        { id: "general", titleKey: "goal.shGeneral" as const, descKey: "goal.shGeneralDesc" as const },
+      ];
+    }
+    if (isSN) {
+      return [
+        { id: "sante_vie", titleKey: "goal.snSante" as const, descKey: "goal.snSanteDesc" as const },
+        { id: "pures_appliquees", titleKey: "goal.snPures" as const, descKey: "goal.snPuresDesc" as const },
+        { id: "general", titleKey: "goal.snGeneral" as const, descKey: "goal.snGeneralDesc" as const },
+      ];
+    }
+    return [];
+  }, [isSH, isSN]);
+
   const genericProfile = useMemo(
     () => getGenericProgramProfile(selectedDec?.programCode || cegepProgramId || ""),
     [selectedDec, cegepProgramId],
@@ -137,8 +169,12 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
           <button
             type="button"
             onClick={() => {
-              update({ cegepProgramId });
-              router.push("/onboarding/score");
+              if (isSH || isSN) {
+                setStep("profile_picker");
+              } else {
+                update({ cegepProgramId });
+                router.push("/onboarding/score");
+              }
             }}
             disabled={!cegepProgramId}
             className="flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40"
@@ -211,6 +247,63 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
           {filteredDecs.length === 0 && (
             <p className="py-8 text-center text-[14px] text-ink/50">{t("goal.noDec")}</p>
           )}
+        </div>
+      </ScreenShell>
+    );
+  }
+
+  if (step === "profile_picker") {
+    return (
+      <ScreenShell
+        onBack={() => setStep("program")}
+        footer={
+          <button
+            type="button"
+            onClick={() => {
+              update({ cegepProgramId });
+              router.push("/onboarding/score");
+            }}
+            disabled={!selectedProfileId}
+            className="flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40"
+          >
+            {t("common.continue")}
+          </button>
+        }
+      >
+        <ScreenHeading
+          title={t("goal.profileTitle")}
+          body={t("goal.profileBody")}
+        />
+
+        <div className="flex flex-col gap-3 pb-4">
+          {activeProfiles.map((p) => {
+            const selected = selectedProfileId === p.id;
+            return (
+              <button
+                key={p.id}
+                type="button"
+                aria-pressed={selected}
+                onClick={() => setSelectedProfileId(p.id)}
+                className={`flex min-h-[64px] items-start justify-between gap-3 rounded border p-4 text-left transition-transform active:scale-[0.99] ${
+                  selected
+                    ? "border-ultramarine bg-ultramarine/[0.07]"
+                    : "border-ink/15 bg-paper"
+                }`}
+              >
+                <div className="flex flex-col gap-1">
+                  <span
+                    className={`block text-[15px] font-semibold ${selected ? "text-ultramarine" : "text-ink"}`}
+                  >
+                    {t(p.titleKey)}
+                  </span>
+                  <span className="block text-[12.5px] leading-relaxed text-ink/55">
+                    {t(p.descKey)}
+                  </span>
+                </div>
+                {selected && <Check className="h-5 w-5 flex-shrink-0 text-ultramarine mt-0.5" />}
+              </button>
+            );
+          })}
         </div>
       </ScreenShell>
     );
