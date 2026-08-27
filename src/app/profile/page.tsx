@@ -109,19 +109,10 @@ export default function ProfilePage() {
   return (
     <AppShell rScore={profile.rScore ?? undefined}>
       <div className="mx-auto flex w-full max-w-[480px] flex-col gap-7 px-4 py-6">
-        <div className="flex items-center justify-between">
+        <div>
           <h1 className="font-display text-[27px] font-bold leading-tight tracking-tight text-ink">
             {t("prof.title")}
           </h1>
-          <button
-            type="button"
-            onClick={handleLogout}
-            disabled={loggingOut}
-            className="flex items-center gap-1.5 rounded-full border border-ink/15 bg-paper px-3.5 py-1.5 text-[13px] font-semibold text-ink shadow-sm transition-all hover:bg-chalk active:scale-[0.97] disabled:opacity-50"
-          >
-            <LogOut className="h-3.5 w-3.5 text-ink/70" />
-            <span>{t("account.logout")}</span>
-          </button>
         </div>
 
         <div className="overflow-hidden rounded-xl border border-ink/12 bg-paper shadow-card">
