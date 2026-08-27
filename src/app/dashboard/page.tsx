@@ -68,6 +68,24 @@ export default function DashboardPage() {
     if (hydrated && profile.cegepId === null) router.replace("/onboarding");
   }, [hydrated, profile.cegepId, router]);
 
+  // Both memos have to sit ABOVE the early return. `hydrated` is false on the hydration pass
+  // and true on the very next render, so a hook placed after the guard is skipped once and
+  // then called — "Rendered more hooks than during the previous render", which killed the
+  // whole page for every student who had actually finished onboarding.
+  const allDeadlines = useMemo(() => {
+    return getDeadlinesForStudent(profile.targetUniversityProgramIds);
+  }, [profile.targetUniversityProgramIds]);
+
+  const filteredDeadlines = useMemo(() => {
+    const filterDef = DATE_FILTERS.find((f) => f.id === dateFilter);
+    if (!filterDef || filterDef.maxDays === null) return allDeadlines;
+    const max = filterDef.maxDays;
+    return allDeadlines.filter((d) => {
+      const days = daysUntil(d.dateIso);
+      return days !== null && days >= 0 && days <= max;
+    });
+  }, [allDeadlines, dateFilter]);
+
   if (!hydrated || profile.cegepId === null) {
     return (
       <AppShell>
@@ -95,20 +113,6 @@ export default function DashboardPage() {
     CEGEP_PROGRAMS.find((p) => p.id === profile.cegepProgramId)?.name ??
     profile.cegepProgramId;
   const targets = UNIVERSITY_PROGRAMS.filter((p) => profile.targetUniversityProgramIds.includes(p.id));
-
-  const allDeadlines = useMemo(() => {
-    return getDeadlinesForStudent(profile.targetUniversityProgramIds);
-  }, [profile.targetUniversityProgramIds]);
-
-  const filteredDeadlines = useMemo(() => {
-    const filterDef = DATE_FILTERS.find((f) => f.id === dateFilter);
-    if (!filterDef || filterDef.maxDays === null) return allDeadlines;
-    const max = filterDef.maxDays;
-    return allDeadlines.filter((d) => {
-      const days = daysUntil(d.dateIso);
-      return days !== null && days >= 0 && days <= max;
-    });
-  }, [allDeadlines, dateFilter]);
 
   return (
     <AppShell rScore={profile.rScore}>
