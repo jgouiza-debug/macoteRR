@@ -15,10 +15,10 @@ export function TopNav({ rScore }: { rScore?: number }) {
 
   return (
     <header className="fixed top-0 z-50 w-full border-b border-ink/10 bg-shell pt-safe">
-      <div className="mx-auto flex h-14 w-full max-w-[1200px] items-center justify-between gap-3 px-4 md:px-8">
+      <div className="mx-auto flex h-12 w-full max-w-[1200px] items-center justify-between gap-3 px-4 md:px-8">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <LogoMark size={22} />
-          <span className="font-display text-[17px] font-bold tracking-tight text-ultramarine">
+          <LogoMark size={20} />
+          <span className="font-display text-[16px] font-bold tracking-tight text-ultramarine">
             MaCote
           </span>
         </Link>
@@ -31,11 +31,11 @@ export function TopNav({ rScore }: { rScore?: number }) {
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`flex items-center gap-2 rounded-full px-3 py-2 text-[13px] font-semibold uppercase tracking-wide transition-colors ${
+                className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px] font-semibold uppercase tracking-wide transition-colors ${
                   active ? "text-ultramarine" : "text-secondary hover:bg-chalk"
                 }`}
               >
-                <item.icon className="h-[18px] w-[18px]" />
+                <item.icon className="h-4 w-4" />
                 {t(item.labelKey)}
               </Link>
             );
@@ -44,7 +44,7 @@ export function TopNav({ rScore }: { rScore?: number }) {
 
         <div className="flex items-center gap-3">
           {rScore !== undefined && (
-            <span className="text-[13px] font-semibold tabular-nums text-ultramarine">
+            <span className="text-[13.5px] font-extrabold tracking-tight tabular-nums text-ultramarine">
               R : {f.score(rScore)}
             </span>
           )}

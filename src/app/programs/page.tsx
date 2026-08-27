@@ -55,12 +55,12 @@ const ProgramRow = memo(function ProgramRow({
             </p>
           </div>
           <div className="flex items-center gap-1.5 text-right">
-            <div>
-              <div className="text-[13px] font-semibold text-ink tabular-nums">
+            <div className="flex flex-col items-end justify-center">
+              <div className="flex h-5 items-center justify-end text-[13px] font-semibold text-ink tabular-nums leading-none">
                 {range ? `${f.score(range.low)}–${f.score(range.high)}` : "—"}
               </div>
               <div
-                className={`text-[10.5px] font-bold uppercase tracking-wide ${CUTOFF_STATUS_COLOR_CLASS[cutoffStatus]}`}
+                className={`text-[10.5px] font-bold uppercase tracking-wide leading-none mt-1 ${CUTOFF_STATUS_COLOR_CLASS[cutoffStatus]}`}
               >
                 {t(CUTOFF_STATUS_LABEL_KEY[cutoffStatus])}
               </div>

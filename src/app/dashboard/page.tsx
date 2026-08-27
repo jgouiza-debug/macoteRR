@@ -8,7 +8,8 @@ import { AppShell } from "@/components/app-shell/AppShell";
 import { AxisRow } from "@/components/rscore/AxisRow";
 import { SourceStamp } from "@/components/SourceStamp";
 import { RScoreBandSheet } from "@/components/rscore/RScoreBandSheet";
-import { CEGEPS, CEGEP_PROGRAMS, UNIVERSITY_PROGRAMS, DEADLINES } from "@/lib/sample-data";
+import { CEGEPS, CEGEP_PROGRAMS, UNIVERSITY_PROGRAMS } from "@/lib/sample-data";
+import { getDeadlinesForStudent } from "@/lib/data/important-dates";
 import { useStudentProfile } from "@/lib/profile/store";
 import {
   getCutoffRange,
@@ -180,7 +181,7 @@ export default function DashboardPage() {
             {t("dash.importantDates")}
           </h2>
           <ul className="relative flex flex-col gap-5 before:absolute before:bottom-2 before:left-[5px] before:top-2 before:w-px before:bg-ink/12">
-            {DEADLINES.map((d) => {
+            {getDeadlinesForStudent(profile.targetUniversityProgramIds).map((d) => {
               // Urgency is DERIVED from today's date, not read from a hardcoded `urgent`
               // flag — that flag was rendering "13 novembre — DEMAIN" in August. Telling a
               // student a deadline is tomorrow when it is months away is worse than silence.

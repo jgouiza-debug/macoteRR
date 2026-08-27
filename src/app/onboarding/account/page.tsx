@@ -256,10 +256,6 @@ export default function AccountPage() {
         provider,
         options: {
           redirectTo: authCallbackUrl(requested ?? "/dashboard"),
-          queryParams: {
-            prompt: "select_account",
-            access_type: "offline",
-          },
         },
       });
       if (error) {

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 export function Footer({ stackAboveBottomNav = false }: { stackAboveBottomNav?: boolean }) {
@@ -13,12 +14,12 @@ export function Footer({ stackAboveBottomNav = false }: { stackAboveBottomNav?: 
     >
       <p className="text-[11px] leading-relaxed text-ink/50">{t("dash.unofficial")}</p>
       <div className="mt-3 flex justify-center gap-5 text-[11px] font-medium text-ink/50">
-        <a href="#" className="underline-offset-2 hover:underline">
+        <Link href="/mentions-legales" className="underline-offset-2 hover:underline">
           {t("dash.legal")}
-        </a>
-        <a href="#" className="underline-offset-2 hover:underline">
+        </Link>
+        <Link href="/methodologie-sources" className="underline-offset-2 hover:underline">
           {t("dash.methodology")}
-        </a>
+        </Link>
       </div>
     </footer>
   );
