@@ -129,6 +129,22 @@ export function suggestUniversityProgramsForCegepProgram(
   );
 }
 
+export function suggestTopUniversityPrograms<T extends { name: string }>(
+  cegepProgramName: string,
+  universityPrograms: readonly T[],
+  limit = 5,
+  programCode?: string | null,
+): ProgramSuggestion<T>[] {
+  const profile = programCode ? getGenericProgramProfile(programCode) : undefined;
+  return suggest(
+    cegepProgramName,
+    universityPrograms,
+    (p) => p.name,
+    limit,
+    profile,
+  );
+}
+
 export function suggestCegepProgramsForUniversityProgram(
   universityProgramName: string,
   limit = 8,

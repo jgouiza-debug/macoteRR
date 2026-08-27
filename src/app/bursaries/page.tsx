@@ -108,7 +108,10 @@ export default function BursariesPage() {
                     amountLabel={amountLabel(match.bursary, f.amount)}
                     deadlineLabel={
                       match.bursary.deadlineIso
-                        ? f.date(match.bursary.deadlineIso, match.bursary.deadlinePrecision ?? "day")
+                        ? f.date(
+                            match.bursary.deadlineIso,
+                            match.bursary.deadlinePrecision === "month" ? "month" : "day",
+                          )
                         : t("burs.noDeadline")
                     }
                     t={t}

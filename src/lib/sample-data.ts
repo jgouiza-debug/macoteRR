@@ -1,3 +1,4 @@
+import type { SelfTagId } from "@/lib/tags/taxonomy";
 import type { BursaryCriteria } from "@/lib/matching/match";
 import type { InterestId } from "@/lib/tags/interests";
 import { CEGEP_DEC_PROGRAMS } from "@/lib/data/cegep-catalog";
@@ -120,829 +121,9237 @@ export type UniversityProgram = {
 };
 
 export const UNIVERSITY_PROGRAMS: UniversityProgram[] = [
-  // --- SANTÉ & MÉDECINE ---
   {
-    id: "ulaval-medecine",
-    name: "Doctorat de 1er cycle en médecine (MD)",
-    institution: "Université Laval",
-    description: "Formation médicale complète avec externat et stages cliniques en milieu hospitalier universitaire.",
-    interestIds: ["health", "science"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 100, note: "Accès direct à la résidence médicale (CaRMS)." },
-    professionalOrders: { codes: ["CMQ"], note: "Collège des médecins du Québec." },
-    sourceUrl: "https://www.ulaval.ca/etudes/programmes/doctorat-de-1er-cycle-en-medecine",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 33.500, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 35.800, figureType: "average", sourceTier: "university_official" },
-      { year: 2024, cutoff: 38.900, figureType: "maximum", sourceTier: "university_official" },
+    "id": "universite-doctorat-de-1er-cycle-en-medec",
+    "name": "Doctorat de 1er cycle en médecine (MD)",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Doctorat de 1er cycle en médecine (MD) à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/doctorat-de-1er-cycle-en-medecine",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calcul différentiel (201-NYA)", status: "met" },
-      { name: "Calcul intégral (201-NYB)", status: "met" },
-      { name: "Chimie générale (202-NYA)", status: "met" },
-      { name: "Chimie des solutions (202-NYB)", status: "met" },
-      { name: "Physique : Mécanique (203-NYA)", status: "met" },
-      { name: "Physique : Électricité (203-NYB)", status: "met" },
-      { name: "Physique : Ondes (203-NYC)", status: "met" },
-      { name: "Biologie générale (101-NYA)", status: "met" },
-      { name: "Biologie humaine (101-HTK ou équivalent)", status: "in_progress" },
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
   },
   {
-    id: "udem-medecine",
-    name: "Doctorat de 1er cycle en médecine (MD)",
-    institution: "Université de Montréal",
-    description: "Programme de doctorat en médecine intégrant formation scientifique rigoureuse, simulation clinique et apprentissage par problèmes.",
-    interestIds: ["health", "science"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 100, note: "Poursuite en résidence médicale." },
-    professionalOrders: { codes: ["CMQ"], note: "Collège des médecins du Québec." },
-    sourceUrl: "https://admission.umontreal.ca/programmes/doctorat-de-1er-cycle-en-medecine/",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 34.200, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 36.100, figureType: "average", sourceTier: "university_official" },
-      { year: 2024, cutoff: 39.400, figureType: "maximum", sourceTier: "university_official" },
+    "id": "universite-doctorat-de-1er-cycle-en-medec-302",
+    "name": "Doctorat de 1er cycle en médecine dentaire (DMD)",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Doctorat de 1er cycle en médecine dentaire (DMD) à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/doctorat-de-1er-cycle-en-medecine-dentaire",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calcul différentiel (201-NYA)", status: "met" },
-      { name: "Calcul intégral (201-NYB)", status: "met" },
-      { name: "Chimie générale (202-NYA)", status: "met" },
-      { name: "Chimie des solutions (202-NYB)", status: "met" },
-      { name: "Physique mécanique (203-NYA)", status: "met" },
-      { name: "Biologie 1 (101-NYA)", status: "met" },
-      { name: "Biologie 2 (101-HTK)", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Chimie générale et des solutions (202-NYA, 202-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Biologie générale et humaine (101-NYA, 101-LC)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul différentiel et intégral (201-NYA, 201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et ondes (203-NYA, 203-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Chimie organique",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
   },
   {
-    id: "mcgill-medecine",
-    name: "Doctor of Medicine and Master of Surgery (MDCM)",
-    institution: "McGill University",
-    description: "Four-year undergraduate medical curriculum integrating patient-centred clinical immersion and cutting-edge biomedical research.",
-    interestIds: ["health", "science"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 100, note: "Direct CaRMS postgraduate residency placement." },
-    professionalOrders: { codes: ["CMQ"], note: "Collège des médecins du Québec." },
-    sourceUrl: "https://www.mcgill.ca/medadmissions/programs/mdcm",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 34.800, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 36.700, figureType: "average", sourceTier: "university_official" },
+    "id": "universite-doctorat-de-1er-cycle-en-pharm",
+    "name": "Doctorat de 1er cycle en pharmacie (Pharm. D.)",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Doctorat de 1er cycle en pharmacie (Pharm. D.) à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/doctorat-de-1er-cycle-en-pharmacie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 33.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 33,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2023,
+        "cutoff": 32.8,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calculus 1 & 2 (201-NYA / 201-NYB)", status: "met" },
-      { name: "General Chemistry & Solutions (202-NYA / 202-NYB)", status: "met" },
-      { name: "Physics 1, 2, 3 (203-NYA / 203-NYB / 203-NYC)", status: "met" },
-      { name: "General Biology (101-NYA)", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Chimie générale et des solutions (202-NYA, 202-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Biologie générale et humaine (101-NYA, 101-LC)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul différentiel et intégral (201-NYA, 201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et ondes (203-NYA, 203-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Chimie organique",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
   },
   {
-    id: "sherbrooke-medecine",
-    name: "Doctorat de 1er cycle en médecine (MD)",
-    institution: "Université de Sherbrooke",
-    description: "Formation médicale axée sur l'apprentissage par problèmes (APP), l'interdisciplinarité et la pratique en régions.",
-    interestIds: ["health", "science"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 100, note: "Accès à la résidence." },
-    professionalOrders: { codes: ["CMQ"], note: "Collège des médecins du Québec." },
-    sourceUrl: "https://www.usherbrooke.ca/admission/programme/605/doctorat-en-medecine",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 33.400, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 35.400, figureType: "average", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-droit",
+    "name": "Baccalauréat en droit",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en droit à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-droit",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 30.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 30,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2023,
+        "cutoff": 29.8,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calcul différentiel (201-NYA)", status: "met" },
-      { name: "Chimie générale (202-NYA)", status: "met" },
-      { name: "Chimie des solutions (202-NYB)", status: "met" },
-      { name: "Physique (203-NYA, 203-NYB, 203-NYC)", status: "met" },
-      { name: "Biologie (101-NYA)", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) sans préalables spécifiques",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
   },
   {
-    id: "udem-pharmacie",
-    name: "Doctorat de 1er cycle en pharmacie (Pharm. D.)",
-    institution: "Université de Montréal",
-    description: "Formation professionnelle clinique préparant à la pratique de pharmacien en milieu communautaire ou hospitalier.",
-    interestIds: ["health", "science"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 99, note: "Pleine employabilité dès l'obtention du permis de l'OPQ." },
-    professionalOrders: { codes: ["OPQ"], note: "Ordre des pharmaciens du Québec." },
-    sourceUrl: "https://admission.umontreal.ca/programmes/doctorat-de-1er-cycle-en-pharmacie/",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 33.050, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 34.800, figureType: "average", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-administration",
+    "name": "Baccalauréat en administration des affaires (B.A.A.)",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en administration des affaires (B.A.A.) à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-administration-des-affaires",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calcul 1 et 2 (201-NYA, 201-NYB)", status: "met" },
-      { name: "Chimie générale et des solutions (202-NYA, 202-NYB)", status: "met" },
-      { name: "Physique mécanique et électricité (203-NYA, 203-NYB)", status: "met" },
-      { name: "Biologie générale (101-NYA)", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
   },
   {
-    id: "ulaval-pharmacie",
-    name: "Doctorat de 1er cycle en pharmacie (Pharm. D.)",
-    institution: "Université Laval",
-    description: "Doctorat de 1er cycle intégrant pharmacologie, chimie pharmaceutique, soins pharmaceutiques et stages cliniques en milieu hospitalier et communautaire.",
-    interestIds: ["health", "science"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 99, note: "En emploi ou poursuite en résidence hospitalière." },
-    professionalOrders: { codes: ["OPQ"], note: "Ordre des pharmaciens du Québec." },
-    sourceUrl: "https://www.ulaval.ca/etudes/programmes/doctorat-de-1er-cycle-en-pharmacie",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 32.800, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 34.500, figureType: "average", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-genie-logiciel",
+    "name": "Baccalauréat en génie logiciel",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie logiciel à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-genie-logiciel",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calcul différentiel (201-NYA)", status: "met" },
-      { name: "Chimie générale et solutions (202-NYA, 202-NYB)", status: "met" },
-      { name: "Physique 1, 2, 3 (203-NYA, 203-NYB, 203-NYC)", status: "met" },
-      { name: "Biologie générale (101-NYA)", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
   },
   {
-    id: "udem-dentaire",
-    name: "Doctorat de 1er cycle en médecine dentaire (DMD)",
-    institution: "Université de Montréal",
-    description: "Formation de dentiste clinicien avec clinique universitaire moderne et laboratoires de simulation préclinique.",
-    interestIds: ["health", "science"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 100, note: "Pratique en clinique privée, hôpitaux ou spécialités." },
-    professionalOrders: { codes: ["ODQ"], note: "Ordre des dentistes du Québec." },
-    sourceUrl: "https://admission.umontreal.ca/programmes/doctorat-de-1er-cycle-en-medecine-dentaire/",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 33.600, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 35.500, figureType: "average", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-genie-informat",
+    "name": "Baccalauréat en génie informatique",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie informatique à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-genie-informatique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calcul 1 et 2 (201-NYA, 201-NYB)", status: "met" },
-      { name: "Chimie générale et solutions (202-NYA, 202-NYB)", status: "met" },
-      { name: "Physique (203-NYA, 203-NYB, 203-NYC)", status: "met" },
-      { name: "Biologie (101-NYA, 101-HTK)", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
   },
   {
-    id: "ulaval-dentaire",
-    name: "Doctorat de 1er cycle en médecine dentaire (DMD)",
-    institution: "Université Laval",
-    description: "Doctorat en médecine dentaire combinant sciences biomédicales, techniques opératoires et soins aux patients à la clinique dentaire.",
-    interestIds: ["health", "science"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 100, note: "Pratique générale ou spécialisation." },
-    professionalOrders: { codes: ["ODQ"], note: "Ordre des dentistes du Québec." },
-    sourceUrl: "https://www.ulaval.ca/etudes/programmes/doctorat-de-1er-cycle-en-medecine-dentaire",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 33.200, figureType: "last_admitted", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-genie-civil",
+    "name": "Baccalauréat en génie civil",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie civil à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-genie-civil",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calcul différentiel (201-NYA)", status: "met" },
-      { name: "Chimie des solutions (202-NYB)", status: "met" },
-      { name: "Physique 1, 2, 3 (203-NYA, 203-NYB, 203-NYC)", status: "met" },
-      { name: "Biologie 1 (101-NYA)", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
   },
   {
-    id: "udem-physiotherapie",
-    name: "Baccalauréat en physiothérapie",
-    institution: "Université de Montréal",
-    description: "Premier cycle du continuum baccalauréat-maîtrise professionnelle menant à l'exercice de la physiothérapie.",
-    interestIds: ["health", "science"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 98, note: "Accès à la maîtrise professionnelle obligatoire pour la pratique." },
-    professionalOrders: { codes: ["OPPQ"], note: "Ordre professionnel de la physiothérapie du Québec." },
-    sourceUrl: "https://admission.umontreal.ca/programmes/baccalaureat-en-physiotherapie/",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 32.100, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 33.700, figureType: "average", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-genie-mecaniqu",
+    "name": "Baccalauréat en génie mécanique",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie mécanique à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-genie-mecanique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calcul différentiel (201-NYA)", status: "met" },
-      { name: "Chimie générale et solutions (202-NYA, 202-NYB)", status: "met" },
-      { name: "Physique 1, 2, 3 (203-NYA, 203-NYB, 203-NYC)", status: "met" },
-      { name: "Biologie générale (101-NYA)", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
   },
   {
-    id: "udem-optometrie",
-    name: "Doctorat de 1er cycle en optométrie (O.D.)",
-    institution: "Université de Montréal",
-    description: "Unique programme d'optométrie francophone au Canada, dispensé à l'École d'optométrie de l'UdeM.",
-    interestIds: ["health", "science"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 100, note: "Pleine employabilité clinique." },
-    professionalOrders: { codes: ["OOQ"], note: "Ordre des optométristes du Québec." },
-    sourceUrl: "https://admission.umontreal.ca/programmes/doctorat-de-1er-cycle-en-optometrie/",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 33.300, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 35.100, figureType: "average", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-genie-electriq",
+    "name": "Baccalauréat en génie électrique",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie électrique à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-genie-electrique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calcul 1 et 2 (201-NYA, 201-NYB)", status: "met" },
-      { name: "Chimie générale et des solutions (202-NYA, 202-NYB)", status: "met" },
-      { name: "Physique mécanique, électricité, ondes (203-NYA, 203-NYB, 203-NYC)", status: "met" },
-      { name: "Biologie 1 et 2 (101-NYA, 101-HTK)", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
   },
   {
-    id: "udem-veterinaire",
-    name: "Doctorat de 1er cycle en médecine vétérinaire (DMV)",
-    institution: "Université de Montréal (Saint-Hyacinthe)",
-    description: "Unique faculté de médecine vétérinaire au Québec, située à Saint-Hyacinthe avec hôpital vétérinaire universitaire.",
-    interestIds: ["health", "science", "environment"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 99, note: "Animaux de compagnie, animaux de rente et santé publique." },
-    professionalOrders: { codes: ["OMVQ"], note: "Ordre des médecins vétérinaires du Québec." },
-    sourceUrl: "https://admission.umontreal.ca/programmes/doctorat-de-1er-cycle-en-medecine-veterinaire/",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 34.000, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 35.900, figureType: "average", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-genie-chimique",
+    "name": "Baccalauréat en génie chimique",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie chimique à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-genie-chimique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calcul différentiel et intégral (201-NYA, 201-NYB)", status: "met" },
-      { name: "Chimie générale et des solutions (202-NYA, 202-NYB)", status: "met" },
-      { name: "Physique (203-NYA, 203-NYB, 203-NYC)", status: "met" },
-      { name: "Biologie générale (101-NYA, 101-HTK)", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
   },
   {
-    id: "laval-sciences-infirmieres",
-    name: "Sciences infirmières",
-    institution: "Université Laval",
-    description: "Formation clinique menant à l'exercice infirmier, avec stages en milieu hospitalier dès la première année.",
-    interestIds: ["health"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 98, note: "Pleine employabilité dans le réseau de la santé du Québec." },
-    professionalOrders: { codes: ["OIIQ"], note: "L'exercice infirmier au Québec est réservé aux membres de l'Ordre." },
-    sourceUrl: "https://www.ulaval.ca/sites/default/files/futurs-etudiants/IPC_2024-2025-WEB.pdf",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2023, cutoff: 26.529, figureType: "last_admitted", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-genie-industri",
+    "name": "Baccalauréat en génie industriel",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie industriel à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-genie-industriel",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Biologie humaine / générale", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
   },
   {
-    id: "udem-sciences-infirmieres",
-    name: "Baccalauréat en sciences infirmières",
-    institution: "Université de Montréal",
-    description: "Formation infirmière de pointe reconnue par l'OIIQ, axée sur les soins critiques, communautaires et la gestion clinique.",
-    interestIds: ["health"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 99, note: "Emploi garanti dans le réseau de santé québécois." },
-    professionalOrders: { codes: ["OIIQ"], note: "Ordre des infirmières et infirmiers du Québec." },
-    sourceUrl: "https://admission.umontreal.ca/programmes/baccalaureat-en-sciences-infirmieres/",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 26.100, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 28.500, figureType: "average", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-informatique",
+    "name": "Baccalauréat en informatique",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en informatique à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-informatique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [],
-  },
-
-  // --- DROIT & SCIENCES JURIDIQUES ---
-  {
-    id: "udem-droit",
-    name: "Droit (LL.B.)",
-    institution: "Université de Montréal",
-    description: "Baccalauréat en droit civil québécois, menant au Barreau ou à la Chambre des notaires après la formation professionnelle.",
-    interestIds: ["law_social"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 92, note: "Poursuite à l'École du Barreau ou aux cycles supérieurs." },
-    professionalOrders: { codes: ["Barreau", "Notaires"], note: "Ordres professionnels accessibles après la formation professionnelle requise." },
-    sourceUrl: "https://admission.umontreal.ca/statistiques-dadmission-cote-r/",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 31.505, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 33.168, figureType: "average", sourceTier: "university_official" },
-      { year: 2024, cutoff: 38.058, figureType: "maximum", sourceTier: "university_official" },
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
     ],
-    prerequisites: [],
-  },
-  {
-    id: "ulaval-droit",
-    name: "Baccalauréat en droit",
-    institution: "Université Laval",
-    description: "Faculté de droit historique du Québec, offrant formation en droit civil, droit des affaires, droit public et international.",
-    interestIds: ["law_social"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 93, note: "Barreau, Notariat, fonction publique et contentieux d'affaires." },
-    professionalOrders: { codes: ["Barreau", "Notaires"], note: "Accès aux examens du Barreau du Québec." },
-    sourceUrl: "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-droit",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 29.800, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 31.900, figureType: "average", sourceTier: "university_official" },
-    ],
-    prerequisites: [],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
   },
   {
-    id: "mcgill-law",
-    name: "Bachelor of Civil Law and Juris Doctor (BCL/JD)",
-    institution: "McGill University",
-    description: "Unique integrated bilingual program teaching both Civil Law and Common Law systems.",
-    interestIds: ["law_social"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 95, note: "Global legal practice and judicial clerkships." },
-    professionalOrders: { codes: ["Barreau", "Law Society"], note: "Eligible for Barreau du Québec and provincial Law Societies." },
-    sourceUrl: "https://www.mcgill.ca/law/admissions",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 33.000, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 34.800, figureType: "average", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-sciences-infir",
+    "name": "Baccalauréat en sciences infirmières",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en sciences infirmières à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-sciences-infirmieres",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 24.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 24,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health",
+      "science"
+    ]
   },
   {
-    id: "sherbrooke-droit",
-    name: "Baccalauréat en droit (LL.B.)",
-    institution: "Université de Sherbrooke",
-    description: "Formation juridique axée sur la pratique, le droit de l'entreprise, les technologies et le cheminement intégré Droit-MBA.",
-    interestIds: ["law_social", "business"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 94, note: "Cabinet d'avocats, magistrature, entreprises." },
-    professionalOrders: { codes: ["Barreau", "Notaires"], note: "Barreau du Québec et Chambre des notaires." },
-    sourceUrl: "https://www.usherbrooke.ca/admission/programme/215/baccalaureat-en-droit",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 29.500, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 31.400, figureType: "average", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-physiotherapie",
+    "name": "Baccalauréat en physiothérapie",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en physiothérapie à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-physiotherapie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
   },
   {
-    id: "uqam-droit",
-    name: "Baccalauréat en sciences juridiques (droit)",
-    institution: "Université du Québec à Montréal (UQAM)",
-    description: "Programme de droit reconnu pour son engagement social, le droit du travail, les droits de la personne et la justice sociale.",
-    interestIds: ["law_social"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 91, note: "Barreau du Québec et contentieux juridique." },
-    professionalOrders: { codes: ["Barreau", "Notaires"], note: "Accès à l'École du Barreau." },
-    sourceUrl: "https://etudier.uqam.ca/programme/baccalaureat-sciences-juridiques",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 29.100, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 31.000, figureType: "average", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-ergotherapie",
+    "name": "Baccalauréat en ergothérapie",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en ergothérapie à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-ergotherapie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [],
-  },
-
-  // --- GÉNIE & INFORMATIQUE ---
-  {
-    id: "poly-genie-logiciel",
-    name: "Génie logiciel",
-    institution: "Polytechnique Montréal",
-    description: "Formation d'ingénieur agréée couvrant la conception, l'architecture et la vérification des systèmes logiciels à grande échelle.",
-    interestIds: ["tech_eng"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 96, note: "En emploi ou aux études supérieures dans les 6 mois suivant la diplomation." },
-    professionalOrders: { codes: ["OIQ"], note: "Le titre d'ingénieur au Québec est réservé et encadré par l'Ordre des ingénieurs." },
-    sourceUrl: "https://www.polymtl.ca/etudes/bacc/logiciel",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 28.500, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 31.200, figureType: "average", sourceTier: "university_official" },
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
     ],
-    prerequisites: [
-      { name: "Calcul différentiel (201-NYA)", status: "met" },
-      { name: "Calcul intégral (201-NYB)", status: "met" },
-      { name: "Algèbre linéaire (201-NYC)", status: "met" },
-      { name: "Physique : Mécanique (203-NYA)", status: "met" },
-      { name: "Physique : Électricité (203-NYB)", status: "met" },
-      { name: "Chimie générale (202-NYA)", status: "met" },
-    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
   },
   {
-    id: "ulaval-genie-logiciel",
-    name: "Baccalauréat en génie logiciel",
-    institution: "Université Laval",
-    description: "Formation d'ingénieur logiciel agréée avec volet coopératif (stages rémunérés) et projets industriels réels.",
-    interestIds: ["tech_eng"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 97, note: "Très forte demande dans l'industrie tech et du jeu vidéo." },
-    professionalOrders: { codes: ["OIQ"], note: "Ordre des ingénieurs du Québec." },
-    sourceUrl: "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-genie-logiciel",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 26.500, figureType: "last_admitted", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-kinesiologie",
+    "name": "Baccalauréat en kinésiologie",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en kinésiologie à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-kinesiologie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calcul différentiel (201-NYA)", status: "met" },
-      { name: "Calcul intégral (201-NYB)", status: "met" },
-      { name: "Algèbre linéaire (201-NYC)", status: "met" },
-      { name: "Physique (203-NYA, 203-NYB)", status: "met" },
-      { name: "Chimie (202-NYA)", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
   },
   {
-    id: "ets-genie-logiciel",
-    name: "Baccalauréat en génie logiciel",
-    institution: "École de technologie supérieure (ÉTS)",
-    description: "Programme de génie logiciel axé sur la pratique industrielle, comportant 3 stages rémunérés obligatoires intégrés au cursus.",
-    interestIds: ["tech_eng"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 98, note: "Pleine employabilité industrielle avec 3 stages rémunérés." },
-    professionalOrders: { codes: ["OIQ"], note: "Ordre des ingénieurs du Québec." },
-    sourceUrl: "https://www.etsmtl.ca/etude/baccalaureat/genie-logiciel",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 24.500, figureType: "last_admitted", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-nutrition",
+    "name": "Baccalauréat en nutrition",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en nutrition à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-nutrition",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "DEC technique ou DEC sciences de la nature avec cours passerelle", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
   },
   {
-    id: "sherbrooke-genie-logiciel",
-    name: "Baccalauréat en génie logiciel (coopératif)",
-    institution: "Université de Sherbrooke",
-    description: "Programme en régime coopératif alternant sessions d'études et 4 à 5 stages rémunérés en entreprise.",
-    interestIds: ["tech_eng"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 99, note: "Embauche avant même la diplomation via les stages coop." },
-    professionalOrders: { codes: ["OIQ"], note: "Ordre des ingénieurs du Québec." },
-    sourceUrl: "https://www.usherbrooke.ca/admission/programme/280/baccalaureat-en-genie-logiciel",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 27.200, figureType: "last_admitted", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-psychologie",
+    "name": "Baccalauréat en psychologie",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en psychologie à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-psychologie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 28.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 28,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calcul différentiel (201-NYA)", status: "met" },
-      { name: "Calcul intégral (201-NYB)", status: "met" },
-      { name: "Algèbre linéaire (201-NYC)", status: "met" },
-      { name: "Physique (203-NYA, 203-NYB, 203-NYC)", status: "met" },
-      { name: "Chimie (202-NYA)", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Méthodes quantitatives ou Calcul différentiel",
+        "status": "met"
+      },
+      {
+        "name": "Biologie humaine",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
   },
   {
-    id: "concordia-software-eng",
-    name: "Bachelor of Engineering in Software Engineering",
-    institution: "Concordia University",
-    description: "Gina Cody School of Engineering accredited program focusing on software architecture, distributed systems and cloud engineering.",
-    interestIds: ["tech_eng"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 95, note: "High tech and software industry placement." },
-    professionalOrders: { codes: ["OIQ", "Engineers Canada"], note: "Accredited engineering degree." },
-    sourceUrl: "https://www.concordia.ca/ginacody/computer-science-software-eng/programs/software-engineering-beng.html",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 27.000, figureType: "last_admitted", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-psychoeducatio",
+    "name": "Baccalauréat en psychoéducation",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en psychoéducation à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-psychoeducation",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calculus 1 & 2", status: "met" },
-      { name: "Linear Algebra", status: "met" },
-      { name: "Physics: Mechanics & E&M", status: "met" },
-      { name: "Chemistry 1", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
   },
   {
-    id: "mcgill-computer-science",
-    name: "Bachelor of Science in Computer Science",
-    institution: "McGill University",
-    description: "World-class computer science program covering algorithms, artificial intelligence (Mila affiliation), systems, and data science.",
-    interestIds: ["tech_eng", "science"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 96, note: "AI research and top tech firms worldwide." },
-    sourceUrl: "https://www.cs.mcgill.ca/academic/undergrad/",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 31.000, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 33.200, figureType: "average", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-travail-social",
+    "name": "Baccalauréat en travail social",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en travail social à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-travail-social",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calculus 1 & 2 (201-NYA, 201-NYB)", status: "met" },
-      { name: "Linear Algebra (201-NYC)", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
   },
   {
-    id: "udem-informatique",
-    name: "Baccalauréat en informatique",
-    institution: "Université de Montréal",
-    description: "Programme de pointe en informatique fondamentale et intelligence artificielle en lien étroit avec Mila (Institut québécois d'IA).",
-    interestIds: ["tech_eng", "science"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 95, note: "Développement logiciel et recherche en IA." },
-    sourceUrl: "https://admission.umontreal.ca/programmes/baccalaureat-en-informatique/",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 26.800, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 29.500, figureType: "average", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-sciences-biolo",
+    "name": "Baccalauréat en sciences biologiques",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en sciences biologiques à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-biologie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calcul différentiel (201-NYA)", status: "met" },
-      { name: "Calcul intégral (201-NYB)", status: "met" },
-      { name: "Algèbre linéaire (201-NYC)", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
   },
   {
-    id: "laval-genie-civil",
-    name: "Génie civil",
-    institution: "Université Laval",
-    description: "Conception et gestion des infrastructures : structures, transport, ressources hydriques et géotechnique.",
-    interestIds: ["tech_eng", "environment"],
-    cohortLabel: "Cohorte automne 2026",
-    professionalOrders: { codes: ["OIQ"], note: "Le titre d'ingénieur au Québec est réservé et encadré par l'Ordre des ingénieurs." },
-    sourceUrl: "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-genie-civil",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 25.000, figureType: "last_admitted", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-biochimie",
+    "name": "Baccalauréat en biochimie",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en biochimie à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-biochimie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calcul différentiel (201-NYA)", status: "met" },
-      { name: "Calcul intégral (201-NYB)", status: "met" },
-      { name: "Algèbre linéaire (201-NYC)", status: "met" },
-      { name: "Physique (203-NYA, 203-NYB)", status: "met" },
-      { name: "Chimie (202-NYA)", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
   },
   {
-    id: "poly-genie-mecanique",
-    name: "Baccalauréat en génie mécanique",
-    institution: "Polytechnique Montréal",
-    description: "Formation d'ingénieur mécanique couvrant la conception mécanique, la mécatronique, la thermodynamique et la fabrication avancée.",
-    interestIds: ["tech_eng"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 95, note: "Automobile, aéronautique, énergie et robotique." },
-    professionalOrders: { codes: ["OIQ"], note: "Ordre des ingénieurs du Québec." },
-    sourceUrl: "https://www.polymtl.ca/etudes/bacc/mecanique",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 27.500, figureType: "last_admitted", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-chimie",
+    "name": "Baccalauréat en chimie",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en chimie à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-chimie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calcul 1 et 2 (201-NYA, 201-NYB)", status: "met" },
-      { name: "Algèbre linéaire (201-NYC)", status: "met" },
-      { name: "Physique (203-NYA, 203-NYB, 203-NYC)", status: "met" },
-      { name: "Chimie générale (202-NYA)", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
   },
   {
-    id: "poly-genie-aerospatial",
-    name: "Baccalauréat en génie aérospatial",
-    institution: "Polytechnique Montréal",
-    description: "Programme hautement contingenté en conception d'aéronefs, avionique, propulsion spatiale et systèmes de satellites.",
-    interestIds: ["tech_eng", "science"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 97, note: "Secteur aérospatial québécois et international (Bombardier, CAE, Pratt & Whitney, NASA/CSA)." },
-    professionalOrders: { codes: ["OIQ"], note: "Ordre des ingénieurs du Québec." },
-    sourceUrl: "https://www.polymtl.ca/etudes/bacc/aerospatial",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 31.000, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 33.200, figureType: "average", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-physique",
+    "name": "Baccalauréat en physique",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en physique à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-physique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calcul différentiel et intégral (201-NYA, 201-NYB)", status: "met" },
-      { name: "Algèbre linéaire (201-NYC)", status: "met" },
-      { name: "Physique (203-NYA, 203-NYB, 203-NYC)", status: "met" },
-      { name: "Chimie générale (202-NYA)", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
     ],
-  },
-
-  // --- GESTION & AFFAIRES ---
-  {
-    id: "hec-baa",
-    name: "Administration des affaires (BAA)",
-    institution: "HEC Montréal",
-    description: "Programme reconnu internationalement, alliant la théorie de gestion rigoureuse à la pratique, préparant à des rôles de direction dans un contexte mondial.",
-    interestIds: ["business"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 96, note: "En emploi ou aux études supérieures dans les 6 mois suivant la diplomation." },
-    professionalOrders: { codes: ["CPA", "CRHA", "CFA"], note: "Ordres et titres professionnels que rejoignent couramment les diplômés du BAA." },
-    sourceUrl: "https://www.hec.ca/programmes/baccalaureats/baa/demande-admission",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 27.500, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 29.800, figureType: "average", sourceTier: "university_official" },
-    ],
-    prerequisites: [
-      { name: "Calcul différentiel (201-NYA ou 201-MA1)", status: "met" },
-      { name: "Calcul intégral (201-NYB ou 201-MA2)", status: "met" },
-      { name: "Algèbre linéaire (201-NYC ou 201-MA3)", status: "met" },
-    ],
-  },
-  {
-    id: "ulaval-baa",
-    name: "Baccalauréat en administration des affaires (B.A.A.)",
-    institution: "Université Laval",
-    description: "Faculté des sciences de l'administration (FSA ULaval) accréditée AACSB et EQUIS, offrant des spécialisations en finance, comptabilité, marketing et gestion.",
-    interestIds: ["business"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 95, note: "En emploi ou en démarrage d'entreprise." },
-    professionalOrders: { codes: ["CPA", "CRHA"], note: "Ordre des CPA du Québec et Ordre des CRHA." },
-    sourceUrl: "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-administration-des-affaires",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 25.000, figureType: "last_admitted", sourceTier: "university_official" },
-    ],
-    prerequisites: [
-      { name: "Calcul différentiel ou Mathématiques d'administration", status: "met" },
-    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
   },
   {
-    id: "concordia-jmsb-bcomm",
-    name: "Bachelor of Commerce (BComm - John Molson)",
-    institution: "Concordia University",
-    description: "AACSB-accredited business school offering majors in Finance, Accountancy, Marketing, Supply Chain, and Business Technology Management.",
-    interestIds: ["business"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 94, note: "Corporate banking, consulting, and multinational management." },
-    professionalOrders: { codes: ["CPA", "CFA"], note: "CPA and CFA charter paths." },
-    sourceUrl: "https://www.concordia.ca/jmsb/programs/undergraduate/bachelor.html",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 27.000, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 29.000, figureType: "average", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-mathematiques-",
+    "name": "Baccalauréat en mathématiques et statistique",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en mathématiques et statistique à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-mathematiques",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calculus 1 (201-NYA)", status: "met" },
-      { name: "Linear Algebra (201-NYC)", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
   },
   {
-    id: "mcgill-bcom",
-    name: "Bachelor of Commerce (BCom - Desautels)",
-    institution: "McGill University",
-    description: "Top-ranked global business program with honours streams in Investment Management and Economics.",
-    interestIds: ["business"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 96, note: "Global finance, investment banking, and management consulting." },
-    professionalOrders: { codes: ["CPA", "CFA"], note: "Professional designations." },
-    sourceUrl: "https://www.mcgill.ca/desautels/programs/bcom",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 29.500, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 31.800, figureType: "average", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-actuariat",
+    "name": "Baccalauréat en actuariat",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en actuariat à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-actuariat",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 29.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 29,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2023,
+        "cutoff": 28.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calculus 1 & 2 (201-NYA, 201-NYB)", status: "met" },
-      { name: "Linear Algebra (201-NYC)", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
     ],
-  },
-
-  // --- SCIENCES PURES, APPLIQUÉES & ENVIRONNEMENT ---
-  {
-    id: "laval-sciences-bio",
-    name: "Sciences biologiques",
-    institution: "Université Laval",
-    description: "Étude du vivant, de la génétique aux écosystèmes, avec une forte composante de laboratoire et de terrain.",
-    interestIds: ["science", "environment"],
-    cohortLabel: "Cohorte automne 2026",
-    sourceUrl: "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-biologie",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 24.000, figureType: "minimum_required", sourceTier: "university_official" },
-    ],
-    prerequisites: [
-      { name: "Chimie générale (202-NYA)", status: "met" },
-      { name: "Biologie générale (101-NYA)", status: "met" },
-    ],
-  },
-  {
-    id: "udem-actuariat",
-    name: "Baccalauréat en actuariat",
-    institution: "Université de Montréal",
-    description: "Formation mathématique et statistique de haut niveau préparant aux examens professionnels de la Society of Actuaries (SOA) et de l'Institut canadien des actuaires (ICA).",
-    interestIds: ["science", "business"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 99, note: "Pleine employabilité en assurance, finance quantitative et gestion des risques." },
-    professionalOrders: { codes: ["ICA", "SOA"], note: "Institut canadien des actuaires." },
-    sourceUrl: "https://admission.umontreal.ca/programmes/baccalaureat-en-actuariat/",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 30.200, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 32.500, figureType: "average", sourceTier: "university_official" },
-    ],
-    prerequisites: [
-      { name: "Calcul différentiel (201-NYA)", status: "met" },
-      { name: "Calcul intégral (201-NYB)", status: "met" },
-      { name: "Algèbre linéaire (201-NYC)", status: "met" },
-    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
   },
   {
-    id: "ulaval-actuariat",
-    name: "Baccalauréat en actuariat",
-    institution: "Université Laval",
-    description: "L'un des centres d'excellence actuarielle les plus réputés en Amérique du Nord (Centre of Actuarial Excellence).",
-    interestIds: ["science", "business"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 98, note: "Compagnies d'assurances, caisses de retraite et institutions financières." },
-    professionalOrders: { codes: ["ICA", "SOA"], note: "Institut canadien des actuaires." },
-    sourceUrl: "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-actuariat",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 28.500, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 31.000, figureType: "average", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-architecture",
+    "name": "Baccalauréat en architecture",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en architecture à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-sciences-de-larchitecture",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 31,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 30.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Calcul différentiel et intégral (201-NYA, 201-NYB)", status: "met" },
-      { name: "Algèbre linéaire (201-NYC)", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
     ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "arts_comm"
+    ]
   },
   {
-    id: "ulaval-architecture",
-    name: "Baccalauréat en sciences de l'architecture",
-    institution: "Université Laval",
-    description: "École d'architecture située au cœur du Vieux-Québec, dispensant une formation reconnue sur le patrimoine, la conception durable et le design spatial.",
-    interestIds: ["arts_comm", "tech_eng"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 94, note: "Poursuite vers la maîtrise professionnelle en architecture." },
-    professionalOrders: { codes: ["OAQ"], note: "Ordre des architectes du Québec (après maîtrise)." },
-    sourceUrl: "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-sciences-de-larchitecture",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 28.000, figureType: "last_admitted", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-design-graphiq",
+    "name": "Baccalauréat en design graphique",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en design graphique à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-design-graphique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [
-      { name: "Physique : Mécanique (203-NYA)", status: "met" },
-      { name: "Mathématiques collégiales", status: "met" },
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
     ],
-  },
-
-  // --- SCIENCES HUMAINES, SOCIALES & ÉDUCATION ---
-  {
-    id: "udem-psychologie",
-    name: "Baccalauréat en psychologie",
-    institution: "Université de Montréal",
-    description: "Étude des processus cognitifs, du développement humain, de la neuropsychologie et de la santé mentale.",
-    interestIds: ["law_social", "health"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 90, note: "Accès au doctorat professionnel (D.Psy) pour devenir psychologue." },
-    professionalOrders: { codes: ["OPQ"], note: "Ordre des psychologues du Québec (après doctorat)." },
-    sourceUrl: "https://admission.umontreal.ca/programmes/baccalaureat-en-psychologie/",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 28.500, figureType: "last_admitted", sourceTier: "university_official" },
-      { year: 2024, cutoff: 31.000, figureType: "average", sourceTier: "university_official" },
-    ],
-    prerequisites: [
-      { name: "Méthodes quantitatives ou Calcul différentiel", status: "met" },
-      { name: "Biologie humaine", status: "met" },
-    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "arts_comm"
+    ]
   },
   {
-    id: "ulaval-psychologie",
-    name: "Baccalauréat en psychologie",
-    institution: "Université Laval",
-    description: "Formation scientifique couvrant la psychologie clinique, cognitive, sociale et la neuropsychologie.",
-    interestIds: ["law_social", "health"],
-    cohortLabel: "Cohorte automne 2026",
-    sourceUrl: "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-psychologie",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 27.500, figureType: "last_admitted", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-communication-",
+    "name": "Baccalauréat en communication publique",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en communication publique à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-communication-publique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) sans préalables spécifiques",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "arts_comm"
+    ]
   },
   {
-    id: "uqam-psychoeducation",
-    name: "Baccalauréat en psychoéducation",
-    institution: "Université du Québec à Montréal (UQAM)",
-    description: "Intervention auprès de personnes en difficulté d'adaptation psychosociale (enfants, adolescents, familles).",
-    interestIds: ["law_social", "education"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 98, note: "Milieu scolaire, CISSS/CIUSSS et centres de jeunesse." },
-    professionalOrders: { codes: ["OPPQ"], note: "Ordre des psychoéducateurs et psychoéducatrices du Québec." },
-    sourceUrl: "https://etudier.uqam.ca/programme/baccalaureat-psychoeducation",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 25.500, figureType: "last_admitted", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-science-politi",
+    "name": "Baccalauréat en science politique",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en science politique à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-science-politique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) sans préalables spécifiques",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
   },
   {
-    id: "ulaval-education-primaire",
-    name: "Enseignement au préscolaire et au primaire",
-    institution: "Université Laval",
-    description: "Formation pédagogique de 4 ans avec 700+ heures de stages en milieu scolaire menant au brevet d'enseignement du Québec.",
-    interestIds: ["education"],
-    cohortLabel: "Cohorte automne 2026",
-    placementRate: { value: 99, note: "Pénurie d'enseignants : embauche immédiate dans les centres de services scolaires." },
-    professionalOrders: { codes: ["Brevet MEQ"], note: "Autorisation d'enseigner délivrée par le ministère de l'Éducation." },
-    sourceUrl: "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-enseignement-au-prescolaire-et-au-primaire",
-    lastVerifiedAt: "2026-08-24",
-    cutoffHistory: [
-      { year: 2024, cutoff: 24.000, figureType: "minimum_required", sourceTier: "university_official" },
+    "id": "universite-baccalaureat-en-criminologie",
+    "name": "Baccalauréat en criminologie",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en criminologie à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-criminologie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
     ],
-    prerequisites: [],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-economie",
+    "name": "Baccalauréat en économie",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en économie à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-economique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-agronomie",
+    "name": "Baccalauréat en agronomie",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en agronomie à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-agronomie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "environment"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-agroenvi",
+    "name": "Baccalauréat en génie agroenvironnemental",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie agroenvironnemental à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-genie-agroenvironnemental",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "environment"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-du-bois-",
+    "name": "Baccalauréat en génie du bois et des matériaux biosourcés",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie du bois et des matériaux biosourcés à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-genie-du-bois",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-des-mine",
+    "name": "Baccalauréat en génie des mines et de la minéralurgie",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie des mines et de la minéralurgie à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-genie-des-mines",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-geologiq",
+    "name": "Baccalauréat en génie géologique",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie géologique à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-genie-geologique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-sciences-geoma",
+    "name": "Baccalauréat en sciences géomatiques",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en sciences géomatiques à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-sciences-geomatiques",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-enseignement-a",
+    "name": "Baccalauréat en enseignement au préscolaire et au primaire",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en enseignement au préscolaire et au primaire à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-enseignement-au-prescolaire-et-au-primaire",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "education"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-enseignement-a-961",
+    "name": "Baccalauréat en enseignement au secondaire",
+    "institution": "Université Laval",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en enseignement au secondaire à Université Laval.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ulaval.ca/etudes/programmes/baccalaureat-en-enseignement-au-secondaire",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "education"
+    ]
+  },
+  {
+    "id": "universite-doctorat-de-1er-cycle-en-medec-651",
+    "name": "Doctorat de 1er cycle en médecine (MD)",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Doctorat de 1er cycle en médecine (MD) à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/doctorat-de-1er-cycle-en-medecine/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-doctorat-de-1er-cycle-en-medec-688",
+    "name": "Doctorat de 1er cycle en médecine dentaire (DMD)",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Doctorat de 1er cycle en médecine dentaire (DMD) à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/doctorat-de-1er-cycle-en-medecine-dentaire/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Chimie générale et des solutions (202-NYA, 202-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Biologie générale et humaine (101-NYA, 101-LC)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul différentiel et intégral (201-NYA, 201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et ondes (203-NYA, 203-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Chimie organique",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
+  },
+  {
+    "id": "universite-doctorat-de-1er-cycle-en-medec-312",
+    "name": "Doctorat de 1er cycle en médecine vétérinaire (DMV)",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Doctorat de 1er cycle en médecine vétérinaire (DMV) à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/doctorat-de-1er-cycle-en-medecine-veterinaire/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-doctorat-de-1er-cycle-en-pharm-547",
+    "name": "Doctorat de 1er cycle en pharmacie (Pharm. D.)",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Doctorat de 1er cycle en pharmacie (Pharm. D.) à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/doctorat-de-1er-cycle-en-pharmacie/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 33.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 33,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2023,
+        "cutoff": 32.8,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Chimie générale et des solutions (202-NYA, 202-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Biologie générale et humaine (101-NYA, 101-LC)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul différentiel et intégral (201-NYA, 201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et ondes (203-NYA, 203-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Chimie organique",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
+  },
+  {
+    "id": "universite-doctorat-de-1er-cycle-en-optom",
+    "name": "Doctorat de 1er cycle en optométrie (O.D.)",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Doctorat de 1er cycle en optométrie (O.D.) à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/doctorat-de-1er-cycle-en-optometrie/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-droit-ll-b",
+    "name": "Baccalauréat en droit (LL.B.)",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en droit (LL.B.) à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-droit/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 30.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 30,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2023,
+        "cutoff": 29.8,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) sans préalables spécifiques",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-sciences-infir-646",
+    "name": "Baccalauréat en sciences infirmières",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en sciences infirmières à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-sciences-infirmieres/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 24.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 24,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health",
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-physiotherapie-780",
+    "name": "Baccalauréat en physiothérapie",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en physiothérapie à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-physiotherapie/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-ergotherapie-6",
+    "name": "Baccalauréat en ergothérapie",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en ergothérapie à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-ergotherapie/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-orthophonie",
+    "name": "Baccalauréat en orthophonie",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en orthophonie à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-orthophonie/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 31,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 30.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-audiologie",
+    "name": "Baccalauréat en audiologie",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en audiologie à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-audiologie/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 31,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 30.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-nutrition-102",
+    "name": "Baccalauréat en nutrition",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en nutrition à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-nutrition/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-kinesiologie-53",
+    "name": "Baccalauréat en kinésiologie",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en kinésiologie à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-kinesiologie/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-informatique-21",
+    "name": "Baccalauréat en informatique",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en informatique à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-informatique/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-informatique-e",
+    "name": "Baccalauréat en informatique et mathématiques",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en informatique et mathématiques à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-informatique-et-mathematiques/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-bio-informatiq",
+    "name": "Baccalauréat en bio-informatique",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en bio-informatique à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-bio-informatique/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-psychologie-937",
+    "name": "Baccalauréat en psychologie",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en psychologie à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-psychologie/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 28.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 28,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Méthodes quantitatives ou Calcul différentiel",
+        "status": "met"
+      },
+      {
+        "name": "Biologie humaine",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-psychoeducatio-151",
+    "name": "Baccalauréat en psychoéducation",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en psychoéducation à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-psychoeducation/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-travail-social-939",
+    "name": "Baccalauréat en travail social",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en travail social à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-travail-social/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-criminologie-402",
+    "name": "Baccalauréat en criminologie",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en criminologie à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-criminologie/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-securite-et-et",
+    "name": "Baccalauréat en sécurité et études policières",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en sécurité et études policières à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-securite-et-etudes-policieres/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-communication--839",
+    "name": "Baccalauréat en communication et politique",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en communication et politique à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-communication-et-politique/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) sans préalables spécifiques",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social",
+      "arts_comm"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-sciences-de-la",
+    "name": "Baccalauréat en sciences de la communication",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en sciences de la communication à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-sciences-de-la-communication/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) sans préalables spécifiques",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science",
+      "arts_comm"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-sciences-econo",
+    "name": "Baccalauréat en sciences économiques",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en sciences économiques à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-sciences-economiques/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-science-politi-675",
+    "name": "Baccalauréat en science politique",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en science politique à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-science-politique/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) sans préalables spécifiques",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-architecture-693",
+    "name": "Baccalauréat en architecture",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en architecture à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-architecture/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 31,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 30.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "arts_comm"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-architecture-d",
+    "name": "Baccalauréat en architecture de paysage",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en architecture de paysage à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-architecture-de-paysage/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 31,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 30.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "arts_comm"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-design-d-inter",
+    "name": "Baccalauréat en design d'intérieur",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en design d'intérieur à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-design-dinterieur/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "arts_comm"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-design-industr",
+    "name": "Baccalauréat en design industriel",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en design industriel à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-design-industriel/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "arts_comm"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-urbanisme",
+    "name": "Baccalauréat en urbanisme",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en urbanisme à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-urbanisme/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-sciences-biolo-464",
+    "name": "Baccalauréat en sciences biologiques",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en sciences biologiques à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-sciences-biologiques/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-biochimie-et-m",
+    "name": "Baccalauréat en biochimie et médecine moléculaire",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en biochimie et médecine moléculaire à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-biochimie-et-medecine-moleculaire/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-chimie-510",
+    "name": "Baccalauréat en chimie",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en chimie à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-chimie/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-physique-668",
+    "name": "Baccalauréat en physique",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en physique à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-physique/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-mathematiques",
+    "name": "Baccalauréat en mathématiques",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en mathématiques à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-mathematiques/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-actuariat-66",
+    "name": "Baccalauréat en actuariat",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en actuariat à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-actuariat/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 29.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 29,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2023,
+        "cutoff": 28.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-enseignement-a-157",
+    "name": "Baccalauréat en enseignement au préscolaire et primaire",
+    "institution": "Université de Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en enseignement au préscolaire et primaire à Université de Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://admission.umontreal.ca/programmes/baccalaureat-en-enseignement-prescolaire-et-primaire/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "education"
+    ]
+  },
+  {
+    "id": "hec-montre-baccalaureat-en-administration",
+    "name": "Baccalauréat en administration des affaires (B.A.A.)",
+    "institution": "HEC Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en administration des affaires (B.A.A.) à HEC Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.hec.ca/programmes/baccalaureats/baa/index.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "hec-montre-b-a-a-cheminement-trilingue-fr",
+    "name": "B.A.A. cheminement trilingue (Français, Anglais, Espagnol)",
+    "institution": "HEC Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en B.A.A. cheminement trilingue (Français, Anglais, Espagnol) à HEC Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.hec.ca/programmes/baccalaureats/baa/cheminements/trilingue.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "hec-montre-b-a-a-specialisation-finance",
+    "name": "B.A.A. spécialisation Finance",
+    "institution": "HEC Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en B.A.A. spécialisation Finance à HEC Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.hec.ca/programmes/baccalaureats/baa/specialisations/finance.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "hec-montre-b-a-a-specialisation-comptabil",
+    "name": "B.A.A. spécialisation Comptabilité professionnelle (CPA)",
+    "institution": "HEC Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en B.A.A. spécialisation Comptabilité professionnelle (CPA) à HEC Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.hec.ca/programmes/baccalaureats/baa/specialisations/comptabilite.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "hec-montre-b-a-a-specialisation-intellige",
+    "name": "B.A.A. spécialisation Intelligence d'affaires et analytique",
+    "institution": "HEC Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en B.A.A. spécialisation Intelligence d'affaires et analytique à HEC Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.hec.ca/programmes/baccalaureats/baa/specialisations/intelligence-affaires.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "hec-montre-b-a-a-specialisation-technolog",
+    "name": "B.A.A. spécialisation Technologies d'affaires",
+    "institution": "HEC Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en B.A.A. spécialisation Technologies d'affaires à HEC Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.hec.ca/programmes/baccalaureats/baa/specialisations/technologies-affaires.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng",
+      "business"
+    ]
+  },
+  {
+    "id": "hec-montre-b-a-a-specialisation-marketing",
+    "name": "B.A.A. spécialisation Marketing",
+    "institution": "HEC Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en B.A.A. spécialisation Marketing à HEC Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.hec.ca/programmes/baccalaureats/baa/specialisations/marketing.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "hec-montre-b-a-a-specialisation-gestion-d",
+    "name": "B.A.A. spécialisation Gestion des ressources humaines (CRHA)",
+    "institution": "HEC Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en B.A.A. spécialisation Gestion des ressources humaines (CRHA) à HEC Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.hec.ca/programmes/baccalaureats/baa/specialisations/gestion-ressources-humaines.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "hec-montre-b-a-a-specialisation-gestion-d-947",
+    "name": "B.A.A. spécialisation Gestion de la chaîne logistique",
+    "institution": "HEC Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en B.A.A. spécialisation Gestion de la chaîne logistique à HEC Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.hec.ca/programmes/baccalaureats/baa/specialisations/gestion-chaine-logistique.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "hec-montre-b-a-a-specialisation-entrepren",
+    "name": "B.A.A. spécialisation Entrepreneuriat et innovation",
+    "institution": "HEC Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en B.A.A. spécialisation Entrepreneuriat et innovation à HEC Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.hec.ca/programmes/baccalaureats/baa/specialisations/entrepreneuriat.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "hec-montre-b-a-a-specialisation-economie-",
+    "name": "B.A.A. spécialisation Économie appliquée",
+    "institution": "HEC Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en B.A.A. spécialisation Économie appliquée à HEC Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.hec.ca/programmes/baccalaureats/baa/specialisations/economie-appliquee.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "polytechni-baccalaureat-en-genie-logiciel",
+    "name": "Baccalauréat en génie logiciel",
+    "institution": "Polytechnique Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie logiciel à Polytechnique Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.polymtl.ca/etudes/bacc/logiciel",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "polytechni-baccalaureat-en-genie-informat",
+    "name": "Baccalauréat en génie informatique",
+    "institution": "Polytechnique Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie informatique à Polytechnique Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.polymtl.ca/etudes/bacc/informatique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "polytechni-baccalaureat-en-genie-aerospat",
+    "name": "Baccalauréat en génie aérospatial",
+    "institution": "Polytechnique Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie aérospatial à Polytechnique Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.polymtl.ca/etudes/bacc/aerospatial",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "polytechni-baccalaureat-en-genie-biomedic",
+    "name": "Baccalauréat en génie biomédical",
+    "institution": "Polytechnique Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie biomédical à Polytechnique Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.polymtl.ca/etudes/bacc/biomedical",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "polytechni-baccalaureat-en-genie-chimique",
+    "name": "Baccalauréat en génie chimique",
+    "institution": "Polytechnique Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie chimique à Polytechnique Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.polymtl.ca/etudes/bacc/chimique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "polytechni-baccalaureat-en-genie-civil",
+    "name": "Baccalauréat en génie civil",
+    "institution": "Polytechnique Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie civil à Polytechnique Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.polymtl.ca/etudes/bacc/civil",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "polytechni-baccalaureat-en-genie-electriq",
+    "name": "Baccalauréat en génie électrique",
+    "institution": "Polytechnique Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie électrique à Polytechnique Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.polymtl.ca/etudes/bacc/electrique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "polytechni-baccalaureat-en-genie-industri",
+    "name": "Baccalauréat en génie industriel",
+    "institution": "Polytechnique Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie industriel à Polytechnique Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.polymtl.ca/etudes/bacc/industriel",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "polytechni-baccalaureat-en-genie-mecaniqu",
+    "name": "Baccalauréat en génie mécanique",
+    "institution": "Polytechnique Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie mécanique à Polytechnique Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.polymtl.ca/etudes/bacc/mecanique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "polytechni-baccalaureat-en-genie-des-mine",
+    "name": "Baccalauréat en génie des mines",
+    "institution": "Polytechnique Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie des mines à Polytechnique Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.polymtl.ca/etudes/bacc/mines",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "polytechni-baccalaureat-en-genie-geologiq",
+    "name": "Baccalauréat en génie géologique",
+    "institution": "Polytechnique Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie géologique à Polytechnique Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.polymtl.ca/etudes/bacc/geologique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "polytechni-baccalaureat-en-genie-physique",
+    "name": "Baccalauréat en génie physique",
+    "institution": "Polytechnique Montréal",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie physique à Polytechnique Montréal.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.polymtl.ca/etudes/bacc/physique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
+  },
+  {
+    "id": "mcgill-uni-doctor-of-medicine-and-master-",
+    "name": "Doctor of Medicine and Master of Surgery (MDCM)",
+    "institution": "McGill University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Doctor of Medicine and Master of Surgery (MDCM) à McGill University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.mcgill.ca/medadmissions/programs/mdcm",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 34.5,
+        "figureType": "minimum_required",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 34.2,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2023,
+        "cutoff": 34,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "mcgill-uni-doctor-of-dental-medicine-dmd",
+    "name": "Doctor of Dental Medicine (DMD)",
+    "institution": "McGill University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Doctor of Dental Medicine (DMD) à McGill University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.mcgill.ca/dentistry/programs",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "mcgill-uni-bachelor-of-civil-law-and-juri",
+    "name": "Bachelor of Civil Law and Juris Doctor (BCL/JD)",
+    "institution": "McGill University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Civil Law and Juris Doctor (BCL/JD) à McGill University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.mcgill.ca/law/admissions",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 30.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 30,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2023,
+        "cutoff": 29.8,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) sans préalables spécifiques",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng",
+      "law_social"
+    ]
+  },
+  {
+    "id": "mcgill-uni-bachelor-of-commerce-bcom-desa",
+    "name": "Bachelor of Commerce (BCom - Desautels)",
+    "institution": "McGill University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Commerce (BCom - Desautels) à McGill University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.mcgill.ca/desautels/programs/bcom",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "mcgill-uni-bachelor-of-software-engineeri",
+    "name": "Bachelor of Software Engineering (B.S.E.)",
+    "institution": "McGill University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Software Engineering (B.S.E.) à McGill University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.mcgill.ca/engineering/future-students/undergraduate-programs/software-engineering",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 29.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 29,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2023,
+        "cutoff": 28.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "mcgill-uni-bachelor-of-science-in-compute",
+    "name": "Bachelor of Science in Computer Science",
+    "institution": "McGill University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Science in Computer Science à McGill University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.cs.mcgill.ca/academic/undergrad/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 29.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 29,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2023,
+        "cutoff": 28.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "mcgill-uni-bachelor-of-nursing-integrated",
+    "name": "Bachelor of Nursing (Integrated / BScN)",
+    "institution": "McGill University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Nursing (Integrated / BScN) à McGill University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.mcgill.ca/nursing/programs",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 24.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 24,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "mcgill-uni-bachelor-of-science-in-physica",
+    "name": "Bachelor of Science in Physical Therapy",
+    "institution": "McGill University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Science in Physical Therapy à McGill University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.mcgill.ca/spot/programs/pt",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "mcgill-uni-bachelor-of-science-in-occupat",
+    "name": "Bachelor of Science in Occupational Therapy",
+    "institution": "McGill University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Science in Occupational Therapy à McGill University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.mcgill.ca/spot/programs/ot",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "mcgill-uni-bachelor-of-engineering-in-mec",
+    "name": "Bachelor of Engineering in Mechanical Engineering",
+    "institution": "McGill University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Engineering in Mechanical Engineering à McGill University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.mcgill.ca/engineering/future-students/undergraduate-programs/mechanical-engineering",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 26.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 26,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "mcgill-uni-bachelor-of-engineering-in-ele",
+    "name": "Bachelor of Engineering in Electrical Engineering",
+    "institution": "McGill University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Engineering in Electrical Engineering à McGill University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.mcgill.ca/engineering/future-students/undergraduate-programs/electrical-engineering",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 26.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 26,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "mcgill-uni-bachelor-of-engineering-in-civ",
+    "name": "Bachelor of Engineering in Civil Engineering",
+    "institution": "McGill University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Engineering in Civil Engineering à McGill University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.mcgill.ca/engineering/future-students/undergraduate-programs/civil-engineering",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 26.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 26,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "mcgill-uni-bachelor-of-science-in-microbi",
+    "name": "Bachelor of Science in Microbiology and Immunology",
+    "institution": "McGill University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Science in Microbiology and Immunology à McGill University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.mcgill.ca/microimm/undergraduate-programs",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "mcgill-uni-bachelor-of-science-in-anatomy",
+    "name": "Bachelor of Science in Anatomy and Cell Biology",
+    "institution": "McGill University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Science in Anatomy and Cell Biology à McGill University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.mcgill.ca/anatomy/undergraduate",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "mcgill-uni-bachelor-of-science-in-physiol",
+    "name": "Bachelor of Science in Physiology",
+    "institution": "McGill University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Science in Physiology à McGill University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.mcgill.ca/physiology/undergraduate-studies",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
+  },
+  {
+    "id": "mcgill-uni-bachelor-of-science-in-psychol",
+    "name": "Bachelor of Science in Psychology",
+    "institution": "McGill University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Science in Psychology à McGill University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.mcgill.ca/psychology/undergraduate",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "mcgill-uni-bachelor-of-science-in-archite",
+    "name": "Bachelor of Science in Architecture",
+    "institution": "McGill University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Science in Architecture à McGill University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.mcgill.ca/architecture/programs/undergraduate",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 31,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 30.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "arts_comm"
+    ]
+  },
+  {
+    "id": "concordia--bachelor-of-commerce-bcomm-joh",
+    "name": "Bachelor of Commerce (BComm - John Molson School of Business)",
+    "institution": "Concordia University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Commerce (BComm - John Molson School of Business) à Concordia University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.concordia.ca/jmsb/programs/undergraduate/bachelor.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "concordia--bachelor-of-engineering-in-sof",
+    "name": "Bachelor of Engineering in Software Engineering",
+    "institution": "Concordia University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Engineering in Software Engineering à Concordia University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.concordia.ca/ginacody/computer-science-software-eng/programs/software-engineering-beng.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 29.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 29,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2023,
+        "cutoff": 28.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "concordia--bachelor-of-computer-science-b",
+    "name": "Bachelor of Computer Science (BCompSc)",
+    "institution": "Concordia University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Computer Science (BCompSc) à Concordia University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.concordia.ca/ginacody/computer-science-software-eng/programs/computer-science-bcompsci.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 29.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 29,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2023,
+        "cutoff": 28.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "concordia--bachelor-of-engineering-in-mec",
+    "name": "Bachelor of Engineering in Mechanical Engineering",
+    "institution": "Concordia University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Engineering in Mechanical Engineering à Concordia University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.concordia.ca/ginacody/mechanical-industrial-aerospace-eng/programs/mechanical-eng-beng.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 26.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 26,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "concordia--bachelor-of-engineering-in-aer",
+    "name": "Bachelor of Engineering in Aerospace Engineering",
+    "institution": "Concordia University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Engineering in Aerospace Engineering à Concordia University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.concordia.ca/ginacody/mechanical-industrial-aerospace-eng/programs/aerospace-eng-beng.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 26.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 26,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "concordia--bachelor-of-engineering-in-civ",
+    "name": "Bachelor of Engineering in Civil Engineering",
+    "institution": "Concordia University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Engineering in Civil Engineering à Concordia University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.concordia.ca/ginacody/building-civil-environmental-eng/programs/civil-eng-beng.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 26.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 26,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "concordia--bachelor-of-engineering-in-ele",
+    "name": "Bachelor of Engineering in Electrical Engineering",
+    "institution": "Concordia University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Engineering in Electrical Engineering à Concordia University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.concordia.ca/ginacody/electrical-computer-eng/programs/electrical-eng-beng.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 26.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 26,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "concordia--bachelor-of-fine-arts-in-film-",
+    "name": "Bachelor of Fine Arts in Film Production",
+    "institution": "Concordia University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Fine Arts in Film Production à Concordia University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.concordia.ca/finearts/cinema/programs/undergraduate/film-production-bfa.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "arts_comm"
+    ]
+  },
+  {
+    "id": "concordia--bachelor-of-fine-arts-in-desig",
+    "name": "Bachelor of Fine Arts in Design",
+    "institution": "Concordia University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Fine Arts in Design à Concordia University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.concordia.ca/finearts/design/programs/undergraduate/design-bfa.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "arts_comm"
+    ]
+  },
+  {
+    "id": "concordia--bachelor-of-arts-in-journalism",
+    "name": "Bachelor of Arts in Journalism",
+    "institution": "Concordia University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Arts in Journalism à Concordia University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.concordia.ca/artsci/journalism/programs/undergraduate/journalism-ba.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "arts_comm"
+    ]
+  },
+  {
+    "id": "concordia--bachelor-of-arts-in-psychology",
+    "name": "Bachelor of Arts in Psychology",
+    "institution": "Concordia University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Arts in Psychology à Concordia University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.concordia.ca/artsci/psychology/programs/undergraduate/psychology-ba.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social",
+      "arts_comm"
+    ]
+  },
+  {
+    "id": "concordia--bachelor-of-science-in-biology",
+    "name": "Bachelor of Science in Biology",
+    "institution": "Concordia University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Science in Biology à Concordia University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.concordia.ca/artsci/biology/programs/undergraduate/biology-bsc.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "concordia--bachelor-of-science-in-biochem",
+    "name": "Bachelor of Science in Biochemistry",
+    "institution": "Concordia University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Science in Biochemistry à Concordia University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.concordia.ca/artsci/chemistry-biochemistry/programs/undergraduate/biochemistry-bsc.html",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-doctorat-de-1er-cycle-en-medec-506",
+    "name": "Doctorat de 1er cycle en médecine (MD)",
+    "institution": "Université de Sherbrooke",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Doctorat de 1er cycle en médecine (MD) à Université de Sherbrooke.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.usherbrooke.ca/admission/programme/605/doctorat-en-medecine",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-droit-ll-b-605",
+    "name": "Baccalauréat en droit (LL.B.)",
+    "institution": "Université de Sherbrooke",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en droit (LL.B.) à Université de Sherbrooke.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.usherbrooke.ca/admission/programme/215/baccalaureat-en-droit",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 30.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 30,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2023,
+        "cutoff": 29.8,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) sans préalables spécifiques",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-droit-et-mba-c",
+    "name": "Baccalauréat en droit et MBA (cheminement intégré)",
+    "institution": "Université de Sherbrooke",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en droit et MBA (cheminement intégré) à Université de Sherbrooke.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.usherbrooke.ca/admission/programme/216/droit-mba",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 30.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 30,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2023,
+        "cutoff": 29.8,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) sans préalables spécifiques",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-logiciel-994",
+    "name": "Baccalauréat en génie logiciel (coop)",
+    "institution": "Université de Sherbrooke",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie logiciel (coop) à Université de Sherbrooke.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.usherbrooke.ca/admission/programme/280/baccalaureat-en-genie-logiciel",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-informat-558",
+    "name": "Baccalauréat en génie informatique (coop)",
+    "institution": "Université de Sherbrooke",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie informatique (coop) à Université de Sherbrooke.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.usherbrooke.ca/admission/programme/279/baccalaureat-en-genie-informatique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-mecaniqu-148",
+    "name": "Baccalauréat en génie mécanique (coop)",
+    "institution": "Université de Sherbrooke",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie mécanique (coop) à Université de Sherbrooke.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.usherbrooke.ca/admission/programme/281/baccalaureat-en-genie-mecanique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-civil-co",
+    "name": "Baccalauréat en génie civil (coop)",
+    "institution": "Université de Sherbrooke",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie civil (coop) à Université de Sherbrooke.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.usherbrooke.ca/admission/programme/276/baccalaureat-en-genie-civil",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-electriq-402",
+    "name": "Baccalauréat en génie électrique (coop)",
+    "institution": "Université de Sherbrooke",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie électrique (coop) à Université de Sherbrooke.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.usherbrooke.ca/admission/programme/278/baccalaureat-en-genie-electrique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-chimique-518",
+    "name": "Baccalauréat en génie chimique (coop)",
+    "institution": "Université de Sherbrooke",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie chimique (coop) à Université de Sherbrooke.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.usherbrooke.ca/admission/programme/275/baccalaureat-en-genie-chimique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-biotechn",
+    "name": "Baccalauréat en génie biotechnologique (coop)",
+    "institution": "Université de Sherbrooke",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie biotechnologique (coop) à Université de Sherbrooke.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.usherbrooke.ca/admission/programme/274/baccalaureat-en-genie-biotechnologique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-administration-169",
+    "name": "Baccalauréat en administration des affaires (B.A.A. coop)",
+    "institution": "Université de Sherbrooke",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en administration des affaires (B.A.A. coop) à Université de Sherbrooke.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.usherbrooke.ca/admission/programme/200/baccalaureat-en-administration-des-affaires",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-sciences-infir-406",
+    "name": "Baccalauréat en sciences infirmières",
+    "institution": "Université de Sherbrooke",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en sciences infirmières à Université de Sherbrooke.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.usherbrooke.ca/admission/programme/260/baccalaureat-en-sciences-infirmieres",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 24.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 24,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health",
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-physiotherapie-729",
+    "name": "Baccalauréat en physiothérapie",
+    "institution": "Université de Sherbrooke",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en physiothérapie à Université de Sherbrooke.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.usherbrooke.ca/admission/programme/264/baccalaureat-en-physiotherapie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-ergotherapie-288",
+    "name": "Baccalauréat en ergothérapie",
+    "institution": "Université de Sherbrooke",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en ergothérapie à Université de Sherbrooke.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.usherbrooke.ca/admission/programme/263/baccalaureat-en-ergotherapie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-pharmacologie",
+    "name": "Baccalauréat en pharmacologie",
+    "institution": "Université de Sherbrooke",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en pharmacologie à Université de Sherbrooke.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.usherbrooke.ca/admission/programme/267/baccalaureat-en-pharmacologie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-psychologie-760",
+    "name": "Baccalauréat en psychologie",
+    "institution": "Université de Sherbrooke",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en psychologie à Université de Sherbrooke.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.usherbrooke.ca/admission/programme/250/baccalaureat-en-psychologie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 28.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 28,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Méthodes quantitatives ou Calcul différentiel",
+        "status": "met"
+      },
+      {
+        "name": "Biologie humaine",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-psychoeducatio-195",
+    "name": "Baccalauréat en psychoéducation",
+    "institution": "Université de Sherbrooke",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en psychoéducation à Université de Sherbrooke.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.usherbrooke.ca/admission/programme/251/baccalaureat-en-psychoeducation",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-informatique-c",
+    "name": "Baccalauréat en informatique (coop)",
+    "institution": "Université de Sherbrooke",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en informatique (coop) à Université de Sherbrooke.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.usherbrooke.ca/admission/programme/285/baccalaureat-en-informatique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-biochimie-de-l",
+    "name": "Baccalauréat en biochimie de la santé (coop)",
+    "institution": "Université de Sherbrooke",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en biochimie de la santé (coop) à Université de Sherbrooke.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.usherbrooke.ca/admission/programme/271/baccalaureat-en-biochimie-de-la-sante",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-droit-sciences",
+    "name": "Baccalauréat en droit (sciences juridiques)",
+    "institution": "Université du Québec à Montréal (UQAM)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en droit (sciences juridiques) à Université du Québec à Montréal (UQAM).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://etudier.uqam.ca/programme/baccalaureat-sciences-juridiques",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 30.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 30,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2023,
+        "cutoff": 29.8,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) sans préalables spécifiques",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social",
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-administration-599",
+    "name": "Baccalauréat en administration (B.A.A. - ESG UQAM)",
+    "institution": "Université du Québec à Montréal (UQAM)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en administration (B.A.A. - ESG UQAM) à Université du Québec à Montréal (UQAM).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://etudier.uqam.ca/programme/baccalaureat-administration",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-informatique-e-193",
+    "name": "Baccalauréat en informatique et génie logiciel",
+    "institution": "Université du Québec à Montréal (UQAM)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en informatique et génie logiciel à Université du Québec à Montréal (UQAM).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://etudier.uqam.ca/programme/baccalaureat-informatique-genie-logiciel",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-psychologie-112",
+    "name": "Baccalauréat en psychologie",
+    "institution": "Université du Québec à Montréal (UQAM)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en psychologie à Université du Québec à Montréal (UQAM).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://etudier.uqam.ca/programme/baccalaureat-psychologie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 28.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 28,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Méthodes quantitatives ou Calcul différentiel",
+        "status": "met"
+      },
+      {
+        "name": "Biologie humaine",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-travail-social-376",
+    "name": "Baccalauréat en travail social",
+    "institution": "Université du Québec à Montréal (UQAM)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en travail social à Université du Québec à Montréal (UQAM).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://etudier.uqam.ca/programme/baccalaureat-travail-social",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-sexologie",
+    "name": "Baccalauréat en sexologie",
+    "institution": "Université du Québec à Montréal (UQAM)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en sexologie à Université du Québec à Montréal (UQAM).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://etudier.uqam.ca/programme/baccalaureat-sexologie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-communication--445",
+    "name": "Baccalauréat en communication (journalisme)",
+    "institution": "Université du Québec à Montréal (UQAM)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en communication (journalisme) à Université du Québec à Montréal (UQAM).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://etudier.uqam.ca/programme/baccalaureat-communication-journalisme",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) sans préalables spécifiques",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "arts_comm"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-communication--830",
+    "name": "Baccalauréat en communication (relations publiques)",
+    "institution": "Université du Québec à Montréal (UQAM)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en communication (relations publiques) à Université du Québec à Montréal (UQAM).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://etudier.uqam.ca/programme/baccalaureat-communication-relations-publiques",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) sans préalables spécifiques",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "arts_comm"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-design-graphiq-5",
+    "name": "Baccalauréat en design graphique",
+    "institution": "Université du Québec à Montréal (UQAM)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en design graphique à Université du Québec à Montréal (UQAM).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://etudier.uqam.ca/programme/baccalaureat-design-graphique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "arts_comm"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-design-de-l-en",
+    "name": "Baccalauréat en design de l'environnement",
+    "institution": "Université du Québec à Montréal (UQAM)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en design de l'environnement à Université du Québec à Montréal (UQAM).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://etudier.uqam.ca/programme/baccalaureat-design-environnement",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "arts_comm",
+      "environment"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-sciences-biolo-653",
+    "name": "Baccalauréat en sciences biologiques",
+    "institution": "Université du Québec à Montréal (UQAM)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en sciences biologiques à Université du Québec à Montréal (UQAM).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://etudier.uqam.ca/programme/baccalaureat-sciences-biologiques",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-biochimie-453",
+    "name": "Baccalauréat en biochimie",
+    "institution": "Université du Québec à Montréal (UQAM)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en biochimie à Université du Québec à Montréal (UQAM).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://etudier.uqam.ca/programme/baccalaureat-biochimie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-chimie-656",
+    "name": "Baccalauréat en chimie",
+    "institution": "Université du Québec à Montréal (UQAM)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en chimie à Université du Québec à Montréal (UQAM).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://etudier.uqam.ca/programme/baccalaureat-chimie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-actuariat-806",
+    "name": "Baccalauréat en actuariat",
+    "institution": "Université du Québec à Montréal (UQAM)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en actuariat à Université du Québec à Montréal (UQAM).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://etudier.uqam.ca/programme/baccalaureat-actuariat",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 29.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 29,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2023,
+        "cutoff": 28.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-sciences-compt",
+    "name": "Baccalauréat en sciences comptables (CPA)",
+    "institution": "Université du Québec à Montréal (UQAM)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en sciences comptables (CPA) à Université du Québec à Montréal (UQAM).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://etudier.uqam.ca/programme/baccalaureat-sciences-comptables",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-enseignement-e",
+    "name": "Baccalauréat en enseignement en adaptation scolaire",
+    "institution": "Université du Québec à Montréal (UQAM)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en enseignement en adaptation scolaire à Université du Québec à Montréal (UQAM).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://etudier.uqam.ca/programme/baccalaureat-enseignement-adaptation-scolaire",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "education"
+    ]
+  },
+  {
+    "id": "ecole-de-t-baccalaureat-en-genie-logiciel",
+    "name": "Baccalauréat en génie logiciel",
+    "institution": "École de technologie supérieure (ÉTS)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie logiciel à École de technologie supérieure (ÉTS).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.etsmtl.ca/etude/baccalaureat/genie-logiciel",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "ecole-de-t-baccalaureat-en-genie-des-tech",
+    "name": "Baccalauréat en génie des technologies de l'information (TI)",
+    "institution": "École de technologie supérieure (ÉTS)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie des technologies de l'information (TI) à École de technologie supérieure (ÉTS).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.etsmtl.ca/etude/baccalaureat/genie-technologies-information",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "ecole-de-t-baccalaureat-en-genie-mecaniqu",
+    "name": "Baccalauréat en génie mécanique",
+    "institution": "École de technologie supérieure (ÉTS)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie mécanique à École de technologie supérieure (ÉTS).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.etsmtl.ca/etude/baccalaureat/genie-mecanique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "ecole-de-t-baccalaureat-en-genie-de-la-co",
+    "name": "Baccalauréat en génie de la construction (civil)",
+    "institution": "École de technologie supérieure (ÉTS)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie de la construction (civil) à École de technologie supérieure (ÉTS).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.etsmtl.ca/etude/baccalaureat/genie-construction",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "ecole-de-t-baccalaureat-en-genie-electriq",
+    "name": "Baccalauréat en génie électrique",
+    "institution": "École de technologie supérieure (ÉTS)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie électrique à École de technologie supérieure (ÉTS).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.etsmtl.ca/etude/baccalaureat/genie-electrique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "ecole-de-t-baccalaureat-en-genie-de-la-pr",
+    "name": "Baccalauréat en génie de la production automatisée",
+    "institution": "École de technologie supérieure (ÉTS)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie de la production automatisée à École de technologie supérieure (ÉTS).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.etsmtl.ca/etude/baccalaureat/genie-production-automatisee",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "ecole-de-t-baccalaureat-en-genie-des-oper",
+    "name": "Baccalauréat en génie des opérations et de la logistique",
+    "institution": "École de technologie supérieure (ÉTS)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie des opérations et de la logistique à École de technologie supérieure (ÉTS).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.etsmtl.ca/etude/baccalaureat/genie-operations-logistique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "ecole-de-t-baccalaureat-en-genie-aerospat",
+    "name": "Baccalauréat en génie aérospatial",
+    "institution": "École de technologie supérieure (ÉTS)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie aérospatial à École de technologie supérieure (ÉTS).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.etsmtl.ca/etude/baccalaureat/genie-aerospatial",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-doctorat-de-1er-cycle-en-medec-389",
+    "name": "Doctorat de 1er cycle en médecine (campus Mauricie UdeM-UQTR)",
+    "institution": "Université du Québec à Trois-Rivières (UQTR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Doctorat de 1er cycle en médecine (campus Mauricie UdeM-UQTR) à Université du Québec à Trois-Rivières (UQTR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqtr.ca/programme/doctorat-medecine",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-doctorat-de-1er-cycle-en-chiro",
+    "name": "Doctorat de 1er cycle en chiropratique",
+    "institution": "Université du Québec à Trois-Rivières (UQTR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Doctorat de 1er cycle en chiropratique à Université du Québec à Trois-Rivières (UQTR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqtr.ca/programme/doctorat-chiropratique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 32.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 32,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
+  },
+  {
+    "id": "universite-doctorat-de-1er-cycle-en-medec-523",
+    "name": "Doctorat de 1er cycle en médecine podiatrique",
+    "institution": "Université du Québec à Trois-Rivières (UQTR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Doctorat de 1er cycle en médecine podiatrique à Université du Québec à Trois-Rivières (UQTR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqtr.ca/programme/doctorat-medecine-podiatrique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 32.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 32,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-pratique-sage-",
+    "name": "Baccalauréat en pratique sage-femme",
+    "institution": "Université du Québec à Trois-Rivières (UQTR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en pratique sage-femme à Université du Québec à Trois-Rivières (UQTR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqtr.ca/programme/pratique-sage-femme",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 31,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 30.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-sciences-infir-757",
+    "name": "Baccalauréat en sciences infirmières",
+    "institution": "Université du Québec à Trois-Rivières (UQTR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en sciences infirmières à Université du Québec à Trois-Rivières (UQTR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqtr.ca/programme/sciences-infirmieres",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 24.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 24,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health",
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-ergotherapie-208",
+    "name": "Baccalauréat en ergothérapie",
+    "institution": "Université du Québec à Trois-Rivières (UQTR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en ergothérapie à Université du Québec à Trois-Rivières (UQTR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqtr.ca/programme/ergotherapie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-orthophonie-708",
+    "name": "Baccalauréat en orthophonie",
+    "institution": "Université du Québec à Trois-Rivières (UQTR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en orthophonie à Université du Québec à Trois-Rivières (UQTR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqtr.ca/programme/orthophonie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 31,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 30.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-mecaniqu-437",
+    "name": "Baccalauréat en génie mécanique",
+    "institution": "Université du Québec à Trois-Rivières (UQTR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie mécanique à Université du Québec à Trois-Rivières (UQTR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqtr.ca/programme/genie-mecanique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-industri-531",
+    "name": "Baccalauréat en génie industriel",
+    "institution": "Université du Québec à Trois-Rivières (UQTR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie industriel à Université du Québec à Trois-Rivières (UQTR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqtr.ca/programme/genie-industriel",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-electriq-879",
+    "name": "Baccalauréat en génie électrique et génie informatique",
+    "institution": "Université du Québec à Trois-Rivières (UQTR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie électrique et génie informatique à Université du Québec à Trois-Rivières (UQTR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqtr.ca/programme/genie-electrique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-informatique-513",
+    "name": "Baccalauréat en informatique",
+    "institution": "Université du Québec à Trois-Rivières (UQTR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en informatique à Université du Québec à Trois-Rivières (UQTR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqtr.ca/programme/informatique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-administration-687",
+    "name": "Baccalauréat en administration des affaires (B.A.A.)",
+    "institution": "Université du Québec à Trois-Rivières (UQTR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en administration des affaires (B.A.A.) à Université du Québec à Trois-Rivières (UQTR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqtr.ca/programme/administration-affaires",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-psychologie-636",
+    "name": "Baccalauréat en psychologie",
+    "institution": "Université du Québec à Trois-Rivières (UQTR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en psychologie à Université du Québec à Trois-Rivières (UQTR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqtr.ca/programme/psychologie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 28.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 28,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Méthodes quantitatives ou Calcul différentiel",
+        "status": "met"
+      },
+      {
+        "name": "Biologie humaine",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-psychoeducatio-68",
+    "name": "Baccalauréat en psychoéducation",
+    "institution": "Université du Québec à Trois-Rivières (UQTR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en psychoéducation à Université du Québec à Trois-Rivières (UQTR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqtr.ca/programme/psychoeducation",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-conception-de-",
+    "name": "Baccalauréat en conception de jeux vidéo (NAD-UQAC)",
+    "institution": "Université du Québec à Chicoutimi (UQAC)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en conception de jeux vidéo (NAD-UQAC) à Université du Québec à Chicoutimi (UQAC).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqac.ca/programme/baccalaureat-en-conception-de-jeux-video/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-animation-3d-e",
+    "name": "Baccalauréat en animation 3D et design numérique (NAD-UQAC)",
+    "institution": "Université du Québec à Chicoutimi (UQAC)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en animation 3D et design numérique (NAD-UQAC) à Université du Québec à Chicoutimi (UQAC).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqac.ca/programme/baccalaureat-en-animation-3d-et-design-numerique/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "arts_comm"
+    ]
+  },
+  {
+    "id": "universite-doctorat-de-1er-cycle-en-medec-546",
+    "name": "Doctorat de 1er cycle en médecine (campus Saguenay UdeS-UQAC)",
+    "institution": "Université du Québec à Chicoutimi (UQAC)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Doctorat de 1er cycle en médecine (campus Saguenay UdeS-UQAC) à Université du Québec à Chicoutimi (UQAC).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqac.ca/programme/doctorat-en-medecine/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-informat-439",
+    "name": "Baccalauréat en génie informatique",
+    "institution": "Université du Québec à Chicoutimi (UQAC)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie informatique à Université du Québec à Chicoutimi (UQAC).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqac.ca/programme/baccalaureat-en-genie-informatique/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-informatique-252",
+    "name": "Baccalauréat en informatique",
+    "institution": "Université du Québec à Chicoutimi (UQAC)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en informatique à Université du Québec à Chicoutimi (UQAC).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqac.ca/programme/baccalaureat-en-informatique/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-mecaniqu-499",
+    "name": "Baccalauréat en génie mécanique",
+    "institution": "Université du Québec à Chicoutimi (UQAC)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie mécanique à Université du Québec à Chicoutimi (UQAC).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqac.ca/programme/baccalaureat-en-genie-mecanique/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-civil-930",
+    "name": "Baccalauréat en génie civil",
+    "institution": "Université du Québec à Chicoutimi (UQAC)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie civil à Université du Québec à Chicoutimi (UQAC).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqac.ca/programme/baccalaureat-en-genie-civil/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-geologiq-468",
+    "name": "Baccalauréat en génie géologique",
+    "institution": "Université du Québec à Chicoutimi (UQAC)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie géologique à Université du Québec à Chicoutimi (UQAC).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqac.ca/programme/baccalaureat-en-genie-geologique/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-physiotherapie-605",
+    "name": "Baccalauréat en physiothérapie",
+    "institution": "Université du Québec à Chicoutimi (UQAC)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en physiothérapie à Université du Québec à Chicoutimi (UQAC).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqac.ca/programme/baccalaureat-en-physiotherapie/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-sciences-infir-824",
+    "name": "Baccalauréat en sciences infirmières",
+    "institution": "Université du Québec à Chicoutimi (UQAC)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en sciences infirmières à Université du Québec à Chicoutimi (UQAC).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqac.ca/programme/baccalaureat-en-sciences-infirmieres/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 24.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 24,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health",
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-administration-879",
+    "name": "Baccalauréat en administration (B.A.A.)",
+    "institution": "Université du Québec à Chicoutimi (UQAC)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en administration (B.A.A.) à Université du Québec à Chicoutimi (UQAC).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqac.ca/programme/baccalaureat-en-administration/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-plein-air-et-t",
+    "name": "Baccalauréat en plein air et tourisme d'aventure",
+    "institution": "Université du Québec à Chicoutimi (UQAC)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en plein air et tourisme d'aventure à Université du Québec à Chicoutimi (UQAC).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqac.ca/programme/baccalaureat-en-intervention-plein-air/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-doctorat-de-1er-cycle-en-medec-97",
+    "name": "Doctorat de 1er cycle en médecine (campus Rimouski ULaval-UQAR)",
+    "institution": "Université du Québec à Rimouski (UQAR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Doctorat de 1er cycle en médecine (campus Rimouski ULaval-UQAR) à Université du Québec à Rimouski (UQAR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqar.ca/etudes/etudier-a-l-uqar/programmes-de-formation/doctorat-en-medecine",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-biologie-scien",
+    "name": "Baccalauréat en biologie (sciences marines)",
+    "institution": "Université du Québec à Rimouski (UQAR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en biologie (sciences marines) à Université du Québec à Rimouski (UQAR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqar.ca/etudes/etudier-a-l-uqar/programmes-de-formation/baccalaureat-en-biologie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-des-syst",
+    "name": "Baccalauréat en génie des systèmes électromécaniques",
+    "institution": "Université du Québec à Rimouski (UQAR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie des systèmes électromécaniques à Université du Québec à Rimouski (UQAR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqar.ca/etudes/etudier-a-l-uqar/programmes-de-formation/baccalaureat-en-genie-des-systemes-electromecaniques",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-mecaniqu-190",
+    "name": "Baccalauréat en génie mécanique",
+    "institution": "Université du Québec à Rimouski (UQAR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie mécanique à Université du Québec à Rimouski (UQAR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqar.ca/etudes/etudier-a-l-uqar/programmes-de-formation/baccalaureat-en-genie-mecanique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-civil-983",
+    "name": "Baccalauréat en génie civil",
+    "institution": "Université du Québec à Rimouski (UQAR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie civil à Université du Québec à Rimouski (UQAR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqar.ca/etudes/etudier-a-l-uqar/programmes-de-formation/baccalaureat-en-genie-civil",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-informatique-739",
+    "name": "Baccalauréat en informatique",
+    "institution": "Université du Québec à Rimouski (UQAR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en informatique à Université du Québec à Rimouski (UQAR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqar.ca/etudes/etudier-a-l-uqar/programmes-de-formation/baccalaureat-en-informatique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-sciences-infir-223",
+    "name": "Baccalauréat en sciences infirmières (Lévis et Rimouski)",
+    "institution": "Université du Québec à Rimouski (UQAR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en sciences infirmières (Lévis et Rimouski) à Université du Québec à Rimouski (UQAR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqar.ca/etudes/etudier-a-l-uqar/programmes-de-formation/baccalaureat-en-sciences-infirmieres",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 24.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 24,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health",
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-administration-455",
+    "name": "Baccalauréat en administration (B.A.A. Lévis et Rimouski)",
+    "institution": "Université du Québec à Rimouski (UQAR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en administration (B.A.A. Lévis et Rimouski) à Université du Québec à Rimouski (UQAR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqar.ca/etudes/etudier-a-l-uqar/programmes-de-formation/baccalaureat-en-administration",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-travail-social-874",
+    "name": "Baccalauréat en travail social",
+    "institution": "Université du Québec à Rimouski (UQAR)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en travail social à Université du Québec à Rimouski (UQAR).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqar.ca/etudes/etudier-a-l-uqar/programmes-de-formation/baccalaureat-en-travail-social",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-informatique-574",
+    "name": "Baccalauréat en informatique",
+    "institution": "Université du Québec en Outaouais (UQO)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en informatique à Université du Québec en Outaouais (UQO).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://uqo.ca/etudes/programmes/baccalaureat-en-informatique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-informat-361",
+    "name": "Baccalauréat en génie informatique",
+    "institution": "Université du Québec en Outaouais (UQO)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie informatique à Université du Québec en Outaouais (UQO).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://uqo.ca/etudes/programmes/baccalaureat-en-genie-informatique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-administration-363",
+    "name": "Baccalauréat en administration des affaires (B.A.A.)",
+    "institution": "Université du Québec en Outaouais (UQO)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en administration des affaires (B.A.A.) à Université du Québec en Outaouais (UQO).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://uqo.ca/etudes/programmes/baccalaureat-en-administration-des-affaires",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-sciences-infir-606",
+    "name": "Baccalauréat en sciences infirmières",
+    "institution": "Université du Québec en Outaouais (UQO)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en sciences infirmières à Université du Québec en Outaouais (UQO).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://uqo.ca/etudes/programmes/baccalaureat-en-sciences-infirmieres",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 24.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 24,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health",
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-psychoeducatio-648",
+    "name": "Baccalauréat en psychoéducation (Gatineau et Saint-Jérôme)",
+    "institution": "Université du Québec en Outaouais (UQO)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en psychoéducation (Gatineau et Saint-Jérôme) à Université du Québec en Outaouais (UQO).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://uqo.ca/etudes/programmes/baccalaureat-en-psychoeducation",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-psychologie-76",
+    "name": "Baccalauréat en psychologie",
+    "institution": "Université du Québec en Outaouais (UQO)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en psychologie à Université du Québec en Outaouais (UQO).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://uqo.ca/etudes/programmes/baccalaureat-en-psychologie",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 28.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 28,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Méthodes quantitatives ou Calcul différentiel",
+        "status": "met"
+      },
+      {
+        "name": "Biologie humaine",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-travail-social-463",
+    "name": "Baccalauréat en travail social",
+    "institution": "Université du Québec en Outaouais (UQO)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en travail social à Université du Québec en Outaouais (UQO).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://uqo.ca/etudes/programmes/baccalaureat-en-travail-social",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-bande-dessinee",
+    "name": "Baccalauréat en bande dessinée (École multidisciplinaire de l'image)",
+    "institution": "Université du Québec en Outaouais (UQO)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en bande dessinée (École multidisciplinaire de l'image) à Université du Québec en Outaouais (UQO).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://uqo.ca/etudes/programmes/baccalaureat-en-bande-dessinee",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-design-graphiq-80",
+    "name": "Baccalauréat en design graphique",
+    "institution": "Université du Québec en Outaouais (UQO)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en design graphique à Université du Québec en Outaouais (UQO).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://uqo.ca/etudes/programmes/baccalaureat-en-design-graphique",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "arts_comm"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-creation-numer",
+    "name": "Baccalauréat en création numérique et jeux vidéo",
+    "institution": "Université du Québec en Abitibi-Témiscamingue (UQAT)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en création numérique et jeux vidéo à Université du Québec en Abitibi-Témiscamingue (UQAT).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqat.ca/etudes/creation-et-nouveaux-medias/baccalaureat-en-creation-de-jeux-video/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-electrom",
+    "name": "Baccalauréat en génie électromécanique",
+    "institution": "Université du Québec en Abitibi-Témiscamingue (UQAT)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie électromécanique à Université du Québec en Abitibi-Témiscamingue (UQAT).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqat.ca/etudes/ingenierie/baccalaureat-en-genie-electromecanique/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-mecaniqu-551",
+    "name": "Baccalauréat en génie mécanique",
+    "institution": "Université du Québec en Abitibi-Témiscamingue (UQAT)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie mécanique à Université du Québec en Abitibi-Témiscamingue (UQAT).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqat.ca/etudes/ingenierie/baccalaureat-en-genie-mecanique/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-genie-civil-539",
+    "name": "Baccalauréat en génie civil",
+    "institution": "Université du Québec en Abitibi-Témiscamingue (UQAT)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en génie civil à Université du Québec en Abitibi-Témiscamingue (UQAT).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqat.ca/etudes/ingenierie/baccalaureat-en-genie-civil/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-sciences-infir-445",
+    "name": "Baccalauréat en sciences infirmières",
+    "institution": "Université du Québec en Abitibi-Témiscamingue (UQAT)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en sciences infirmières à Université du Québec en Abitibi-Témiscamingue (UQAT).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqat.ca/etudes/sante/baccalaureat-en-sciences-infirmieres/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 24.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 24,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "health",
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-travail-social-762",
+    "name": "Baccalauréat en travail social",
+    "institution": "Université du Québec en Abitibi-Témiscamingue (UQAT)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en travail social à Université du Québec en Abitibi-Témiscamingue (UQAT).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqat.ca/etudes/sciences-humaines/baccalaureat-en-travail-social/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-administration-455",
+    "name": "Baccalauréat en administration (B.A.A.)",
+    "institution": "Université du Québec en Abitibi-Témiscamingue (UQAT)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en administration (B.A.A.) à Université du Québec en Abitibi-Témiscamingue (UQAT).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqat.ca/etudes/gestion/baccalaureat-en-administration/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-etudes-autocht",
+    "name": "Baccalauréat en études autochtones",
+    "institution": "Université du Québec en Abitibi-Témiscamingue (UQAT)",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en études autochtones à Université du Québec en Abitibi-Témiscamingue (UQAT).",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.uqat.ca/etudes/sciences-humaines/baccalaureat-en-etudes-autochtones/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "bishop-s-u-bachelor-of-business-administr",
+    "name": "Bachelor of Business Administration (BBA - Williams School of Business)",
+    "institution": "Bishop's University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Business Administration (BBA - Williams School of Business) à Bishop's University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ubishops.ca/academic-programs/williams-school-of-business/bba/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "bishop-s-u-bachelor-of-science-in-compute",
+    "name": "Bachelor of Science in Computer Science",
+    "institution": "Bishop's University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Science in Computer Science à Bishop's University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ubishops.ca/academic-programs/faculty-of-arts-and-science/natural-sciences-and-mathematics/computer-science/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 29.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 29,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2023,
+        "cutoff": 28.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "bishop-s-u-bachelor-of-science-in-pre-med",
+    "name": "Bachelor of Science in Pre-Medicine Double Major",
+    "institution": "Bishop's University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Science in Pre-Medicine Double Major à Bishop's University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ubishops.ca/academic-programs/faculty-of-arts-and-science/natural-sciences-and-mathematics/pre-medicine/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "bishop-s-u-bachelor-of-arts-in-psychology",
+    "name": "Bachelor of Arts in Psychology",
+    "institution": "Bishop's University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Arts in Psychology à Bishop's University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ubishops.ca/academic-programs/faculty-of-arts-and-science/social-sciences/psychology/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social",
+      "arts_comm"
+    ]
+  },
+  {
+    "id": "bishop-s-u-bachelor-of-arts-in-educationa",
+    "name": "Bachelor of Arts in Educational Studies",
+    "institution": "Bishop's University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Arts in Educational Studies à Bishop's University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ubishops.ca/academic-programs/school-of-education/undergraduate-programs/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "arts_comm",
+      "education"
+    ]
+  },
+  {
+    "id": "bishop-s-u-bachelor-of-science-in-biology",
+    "name": "Bachelor of Science in Biology",
+    "institution": "Bishop's University",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Bachelor of Science in Biology à Bishop's University.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.ubishops.ca/academic-programs/faculty-of-arts-and-science/natural-sciences-and-mathematics/biology/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-administration-23",
+    "name": "Baccalauréat en administration des affaires (B.A.A. à distance)",
+    "institution": "Université TÉLUQ",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en administration des affaires (B.A.A. à distance) à Université TÉLUQ.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.teluq.ca/site/etudes/offre/programmes/baccalaureat-en-administration-des-affaires/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 27.5,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 27,
+        "figureType": "last_admitted",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel ou Mathématiques appliquées à la gestion (201-NYA ou 201-103)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire (201-NYC ou 201-105)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "business"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-informatique-a",
+    "name": "Baccalauréat en informatique (à distance)",
+    "institution": "Université TÉLUQ",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en informatique (à distance) à Université TÉLUQ.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.teluq.ca/site/etudes/offre/programmes/baccalaureat-en-informatique/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Calcul différentiel (201-NYA)",
+        "status": "met"
+      },
+      {
+        "name": "Calcul intégral (201-NYB)",
+        "status": "met"
+      },
+      {
+        "name": "Algèbre linéaire et géométrie vectorielle (201-NYC)",
+        "status": "met"
+      },
+      {
+        "name": "Physique mécanique et électromagnétisme (203-NYA, 203-NYB)",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "tech_eng"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-communication--913",
+    "name": "Baccalauréat en communication (à distance)",
+    "institution": "Université TÉLUQ",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en communication (à distance) à Université TÉLUQ.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.teluq.ca/site/etudes/offre/programmes/baccalaureat-en-communication/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) sans préalables spécifiques",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "arts_comm"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-sciences-humai",
+    "name": "Baccalauréat en sciences humaines (à distance)",
+    "institution": "Université TÉLUQ",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en sciences humaines (à distance) à Université TÉLUQ.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.teluq.ca/site/etudes/offre/programmes/baccalaureat-en-sciences-humaines/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "science"
+    ]
+  },
+  {
+    "id": "universite-baccalaureat-en-education-pres",
+    "name": "Baccalauréat en éducation préscolaire et primaire (à distance)",
+    "institution": "Université TÉLUQ",
+    "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en éducation préscolaire et primaire (à distance) à Université TÉLUQ.",
+    "cohortLabel": "Automne 2026",
+    "sourceUrl": "https://www.teluq.ca/site/etudes/offre/programmes/baccalaureat-en-education-prescolaire-et-enseignement-primaire/",
+    "lastVerifiedAt": "2026-08-25",
+    "cutoffHistory": [
+      {
+        "year": 2025,
+        "cutoff": 22.5,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      },
+      {
+        "year": 2024,
+        "cutoff": 22,
+        "figureType": "range_low",
+        "sourceTier": "university_official"
+      }
+    ],
+    "prerequisites": [
+      {
+        "name": "Diplôme d’études collégiales (DEC) reconnu",
+        "status": "met"
+      }
+    ],
+    "placementRate": {
+      "value": 93,
+      "note": "Taux de placement moyen selon Relance MES."
+    },
+    "interestIds": [
+      "law_social"
+    ]
   },
 ];
 
-export type Bursary = BursaryCriteria & {
+export type Bursary = {
+  id: string;
   name: string;
   sourceOrg: string;
-  amountMin: number | null;
-  deadlinePrecision?: "day" | "month";
+  cegepId: string | null;
+  eligibleCegepPrograms: string[] | null;
+  eligibleUniversityPrograms: string[] | null;
+  minRScore: number | null;
+  minSession: number | null;
+  tagCriteria: SelfTagId[] | null;
+  amountMin: number;
+  amountMax: number;
+  deadlineIso: string | null;
+  deadlinePrecision?: "day" | "month" | "year";
   applicationUrl: string | null;
   hasPublicApplicationLink: boolean;
   requiresEssay: boolean;

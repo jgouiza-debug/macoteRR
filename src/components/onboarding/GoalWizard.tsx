@@ -2,15 +2,16 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Check, ChevronRight, ExternalLink } from "lucide-react";
+import { Search, Check, ChevronRight, Sparkles, Plus } from "lucide-react";
 import { ScreenShell, ScreenHeading } from "@/components/onboarding/ScreenShell";
-import { UNIVERSITY_PROGRAMS } from "@/lib/sample-data";
+import { UNIVERSITY_PROGRAMS, type UniversityProgram } from "@/lib/sample-data";
 import { decOfferingsAtCegep, findCegepInstitution } from "@/lib/data/cegep-institutions";
 import { INTERESTS, type InterestId } from "@/lib/tags/interests";
 import { INTEREST_QUIZ, tallyInterests } from "@/lib/matching/interest-quiz";
-import { suggestUniversityProgramsForCegepProgram } from "@/lib/matching/program-suggestions";
+import { suggestTopUniversityPrograms } from "@/lib/matching/program-suggestions";
 import { getGenericProgramProfile } from "@/lib/data/generic-program-profiles";
 import { DecProgramProfileCard } from "@/components/programs/DecProgramProfileCard";
+import { getCutoffRange } from "@/lib/rscore/cutoff-range";
 import { useStudentProfile } from "@/lib/profile/store";
 import { useOnboardingGuard } from "@/lib/profile/onboarding";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
@@ -23,14 +24,59 @@ const DEC_GROUPS = [
   { category: "Cheminement particulier" as const, labelKey: "goal.decSpecial" as const },
 ];
 
-/**
- * The DEC picker and the goal/interest stages, one component mounted at two routes.
- *
- * They used to be a single screen. The funnel now runs cégep -> program -> cote R -> goal, so
- * the DEC half has to finish before the score step and the goal half has to run after it.
- * Splitting the file would have duplicated ~300 lines of stage logic; a start step and a
- * matching exit keeps one implementation.
- */
+const UNIVERSITIES_FILTER = [
+  { id: "all", label: "Toutes les universités" },
+  { id: "Université Laval", label: "ULaval" },
+  { id: "Université de Montréal", label: "UdeM" },
+  { id: "McGill University", label: "McGill" },
+  { id: "HEC Montréal", label: "HEC" },
+  { id: "Polytechnique Montréal", label: "Polytechnique" },
+  { id: "Université de Sherbrooke", label: "UdeS" },
+  { id: "Concordia University", label: "Concordia" },
+  { id: "Université du Québec à Montréal (UQAM)", label: "UQAM" },
+  { id: "École de technologie supérieure (ÉTS)", label: "ÉTS" },
+  { id: "Université du Québec à Trois-Rivières (UQTR)", label: "UQTR" },
+  { id: "Université du Québec à Chicoutimi (UQAC)", label: "UQAC" },
+  { id: "Université du Québec à Rimouski (UQAR)", label: "UQAR" },
+  { id: "Université du Québec en Outaouais (UQO)", label: "UQO" },
+  { id: "Université du Québec en Abitibi-Témiscamingue (UQAT)", label: "UQAT" },
+  { id: "Bishop's University", label: "Bishop's" },
+  { id: "Université TÉLUQ", label: "TÉLUQ" },
+];
+
+function getChanceBadge(program: UniversityProgram, score: number | null, locale: "fr" | "en") {
+  const range = getCutoffRange(program.cutoffHistory);
+  if (!range) {
+    return {
+      label: locale === "fr" ? "Non contingenté" : "Open admission",
+      cls: "bg-ink/8 text-ink/65 border border-ink/15",
+    };
+  }
+  if (score === null) {
+    return {
+      label: `${locale === "fr" ? "Seuil" : "Cutoff"} ${range.low.toFixed(1)}–${range.high.toFixed(1)}`,
+      cls: "bg-ink/8 text-ink/70 border border-ink/15",
+    };
+  }
+  if (score >= range.high) {
+    return {
+      label: locale === "fr" ? "Très accessible (Tu dépasses le seuil)" : "Very accessible (Above cutoff)",
+      cls: "bg-moss/12 text-moss border border-moss/30 font-bold",
+    };
+  }
+  if (score >= range.low - 1.0) {
+    return {
+      label: locale === "fr" ? "Dans la fourchette (Tu as tes chances)" : "Within reach (Good chance)",
+      cls: "bg-ultramarine/12 text-ultramarine border border-ultramarine/30 font-bold",
+    };
+  }
+  const gap = (range.low - score).toFixed(1);
+  return {
+    label: locale === "fr" ? `Cible ambitieuse (À travailler — écart de ${gap})` : `Ambitious target (Gap of ${gap})`,
+    cls: "bg-ember/12 text-ember border border-ember/30 font-bold",
+  };
+}
+
 export function GoalWizard({ startStep }: { startStep: Step }) {
   const router = useRouter();
   const { t, locale } = useLocale();
@@ -38,8 +84,6 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
 
   const [step, setStep] = useState<Step>(startStep);
 
-  // The DEC step needs a cégep; the goal step needs a score as well. Mounting either
-  // without them let a student walk backwards into a screen the profile could not fill.
   useOnboardingGuard(startStep === "program" ? "program" : "goal");
   const [cegepProgramId, setCegepProgramId] = useState<string | null>(profile.cegepProgramId);
   const [selectedProfileId, setSelectedProfileId] = useState<string | null>(null);
@@ -47,17 +91,13 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
   const [interestIds, setInterestIds] = useState<InterestId[]>(profile.interestIds);
   const [query, setQuery] = useState("");
   const [decQuery, setDecQuery] = useState("");
+  const [selectedUniversity, setSelectedUniversity] = useState("all");
   const [quizIndex, setQuizIndex] = useState(0);
   const [quizPicks, setQuizPicks] = useState<InterestId[]>([]);
   const [fromQuiz, setFromQuiz] = useState(false);
 
   const cegep = findCegepInstitution(profile.cegepId);
-
-  // Scoped to the cégep chosen in step 1. A DEC code is province-wide, but which ones a given
-  // school actually runs is not — listing all 42 curated programs offered a student a DEC
-  // their cégep does not teach.
   const decOfferings = useMemo(() => decOfferingsAtCegep(profile.cegepId), [profile.cegepId]);
-
   const selectedDec = decOfferings.find((p) => p.programCode === cegepProgramId);
 
   const isSH = Boolean(
@@ -94,27 +134,31 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
     () => getGenericProgramProfile(selectedDec?.programCode || cegepProgramId || ""),
     [selectedDec, cegepProgramId],
   );
-  const catalogSuggestions = useMemo(
+
+  const topSuggestions = useMemo(
     () =>
-      selectedDec
-        ? suggestUniversityProgramsForCegepProgram(
-            selectedDec.programName,
-            5,
-            selectedDec.programCode,
-          )
-        : [],
+      suggestTopUniversityPrograms(
+        selectedDec?.programName || "Sciences",
+        UNIVERSITY_PROGRAMS,
+        8,
+        selectedDec?.programCode,
+      ),
     [selectedDec],
   );
 
   const filteredPrograms = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const list = q
-      ? UNIVERSITY_PROGRAMS.filter(
-          (p) => p.name.toLowerCase().includes(q) || p.institution.toLowerCase().includes(q),
-        )
-      : UNIVERSITY_PROGRAMS;
+    let list = UNIVERSITY_PROGRAMS;
+    if (selectedUniversity !== "all") {
+      list = list.filter((p) => p.institution === selectedUniversity || p.institution.includes(selectedUniversity));
+    }
+    if (q) {
+      list = list.filter(
+        (p) => p.name.toLowerCase().includes(q) || p.institution.toLowerCase().includes(q),
+      );
+    }
     return list;
-  }, [query]);
+  }, [query, selectedUniversity]);
 
   const filteredDecs = useMemo(() => {
     const q = decQuery.trim().toLowerCase();
@@ -125,13 +169,16 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
     );
   }, [decQuery, decOfferings]);
 
-  const matchedPrograms = useMemo(
-    () =>
+  const matchedPrograms = useMemo(() => {
+    let list =
       interestIds.length === 0
         ? []
-        : UNIVERSITY_PROGRAMS.filter((p) => p.interestIds.some((id) => interestIds.includes(id))),
-    [interestIds],
-  );
+        : UNIVERSITY_PROGRAMS.filter((p) => p.interestIds.some((id) => interestIds.includes(id)));
+    if (selectedUniversity !== "all") {
+      list = list.filter((p) => p.institution === selectedUniversity || p.institution.includes(selectedUniversity));
+    }
+    return list;
+  }, [interestIds, selectedUniversity]);
 
   function toggleTarget(id: string) {
     setTargetIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
@@ -141,11 +188,13 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
     setInterestIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   }
 
+  function selectTop5() {
+    const top5Ids = topSuggestions.slice(0, 5).map((s) => s.item.id);
+    setTargetIds((prev) => Array.from(new Set([...prev, ...top5Ids])));
+  }
+
   function finish() {
     update({ cegepProgramId, targetUniversityProgramIds: targetIds, interestIds });
-    // The goal stages now run after the results screen, so the last thing left in the funnel
-    // is the account. Sign-up is mandatory (src/proxy.ts gates every app route on a session),
-    // which is why this pushes rather than offering a way past it.
     router.push("/onboarding/account");
   }
 
@@ -200,7 +249,7 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
             aria-label={t("goal.searchDec")}
             placeholder={t("goal.searchDec")}
             autoComplete="off"
-            className="h-[52px] w-full rounded border border-ink/50 bg-paper pl-11 pr-4 text-[16px] text-ink outline-none transition-colors placeholder:text-ink/40 focus:border-[1.5px] focus:border-ultramarine"
+            className="h-[52px] w-full rounded-xl border border-ink/20 bg-paper pl-11 pr-4 text-[15px] text-ink outline-none transition-colors placeholder:text-ink/40 focus:border-[1.5px] focus:border-ultramarine"
           />
         </div>
 
@@ -221,10 +270,10 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
                       type="button"
                       aria-pressed={selected}
                       onClick={() => setCegepProgramId(p.programCode)}
-                      className={`flex min-h-[56px] items-center justify-between gap-3 rounded border px-4 py-3 text-left transition-transform active:scale-[0.99] ${
+                      className={`flex min-h-[56px] items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left transition-transform active:scale-[0.99] ${
                         selected
-                          ? "border-ultramarine bg-ultramarine/[0.07]"
-                          : "border-ink/15 bg-paper"
+                          ? "border-ultramarine bg-ultramarine/[0.07] shadow-sm"
+                          : "border-ink/15 bg-paper hover:border-ink/30"
                       }`}
                     >
                       <span>
@@ -284,10 +333,10 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
                 type="button"
                 aria-pressed={selected}
                 onClick={() => setSelectedProfileId(p.id)}
-                className={`flex min-h-[64px] items-start justify-between gap-3 rounded border p-4 text-left transition-transform active:scale-[0.99] ${
+                className={`flex min-h-[64px] items-start justify-between gap-3 rounded-xl border p-4 text-left transition-transform active:scale-[0.99] ${
                   selected
-                    ? "border-ultramarine bg-ultramarine/[0.07]"
-                    : "border-ink/15 bg-paper"
+                    ? "border-ultramarine bg-ultramarine/[0.07] shadow-sm"
+                    : "border-ink/15 bg-paper hover:border-ink/30"
                 }`}
               >
                 <div className="flex flex-col gap-1">
@@ -328,11 +377,11 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
         }
       >
         <ScreenHeading title={t("goal.futureTitle")} body={t("goal.futureBody")} />
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2.5">
           <button
             type="button"
             onClick={() => setStep("specific")}
-            className="flex min-h-[64px] items-center justify-between gap-3 rounded border border-ink/15 bg-paper px-4 py-3.5 text-left text-[15px] font-semibold text-ink transition-transform active:scale-[0.99]"
+            className="flex min-h-[60px] items-center justify-between gap-3 rounded-xl border border-ink/15 bg-paper px-4 py-3 text-left text-[14.5px] font-semibold text-ink shadow-sm transition-transform active:scale-[0.99] hover:border-ink/30"
           >
             {t("goal.specific")}
             <ChevronRight className="h-5 w-5 flex-shrink-0 text-ink/40" />
@@ -343,7 +392,7 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
               setFromQuiz(false);
               setStep("general");
             }}
-            className="flex min-h-[64px] items-center justify-between gap-3 rounded border border-ink/15 bg-paper px-4 py-3.5 text-left text-[15px] font-semibold text-ink transition-transform active:scale-[0.99]"
+            className="flex min-h-[60px] items-center justify-between gap-3 rounded-xl border border-ink/15 bg-paper px-4 py-3 text-left text-[14.5px] font-semibold text-ink shadow-sm transition-transform active:scale-[0.99] hover:border-ink/30"
           >
             {t("goal.general")}
             <ChevronRight className="h-5 w-5 flex-shrink-0 text-ink/40" />
@@ -355,7 +404,7 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
               setQuizPicks([]);
               setStep("quiz");
             }}
-            className="flex min-h-[64px] items-center justify-between gap-3 rounded border-[1.5px] border-ultramarine bg-ultramarine/[0.07] px-4 py-3.5 text-left text-[15px] font-semibold text-ultramarine transition-transform active:scale-[0.99]"
+            className="flex min-h-[60px] items-center justify-between gap-3 rounded-xl border-[1.5px] border-ultramarine bg-ultramarine/[0.07] px-4 py-3 text-left text-[14.5px] font-semibold text-ultramarine shadow-sm transition-transform active:scale-[0.99]"
           >
             {t("goal.quiz")}
             <ChevronRight className="h-5 w-5 flex-shrink-0" />
@@ -371,38 +420,72 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
           </div>
         )}
 
-        {catalogSuggestions.length > 0 && (
-          <div className="mt-6 flex flex-col gap-2.5">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-ink/45">
-              {t("goal.catalogSuggestions")}
-            </p>
-            {catalogSuggestions.map(({ item, sharedWords, matchChip }) => (
-              <a
-                key={`${item.institution}-${item.programName}`}
-                href={item.sourceUrl}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="flex items-start justify-between gap-3 rounded border border-ink/15 bg-paper px-4 py-3 text-left transition-transform active:scale-[0.99]"
+        {topSuggestions.length > 0 && (
+          <div className="mt-6 flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <p className="text-[12px] font-bold uppercase tracking-wider text-ink/60">
+                {t("goal.catalogSuggestions")}
+              </p>
+              <button
+                type="button"
+                onClick={selectTop5}
+                className="inline-flex items-center gap-1.5 rounded-full bg-ultramarine/[0.08] px-3 py-1 text-[11.5px] font-bold text-ultramarine hover:bg-ultramarine/15 transition-colors"
               >
-                <span>
-                  <span className="block text-[13.5px] font-semibold text-ink">
-                    {item.programName}
-                  </span>
-                  <span className="mt-0.5 block text-[11.5px] text-ink/50">
-                    {item.institution} · {t("goal.matchedOn")} {sharedWords.join(", ")}
-                  </span>
-                  {matchChip && (
-                    <span className="mt-1.5 inline-block rounded-full bg-ultramarine/[0.08] px-2 py-0.5 text-[10.5px] font-semibold text-ultramarine">
-                      {matchChip}
-                    </span>
-                  )}
-                </span>
-                <ExternalLink className="mt-0.5 h-4 w-4 flex-shrink-0 text-ink/40" />
-              </a>
-            ))}
-            <p className="text-[11px] leading-relaxed text-ink/45">
-              {t("goal.catalogSuggestionsCaveat")}
-            </p>
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>{locale === "fr" ? "Sélectionner les 5 meilleurs" : "Select top 5"}</span>
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-2.5">
+              {topSuggestions.map(({ item, matchChip }) => {
+                const isSelected = targetIds.includes(item.id);
+                const badge = getChanceBadge(item, profile.rScore, locale);
+                return (
+                  <div
+                    key={item.id}
+                    className={`flex items-center justify-between gap-3 rounded-xl border p-3.5 transition-all shadow-sm ${
+                      isSelected
+                        ? "border-ultramarine bg-ultramarine/[0.05]"
+                        : "border-ink/12 bg-paper hover:border-ink/30"
+                    }`}
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="block text-[14px] font-semibold text-ink">
+                          {item.name}
+                        </span>
+                        {matchChip && (
+                          <span className="rounded-full bg-ink/[0.06] px-2 py-0.5 text-[10px] font-medium text-ink/60">
+                            {matchChip}
+                          </span>
+                        )}
+                      </div>
+                      <span className="mt-0.5 block text-[11.5px] text-ink/50">
+                        {item.institution}
+                      </span>
+                      <div className="mt-1.5 flex items-center gap-1.5">
+                        <span className={`rounded-full px-2 py-0.5 text-[10.5px] ${badge.cls}`}>
+                          {badge.label}
+                        </span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      aria-label="Sélectionner le programme"
+                      onClick={() => toggleTarget(item.id)}
+                      className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border transition-transform active:scale-[0.92] ${
+                        isSelected
+                          ? "border-ultramarine bg-ultramarine text-paper"
+                          : "border-ink/20 bg-chalk/60 text-ink/60 hover:bg-chalk"
+                      }`}
+                    >
+                      {isSelected ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
       </ScreenShell>
@@ -428,7 +511,7 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
               key={opt.id}
               type="button"
               onClick={() => answerQuiz(opt.interest)}
-              className="flex min-h-[56px] items-center justify-between gap-3 rounded border border-ink/15 bg-paper px-4 py-3 text-left text-[15px] font-semibold text-ink transition-transform active:scale-[0.99]"
+              className="flex min-h-[56px] items-center justify-between gap-3 rounded-xl border border-ink/15 bg-paper px-4 py-3 text-left text-[14.5px] font-semibold text-ink transition-transform active:scale-[0.99] hover:border-ink/30"
             >
               {locale === "fr" ? opt.fr : opt.en}
               <ChevronRight className="h-5 w-5 flex-shrink-0 text-ink/40" />
@@ -456,6 +539,22 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
         }
       >
         <ScreenHeading title={t("goal.specificTitle")} body={t("goal.specificBody")} />
+
+        {/* Top 5 button */}
+        {topSuggestions.length > 0 && (
+          <div className="mb-3">
+            <button
+              type="button"
+              onClick={selectTop5}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-ultramarine/30 bg-ultramarine/[0.06] py-2.5 text-[12.5px] font-bold text-ultramarine shadow-sm hover:bg-ultramarine/12 transition-colors active:scale-[0.98]"
+            >
+              <Sparkles className="h-4 w-4" />
+              <span>{locale === "fr" ? "⭐ Sélectionner les 5 meilleurs pour mon DEC" : "⭐ Select top 5 for my DEC"}</span>
+            </button>
+          </div>
+        )}
+
+        {/* Search */}
         <div className="relative mb-3">
           <Search className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink/40" />
           <input
@@ -464,30 +563,58 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
             aria-label={t("goal.searchProgram")}
             placeholder={t("goal.searchProgram")}
             autoComplete="off"
-            className="h-[52px] w-full rounded border border-ink/15 bg-paper pl-11 pr-4 text-[16px] text-ink outline-none transition-colors placeholder:text-ink/40 focus:border-[1.5px] focus:border-ultramarine"
+            className="h-[50px] w-full rounded-xl border border-ink/20 bg-paper pl-11 pr-4 text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink/40 focus:border-[1.5px] focus:border-ultramarine"
           />
         </div>
+
+        {/* University Filter Chips */}
+        <div className="mb-4 flex flex-wrap gap-1.5">
+          {UNIVERSITIES_FILTER.map((uni) => {
+            const isSelected = selectedUniversity === uni.id;
+            return (
+              <button
+                key={uni.id}
+                type="button"
+                onClick={() => setSelectedUniversity(uni.id)}
+                className={`rounded-full px-3 py-1 text-[11.5px] font-semibold transition-all ${
+                  isSelected
+                    ? "bg-ultramarine text-paper shadow-sm"
+                    : "border border-ink/15 bg-paper text-ink/70 hover:bg-chalk"
+                }`}
+              >
+                {uni.label}
+              </button>
+            );
+          })}
+        </div>
+
         <div className="flex flex-col gap-2.5 pb-4">
           {filteredPrograms.length === 0 && (
             <p className="py-6 text-center text-[14px] text-ink/50">{t("goal.noProgram")}</p>
           )}
           {filteredPrograms.map((p) => {
             const selected = targetIds.includes(p.id);
+            const badge = getChanceBadge(p, profile.rScore, locale);
             return (
               <button
                 key={p.id}
                 type="button"
                 aria-pressed={selected}
                 onClick={() => toggleTarget(p.id)}
-                className={`flex min-h-[64px] items-center justify-between gap-3 rounded border px-4 py-3 text-left transition-transform active:scale-[0.99] ${
-                  selected ? "border-ultramarine bg-ultramarine/[0.07]" : "border-ink/15 bg-paper"
+                className={`flex min-h-[64px] items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left transition-transform active:scale-[0.99] ${
+                  selected ? "border-ultramarine bg-ultramarine/[0.07] shadow-sm" : "border-ink/12 bg-paper hover:border-ink/30"
                 }`}
               >
-                <span>
-                  <span className={`block text-[15px] font-semibold ${selected ? "text-ultramarine" : "text-ink"}`}>
+                <span className="flex-1">
+                  <span className={`block text-[14.5px] font-semibold ${selected ? "text-ultramarine" : "text-ink"}`}>
                     {p.name}
                   </span>
-                  <span className="block text-[12.5px] text-ink/55">{p.institution}</span>
+                  <span className="block text-[12px] text-ink/55">{p.institution}</span>
+                  <span className="mt-1.5 inline-block">
+                    <span className={`rounded-full px-2 py-0.5 text-[10.5px] ${badge.cls}`}>
+                      {badge.label}
+                    </span>
+                  </span>
                 </span>
                 {selected && <Check className="h-5 w-5 flex-shrink-0 text-ultramarine" />}
               </button>
@@ -519,7 +646,7 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
         title={fromQuiz ? t("goal.quizResultTitle") : t("goal.generalTitle")}
         body={fromQuiz ? t("goal.quizResultBody") : t("goal.generalBody")}
       />
-      <ul className="mb-6 flex flex-wrap gap-2">
+      <ul className="mb-4 flex flex-wrap gap-2">
         {INTERESTS.map((interest) => {
           const selected = interestIds.includes(interest.id);
           return (
@@ -528,8 +655,8 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
                 type="button"
                 aria-pressed={selected}
                 onClick={() => toggleInterest(interest.id)}
-                className={`flex min-h-[48px] items-center gap-2 rounded-full border px-4 text-[13px] font-semibold transition-colors active:scale-[0.98] ${
-                  selected ? "border-ultramarine bg-ultramarine text-paper" : "border-ink/20 bg-paper text-ink/70"
+                className={`flex min-h-[42px] items-center gap-2 rounded-full border px-3.5 text-[12.5px] font-semibold transition-colors active:scale-[0.98] ${
+                  selected ? "border-ultramarine bg-ultramarine text-paper shadow-sm" : "border-ink/20 bg-paper text-ink/70 hover:bg-chalk"
                 }`}
               >
                 {locale === "fr" ? interest.fr : interest.en}
@@ -539,14 +666,38 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
         })}
       </ul>
 
+      {/* University filter in general step too */}
+      <div className="mb-4 flex flex-wrap gap-1.5">
+        {UNIVERSITIES_FILTER.map((uni) => {
+          const isSelected = selectedUniversity === uni.id;
+          return (
+            <button
+              key={uni.id}
+              type="button"
+              onClick={() => setSelectedUniversity(uni.id)}
+              className={`rounded-full px-3 py-1 text-[11.5px] font-semibold transition-all ${
+                isSelected
+                  ? "bg-ultramarine text-paper shadow-sm"
+                  : "border border-ink/15 bg-paper text-ink/70 hover:bg-chalk"
+              }`}
+            >
+              {uni.label}
+            </button>
+          );
+        })}
+      </div>
+
       {matchedPrograms.length > 0 && (
         <>
-          <p className="mb-2.5 text-[12px] font-semibold uppercase tracking-wide text-ink/45">
-            {t("goal.matchesTitle")}
-          </p>
+          <div className="mb-2.5 flex items-center justify-between">
+            <p className="text-[12px] font-bold uppercase tracking-wider text-ink/60">
+              {t("goal.matchesTitle")} ({matchedPrograms.length})
+            </p>
+          </div>
           <div className="flex flex-col gap-2.5 pb-4">
             {matchedPrograms.map((p) => {
               const selected = targetIds.includes(p.id);
+              const badge = getChanceBadge(p, profile.rScore, locale);
               const matchingInterestLabels = p.interestIds
                 .filter((id) => interestIds.includes(id))
                 .map((id) =>
@@ -562,29 +713,30 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
                   type="button"
                   aria-pressed={selected}
                   onClick={() => toggleTarget(p.id)}
-                  className={`flex min-h-[64px] items-center justify-between gap-3 rounded border px-4 py-3 text-left transition-transform active:scale-[0.99] ${
-                    selected ? "border-ultramarine bg-ultramarine/[0.07]" : "border-ink/15 bg-paper"
+                  className={`flex min-h-[64px] items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left transition-transform active:scale-[0.99] ${
+                    selected ? "border-ultramarine bg-ultramarine/[0.07] shadow-sm" : "border-ink/12 bg-paper hover:border-ink/30"
                   }`}
                 >
                   <span className="flex-1">
                     <span
-                      className={`block text-[15px] font-semibold ${selected ? "text-ultramarine" : "text-ink"}`}
+                      className={`block text-[14.5px] font-semibold ${selected ? "text-ultramarine" : "text-ink"}`}
                     >
                       {p.name}
                     </span>
-                    <span className="block text-[12.5px] text-ink/55">{p.institution}</span>
-                    {matchingInterestLabels.length > 0 && (
-                      <span className="mt-1.5 flex flex-wrap gap-1">
-                        {matchingInterestLabels.map((lbl) => (
-                          <span
-                            key={lbl}
-                            className="rounded-full bg-ink/[0.06] px-2 py-0.5 text-[10.5px] font-medium text-ink/70"
-                          >
-                            {lbl}
-                          </span>
-                        ))}
+                    <span className="block text-[12px] text-ink/55">{p.institution}</span>
+                    <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                      <span className={`rounded-full px-2 py-0.5 text-[10.5px] ${badge.cls}`}>
+                        {badge.label}
                       </span>
-                    )}
+                      {matchingInterestLabels.map((lbl) => (
+                        <span
+                          key={lbl}
+                          className="rounded-full bg-ink/[0.06] px-2 py-0.5 text-[10px] font-medium text-ink/70"
+                        >
+                          {lbl}
+                        </span>
+                      ))}
+                    </div>
                   </span>
                   {selected && <Check className="h-5 w-5 flex-shrink-0 text-ultramarine" />}
                 </button>
