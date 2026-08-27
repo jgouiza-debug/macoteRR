@@ -156,25 +156,40 @@ export default function ProgramsPage() {
     }).sort((a, b) => CUTOFF_STATUS_ORDER[a.tier] - CUTOFF_STATUS_ORDER[b.tier]);
   }, [score]);
 
-  const counts: Record<CutoffStatus, number> = useMemo(() => {
-    const res: Record<CutoffStatus, number> = { above: 0, inside: 0, below: 0, unknown: 0 };
-    for (const row of allRows) res[row.tier] += 1;
-    return res;
-  }, [allRows]);
-
-  const filtered = useMemo(() => {
+  // Narrowed by the university chips and the search box, but NOT by the tier buttons — the
+  // tier counts have to describe the same set the list below them shows. Counting all 237
+  // programs while the list held 9 made the four numbers openly contradict "programmes
+  // trouvés", so a student filtering to UQAR read "181 au-dessus" over a list of nine.
+  const scopedRows = useMemo(() => {
     const q = query.trim().toLowerCase();
     return allRows.filter((row) => {
-      if (tier !== "all" && row.tier !== tier) return false;
-      if (selectedUniversity !== "all" && row.program.institution !== selectedUniversity && !row.program.institution.includes(selectedUniversity)) {
+      if (
+        selectedUniversity !== "all" &&
+        row.program.institution !== selectedUniversity &&
+        !row.program.institution.includes(selectedUniversity)
+      ) {
         return false;
       }
       if (q) {
-        return row.program.name.toLowerCase().includes(q) || row.program.institution.toLowerCase().includes(q);
+        return (
+          row.program.name.toLowerCase().includes(q) ||
+          row.program.institution.toLowerCase().includes(q)
+        );
       }
       return true;
     });
-  }, [allRows, tier, selectedUniversity, query]);
+  }, [allRows, selectedUniversity, query]);
+
+  const counts: Record<CutoffStatus, number> = useMemo(() => {
+    const res: Record<CutoffStatus, number> = { above: 0, inside: 0, below: 0, unknown: 0 };
+    for (const row of scopedRows) res[row.tier] += 1;
+    return res;
+  }, [scopedRows]);
+
+  const filtered = useMemo(
+    () => (tier === "all" ? scopedRows : scopedRows.filter((row) => row.tier === tier)),
+    [scopedRows, tier],
+  );
 
   if (!hydrated || profile.cegepId === null) {
     return (
