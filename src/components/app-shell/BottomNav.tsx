@@ -10,12 +10,15 @@ export function BottomNav() {
   const { t } = useLocale();
 
   return (
-    <nav className="fixed bottom-0 z-50 w-full border-t border-ink/10 bg-shell pb-safe md:hidden">
-      {/* Icons only. Stacking a caption under the icon is what forced the bar wide — at a
-          height that reads as thin, the text lands around 8px, which is decoration rather
-          than something anyone reads. The label survives as an accessible name, so screen
-          readers and the aria-current state are unchanged. */}
-      <div className="flex h-[34px] items-center justify-around px-2">
+    <nav className="fixed bottom-0 z-50 w-full border-t border-ink/10 bg-shell md:hidden">
+      {/* Icons only, centred in the whole bar. The label survives as an accessible name, so
+          screen readers and the aria-current state are unchanged.
+
+          The height folds half the home-indicator inset into the row rather than hanging it
+          underneath as padding. Padding put the entire inset below the icons — 3px of shell
+          above them and better than 30px below — which is what made the bar read as thick and
+          bottom-heavy. Half the inset still clears the indicator. */}
+      <div className="flex h-[calc(1.875rem+env(safe-area-inset-bottom)*0.5)] items-center justify-around px-2">
         {NAV_ITEMS.map((item) => {
           const active = pathname.startsWith(item.href);
           return (
