@@ -21,8 +21,8 @@ const APP_PREFIXES = [
   "/app",
 ];
 
-/** Mark draw (600ms) + dot settle (ends at 700ms) + a beat, then a 300ms fade. */
-const SPLASH_MS = 1200;
+/** Mark in (520ms), dot in (ends at 640ms), a beat, then a 320ms fade from 980ms. */
+const SPLASH_MS = 1350;
 
 /**
  * Survives client-side navigation because the module does. The splash belongs to the boot, so
@@ -64,25 +64,39 @@ export function BootSplash() {
       aria-hidden="true"
       className="boot-splash pointer-events-none fixed inset-0 z-[100] flex items-center justify-center bg-chalk"
     >
+      {/* Opacity and transform only — nothing else. This plays while the app is parsing and
+          hydrating, so the main thread is the busiest it will ever be; the previous version
+          animated clip-path, which repaints on the main thread every frame and therefore
+          stuttered exactly when it was on screen. These two properties run on the compositor
+          and are unaffected by whatever React is doing. */}
       <style>{`
-        @keyframes bootMarkDraw {
-          0% { clip-path: inset(0 100% 0 0); opacity: 0.3; }
-          100% { clip-path: inset(0 0% 0 0); opacity: 1; }
+        @keyframes bootMarkIn {
+          0% { opacity: 0; transform: scale(0.94); }
+          100% { opacity: 1; transform: scale(1); }
         }
-        @keyframes bootDotSettle {
-          0% { opacity: 0; transform: scale(0) translate(-8px, -12px); }
-          70% { opacity: 1; transform: scale(1.15) translate(0, 0); }
-          100% { opacity: 1; transform: scale(1) translate(0, 0); }
+        @keyframes bootDotIn {
+          0% { opacity: 0; transform: scale(0.4); }
+          60% { opacity: 1; transform: scale(1.08); }
+          100% { opacity: 1; transform: scale(1); }
         }
         @keyframes bootSplashOut {
           0% { opacity: 1; }
           100% { opacity: 0; visibility: hidden; }
         }
-        .boot-splash { animation: bootSplashOut 300ms cubic-bezier(0.4, 0, 1, 1) 900ms forwards; }
-        .boot-splash-mark { animation: bootMarkDraw 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .boot-splash {
+          animation: bootSplashOut 320ms ease-out 980ms forwards;
+        }
+        .boot-splash-mark {
+          opacity: 0;
+          will-change: opacity, transform;
+          animation: bootMarkIn 520ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
         .boot-splash-dot {
           opacity: 0;
-          animation: bootDotSettle 220ms cubic-bezier(0.16, 1, 0.3, 1) 480ms forwards;
+          transform-box: fill-box;
+          transform-origin: center;
+          will-change: opacity, transform;
+          animation: bootDotIn 340ms cubic-bezier(0.22, 1, 0.36, 1) 300ms forwards;
         }
         @media (prefers-reduced-motion: reduce) {
           .boot-splash-mark, .boot-splash-dot { animation: none; opacity: 1; }
@@ -90,22 +104,24 @@ export function BootSplash() {
         }
       `}</style>
 
-      <svg
-        width="164"
-        height="126"
-        viewBox="0 0 130.3 100"
-        role="presentation"
-        className="overflow-visible"
-      >
-        <path d={R_PATH_D} fill="var(--color-ink)" className="boot-splash-mark" />
-        <circle
-          cx="110.3"
-          cy="20.0"
-          r="20.0"
-          fill="var(--color-ultramarine)"
-          className="boot-splash-dot"
-        />
-      </svg>
+      <div className="boot-splash-mark">
+        <svg
+          width="164"
+          height="126"
+          viewBox="0 0 130.3 100"
+          role="presentation"
+          className="overflow-visible"
+        >
+          <path d={R_PATH_D} fill="var(--color-ink)" />
+          <circle
+            cx="110.3"
+            cy="20.0"
+            r="20.0"
+            fill="var(--color-ultramarine)"
+            className="boot-splash-dot"
+          />
+        </svg>
+      </div>
     </div>
   );
 }
