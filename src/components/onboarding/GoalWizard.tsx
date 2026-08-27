@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Check, ChevronRight, Sparkles, Plus } from "lucide-react";
+import { Search, Check, ChevronRight, Plus } from "lucide-react";
 import { ScreenShell, ScreenHeading } from "@/components/onboarding/ScreenShell";
 import { UNIVERSITY_PROGRAMS, type UniversityProgram } from "@/lib/sample-data";
 import { decOfferingsAtCegep, findCegepInstitution } from "@/lib/data/cegep-institutions";
@@ -146,6 +146,14 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
     [selectedDec],
   );
 
+  // Auto-select top 5 most accessible suggestions by default
+  useEffect(() => {
+    if (topSuggestions.length) {
+      const top5Ids = topSuggestions.slice(0, 5).map((s) => s.item.id);
+      setTargetIds((prev) => Array.from(new Set([...prev, ...top5Ids])));
+    }
+  }, [topSuggestions]);
+
   const filteredPrograms = useMemo(() => {
     const q = query.trim().toLowerCase();
     let list = UNIVERSITY_PROGRAMS;
@@ -188,10 +196,7 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
     setInterestIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   }
 
-  function selectTop5() {
-    const top5Ids = topSuggestions.slice(0, 5).map((s) => s.item.id);
-    setTargetIds((prev) => Array.from(new Set([...prev, ...top5Ids])));
-  }
+  
 
   function finish() {
     update({ cegepProgramId, targetUniversityProgramIds: targetIds, interestIds });
@@ -426,14 +431,6 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
               <p className="text-[12px] font-bold uppercase tracking-wider text-ink/60">
                 {t("goal.catalogSuggestions")}
               </p>
-              <button
-                type="button"
-                onClick={selectTop5}
-                className="inline-flex items-center gap-1.5 rounded-full bg-ultramarine/[0.08] px-3 py-1 text-[11.5px] font-bold text-ultramarine hover:bg-ultramarine/15 transition-colors"
-              >
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>{locale === "fr" ? "Sélectionner les 5 meilleurs" : "Select top 5"}</span>
-              </button>
             </div>
 
             <div className="flex flex-col gap-2.5">
@@ -540,19 +537,7 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
       >
         <ScreenHeading title={t("goal.specificTitle")} body={t("goal.specificBody")} />
 
-        {/* Top 5 button */}
-        {topSuggestions.length > 0 && (
-          <div className="mb-3">
-            <button
-              type="button"
-              onClick={selectTop5}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-ultramarine/30 bg-ultramarine/[0.06] py-2.5 text-[12.5px] font-bold text-ultramarine shadow-sm hover:bg-ultramarine/12 transition-colors active:scale-[0.98]"
-            >
-              <Sparkles className="h-4 w-4" />
-              <span>{locale === "fr" ? "⭐ Sélectionner les 5 meilleurs pour mon DEC" : "⭐ Select top 5 for my DEC"}</span>
-            </button>
-          </div>
-        )}
+
 
         {/* Search */}
         <div className="relative mb-3">

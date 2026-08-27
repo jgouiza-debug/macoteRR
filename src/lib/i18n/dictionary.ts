@@ -180,7 +180,7 @@ export const DICTIONARY = {
     "goal.quiz": "Je ne sais pas — quiz rapide (1 min)",
     "goal.specificTitle": "Quel(s) programme(s) vises-tu?",
     "goal.specificBody": "Choisis-en un ou plusieurs. Tu pourras changer d'idée plus tard.",
-    "goal.searchProgram": "Cherche un programme ou une université",
+    "goal.searchProgram": "Cherche un programme",
     "goal.noProgram": "Aucun programme trouvé.",
     "goal.generalTitle": "Quels domaines t'intéressent?",
     "goal.generalBody": "Choisis-en un ou plusieurs.",
