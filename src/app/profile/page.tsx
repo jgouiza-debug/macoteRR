@@ -11,11 +11,13 @@ import { findCegepInstitution } from "@/lib/data/cegep-institutions";
 import { useStudentProfile, resetProfile } from "@/lib/profile/store";
 import { SELF_TAGS, tagLabel } from "@/lib/tags/taxonomy";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { useFormat } from "@/lib/i18n/useFormat";
 import { createClient } from "@/lib/db/client";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { t, locale } = useLocale();
+  const f = useFormat();
   const { profile, toggleTag } = useStudentProfile();
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -85,6 +87,15 @@ export default function ProfilePage() {
     {
       label: t("prof.session"),
       value: sessionLabel,
+    },
+    {
+      label: t("entry.label"),
+      value:
+        profile.rScore !== null
+          ? `${f.score(profile.rScore)} (${profile.rScoreStatus === "confirmed" ? "confirmée" : "estimée"})`
+          : locale === "fr"
+            ? "En attente (1ère session)"
+            : "Pending (1st session)",
     },
   ];
 

@@ -40,11 +40,9 @@ function isSatisfied(step: OnboardingStep, profile: StudentProfile): boolean {
     case "program":
       return profile.cegepProgramId !== null;
     case "score":
-      return profile.rScore !== null;
+      return profile.rScore !== null || profile.currentSession !== null;
     case "goal":
-      // Deliberately not gated on a target or an interest: "I don't know yet" is a legitimate
-      // answer the quiz exists to serve, and blocking on it would trap that student.
-      return profile.rScore !== null;
+      return profile.rScore !== null || profile.currentSession !== null;
     case "account":
       return false; // Never "done" client-side — completion is having a session.
   }

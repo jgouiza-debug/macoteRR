@@ -75,6 +75,17 @@ export function ResultsView({
       ? `${status === "confirmed" ? "Ta cote" : "Ton estimation"} de ${f.score(score)} dépasse le seuil publié dans ${cleared} programme${cleared === 1 ? "" : "s"} de notre base.`
       : `Your ${status === "confirmed" ? "score" : "estimate"} of ${f.score(score)} clears the published cutoff in ${cleared} program${cleared === 1 ? "" : "s"} in our database.`;
 
+  const percentileText =
+    score >= 35.0
+      ? locale === "fr" ? "Top 1% provincial" : "Top 1% province-wide"
+      : score >= 32.5
+        ? locale === "fr" ? "Top 5% provincial" : "Top 5% province-wide"
+        : score >= 29.5
+          ? locale === "fr" ? "Top 20% provincial" : "Top 20% province-wide"
+          : score >= 26.0
+            ? locale === "fr" ? "Moitié supérieure (Top 50%)" : "Upper half (Top 50%)"
+            : null;
+
   return (
     <div className="flex min-h-[100dvh] flex-col bg-chalk">
       <header className="sticky top-0 z-50 bg-chalk/90 backdrop-blur-sm pt-safe">
@@ -93,10 +104,17 @@ export function ResultsView({
           <div className="mb-1 flex items-end justify-between gap-4">
             <div>
               <p className="text-[11px] text-ink/50">{t("entry.label")}</p>
-              <p className="font-display text-[24px] font-bold leading-tight text-ultramarine tabular-nums">
-                {status === "estimated" && "≈ "}
-                {f.score(score)}
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="font-display text-[24px] font-bold leading-tight text-ultramarine tabular-nums">
+                  {status === "estimated" && "≈ "}
+                  {f.score(score)}
+                </p>
+                {percentileText && (
+                  <span className="rounded-full bg-ultramarine/[0.08] px-2 py-0.5 text-[11px] font-bold text-ultramarine">
+                    {percentileText}
+                  </span>
+                )}
+              </div>
             </div>
             <div className="text-right">
               <p className="text-[11px] text-ink/50">{t("cutoff.publishedRange")}</p>

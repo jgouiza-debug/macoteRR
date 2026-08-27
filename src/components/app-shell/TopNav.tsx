@@ -8,7 +8,7 @@ import { NAV_ITEMS } from "./nav-items";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
-export function TopNav({ rScore }: { rScore?: number }) {
+export function TopNav({ rScore }: { rScore?: number | null }) {
   const pathname = usePathname();
   const { t } = useLocale();
   const f = useFormat();
@@ -43,9 +43,13 @@ export function TopNav({ rScore }: { rScore?: number }) {
         </nav>
 
         <div className="flex items-center gap-3">
-          {rScore !== undefined && (
+          {rScore !== undefined && rScore !== null ? (
             <span className="text-[13.5px] font-extrabold tracking-tight tabular-nums text-ultramarine">
               R : {f.score(rScore)}
+            </span>
+          ) : (
+            <span className="text-[13.5px] font-extrabold tracking-tight text-ink/40">
+              R : ??
             </span>
           )}
           <LangToggle />

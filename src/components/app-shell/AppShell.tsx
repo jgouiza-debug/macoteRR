@@ -10,7 +10,7 @@ export function AppShell({
   footer = true,
 }: {
   children: ReactNode;
-  rScore?: number;
+  rScore?: number | null;
   footer?: boolean;
 }) {
   return (

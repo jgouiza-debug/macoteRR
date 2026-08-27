@@ -18,14 +18,12 @@ export default function StartingCegepPage() {
 
   function handleContinue() {
     setLoading(true);
-    // Baseline exploratory score for 1st semester cégep student
-    const exploratoryScore = 30.0;
     update({
       currentSession: 1,
-      rScore: exploratoryScore,
-      rScoreStatus: "estimated",
+      rScore: null,
+      rScoreStatus: null,
     });
-    router.push(`/onboarding/results?score=${exploratoryScore}&status=estimated&starting=true`);
+    router.push("/onboarding/goal");
   }
 
   return (

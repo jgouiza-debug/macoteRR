@@ -11,11 +11,12 @@ export const AxisRow = memo(function AxisRow({
   score,
   range,
 }: {
-  score: number;
+  score?: number | null;
   range: CutoffRange | null;
 }) {
-  const scoreLeft = scorePercent(score);
-  const status = compareToCutoffRange(score, range);
+  const hasScore = score !== null && score !== undefined;
+  const scoreLeft = hasScore ? scorePercent(score) : null;
+  const status = hasScore ? compareToCutoffRange(score, range) : "unverified";
   const dotColor =
     status === "above"
       ? "bg-moss"
@@ -42,10 +43,12 @@ export const AxisRow = memo(function AxisRow({
           style={{ left: "50%" }}
         />
       )}
-      <div
-        className={`absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-paper ${dotColor}`}
-        style={{ left: `${scoreLeft}%` }}
-      />
+      {scoreLeft !== null && (
+        <div
+          className={`absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-paper ${dotColor}`}
+          style={{ left: `${scoreLeft}%` }}
+        />
+      )}
     </div>
   );
 });

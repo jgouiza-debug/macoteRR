@@ -49,12 +49,12 @@ export default function DashboardPage() {
     () => false,
   );
 
-  // No score means onboarding was never completed on this device — nothing real to show.
+  // No cegep means onboarding was never started on this device — nothing real to show.
   useEffect(() => {
-    if (hydrated && profile.rScore === null) router.replace("/onboarding");
-  }, [hydrated, profile.rScore, router]);
+    if (hydrated && profile.cegepId === null) router.replace("/onboarding");
+  }, [hydrated, profile.cegepId, router]);
 
-  if (!hydrated || profile.rScore === null) {
+  if (!hydrated || profile.cegepId === null) {
     return (
       <AppShell>
         <div className="mx-auto flex w-full max-w-[480px] flex-col items-center gap-4 px-4 py-16 text-center">
@@ -71,6 +71,7 @@ export default function DashboardPage() {
   }
 
   const isConfirmed = profile.rScoreStatus === "confirmed";
+  const hasScore = profile.rScore !== null;
   const cegep = CEGEPS.find((c) => c.id === profile.cegepId);
   const cegepProgram = CEGEP_PROGRAMS.find((p) => p.id === profile.cegepProgramId);
   const targets = UNIVERSITY_PROGRAMS.filter((p) => profile.targetUniversityProgramIds.includes(p.id));
@@ -78,49 +79,70 @@ export default function DashboardPage() {
   return (
     <AppShell rScore={profile.rScore}>
       <div className="mx-auto flex w-full max-w-[480px] flex-col gap-7 px-4 py-6">
-        <section className="flex flex-col items-center gap-1 rounded border border-ink/12 bg-paper px-5 py-6 text-center shadow-card">
+        <section className="flex flex-col items-center gap-1 rounded-xl border border-ink/12 bg-paper px-5 py-6 text-center shadow-card">
           <h1 className="font-display text-[17px] font-bold text-ink">
-            {/* The heading has to track the actual status: it read "Estimation actuelle"
-                above a badge saying CONFIRMÉE, which is exactly the confirmed-vs-estimated
-                ambiguity this product treats as non-negotiable. */}
-            {t(isConfirmed ? "dash.confirmedTitle" : "dash.estimateTitle")}
+            {hasScore
+              ? t(isConfirmed ? "dash.confirmedTitle" : "dash.estimateTitle")
+              : locale === "fr"
+                ? "Cheminement collégial (1ère session)"
+                : "College Pathway (1st Semester)"}
           </h1>
           {(cegep || cegepProgram) && (
             <p className="text-[12.5px] text-ink/50">
               {[cegep?.name, cegepProgram?.name].filter(Boolean).join(" · ")}
             </p>
           )}
-          {/* Dashed frame + ≈ + trending icon are the "this is an estimate" tell. A
-              confirmed score is a fact from the student's cégep and gets a solid frame and a
-              check, so the two can never be mistaken for each other at a glance. */}
-          <button
-            type="button"
-            onClick={() => setBandOpen(true)}
-            aria-label={t(isConfirmed ? "dash.confirmedTitle" : "dash.estimateTitle")}
-            className={`mt-4 flex min-w-[180px] flex-col items-center gap-1 rounded border px-5 py-3.5 shadow-sm tap-spring active:scale-[0.97] ${
-              isConfirmed ? "border-moss/60 bg-moss/[0.02]" : "border-dashed border-moss/60 bg-paper"
-            }`}
-          >
-            <span className="flex items-center gap-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-moss">
-              {isConfirmed ? (
-                <BadgeCheck className="h-3.5 w-3.5" />
-              ) : (
-                <TrendingUp className="h-3.5 w-3.5" />
-              )}
-              {t(isConfirmed ? "dash.confirmed" : "dash.estimated")}
-            </span>
-            <span className="font-display text-[40px] font-extrabold leading-none tracking-tight text-ultramarine tabular-nums">
-              {!isConfirmed && "≈ "}
-              {f.score(profile.rScore, 2)}
-            </span>
-            <span className="mt-1 flex items-center gap-1 text-[11px] font-medium text-ink/45">
-              <Info className="h-3 w-3" />
-              {t("common.seuil")}
-            </span>
-          </button>
+
+          {hasScore ? (
+            <button
+              type="button"
+              onClick={() => setBandOpen(true)}
+              aria-label={t(isConfirmed ? "dash.confirmedTitle" : "dash.estimateTitle")}
+              className={`mt-4 flex min-w-[180px] flex-col items-center gap-1 rounded-xl border px-5 py-3.5 shadow-sm tap-spring active:scale-[0.97] ${
+                isConfirmed ? "border-moss/60 bg-moss/[0.02]" : "border-dashed border-moss/60 bg-paper"
+              }`}
+            >
+              <span className="flex items-center gap-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-moss">
+                {isConfirmed ? (
+                  <BadgeCheck className="h-3.5 w-3.5" />
+                ) : (
+                  <TrendingUp className="h-3.5 w-3.5" />
+                )}
+                {t(isConfirmed ? "dash.confirmed" : "dash.estimated")}
+              </span>
+              <span className="font-display text-[40px] font-extrabold leading-none tracking-tight text-ultramarine tabular-nums">
+                {!isConfirmed && "≈ "}
+                {f.score(profile.rScore as number, 2)}
+              </span>
+              <span className="mt-1 flex items-center gap-1 text-[11px] font-medium text-ink/45">
+                <Info className="h-3 w-3" />
+                {t("common.seuil")}
+              </span>
+            </button>
+          ) : (
+            <div className="mt-3 flex min-w-[200px] flex-col items-center gap-1.5 rounded-xl border border-dashed border-ink/20 bg-chalk/30 px-5 py-4">
+              <span className="flex items-center gap-1.5 rounded-full bg-ink/8 px-2.5 py-0.5 text-[10.5px] font-bold uppercase tracking-wider text-ink/60">
+                {locale === "fr" ? "EN ATTENTE" : "PENDING"}
+              </span>
+              <span className="font-display text-[38px] font-extrabold leading-none tracking-tight text-ink/40 tabular-nums">
+                ??
+              </span>
+              <p className="mt-1 max-w-[260px] text-[11.5px] leading-relaxed text-ink/60">
+                {locale === "fr"
+                  ? "Ta cote R sera calculée après ta première session."
+                  : "Your R-score will be calculated after your first semester."}
+              </p>
+              <Link
+                href="/onboarding/score/confirm"
+                className="mt-2 text-[12.5px] font-semibold text-ultramarine hover:underline"
+              >
+                {locale === "fr" ? "Entrer ma cote R" : "Enter my R-score"}
+              </Link>
+            </div>
+          )}
         </section>
 
-        <section className="flex flex-col gap-4 rounded border border-ink/12 bg-paper p-4 shadow-card">
+        <section className="flex flex-col gap-4 rounded-xl border border-ink/12 bg-paper p-4 shadow-card">
           <h2 className="font-display text-[17px] font-bold text-ink">
             {t("dash.programGoal")}
           </h2>
@@ -135,38 +157,38 @@ export default function DashboardPage() {
           ) : (
             targets.map((program) => {
               const range = getCutoffRange(program.cutoffHistory);
-              const status = compareToCutoffRange(profile.rScore as number, range);
+              const status = hasScore && profile.rScore !== null ? compareToCutoffRange(profile.rScore, range) : null;
               const goalName = program.name;
               return (
                 <div key={program.id} className="flex flex-col gap-2 border-t border-ink/10 pt-4 first:border-t-0 first:pt-0">
                   <Link
                     href={`/programs/${program.id}`}
-                    className="flex flex-col gap-2 rounded p-2.5 -mx-2.5 transition-[transform,background-color] duration-150 hover:bg-chalk/40 active:bg-chalk/70 active:scale-[0.99]"
+                    className="flex flex-col gap-2 rounded-lg p-2.5 -mx-2.5 transition-[transform,background-color] duration-150 hover:bg-chalk/40 active:bg-chalk/70 active:scale-[0.99]"
                   >
                     <div className="flex items-baseline justify-between gap-3 text-[13.5px]">
                       <span className="font-semibold text-ink">
                         {goalName} · {program.institution}
                       </span>
-                      <span className="text-ink/55 tabular-nums">
+                      <span className="text-ink/55 tabular-nums text-[12.5px]">
                         {range
                           ? `${t("cutoff.publishedRange")} ${formatRangeYears(range)} : ${f.score(range.low)}–${f.score(range.high)}`
                           : t("cutoff.unverified")}
                       </span>
                     </div>
 
-                    {/* Position on the distribution, never a progress bar: a cote R is a rank in a
-                        cohort, and a bar would read the gap as a failure to fill. */}
-                    <AxisRow score={profile.rScore as number} range={range} />
+                    <AxisRow score={profile.rScore} range={range} />
 
-                    <div className="flex justify-between text-[11.5px] text-ink/55 tabular-nums">
-                      <span>
-                        {t(isConfirmed ? "dash.yourScore" : "dash.yourEst")} : {!isConfirmed && "≈ "}
-                        {f.score(profile.rScore as number)}
-                      </span>
-                      <span className={`font-semibold ${CUTOFF_STATUS_COLOR_CLASS[status]}`}>
-                        {t(CUTOFF_STATUS_LABEL_KEY[status])}
-                      </span>
-                    </div>
+                    {hasScore && profile.rScore !== null && status !== null && (
+                      <div className="flex justify-between text-[11.5px] text-ink/55 tabular-nums">
+                        <span>
+                          {t(isConfirmed ? "dash.yourScore" : "dash.yourEst")} : {!isConfirmed && "≈ "}
+                          {f.score(profile.rScore)}
+                        </span>
+                        <span className={`font-semibold ${CUTOFF_STATUS_COLOR_CLASS[status]}`}>
+                          {t(CUTOFF_STATUS_LABEL_KEY[status])}
+                        </span>
+                      </div>
+                    )}
                   </Link>
                   <SourceStamp date={program.lastVerifiedAt} href={program.sourceUrl} />
                 </div>
@@ -175,7 +197,7 @@ export default function DashboardPage() {
           )}
         </section>
 
-        <section className="flex flex-col gap-4 rounded border border-ink/12 bg-paper p-4 shadow-card">
+        <section className="flex flex-col gap-4 rounded-xl border border-ink/12 bg-paper p-4 shadow-card">
           <h2 className="flex items-center gap-2 font-display text-[17px] font-bold text-ink">
             <CalendarDays className="h-[18px] w-[18px]" />
             {t("dash.importantDates")}
@@ -228,11 +250,13 @@ export default function DashboardPage() {
         </section>
       </div>
 
-      <RScoreBandSheet
-        score={profile.rScore}
-        open={bandOpen}
-        onClose={() => setBandOpen(false)}
-      />
+      {profile.rScore !== null && (
+        <RScoreBandSheet
+          score={profile.rScore}
+          open={bandOpen}
+          onClose={() => setBandOpen(false)}
+        />
+      )}
     </AppShell>
   );
 }

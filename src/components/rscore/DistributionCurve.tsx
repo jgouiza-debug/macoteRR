@@ -189,6 +189,47 @@ export const DistributionCurve = memo(function DistributionCurve({
             }
           />
 
+          {/* Percentile benchmark milestone lines (Top 20%, Top 5%, Top 1%) */}
+          <g className="select-none">
+            {[
+              { score: 29.5, label: "Top 20%" },
+              { score: 32.5, label: "Top 5%" },
+              { score: 35.0, label: "Top 1%" },
+            ].map((b) => {
+              const xB = xForScore(b.score);
+              const yB = yForX(xB);
+              const isNearRight = xB > VIEW_W - 18;
+              return (
+                <g key={b.label}>
+                  <line
+                    x1={xB}
+                    y1={yB}
+                    x2={xB}
+                    y2={BASELINE_Y}
+                    stroke="var(--color-ink)"
+                    strokeOpacity="0.22"
+                    strokeWidth="1"
+                    strokeDasharray="2 2"
+                  />
+                  <circle cx={xB} cy={yB} r="2" fill="var(--color-ink)" fillOpacity="0.35" />
+                  <text
+                    x={isNearRight ? xB : xB}
+                    y={yB - 4}
+                    textAnchor={isNearRight ? "end" : "middle"}
+                    fill="var(--color-ink)"
+                    fillOpacity="0.55"
+                    fontSize="8.5"
+                    fontWeight="700"
+                    fontFamily="var(--font-sans), sans-serif"
+                    className="tabular-nums tracking-tight"
+                  >
+                    {b.label}
+                  </text>
+                </g>
+              );
+            })}
+          </g>
+
           {/* Cutoff mark (1.5px dashed vertical line + label, faded in 0-250ms) */}
           {xCutoff !== null && yCutoff !== null && (
             <g
