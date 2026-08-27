@@ -130,6 +130,24 @@ export function decOfferingsAtCegep(shortCode: string | null | undefined): Cegep
   return [...byCode.values()].sort((a, b) => a.programName.localeCompare(b.programName, "fr"));
 }
 
+/**
+ * The display name for a ministerial DEC code, whichever spelling of the code arrives.
+ *
+ * `CEGEP_PROGRAM_OFFERINGS` stores codes exactly as the scrape found them ("200B1"), while the
+ * profile stores the normalized form ("200.B1") that `decOfferingsAtCegep` hands the picker.
+ * Comparing the two verbatim never matched, so every screen naming the student's DEC fell
+ * through to the bare code — or, on the counsellor sheet, to "Non précisé". Both sides are
+ * normalized here so there is one answer to "what is this programme called".
+ */
+export function findDecProgramName(code: string | null | undefined): string | null {
+  if (!code) return null;
+  const target = normalizeProgramCode(code);
+  const match = CEGEP_PROGRAM_OFFERINGS.find(
+    (offering) => normalizeProgramCode(offering.programCode) === target,
+  );
+  return match?.programName ?? null;
+}
+
 /** Ministerial codes offered at one cégep, for filtering a list keyed by code. */
 export function decCodesAtCegep(shortCode: string | null | undefined): Set<string> {
   return new Set(decOfferingsAtCegep(shortCode).map((o) => o.programCode));

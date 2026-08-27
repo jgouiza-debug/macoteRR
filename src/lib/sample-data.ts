@@ -8837,7 +8837,7 @@ export const UNIVERSITY_PROGRAMS: UniversityProgram[] = [
     ]
   },
   {
-    "id": "universite-baccalaureat-en-administration-455",
+    "id": "universite-baccalaureat-en-administration-455-uqat",
     "name": "Baccalauréat en administration (B.A.A.)",
     "institution": "Université du Québec en Abitibi-Témiscamingue (UQAT)",
     "description": "Formation universitaire de 1er cycle menant au baccalauréat en Baccalauréat en administration (B.A.A.) à Université du Québec en Abitibi-Témiscamingue (UQAT).",
