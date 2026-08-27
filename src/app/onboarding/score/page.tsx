@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronRight, TriangleAlert, Sparkles } from "lucide-react";
+import { ChevronRight, TriangleAlert } from "lucide-react";
 import { ScreenShell, ScreenHeading } from "@/components/onboarding/ScreenShell";
 import { Sheet } from "@/components/ui/Sheet";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
@@ -81,16 +81,13 @@ export default function KnowYourScorePage() {
           href="/onboarding/score/starting"
           className="flex min-h-[64px] items-center justify-between gap-3 rounded-xl border border-moss/40 bg-moss/[0.04] px-4 py-3 text-left text-moss transition-transform active:scale-[0.99]"
         >
-          <div className="flex items-start gap-2.5">
-            <Sparkles className="mt-0.5 h-4 w-4 flex-shrink-0 text-moss" />
-            <div>
-              <span className="block text-[14.5px] font-semibold text-moss">
-                {t("bif.startingCegep")}
-              </span>
-              <span className="block text-[12px] font-normal text-moss/80">
-                {t("bif.startingCegepSub")}
-              </span>
-            </div>
+          <div>
+            <span className="block text-[14.5px] font-semibold text-moss">
+              {t("bif.startingCegep")}
+            </span>
+            <span className="block text-[12px] font-normal text-moss/80">
+              {t("bif.startingCegepSub")}
+            </span>
           </div>
           <ChevronRight className="h-5 w-5 flex-shrink-0 text-moss/70" />
         </Link>
