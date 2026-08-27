@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles, ArrowRight, BookOpen, GraduationCap, Award } from "lucide-react";
+import { ArrowRight, BookOpen, GraduationCap, Award } from "lucide-react";
 import { ScreenShell } from "@/components/onboarding/ScreenShell";
 import { useStudentProfile } from "@/lib/profile/store";
 import { useOnboardingGuard } from "@/lib/profile/onboarding";
@@ -44,10 +44,6 @@ export default function StartingCegepPage() {
       }
     >
       <div className="flex flex-col gap-5 pt-2">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-ultramarine/[0.08] text-ultramarine">
-          <Sparkles className="h-6 w-6" />
-        </div>
-
         <div className="flex flex-col gap-1.5">
           <h1 className="font-display text-[26px] font-bold leading-tight tracking-tight text-ink">
             {t("starting.title")}
@@ -59,9 +55,6 @@ export default function StartingCegepPage() {
 
         {/* Highlight card for bursaries for program & future */}
         <div className="flex items-start gap-3.5 rounded-xl border border-ember/30 bg-ember/[0.06] p-4 shadow-sm">
-          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-ember/15 text-ember">
-            <Award className="h-5 w-5" />
-          </div>
           <div className="flex flex-col gap-1">
             <h2 className="text-[14px] font-bold text-ink">
               {t("starting.bursaryHighlight")}

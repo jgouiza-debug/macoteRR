@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Check, ChevronRight, Plus } from "lucide-react";
 import { ScreenShell, ScreenHeading } from "@/components/onboarding/ScreenShell";
@@ -146,13 +146,17 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
     [selectedDec],
   );
 
-  // Auto-select top 5 most accessible suggestions by default
-  useEffect(() => {
-    if (topSuggestions.length) {
-      const top5Ids = topSuggestions.slice(0, 5).map((s) => s.item.id);
-      setTargetIds((prev) => Array.from(new Set([...prev, ...top5Ids])));
-    }
-  }, [topSuggestions]);
+  // The top five come pre-selected, once per DEC. Seeding this from an effect re-ran the
+  // merge on every pass, so unticking one of the five put it straight back and the checkmarks
+  // could not be turned off. Keyed on the suggestion ids instead: a new DEC seeds a new set,
+  // and within one set the student's own selections stand.
+  const [seededFor, setSeededFor] = useState<string | null>(null);
+  const suggestionKey = topSuggestions.map((s) => s.item.id).join("|");
+  if (suggestionKey && seededFor !== suggestionKey) {
+    setSeededFor(suggestionKey);
+    const top5Ids = topSuggestions.slice(0, 5).map((s) => s.item.id);
+    setTargetIds((prev) => Array.from(new Set([...prev, ...top5Ids])));
+  }
 
   const filteredPrograms = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -368,19 +372,11 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
       profile.rScore !== null
         ? `/onboarding/results?score=${profile.rScore}&status=${profile.rScoreStatus ?? "confirmed"}`
         : "/onboarding/score";
+    // No sticky footer on this step. The skip sat pinned over the last suggestion card, so it
+    // read as a caption on that card and competed with the three choices above it. It now
+    // lives once, at the very end of the scroll: the last thing offered, not the first in reach.
     return (
-      <ScreenShell
-        backHref={resultsHref}
-        footer={
-          <button
-            type="button"
-            onClick={finish}
-            className="flex h-12 w-full items-center justify-center text-[14px] font-semibold text-ink/60"
-          >
-            {t("goal.skipStep")}
-          </button>
-        }
-      >
+      <ScreenShell backHref={resultsHref}>
         <ScreenHeading title={t("goal.futureTitle")} body={t("goal.futureBody")} />
         <div className="flex flex-col gap-2.5">
           <button
@@ -434,7 +430,7 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
             </div>
 
             <div className="flex flex-col gap-2.5">
-              {topSuggestions.map(({ item, matchChip }) => {
+              {topSuggestions.map(({ item }) => {
                 const isSelected = targetIds.includes(item.id);
                 const badge = getChanceBadge(item, profile.rScore, locale);
                 return (
@@ -451,11 +447,6 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
                         <span className="block text-[14px] font-semibold text-ink">
                           {item.name}
                         </span>
-                        {matchChip && (
-                          <span className="rounded-full bg-ink/[0.06] px-2 py-0.5 text-[10px] font-medium text-ink/60">
-                            {matchChip}
-                          </span>
-                        )}
                       </div>
                       <span className="mt-0.5 block text-[11.5px] text-ink/50">
                         {item.institution}
@@ -485,6 +476,14 @@ export function GoalWizard({ startStep }: { startStep: Step }) {
             </div>
           </div>
         )}
+
+        <button
+          type="button"
+          onClick={finish}
+          className="mb-2 mt-8 flex h-12 w-full items-center justify-center text-[14px] font-semibold text-ink/50 transition-colors hover:text-ink/70"
+        >
+          {t("goal.skipStep")}
+        </button>
       </ScreenShell>
     );
   }
