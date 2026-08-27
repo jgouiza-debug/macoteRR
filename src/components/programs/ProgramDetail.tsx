@@ -166,29 +166,29 @@ export function ProgramDetail({ program }: { program: UniversityProgram }) {
             <ul className="flex flex-col">
               {program.prerequisites.map((req) => {
                 const covered = prereqByName.get(req.name);
-                const label =
+                // Only the two states that say something get a badge. The third fired whenever
+                // the DEC's core course list has not been researched yet — most programmes —
+                // so "À VÉRIFIER" sat next to a plain "DEC reconnu" and read as a warning
+                // about the prerequisite rather than an admission about our own catalogue.
+                const badge =
                   covered === "prereq_covered"
-                    ? t("prog.inDecCore")
+                    ? { label: t("prog.inDecCore"), cls: "bg-moss/10 text-moss" }
                     : covered === "prereq_not_in_core"
-                      ? t("prog.notInDecCore")
-                      : t("prog.decCoreUnknown");
-                const cls =
-                  covered === "prereq_covered"
-                    ? "bg-moss/10 text-moss"
-                    : covered === "prereq_not_in_core"
-                      ? "bg-ember/10 text-ember"
-                      : "bg-ink/8 text-ink/60";
+                      ? { label: t("prog.notInDecCore"), cls: "bg-ember/10 text-ember" }
+                      : null;
                 return (
                   <li
                     key={req.name}
                     className="flex items-center justify-between gap-3 border-b border-ink/10 py-2.5 last:border-b-0"
                   >
                     <span className="text-[13.5px] text-ink">{req.name}</span>
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${cls}`}
-                    >
-                      {label}
-                    </span>
+                    {badge && (
+                      <span
+                        className={`flex-shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${badge.cls}`}
+                      >
+                        {badge.label}
+                      </span>
+                    )}
                   </li>
                 );
               })}
