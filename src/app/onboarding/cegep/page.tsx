@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Check } from "lucide-react";
 import { ScreenShell, ScreenHeading } from "@/components/onboarding/ScreenShell";
@@ -33,6 +33,19 @@ export default function CegepPickerPage() {
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<string | null>(profile.cegepId);
 
+  useEffect(() => {
+    // Lock history on step 1 of onboarding so browser back gesture/button stays on step 1
+    // instead of bouncing out to the landing page / website.
+    window.history.pushState(null, "", window.location.href);
+    const handlePopState = () => {
+      window.history.pushState(null, "", window.location.href);
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
+
   const filtered = useMemo(() => {
     const q = fold(query);
     if (!q) return CEGEP_INSTITUTIONS;
@@ -55,7 +68,7 @@ export default function CegepPickerPage() {
   }
 
   return (
-    <ScreenShell backHref="/">
+    <ScreenShell brand>
       <ScreenHeading title={t("cegep.title")} body={t("cegep.body")} />
 
       <div className="relative mb-3">
