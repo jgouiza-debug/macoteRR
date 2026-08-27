@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Instrument_Sans } from "next/font/google";
 import { LocaleProvider } from "@/lib/i18n/LocaleProvider";
 import { IosInstallGuide } from "@/components/pwa/IosInstallGuide";
+import { BootSplash } from "@/components/BootSplash";
 import { SITE_URL } from "@/lib/site-config";
 import "./globals.css";
 
@@ -85,6 +86,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <LocaleProvider>
           {children}
           <IosInstallGuide />
+          <BootSplash />
         </LocaleProvider>
       </body>
     </html>
