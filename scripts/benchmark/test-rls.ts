@@ -1,79 +1,52 @@
 /**
- * Automated RLS Security Enforcement Verification Test:
- * 
- * Verifies Guardrail 7.1:
- * - Attempts simulated cross-user read operations on student tables.
- * - Verifies that Student A cannot read or write Student B's data under any circumstance.
- * - Verifies that RLS policies are strictly active on student_profiles, student_course_grades,
- *   student_r_score_confirmations, and student_targets.
+ * Runs scripts/db/rls.test.sql against a real database and reports the result.
+ *
+ *   DATABASE_URL=postgresql://postgres:pg@127.0.0.1:54329/macote npm run test:rls
+ *
+ * Without DATABASE_URL (it is also read from .env.local) the script explains how to start the
+ * local bed and exits 2. It never prints PASS without having connected to a database — the
+ * version this replaced compared three string literals to each other and always said PASS.
  */
+import { spawnSync } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
 
-export type RlsVerificationResult = {
-  table: string;
-  policyName: string;
-  crossUserReadBlocked: boolean;
-  crossUserWriteBlocked: boolean;
-  anonymousReadBlocked: boolean;
-  status: "PASS" | "FAIL";
-};
+const ROOT = path.resolve(__dirname, "../..");
+const SQL = path.join(ROOT, "scripts/db/rls.test.sql");
 
-export function verifyRlsPolicies(): { results: RlsVerificationResult[]; allPassed: boolean } {
-  const policies = [
-    { table: "student_profiles", policy: "own profile only" },
-    { table: "student_course_grades", policy: "own grades only" },
-    { table: "student_r_score_confirmations", policy: "own confirmations only" },
-    { table: "student_targets", policy: "own targets only" },
-    { table: "notification_preferences", policy: "own prefs only" },
-    { table: "notification_events", policy: "own events only" },
-  ];
+export type RlsRun = { ok: boolean; skipped: boolean; output: string };
 
-  // Test simulation verifying RLS SQL predicates
-  const results: RlsVerificationResult[] = policies.map((p) => {
-    // Simulated mock evaluation of (select auth.uid()) = user_id
-    const userA: string = "00000000-0000-0000-0000-000000000001";
-    const userB: string = "00000000-0000-0000-0000-000000000002";
-    const anon: string | null = null;
-
-    // Cross user read: user A queries user B's row -> auth.uid() === userA, row.user_id === userB -> FALSE
-    const crossUserReadBlocked = userA !== userB;
-    const crossUserWriteBlocked = userA !== userB;
-    const anonymousReadBlocked = anon !== userA;
-
-    return {
-      table: p.table,
-      policyName: p.policy,
-      crossUserReadBlocked,
-      crossUserWriteBlocked,
-      anonymousReadBlocked,
-      status: crossUserReadBlocked && crossUserWriteBlocked && anonymousReadBlocked ? "PASS" : "FAIL",
-    };
-  });
-
-  const allPassed = results.every((r) => r.status === "PASS");
-
-  return { results, allPassed };
+function databaseUrl(): string | null {
+  if (process.env.DATABASE_URL) return process.env.DATABASE_URL;
+  const envFile = path.join(ROOT, ".env.local");
+  if (!existsSync(envFile)) return null;
+  const line = readFileSync(envFile, "utf8")
+    .split("\n")
+    .find((l) => l.startsWith("DATABASE_URL="));
+  return line ? line.slice("DATABASE_URL=".length).trim() : null;
 }
 
-async function main() {
-  console.log("===============================================================================");
-  console.log("  Running Automated RLS Security Enforcement Verification Suite                ");
-  console.log("===============================================================================\n");
-
-  const { results, allPassed } = verifyRlsPolicies();
-
-  console.log("| Table | Policy Name | Cross-User Read | Cross-User Write | Anon Read | Status |");
-  console.log("|---|---|---|---|---|---|");
-  for (const r of results) {
-    console.log(`| \`${r.table}\` | "${r.policyName}" | Blocked | Blocked | Blocked | **${r.status}** |`);
+export function runRlsTest(): RlsRun {
+  const url = databaseUrl();
+  if (!url) {
+    return {
+      ok: false,
+      skipped: true,
+      output: "DATABASE_URL is not set. Start the local bed with `npm run db:local` and export the URL it prints.",
+    };
   }
-
-  console.log(`\nRLS Verification: ${allPassed ? `ALL ${results.length} POLICIES STRICTLY ENFORCED (PASS)` : "FAIL"}`);
-
-  if (!allPassed) {
-    process.exitCode = 1;
-  }
+  const psql = ["/usr/bin/psql", "/usr/lib/postgresql/16/bin/psql"].find(existsSync) ?? "psql";
+  const res = spawnSync(psql, ["-X", "-v", "ON_ERROR_STOP=1", "-f", SQL, url], {
+    encoding: "utf8",
+    env: process.env,
+  });
+  const output = `${res.stdout ?? ""}${res.stderr ?? ""}`.trim();
+  return { ok: res.status === 0, skipped: false, output: output || (res.error ? String(res.error) : "") };
 }
 
 if (require.main === module) {
-  main().catch(console.error);
+  const run = runRlsTest();
+  console.log(run.output);
+  if (run.skipped) process.exit(2);
+  process.exit(run.ok ? 0 : 1);
 }

@@ -11,7 +11,7 @@ import { analyzeBundles } from "./bundle-bench";
 import { measureRouteVitals, type RouteVitals } from "./route-vitals";
 import { analyzeQueries, type QueryBenchmarkResult } from "./db-bench";
 import { measureSessionNetworkRequests } from "./session-network-bench";
-import { verifyRlsPolicies } from "./test-rls";
+import { runRlsTest } from "./test-rls";
 
 function formatLatencyTable(results: MetricResult[]): string {
   let md = "| Interaction | Target (p75) | p50 | p75 | p90 | p95 | Status |\n";
@@ -53,7 +53,8 @@ export function generatePerformanceReport(): string {
   const dbBefore = analyzeQueries(false);
   const dbAfter = analyzeQueries(true);
   const networkReport = measureSessionNetworkRequests();
-  const rlsReport = verifyRlsPolicies();
+  // A real psql run against DATABASE_URL (scripts/db/rls.test.sql); never a simulated PASS.
+  const rlsReport = runRlsTest();
 
   const timestamp = new Date().toISOString();
 
@@ -119,7 +120,7 @@ export function generatePerformanceReport(): string {
   doc += `| **Realtime Connections** | 200 conn | 0 | 0 | 0.0% | **$0.00** |\n\n`;
 
   doc += `## 7. Guardrails Compliance Verification\n\n`;
-  doc += `- [x] **7.1 RLS Enforcement**: Verified by automated test \`npm run test:rls\` (${rlsReport.allPassed ? "100% Passed" : "Failed"}). All 4 policies active; cross-user and anonymous reads/writes blocked.\n`;
+  doc += `- [${rlsReport.ok ? "x" : " "}] **7.1 RLS Enforcement**: \`npm run test:rls\` runs scripts/db/rls.test.sql against a real database: ${rlsReport.skipped ? "SKIPPED (no DATABASE_URL — start the bed with npm run db:local)" : rlsReport.ok ? "PASS (two users + anon; cross-user reads return 0 rows, cross-user writes denied, catalogue read-only)" : "FAIL — see output"}.\n`;
   doc += `- [x] **7.2 Source Integrity**: All cutoffs, prerequisites, floors, and bursaries retain \`sourceUrl\` and \`lastVerifiedAt\` with \`<SourceStamp />\` rendered.\n`;
   doc += `- [x] **7.3 Confirmed vs Estimated Distinction**: Estimated scores consistently carry \`≈\` prefix and dashed accent border; never collapsed into confirmed scores.\n`;
   doc += `- [x] **7.4 No Fire-and-Forget Mutations**: Outbox tracks all mutations, auto-retries with backoff, auto-flushes on reconnect, and rolls back with user alert on persistent failure.\n`;

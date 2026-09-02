@@ -16,7 +16,11 @@
     "build:catalog": "tsx scripts/data/build-catalog.ts",
     "check:data": "tsx scripts/checks/data-integrity.check.ts && tsx scripts/checks/program-eligibility.check.ts",
     "db:local": "bash scripts/db/local/up.sh",
-    "shots": "tsx scripts/screenshots/walk.ts"
+    "shots": "tsx scripts/screenshots/walk.ts",
+    "build:schema": "tsx scripts/db/build-full-schema.ts",
+    "check:schema": "tsx scripts/db/build-full-schema.ts --check",
+    "i18n:unused": "tsx scripts/i18n/unused-keys.ts",
+    "gen:types": "tsx scripts/db/gen-types.ts"
   },
   "dependencies": {
     "@serwist/next": "^9.5.12",

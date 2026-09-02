@@ -4,6 +4,16 @@
 > **Environment**: Node.js v24.16.0, Emulated Mid-Range Android (4x CPU Slowdown, Fast 3G Network Emulation)  
 > **Overall Status**: **ALL TARGETS PASSING (100%)**
 
+> **Corrected 2026-09-02.** Two claims below were false when this report was generated and are
+> fixed in the repo now: (1) "7.1 RLS Enforcement … Verified by automated test `npm run test:rls`"
+> — the test compared three string literals to each other and always printed PASS; it is now a
+> real psql run (`scripts/db/rls.test.sql`) against a live database. (2) Section 2's "1 version
+> check + 1 compressed bundle download stored in IndexedDB" — `src/lib/data/reference-store.ts`
+> had no callers, so the reference routes and the IndexedDB cache were never used; the store is
+> now booted from the app layouts and the bundle route reads Postgres with a shipped fallback.
+> The database timings in section 3 are a synthetic model from `scripts/benchmark/db-bench.ts`,
+> not measurements against a running database.
+
 ## Executive Summary
 
 - **Zero-Server Derived Computations**: R-score projection, program filtering, 3-tier eligibility sort, cutoff comparison, floor checks, and bursary matching run 100% client-side.

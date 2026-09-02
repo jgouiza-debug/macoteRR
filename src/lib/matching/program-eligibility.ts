@@ -5,6 +5,7 @@ import {
   type CegepDecProgram,
   type CollegialCourseCode,
 } from "@/lib/data/cegep-catalog";
+import { resolveDecBaseCode } from "@/lib/data/dec-aliases";
 import {
   compareToCutoffRange,
   getCutoffRange,
@@ -471,13 +472,21 @@ export type RankProgramsInput<T extends UniversityProgram> = {
   decCatalog?: readonly DecCoreCourses[];
 };
 
-/** null when the code is absent or not in the catalogue — never a partial-credit fallback. */
+/**
+ * The DEC core for a code, or null when neither the code nor its local variant's name maps
+ * to a catalogue programme — never a partial-credit fallback. A cégep's own code ("200.B1",
+ * "300.13") resolves through src/lib/data/dec-aliases.ts to the ministerial family whose
+ * core it shares; the returned entry is the family's, so `code` may differ from the input.
+ */
 export function findDecCoreCourses(
   decProgramCode: string | null,
   decCatalog: readonly DecCoreCourses[] = CEGEP_DEC_PROGRAMS,
 ): DecCoreCourses | null {
   if (!decProgramCode) return null;
-  return decCatalog.find((d) => d.code === decProgramCode) ?? null;
+  const exact = decCatalog.find((d) => d.code === decProgramCode);
+  if (exact) return exact;
+  const base = resolveDecBaseCode(decProgramCode);
+  return base ? (decCatalog.find((d) => d.code === base) ?? null) : null;
 }
 
 /**

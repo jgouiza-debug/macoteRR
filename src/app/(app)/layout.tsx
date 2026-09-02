@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { ReferenceCatalogBoot } from "@/components/app-shell/ReferenceCatalogBoot";
 
 /**
  * The signed-in app: dashboard, programs, bursaries, profile, counselor prep. Grouped so they
@@ -14,5 +15,10 @@ export const metadata: Metadata = {
 export default function AppGroupLayout({ children }: LayoutProps<"/">) {
   // Client pages under here read the query string (useSearchParams) for edit-mode returns;
   // the boundary keeps the static shell prerenderable.
-  return <Suspense fallback={null}>{children}</Suspense>;
+  return (
+    <>
+      <ReferenceCatalogBoot />
+      <Suspense fallback={null}>{children}</Suspense>
+    </>
+  );
 }

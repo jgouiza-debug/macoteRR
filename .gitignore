@@ -57,3 +57,4 @@ public/swe-worker-*.js
 
 # unrelated local scratch project (Python venv, not part of this app)
 /scraper/
+.shots/

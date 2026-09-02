@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { ReferenceCatalogBoot } from "@/components/app-shell/ReferenceCatalogBoot";
 import OnboardingLoading from "./loading";
 
 /**
@@ -14,5 +15,10 @@ export const metadata: Metadata = {
 };
 
 export default function OnboardingLayout({ children }: LayoutProps<"/onboarding">) {
-  return <Suspense fallback={<OnboardingLoading />}>{children}</Suspense>;
+  return (
+    <>
+      <ReferenceCatalogBoot />
+      <Suspense fallback={<OnboardingLoading />}>{children}</Suspense>
+    </>
+  );
 }

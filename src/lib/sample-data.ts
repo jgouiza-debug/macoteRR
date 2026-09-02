@@ -9338,10 +9338,28 @@ export const UNIVERSITY_PROGRAMS: UniversityProgram[] = [
   },
 ];
 
+/**
+ * The foundation's own stated purpose, as one of the `bursaries.category` labels the database
+ * requires. A label for grouping and seeding, never a figure and never a claim about the
+ * student: an "academic_merit" bursary is still matched only on the non-sensitive criteria below.
+ */
+export type BursaryCategory =
+  | "financial_need"
+  | "academic_merit"
+  | "athletics"
+  | "arts_culture"
+  | "community_engagement"
+  | "perseverance"
+  | "program_specific"
+  | "mobility"
+  | "event_based"
+  | "other";
+
 export type Bursary = {
   id: string;
   name: string;
   sourceOrg: string;
+  category: BursaryCategory;
   cegepId: string | null;
   eligibleCegepPrograms: string[] | null;
   eligibleUniversityPrograms: string[] | null;
@@ -9373,6 +9391,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "bourse-perspective-quebec",
     name: "Bourses Perspective Québec (TI, Génie, Santé, Éducation)",
     sourceOrg: "Gouvernement du Québec (MES)",
+    category: "program_specific",
     cegepId: null,
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,
@@ -9393,6 +9412,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "afe-prets-bourses",
     name: "Programme de prêts et bourses (AFE)",
     sourceOrg: "Aide financière aux études — Gouvernement du Québec",
+    category: "financial_need",
     cegepId: null,
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,
@@ -9413,6 +9433,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "bourses-mes-excellence-collegiale",
     name: "Bourse d'excellence pour la persévérance et la réussite collégiale",
     sourceOrg: "Ministère de l'Enseignement supérieur",
+    category: "perseverance",
     cegepId: null,
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,
@@ -9435,6 +9456,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "desjardins-bourses-etudes",
     name: "Bourse d'études de la Fondation Desjardins (Collégial & Universitaire)",
     sourceOrg: "Fondation Desjardins",
+    category: "community_engagement",
     cegepId: null,
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,
@@ -9455,6 +9477,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "loran-scholars-award",
     name: "Bourse Loran de premier cycle",
     sourceOrg: "Fondation Bourses Loran",
+    category: "community_engagement",
     cegepId: null,
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,
@@ -9475,6 +9498,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "schulich-leader-scholarship",
     name: "Bourse Schulich Leader (STIM / Sciences, Technologie, Ingénierie, Maths)",
     sourceOrg: "Schulich Foundation",
+    category: "academic_merit",
     cegepId: null,
     eligibleCegepPrograms: ["200.B0", "200.B1", "420.B0"],
     // `UNIVERSITY_PROGRAMS[].id` slugs; the data-integrity check fails on a dangling id.
@@ -9500,6 +9524,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "hydro-quebec-collegial",
     name: "Bourses d'excellence Hydro-Québec pour les étudiants en sciences et génie",
     sourceOrg: "Fondation Hydro-Québec",
+    category: "academic_merit",
     cegepId: null,
     eligibleCegepPrograms: ["200.B0", "200.B1", "243.B0", "420.B0"],
     eligibleUniversityPrograms: null,
@@ -9520,6 +9545,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "forces-avenir-collegial",
     name: "Prix et Bourses Forces AVENIR Collégial (Projets engagés & Personnalités)",
     sourceOrg: "Forces AVENIR",
+    category: "community_engagement",
     cegepId: null,
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,
@@ -9540,6 +9566,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "aleo-faeq-sport-etudes",
     name: "Bourse Fondation Aléo (FAEQ) — Athlètes d'excellence et Sport-Études",
     sourceOrg: "Fondation Aléo",
+    category: "athletics",
     cegepId: null,
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,
@@ -9562,6 +9589,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "excellence-sciences-nature-sainte-foy",
     name: "Bourse d'excellence en sciences de la nature",
     sourceOrg: "Fondation du Cégep de Sainte-Foy",
+    category: "academic_merit",
     cegepId: "sainte-foy",
     eligibleCegepPrograms: ["200.B0", "200.B1"],
     eligibleUniversityPrograms: null,
@@ -9582,6 +9610,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "implication-communautaire-sainte-foy",
     name: "Bourse d'implication communautaire Desjardins",
     sourceOrg: "Fondation du Cégep de Sainte-Foy",
+    category: "community_engagement",
     cegepId: "sainte-foy",
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,
@@ -9602,6 +9631,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "perseverance-sainte-foy",
     name: "Bourse de persévérance scolaire",
     sourceOrg: "Fondation du Cégep de Sainte-Foy",
+    category: "perseverance",
     cegepId: "sainte-foy",
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,
@@ -9622,6 +9652,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "garneau-excellence-scolaire",
     name: "Bourse d'excellence académique de la Fondation Garneau",
     sourceOrg: "Fondation Cégep Garneau",
+    category: "academic_merit",
     cegepId: "garneau",
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,
@@ -9642,6 +9673,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "garneau-engagement-etudiant",
     name: "Bourse d'engagement socioculturel et sportif",
     sourceOrg: "Fondation Cégep Garneau",
+    category: "community_engagement",
     cegepId: "garneau",
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,
@@ -9662,6 +9694,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "limoilou-merite-etudiant",
     name: "Bourse de mérite et réussite de la Fondation Limoilou",
     sourceOrg: "Fondation Québec Philanthrope — Fonds Cégep Limoilou",
+    category: "academic_merit",
     cegepId: "limoilou",
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,
@@ -9682,6 +9715,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "maisonneuve-bourses-reussite",
     name: "Bourse d'excellence et persévérance de la Fondation Maisonneuve",
     sourceOrg: "Fondation du Cégep de Maisonneuve",
+    category: "perseverance",
     cegepId: "maisonneuve",
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,
@@ -9702,6 +9736,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "vieux-montreal-bourses-arts-sciences",
     name: "Bourse de la Fondation du Cégep du Vieux Montréal",
     sourceOrg: "Fondation du Cégep du Vieux Montréal",
+    category: "arts_culture",
     cegepId: "vieux-montreal",
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,
@@ -9722,6 +9757,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "ahuntsic-bourses-fondation",
     name: "Bourses d'encouragement aux études du Collège Ahuntsic",
     sourceOrg: "Fondation Collège Ahuntsic",
+    category: "perseverance",
     cegepId: "ahuntsic",
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,
@@ -9742,6 +9778,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "dawson-foundation-bursary",
     name: "Dawson College Foundation Academic & Leadership Award",
     sourceOrg: "Dawson College Foundation",
+    category: "academic_merit",
     cegepId: "dawson",
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,
@@ -9762,6 +9799,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "sherbrooke-cegep-bourses",
     name: "Bourse d'excellence et engagement de la Fondation Cégep de Sherbrooke",
     sourceOrg: "Fondation Cégep de Sherbrooke",
+    category: "community_engagement",
     cegepId: "sherbrooke",
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,
@@ -9782,6 +9820,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "trois-rivieres-fondation-bourses",
     name: "Bourses d'études de la Fondation du Cégep de Trois-Rivières",
     sourceOrg: "Fondation du Cégep de Trois-Rivières",
+    category: "perseverance",
     cegepId: "trois-rivieres",
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,
@@ -9802,6 +9841,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "outaouais-fondation-bourses",
     name: "Bourse de persévérance et leadership de la Fondation du Cégep de l'Outaouais",
     sourceOrg: "Fondation du Cégep de l'Outaouais",
+    category: "perseverance",
     cegepId: "outaouais",
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,
@@ -9822,6 +9862,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "chicoutimi-fondation-bourses",
     name: "Bourse de réussite et engagement de la Fondation du Cégep de Chicoutimi",
     sourceOrg: "Fondation du Cégep de Chicoutimi",
+    category: "community_engagement",
     cegepId: "chicoutimi",
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,
@@ -9842,6 +9883,7 @@ const BURSARY_ROWS: Bursary[] = [
     id: "rimouski-fondation-bourses",
     name: "Bourses d'études et d'implication de la Fondation du Cégep de Rimouski",
     sourceOrg: "Fondation du Cégep de Rimouski",
+    category: "community_engagement",
     cegepId: "rimouski",
     eligibleCegepPrograms: null,
     eligibleUniversityPrograms: null,

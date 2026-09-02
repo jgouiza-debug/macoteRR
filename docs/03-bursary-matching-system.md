@@ -41,7 +41,7 @@ Result: three tiers per student, not one flat list. **Matched now** (passed ever
 
 ## Data model note
 
-This logic is a straightforward SQL query (a handful of `where` and `array &&` overlap conditions), not a service that needs its own infrastructure. Build it as a Postgres function or a well-indexed query behind a single API route (`/api/bursaries/matches`), not a separate matching microservice. There's no scale problem here that justifies more machinery than that.
+This logic is a handful of set comparisons, not a service that needs its own infrastructure. It runs client-side in `src/lib/matching/match.ts` over the reference catalogue the app already holds, so the bursaries screen needs no network round-trip and works offline; the `/api/bursaries/matches` route once planned here was retired (2026-09) rather than left as a 501 stub. The `bursaries` table is the source the catalogue bundle is built from (`scripts/data/build-catalog.ts`, `/api/reference/bundle`), and `eligible_cegep_program_codes` holds the ministerial DEC codes the matcher compares, since a DEC code is province-wide and one code maps to many per-cégep offering rows.
 
 ## UI/UX requirements
 

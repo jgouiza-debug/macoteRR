@@ -1,115 +1,118 @@
 # Cloud setup handoff
 
-Everything up to this point (app scaffold, migrations, collector/promotion scripts, seed
-templates) was built and verified without any Supabase or Vercel account, and without Docker.
-That's as far as local-only verification can go — the real acceptance checks in
-`docs/00-BUILD-PROMPT.md` (live auth, real source-linked query results, a live deploy URL)
-need one of the two paths below. Pick whichever fits; both are documented, neither is chosen for
-you.
+Everything in this repo was built and verified without a Supabase or Vercel account and
+without Docker. The schema, the seed, row-level security and the profile sync are exercised
+against a local Postgres (see "Local verification bed"); what still needs a real project is
+the live acceptance checks in `docs/00-BUILD-PROMPT.md` (magic-link auth end to end, a deploy
+URL). Pick whichever path fits; both are documented, neither is chosen for you.
 
-## Path A — Install Docker Desktop (fully local, no cloud account yet)
+## Local verification bed (no cloud account, no Docker required)
+
+`scripts/db/local/up.sh` stands up a Postgres 16 (Docker if a daemon is reachable, otherwise
+the local binaries as an unprivileged user), installs a shim `auth` schema that mimics
+Supabase's `auth.uid()` / roles / grants, applies every migration in order, and loads the
+catalogue seed. It prints the `DATABASE_URL` the scripts below read (also picked up from
+`.env.local`).
+
+```bash
+npm run db:local                 # create or reset the bed and load everything
+npm run test:rls                 # real RLS test: two users + anon, cross-user reads/writes, catalogue read-only
+npm run build:schema             # regenerate supabase/full_schema.sql from the migrations
+npm run check:schema             # exit 1 if full_schema.sql drifted from the migrations
+scripts/db/local/dump-diff.sh    # prove full_schema.sql builds the same database as the migrations
+npm run gen:types                # regenerate the Database type from the live schema (no Docker needed)
+npm run build:catalog            # regenerate supabase/seed/catalog.sql + src/lib/data/version.ts from the TS data
+npm run check:data               # cross-reference and guardrail checks on the shipped data
+```
+
+`supabase gen types --db-url` needs a pg-meta container even for a plain Postgres, which is
+why `gen:types` introspects `information_schema` through `psql` instead. Its output replaces
+only the `Database` type; the named unions above it are kept.
+
+## Local development without a Supabase project
+
+Copy `.env.local.example` and use the "without a Supabase project" block: the Supabase URL
+points at a port nothing listens on, so `createClient()` succeeds and every auth/DB call
+fails fast. The app then runs as a guest: the whole funnel works, the outbox keeps its
+mutations pending, nothing is lost. `MACOTE_DEV_AUTH_BYPASS=1` lets `src/proxy.ts` serve the
+protected pages to that guest so `npm run shots` can render them against a seeded
+localStorage profile. The bypass is gated on `NODE_ENV !== "production"` at compile time and
+does not exist in a production bundle.
+
+```bash
+npm run dev
+npm run shots -- --serve         # every screen, every seeded state, both locales, phone + desktop
+```
+
+## Path A — Install Docker Desktop (fully local Supabase stack)
 
 1. Install Docker Desktop and make sure it's running (`docker info` should succeed).
-2. `npx supabase start` — spins up a full local Postgres/Auth/Storage stack. First run pulls
-   several images; that's expected.
-3. `npx supabase db push` (or `npx supabase migration up`) — applies every migration in
-   `supabase/migrations/` in order.
-4. `npx supabase gen types typescript --local > src/lib/db/database.types.ts` — regenerates the
-   hand-authored types from the real schema; diff against what's there now as a correctness
-   check (it should match exactly).
+2. `npx supabase start` — spins up a full local Postgres/Auth/Storage stack.
+3. `npx supabase db push` — applies every migration in `supabase/migrations/` in order.
+4. `npx supabase db query --local -f supabase/seed/catalog.sql` — loads the catalogue
+   (`supabase/config.toml` also lists it under `db.seed`, so `supabase db reset` loads it).
 5. Copy `.env.local.example` to `.env.local` and fill in the local stack's URL/anon key
    (`npx supabase status` prints them).
-6. `npm run collect:sainte-foy` once `supabase/seed/sainte-foy/*.json` has real, sourced data in
-   it, then `npm run promote:review` and `npm run promote` to exercise the full pipeline.
-7. `npm run dev`, sign up a test account, confirm the magic-link flow works end-to-end.
+6. `npm run dev`, sign up a test account, confirm the magic-link and OTP flows end-to-end.
 
-This unblocks everything except a real deploy URL — Vercel still needs a cloud Supabase project
-to talk to (a local Docker stack isn't reachable from Vercel's servers), so Path B is still the
-one needed before Phase 0's literal "blank deploy live at a real URL" check can pass for real.
+Vercel still needs a cloud Supabase project to talk to, so Path B is needed before the
+"blank deploy live at a real URL" check can pass.
 
 ## Path B — Create a free Supabase project (needed eventually regardless of Path A)
 
-1. Create a project at supabase.com (free tier is enough for this stage).
+1. Create a project at supabase.com (free tier is enough). Note the region: it decides
+   whether personal information leaves Quebec (see `LEGAL-REVIEW-NOTES.md`).
 2. `npx supabase link --project-ref <ref>` — the ref is in the project's dashboard URL.
-3. `npx supabase db push` — applies every migration in `supabase/migrations/` to the real
-   project.
-4. `npx supabase gen types typescript --project-id <ref> > src/lib/db/database.types.ts` —
-   regenerate and diff against the hand-authored version, same as Path A step 4.
+3. `npx supabase db push` — applies every migration through `20260902120000`.
+4. Load the catalogue: SQL editor → paste `supabase/seed/catalog.sql` → Run, or
+   `npx supabase db query --linked -f supabase/seed/catalog.sql`. It is idempotent (upserts
+   on `short_code` / `catalog_slug` / `course_code` / `program_code`) and inserts a
+   `catalog_versions` row that `/api/reference/version` reports.
 5. Copy `.env.local.example` to `.env.local`, fill in the project's URL/anon key (Project
    Settings → API) and the service-role key (same page — keep this one out of anything
-   client-side, per the warning already in `.env.local.example`).
-6. `npm run collect:sainte-foy` / `npm run promote:review` / `npm run promote` once the seed
-   templates have real data.
-7. `npm run dev`, sign up a test account, confirm the magic-link flow works end-to-end.
-8. Deploy: `vercel link`, set the same three env vars in the Vercel project settings, deploy.
+   client-side, per the warning in the example file).
+6. `npm run dev`, sign up a test account, confirm the magic-link and OTP flows end-to-end.
+7. Deploy: `vercel link`, set the same env vars in the Vercel project settings, deploy.
    Verify auth works against the live URL, not just localhost.
 
-## Required for the reworked onboarding flow
-
-The funnel (cégep → program → cote R → quiz → sign-up) reads its catalogue from the app bundle,
-so it works against an empty database. Two things still have to be applied before a signed-in
-student's answers can be stored:
-
-Both files are plain SQL. The dashboard path needs no CLI auth at all and is the shortest
-route; the CLI path needs `npx supabase login` and `npx supabase link --project-ref <ref>`
-first (the ref is the subdomain in `NEXT_PUBLIC_SUPABASE_URL`).
-
-1. **The migration.** `supabase/migrations/20260825120000_catalog_slugs_and_onboarding.sql` adds
-   the `catalog_slug` columns, widens `cegep_programs.type` to accept `special`, and adds the
-   slug columns plus resolver triggers on `student_profiles` / `student_targets`. Without it,
-   every profile write fails — the client sends slugs and the table only knows uuids.
-
-   Dashboard: SQL Editor → paste the file's contents → Run.
-
-   CLI (after `login` + `link`):
-
-   ```bash
-   npx supabase db push
-   ```
-
-2. **The catalogue seed.** `supabase/seed/catalog.sql` populates `cegeps`, `cegep_programs`,
-   `universities`, and `university_programs` from the scraped Quebec City data (11 cégeps, 150
-   programs, 7 universities, 198 university programs — 366 rows across four batched upserts in
-   one transaction).
-   It is idempotent: it upserts on `short_code` / `catalog_slug`, so replaying it after a data
-   refresh is safe.
-
-   Dashboard: SQL Editor → paste the file's contents → Run.
-
-   CLI (after `login` + `link`):
-
-   ```bash
-   npx supabase db query --linked -f supabase/seed/catalog.sql
-   ```
-
-   Note the subcommand is `db query`, not `db execute` — older docs and some CLI versions
-   differ here; `npx supabase db query --help` is authoritative for the version installed.
-
-   Until this runs, profile writes still succeed (the slug columns accept them) but the uuid
-   foreign keys stay null. The trigger backfills them on the next write once the rows exist.
-
-Verify both landed:
+Verify the seed landed:
 
 ```bash
-npx supabase db query --linked "select (select count(*) from cegeps) cegeps, (select count(*) from cegep_programs) programs, (select count(*) from university_programs) uni_programs;"
+npx supabase db query --linked "select version, generated_at, row_counts from catalog_versions order by generated_at desc limit 1;"
 ```
 
-Regenerate the catalogue after editing `src/lib/data/raw/*.json`:
+## What the seed contains, and where it comes from
 
-```bash
-npm run build:catalog
-```
+`npm run build:catalog` reads the verified TypeScript data the app ships (`src/lib/sample-data.ts`
+programmes, cutoffs and bursaries; `src/lib/data/important-dates.ts`;
+`src/lib/data/generic-program-profiles.ts`; the NY courses in `src/lib/data/cegep-catalog.ts`;
+the scraped cégep offerings in `src/lib/data/raw/cegep-programs.json`) and writes:
 
-That rewrites `src/lib/data/catalog.generated.ts`, `catalog-summaries.generated.ts`, and
-`supabase/seed/catalog.sql` together, so the bundle and the database never drift apart. Bump
-`REFERENCE_CATALOG_VERSION` in `src/lib/data/version.ts` when you do, or clients keep serving
-the previous bundle out of IndexedDB.
+- `supabase/seed/catalog.sql` — every catalogue table: 11 cégeps, 150 cégep programmes, 16
+  universities, 237 university programmes, 491 cutoff figures, 9 courses, the prerequisite
+  links the parser resolves, 15 in-region bursaries, 16 dates, 2 generic profiles.
+- `src/lib/data/version.ts` — the catalogue version (a hash of the seed body), so the bundle
+  in the app and the rows in Postgres report the same version for the same data.
+
+Regenerate both after editing any of those files; commit the generated output. There is no
+`catalog.generated.ts` any more — the client reads the same TypeScript modules directly.
+
+## How data reaches students without a redeploy
+
+`/api/reference/version` and `/api/reference/bundle` read `catalog_versions` and the
+catalogue tables when `NEXT_PUBLIC_SUPABASE_*` is set, overlay them onto the shipped data
+(a database row wins only when its `last_verified_at` is not older than the shipped one),
+and fall back to the shipped data otherwise. Clients (`src/lib/data/reference-store.ts`) ask
+for the version on boot, keep the last bundle in IndexedDB, and re-fetch only when it
+changed. So: promote a corrected row through `scripts/collectors/promote`, insert a new
+`catalog_versions` row, and every client picks it up on its next boot.
 
 ## Either way
 
 - Auth email templates and the magic-link redirect URL (Authentication → URL Configuration in
   the Supabase dashboard) need to point at wherever `src/app/auth/callback/route.ts` is actually
   reachable (`http://localhost:3000/auth/callback` locally, the real Vercel URL in production).
-- Row Level Security is already enabled on every table (see the migrations) — the student-data
-  cluster restricts to `auth.uid()`, the catalog clusters are public-read-only. Nothing extra to
-  configure there.
+  `docs/email-templates/README.md` has the templates.
+- Row Level Security is enabled on every table (see the migrations, and `npm run test:rls`
+  for the proof) — the student-data cluster restricts to `auth.uid()`, the catalogue clusters
+  are public-read-only, staging is service-role only.

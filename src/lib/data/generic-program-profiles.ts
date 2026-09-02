@@ -18,6 +18,8 @@
  * or fit scores, which are legally reserved activities for licensed orientation counselors.
  */
 
+import { resolveDecBaseCode } from "@/lib/data/dec-aliases";
+
 export type CourseItem = {
   code: string;
   nameFr: string;
@@ -637,11 +639,19 @@ const PROFILE_BY_CODE = new Map(
   GENERIC_PROGRAM_PROFILES.map((p) => [p.programCode, p]),
 );
 
+/**
+ * Exact code first; then the ministerial family a cégep's own code belongs to
+ * (src/lib/data/dec-aliases.ts), so a student on "200.B1" or "300.13" gets the 200.B0 / 300.A0
+ * profile instead of nothing.
+ */
 export function findGenericProgramProfile(
   programCode: string | null | undefined,
 ): GenericProgramProfile | undefined {
   if (!programCode) return undefined;
-  return PROFILE_BY_CODE.get(programCode);
+  const exact = PROFILE_BY_CODE.get(programCode);
+  if (exact) return exact;
+  const base = resolveDecBaseCode(programCode);
+  return base ? PROFILE_BY_CODE.get(base) : undefined;
 }
 
 export function getGenericProgramProfile(
