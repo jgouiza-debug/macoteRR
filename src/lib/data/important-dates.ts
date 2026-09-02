@@ -86,16 +86,23 @@ export const ALL_IMPORTANT_DATES: ImportantDate[] = [
     detailFr: "Première série de dates pour l'examen CASPer obligatoire en Médecine, Médecine dentaire et Pharmacie (UdeM, ULaval, McGill, Sherbrooke).",
     detailEn: "First test sitting for CASPer exam required for Medicine, Dentistry and Pharmacy.",
     category: "test",
+    // Ids are `UNIVERSITY_PROGRAMS[].id` slugs — scripts/checks/data-integrity.check.ts fails
+    // on any id that does not exist, because a dangling id silently hides the date from every
+    // student. Medicine, dentistry and pharmacy at the four universities named in detailFr,
+    // plus the regional medicine campuses that run the same UdeM / UdeS / ULaval admission.
     programIds: [
-      "ulaval-medecine",
-      "udem-medecine",
-      "mcgill-medecine",
-      "sherbrooke-medecine",
-      "ulaval-dentaire",
-      "udem-dentaire",
-      "ulaval-pharmacie",
-      "udem-pharmacie",
-      "mcgill-law",
+      "universite-doctorat-de-1er-cycle-en-medec", // ULaval médecine
+      "universite-doctorat-de-1er-cycle-en-medec-651", // UdeM médecine
+      "mcgill-uni-doctor-of-medicine-and-master-", // McGill MDCM
+      "universite-doctorat-de-1er-cycle-en-medec-506", // UdeS médecine
+      "universite-doctorat-de-1er-cycle-en-medec-389", // UdeM-UQTR campus Mauricie
+      "universite-doctorat-de-1er-cycle-en-medec-546", // UdeS-UQAC campus Saguenay
+      "universite-doctorat-de-1er-cycle-en-medec-97", // ULaval-UQAR campus Rimouski
+      "universite-doctorat-de-1er-cycle-en-medec-302", // ULaval médecine dentaire
+      "universite-doctorat-de-1er-cycle-en-medec-688", // UdeM médecine dentaire
+      "mcgill-uni-doctor-of-dental-medicine-dmd", // McGill DMD
+      "universite-doctorat-de-1er-cycle-en-pharm", // ULaval pharmacie
+      "universite-doctorat-de-1er-cycle-en-pharm-547", // UdeM pharmacie
     ],
     sourceUrl: "https://acuityinsights.app/",
     lastVerifiedAt: "2026-08-24",
@@ -109,14 +116,18 @@ export const ALL_IMPORTANT_DATES: ImportantDate[] = [
     detailEn: "Final valid date to complete the CASPer exam for Fall 2027 health science admissions.",
     category: "test",
     programIds: [
-      "ulaval-medecine",
-      "udem-medecine",
-      "mcgill-medecine",
-      "sherbrooke-medecine",
-      "ulaval-dentaire",
-      "udem-dentaire",
-      "ulaval-pharmacie",
-      "udem-pharmacie",
+      "universite-doctorat-de-1er-cycle-en-medec", // ULaval médecine
+      "universite-doctorat-de-1er-cycle-en-medec-651", // UdeM médecine
+      "mcgill-uni-doctor-of-medicine-and-master-", // McGill MDCM
+      "universite-doctorat-de-1er-cycle-en-medec-506", // UdeS médecine
+      "universite-doctorat-de-1er-cycle-en-medec-389", // UdeM-UQTR campus Mauricie
+      "universite-doctorat-de-1er-cycle-en-medec-546", // UdeS-UQAC campus Saguenay
+      "universite-doctorat-de-1er-cycle-en-medec-97", // ULaval-UQAR campus Rimouski
+      "universite-doctorat-de-1er-cycle-en-medec-302", // ULaval médecine dentaire
+      "universite-doctorat-de-1er-cycle-en-medec-688", // UdeM médecine dentaire
+      "mcgill-uni-doctor-of-dental-medicine-dmd", // McGill DMD
+      "universite-doctorat-de-1er-cycle-en-pharm", // ULaval pharmacie
+      "universite-doctorat-de-1er-cycle-en-pharm-547", // UdeM pharmacie
     ],
     sourceUrl: "https://acuityinsights.app/",
     lastVerifiedAt: "2026-08-24",
@@ -130,12 +141,12 @@ export const ALL_IMPORTANT_DATES: ImportantDate[] = [
     detailEn: "MMI interview period for collegial candidates in Medicine across ULaval, UdeM, and Sherbrooke.",
     category: "university",
     programIds: [
-      "ulaval-medecine",
-      "udem-medecine",
-      "sherbrooke-medecine",
-      "uqtr-medecine",
-      "uqar-medecine",
-      "uqac-medecine",
+      "universite-doctorat-de-1er-cycle-en-medec", // ULaval médecine
+      "universite-doctorat-de-1er-cycle-en-medec-651", // UdeM médecine
+      "universite-doctorat-de-1er-cycle-en-medec-506", // UdeS médecine
+      "universite-doctorat-de-1er-cycle-en-medec-389", // UdeM-UQTR campus Mauricie
+      "universite-doctorat-de-1er-cycle-en-medec-97", // ULaval-UQAR campus Rimouski
+      "universite-doctorat-de-1er-cycle-en-medec-546", // UdeS-UQAC campus Saguenay
     ],
     sourceUrl: "https://www.ulaval.ca/etudes/programmes/doctorat-de-1er-cycle-en-medecine",
     lastVerifiedAt: "2026-08-24",
@@ -149,13 +160,13 @@ export const ALL_IMPORTANT_DATES: ImportantDate[] = [
     detailEn: "Deadline to submit creative portfolio for Architecture and Design programs.",
     category: "university",
     programIds: [
-      "ulaval-architecture",
-      "udem-architecture",
-      "mcgill-architecture",
-      "ulaval-design-graphique",
-      "uqam-design-graphique",
-      "uqam-design-environnement",
-      "nad-jeux-video",
+      "universite-baccalaureat-en-architecture", // ULaval architecture
+      "universite-baccalaureat-en-architecture-693", // UdeM architecture
+      "mcgill-uni-bachelor-of-science-in-archite", // McGill BSc (Arch)
+      "universite-baccalaureat-en-design-graphiq", // ULaval design graphique
+      "universite-baccalaureat-en-design-graphiq-5", // UQAM design graphique
+      "universite-baccalaureat-en-design-de-l-en", // UQAM design de l'environnement
+      "universite-baccalaureat-en-animation-3d-e", // NAD-UQAC animation 3D et design numérique
     ],
     sourceUrl: "https://www.arc.ulaval.ca/",
     lastVerifiedAt: "2026-08-24",

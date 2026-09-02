@@ -1,7 +1,7 @@
 import type { SelfTagId } from "@/lib/tags/taxonomy";
-import type { BursaryCriteria } from "@/lib/matching/match";
 import type { InterestId } from "@/lib/tags/interests";
 import { CEGEP_DEC_PROGRAMS } from "@/lib/data/cegep-catalog";
+import { CEGEP_INSTITUTIONS } from "@/lib/data/cegep-institutions";
 import { ALL_IMPORTANT_DATES } from "@/lib/data/important-dates";
 
 export type Cegep = { id: string; name: string; region: string };
@@ -9360,7 +9360,14 @@ export type Bursary = {
   lastVerifiedAt: string;
 };
 
-export const BURSARIES: Bursary[] = [
+/**
+ * Every researched bursary row. Not exported: the app ships `BURSARIES` (below), which keeps
+ * only rows a student in the Quebec City picker can actually be matched against. Rows gated
+ * on a cégep outside that region stay here, verified and dated, for the docs/02 Phase 7
+ * widening — src/lib/matching/match.ts hard-gates on `cegepId`, so shipping them today would
+ * mean 9 bursaries no student could ever see.
+ */
+const BURSARY_ROWS: Bursary[] = [
   // --- PROGRAMMES PROVINCIAUX ET GOUVERNEMENTAUX ---
   {
     id: "bourse-perspective-quebec",
@@ -9470,7 +9477,12 @@ export const BURSARIES: Bursary[] = [
     sourceOrg: "Schulich Foundation",
     cegepId: null,
     eligibleCegepPrograms: ["200.B0", "200.B1", "420.B0"],
-    eligibleUniversityPrograms: ["poly-genie-logiciel", "ulaval-genie-logiciel", "mcgill-computer-science"],
+    // `UNIVERSITY_PROGRAMS[].id` slugs; the data-integrity check fails on a dangling id.
+    eligibleUniversityPrograms: [
+      "polytechni-baccalaureat-en-genie-logiciel",
+      "universite-baccalaureat-en-genie-logiciel",
+      "mcgill-uni-bachelor-of-science-in-compute",
+    ],
     minRScore: 32.0,
     minSession: 3,
     tagCriteria: ["research", "leadership"],
@@ -9848,6 +9860,24 @@ export const BURSARIES: Bursary[] = [
   },
 ];
 
+const PICKER_CEGEP_IDS = new Set(CEGEP_INSTITUTIONS.map((c) => c.shortCode));
+
+function isReachableFromPicker(bursary: Bursary): boolean {
+  return bursary.cegepId === null || PICKER_CEGEP_IDS.has(bursary.cegepId);
+}
+
+/** Province-wide bursaries plus those gated on a cégep the onboarding picker offers. */
+export const BURSARIES: Bursary[] = BURSARY_ROWS.filter(isReachableFromPicker);
+
+/**
+ * Researched rows gated on a cégep outside the Quebec City region. Not shipped, not seeded,
+ * not matched — kept so widening coverage (docs/02, Phase 7) is a one-line change, not a
+ * re-research. scripts/checks/data-integrity.check.ts asserts the split is exhaustive.
+ */
+export const BURSARIES_OUT_OF_REGION: Bursary[] = BURSARY_ROWS.filter(
+  (bursary) => !isReachableFromPicker(bursary),
+);
+
 export type Deadline = {
   id: string;
   titleFr: string;
@@ -9871,53 +9901,3 @@ export const DEADLINES: Deadline[] = ALL_IMPORTANT_DATES.map((d) => ({
   lastVerifiedAt: d.lastVerifiedAt,
 }));
 
-export const STUDENT_SAMPLE = {
-  cegep: CEGEPS[0],
-  program: CEGEP_PROGRAMS[0],
-  session: SESSIONS[0],
-  rScoreEstimated: 32.4,
-};
-
-export const DASHBOARD_SAMPLE = {
-  currentEstimate: 32.41,
-  currentSessionLabelFr: "Automne 2026",
-  currentSessionLabelEn: "Fall 2026",
-  confirmedSessions: [
-    { sessionFr: "Hiver 2026", sessionEn: "Winter 2026", score: 31.85 },
-    { sessionFr: "Automne 2025", sessionEn: "Fall 2025", score: 30.2 },
-  ],
-  currentCourses: [
-    {
-      nameFr: "Calcul différentiel",
-      nameEn: "Calculus I",
-      code: "201-NYA-05",
-      grade: 88,
-      groupAverage: 72,
-    },
-    {
-      nameFr: "Physique — Mécanique",
-      nameEn: "Physics: Mechanics",
-      code: "203-NYA-05",
-      grade: 82,
-      groupAverage: 75,
-    },
-    {
-      nameFr: "Philosophie et rationalité",
-      nameEn: "Philosophy",
-      code: "340-101-MQ",
-      grade: 76,
-      groupAverage: 78,
-    },
-  ],
-  goalProgram: {
-    nameFr: "Droit (UdeM)",
-    nameEn: "Law (UdeM)",
-    cutoffHistory: [
-      { year: 2024, cutoff: 31.505, figureType: "last_admitted" as const, sourceTier: "university_official" as const },
-      { year: 2024, cutoff: 33.168, figureType: "average" as const, sourceTier: "university_official" as const },
-      { year: 2024, cutoff: 38.058, figureType: "maximum" as const, sourceTier: "university_official" as const },
-    ],
-    sourceUrl: "https://admission.umontreal.ca/statistiques-dadmission-cote-r/",
-    lastVerifiedAt: "2026-08-24",
-  },
-};

@@ -1,6 +1,7 @@
 import type { UniversityProgram } from "@/lib/sample-data";
 import {
   CEGEP_DEC_PROGRAMS,
+  COLLEGIAL_COURSES,
   type CegepDecProgram,
   type CollegialCourseCode,
 } from "@/lib/data/cegep-catalog";
@@ -57,9 +58,11 @@ import {
  *     (`university_program_prerequisites.course_id` is an FK to `courses`), so this table is a
  *     temporary bridge, not the destination.
  *   - STILL NEEDS SOURCING: which university programs require what. This file adds no
- *     prerequisite claims — it reads only what sample-data.ts already records, and 4 of its 6
- *     university programs record none at all, which resolves to `prerequisites_unknown`.
- *   - Date: 2026-08-24.
+ *     prerequisite claims — it reads only what sample-data.ts already records. As of
+ *     2026-09-02 every catalogue program records its prerequisites as "Title (201-NYA, …)",
+ *     and `resolvePrerequisite` reads the codes in the parentheses; the alias table is the
+ *     fallback for code-less titles.
+ *   - Date: 2026-08-24, parser added 2026-09-02.
  */
 
 /* ------------------------------------------------------------------ *
@@ -138,6 +141,99 @@ export function resolvePrerequisiteCourseCode(name: string): CollegialCourseCode
   return PREREQUISITE_COURSE_CODES[normalizeName(name)] ?? null;
 }
 
+/**
+ * The strings a university uses when its only requirement is the diploma itself. These are
+ * not courses: a program listing one of them and nothing else has no course-level
+ * prerequisite our catalogue could fail to cover.
+ */
+const DEC_ONLY_MARKERS = new Set([
+  "diplome d etudes collegiales dec reconnu",
+  "diplome d etudes collegiales dec",
+  "dec reconnu",
+  "diplome d etudes collegiales dec sans prealables specifiques",
+  "dec sans prealables specifiques",
+  "aucun prealable specifique",
+]);
+
+const CATALOGUE_CODE_BY_STEM = new Map<string, CollegialCourseCode>(
+  COLLEGIAL_COURSES.map((course) => [course.code.replace(/-\d{2}$/, ""), course.code]),
+);
+
+/** One alternative inside a prerequisite: either an NY course we know, or a code we don't carry. */
+export type PrerequisiteAlternative =
+  | { code: CollegialCourseCode; raw: string }
+  | { code: null; raw: string };
+
+/**
+ * A prerequisite name resolved into something comparable against a DEC core.
+ *
+ *  - `courses`: a conjunction of alternative sets. "(203-NYA, 203-NYB)" is two groups of one
+ *    course each — both required. "(201-NYA ou 201-103)" is one group with two alternatives —
+ *    either satisfies it. A code outside COLLEGIAL_COURSES (201-103, 101-LC, …) stays in the
+ *    group with `code: null`, so the evaluator can see that an alternative exists it cannot
+ *    judge instead of silently treating the group as failed.
+ *  - `dec_only`: the requirement is the diploma itself.
+ *  - `unmapped`: nothing recognisable — no code in parentheses and no alias-table hit.
+ */
+export type PrerequisiteResolution =
+  | { kind: "courses"; groups: PrerequisiteAlternative[][] }
+  | { kind: "dec_only" }
+  | { kind: "unmapped" };
+
+function resolveCodeToken(token: string): PrerequisiteAlternative {
+  const raw = token.trim();
+  const stem = raw.toUpperCase().replace(/-\d{2}$/, "");
+  const code = CATALOGUE_CODE_BY_STEM.get(stem);
+  return code ? { code, raw } : { code: null, raw };
+}
+
+/**
+ * Parses the prerequisite strings the university-side data actually records. Every one of the
+ * 237 catalogue programs writes its prerequisites as a French title followed by the collegial
+ * codes in parentheses — "Calcul différentiel (201-NYA)", "Physique mécanique et
+ * électromagnétisme (203-NYA, 203-NYB)", "Algèbre linéaire (201-NYC ou 201-105)". The codes
+ * are the stable key (cegep-catalog.ts: "match on `code`, never on `nameFr`"), so they are what
+ * gets compared; the title is display only.
+ *
+ * Without parentheses, the closed alias table above is the only fallback, applied to each
+ * " ou "-separated part so "Méthodes quantitatives ou Calcul différentiel" resolves to one
+ * group of two alternatives, one of them outside the catalogue. No substring or fuzzy match.
+ */
+export function resolvePrerequisite(name: string): PrerequisiteResolution {
+  const parenthesised = [...name.matchAll(/\(([^)]*)\)/g)].map((m) => m[1]);
+  const title = name.replace(/\([^)]*\)/g, " ");
+  const normalizedTitle = normalizeName(title);
+
+  if (DEC_ONLY_MARKERS.has(normalizeName(name)) || DEC_ONLY_MARKERS.has(normalizedTitle)) {
+    return { kind: "dec_only" };
+  }
+
+  const codeSegments = parenthesised.filter((segment) => /\d{3}-[A-Z0-9]{2,3}\b/i.test(segment));
+  if (codeSegments.length > 0) {
+    const groups: PrerequisiteAlternative[][] = [];
+    for (const segment of codeSegments) {
+      for (const conjunct of segment.split(/\s*(?:,|;|\bet\b)\s*/i)) {
+        const alternatives = conjunct
+          .split(/\s+(?:ou|or)\s+|\s*\/\s*/i)
+          .map((token) => token.trim())
+          .filter((token) => /\d{3}-[A-Z0-9]{2,3}\b/i.test(token))
+          .map(resolveCodeToken);
+        if (alternatives.length > 0) groups.push(alternatives);
+      }
+    }
+    if (groups.length > 0) return { kind: "courses", groups };
+  }
+
+  // No codes: the alias table, per " ou "-separated alternative.
+  const parts = title.split(/\s+(?:ou|or)\s+/i).map((p) => p.trim()).filter(Boolean);
+  const alternatives: PrerequisiteAlternative[] = parts.map((part) => {
+    const code = PREREQUISITE_COURSE_CODES[normalizeName(part)];
+    return code ? { code, raw: part } : { code: null, raw: part };
+  });
+  if (alternatives.some((a) => a.code !== null)) return { kind: "courses", groups: [alternatives] };
+  return { kind: "unmapped" };
+}
+
 /* ------------------------------------------------------------------ *
  * Result types
  * ------------------------------------------------------------------ */
@@ -148,14 +244,21 @@ export type PrerequisiteCoverage =
   | "prerequisites_unknown";
 
 export type EligibilityReasonKind =
-  /** Resolved to a course code that IS in the DEC's core. A positive finding. */
+  /** Resolved to course code(s) that ARE in the DEC's core. A positive finding. */
   | "prereq_covered"
   /** Resolved, absent from a VERIFIED core — a real, nameable gap in the DEC's curriculum. */
   | "prereq_not_in_core"
   /** Resolved, but the DEC's core is unresearched, so its absence proves nothing. */
   | "prereq_core_unverified"
-  /** Name is not in the closed alias table — cannot be judged either way. */
+  /**
+   * Not covered by the core, and at least one accepted alternative is a course outside the
+   * NY catalogue (201-103, 101-LC, …) that this module cannot see either way.
+   */
+  | "prereq_outside_catalogue"
+  /** Name is not in the closed alias table and carries no course code — cannot be judged. */
   | "prereq_unmapped"
+  /** The requirement is the diploma itself ("DEC reconnu"), not a course. */
+  | "dec_only"
   /** The university program records no prerequisites at all in our data. */
   | "no_prereqs_recorded"
   /** No DEC supplied, or the code is not in the catalogue. */
@@ -165,8 +268,15 @@ export type EligibilityReason = {
   kind: EligibilityReasonKind;
   /** The prerequisite name exactly as recorded on the university program. */
   name?: string;
-  /** Course code the name resolved to. Absent for `prereq_unmapped` and the two global kinds. */
+  /**
+   * The first course code the name resolved to (display convenience; `courseCodes` has all).
+   * Absent for `prereq_unmapped`, `dec_only` and the two global kinds.
+   */
   courseCode?: CollegialCourseCode;
+  /** Every catalogue course the name resolved to, across all its groups. */
+  courseCodes?: CollegialCourseCode[];
+  /** Raw tokens that named a course outside the NY catalogue. */
+  outsideCatalogue?: string[];
 };
 
 export type PrerequisiteEligibility = {
@@ -176,14 +286,16 @@ export type PrerequisiteEligibility = {
    * Derived strictly from `reasons` — no second source of truth. Lets the UI say "2 of 3"
    * instead of leaning on the status word alone. When `no_prereqs_recorded` or `dec_unknown`
    * is present every per-prerequisite count is 0 because nothing could be judged; `recorded`
-   * still reports how many the program lists.
+   * still reports how many the program lists. `decOnly` rows are neither covered nor gaps.
    */
   counts: {
     recorded: number;
     covered: number;
     notInCore: number;
     coreUnverified: number;
+    outsideCatalogue: number;
     unmapped: number;
+    decOnly: number;
   };
 };
 
@@ -197,17 +309,26 @@ export type PrerequisiteEligibility = {
  *   1. Program records no prerequisites          → unknown  (NEVER "met")
  *   2. No DEC / not in the catalogue             → unknown
  *   3. Any prerequisite absent from a VERIFIED   → partial  (a definite, nameable gap)
- *      core
- *   4. Any name unresolvable, or absent from an  → unknown  (cannot assert "met")
+ *      core, with no alternative we cannot see
+ *   4. Any name unresolvable, any alternative     → unknown  (cannot assert "met")
+ *      outside the catalogue, or absent from an
  *      UNVERIFIED core
- *   5. Every prerequisite resolved and in core   → met
+ *   5. Every course prerequisite in core, or the  → met
+ *      program asks for the DEC alone
  *
  * On rule 3: "partial" is the label for "not fully covered by the DEC core", and it covers the
  * zero-covered case too — `counts` carries the breakdown so the UI renders "0 of 3" or "2 of 3"
  * rather than relying on the word to carry the nuance.
  *
  * On rule 4: this is the rule that makes `coreCoursesVerified` matter. A DEC whose core nobody
- * has researched must never produce a gap, however plausible that gap looks.
+ * has researched must never produce a gap, however plausible that gap looks. The same caution
+ * applies to "201-NYA ou 201-103": a Sciences humaines core verifiably lacks 201-NYA, but
+ * 201-103 is outside this catalogue, so the honest answer is unknown, not a gap.
+ *
+ * On rule 5: "DEC reconnu" with nothing else is the university saying no specific course is
+ * required. Reporting that as unknown would tell 158 programs' worth of students that we
+ * could not judge a requirement the source explicitly states. It is reported as met with a
+ * `dec_only` reason so the UI can phrase it as "no specific course" rather than "covered".
  */
 export function evaluatePrerequisites(
   dec: DecCoreCourses | null,
@@ -219,11 +340,12 @@ export function evaluatePrerequisites(
     covered: 0,
     notInCore: 0,
     coreUnverified: 0,
+    outsideCatalogue: 0,
     unmapped: 0,
+    decOnly: 0,
   };
 
-  // 1. Nothing recorded on the university side. True today for 4 of the 6 programs in
-  //    sample-data.ts, and it means "we have not sourced them", not "this program has none".
+  // 1. Nothing recorded on the university side: "we have not sourced them", not "none".
   if (recorded === 0) {
     return {
       status: "prerequisites_unknown",
@@ -243,41 +365,64 @@ export function evaluatePrerequisites(
 
   const core = new Set<CollegialCourseCode>(dec.coreCourseCodes);
   const reasons: EligibilityReason[] = [];
-  let covered = 0;
-  let notInCore = 0;
-  let coreUnverified = 0;
-  let unmapped = 0;
+  const counts = { ...nothingJudged };
 
   for (const prerequisite of program.prerequisites) {
     // `prerequisite.status` is deliberately not read here — see the file header.
-    const courseCode = resolvePrerequisiteCourseCode(prerequisite.name);
+    const name = prerequisite.name;
+    const resolution = resolvePrerequisite(name);
 
-    if (courseCode === null) {
-      reasons.push({ kind: "prereq_unmapped", name: prerequisite.name });
-      unmapped += 1;
-    } else if (core.has(courseCode)) {
+    if (resolution.kind === "dec_only") {
+      reasons.push({ kind: "dec_only", name });
+      counts.decOnly += 1;
+      continue;
+    }
+    if (resolution.kind === "unmapped") {
+      reasons.push({ kind: "prereq_unmapped", name });
+      counts.unmapped += 1;
+      continue;
+    }
+
+    const courseCodes = resolution.groups
+      .flat()
+      .map((a) => a.code)
+      .filter((c): c is CollegialCourseCode => c !== null);
+    const outsideCatalogue = resolution.groups
+      .flat()
+      .filter((a) => a.code === null)
+      .map((a) => a.raw);
+    const base = { name, courseCode: courseCodes[0], courseCodes, outsideCatalogue };
+
+    // Each group is one requirement; any known alternative in the core satisfies it.
+    const unsatisfied = resolution.groups.filter(
+      (group) => !group.some((a) => a.code !== null && core.has(a.code)),
+    );
+
+    if (unsatisfied.length === 0) {
       // Presence is a positive finding whether or not the list was audited for completeness.
-      reasons.push({ kind: "prereq_covered", name: prerequisite.name, courseCode });
-      covered += 1;
+      reasons.push({ kind: "prereq_covered", ...base });
+      counts.covered += 1;
+    } else if (unsatisfied.some((group) => group.some((a) => a.code === null))) {
+      // An alternative we do not carry might be the one the student's DEC has.
+      reasons.push({ kind: "prereq_outside_catalogue", ...base });
+      counts.outsideCatalogue += 1;
     } else if (dec.coreCoursesVerified) {
-      reasons.push({ kind: "prereq_not_in_core", name: prerequisite.name, courseCode });
-      notInCore += 1;
+      reasons.push({ kind: "prereq_not_in_core", ...base });
+      counts.notInCore += 1;
     } else {
       // Absence from an unresearched list is not evidence of absence.
-      reasons.push({ kind: "prereq_core_unverified", name: prerequisite.name, courseCode });
-      coreUnverified += 1;
+      reasons.push({ kind: "prereq_core_unverified", ...base });
+      counts.coreUnverified += 1;
     }
   }
 
-  const counts = { recorded, covered, notInCore, coreUnverified, unmapped };
-
   // 3. A definite gap outranks an unresolved one: it is the more specific, more useful fact.
-  if (notInCore > 0) return { status: "prerequisites_partial", reasons, counts };
+  if (counts.notInCore > 0) return { status: "prerequisites_partial", reasons, counts };
   // 4. Everything else is covered, but something unresolved means we cannot say "met".
-  if (coreUnverified > 0 || unmapped > 0) {
+  if (counts.coreUnverified > 0 || counts.outsideCatalogue > 0 || counts.unmapped > 0) {
     return { status: "prerequisites_unknown", reasons, counts };
   }
-  // 5.
+  // 5. Every course requirement is in the core, or the program asks for the DEC alone.
   return { status: "prerequisites_met", reasons, counts };
 }
 
