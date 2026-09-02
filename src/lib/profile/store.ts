@@ -1,20 +1,30 @@
 "use client";
 
-import { useCallback, useSyncExternalStore, useEffect } from "react";
+import { useCallback, useEffect, useSyncExternalStore } from "react";
 import type { SelfTagId } from "@/lib/tags/taxonomy";
 import type { InterestId } from "@/lib/tags/interests";
-import { idbSet } from "@/lib/data/indexed-db";
+import { idbDelete, idbSet } from "@/lib/data/indexed-db";
 import { createClient } from "@/lib/db/client";
-import { syncProfileToServer } from "./sync";
+import type { TranslationKey } from "@/lib/i18n/dictionary";
+import {
+  DEFAULT_NOTIFICATION_PREFERENCES,
+  type NotificationPreferences,
+} from "@/lib/notifications/types";
+import { pullProfileFromServer, syncProfileToServer } from "./sync";
 
 /**
- * Local-first student profile with optimistic updates and offline mutation queue.
+ * Local-first student profile with optimistic updates and an offline mutation queue.
  *
- * Latency budget: local updates render immediately (0ms perceived).
- * Writes are queued and flushed in background with retry and rollback.
+ * The browser's copy is the working copy: every edit renders immediately and is queued for
+ * the server. The server is the copy that survives a lost phone. Reconciling the two is
+ * ordered (push what is pending, then pull, then adopt whichever is newer) so a slow pull can
+ * never overwrite an edit the student just made — which is what three concurrent calls on
+ * every mount used to allow.
  *
  * GUARDRAIL #3: this shape must never grow an income, household, or financial-need field.
- * GUARDRAIL #4: mutations are never fire-and-forget; tracked, queued, retried, and rolled back on permanent failure.
+ * GUARDRAIL #4: mutations are never fire-and-forget. They are tracked, queued, retried with
+ * backoff, and when they keep failing the student is told — the local copy is NOT reverted,
+ * because deleting a student's own edit to satisfy a server that is down is the worse outcome.
  */
 export type StudentProfile = {
   cegepId: string | null;
@@ -25,6 +35,12 @@ export type StudentProfile = {
   selfTags: SelfTagId[];
   targetUniversityProgramIds: string[];
   interestIds: InterestId[];
+  /** The Sciences humaines / Sciences de la nature profile picked in the DEC step. */
+  decProfileId: string | null;
+  /** "Passer cette étape" on the goal step: no targets, on purpose. */
+  goalSkipped: boolean;
+  /** The four notification toggles. Lived in a third localStorage key before; now one store. */
+  notificationPrefs: NotificationPreferences;
 };
 
 export type MutationRecord = {
@@ -34,10 +50,33 @@ export type MutationRecord = {
   previousSnapshot: StudentProfile;
   attempts: number;
   status: "pending" | "processing" | "failed" | "completed";
+  /** Earliest time the next attempt is allowed (exponential backoff after a failure). */
+  nextAttemptAt?: number;
 };
+
+export type SyncState =
+  /** Not yet checked for a session, or no window. */
+  | "unknown"
+  /** No session: local-only, nothing to reconcile. */
+  | "guest"
+  /** Signed in; first reconcile in flight. Pages should not redirect on local state yet. */
+  | "syncing"
+  /** Signed in; local and server agree as of the last reconcile. */
+  | "synced"
+  /** Signed in; the last reconcile failed. Local copy is still authoritative on this device. */
+  | "error";
 
 const STORAGE_KEY = "macote.profile";
 const OUTBOX_KEY = "macote.mutation_outbox";
+const META_KEY = "macote.profile_meta";
+/** Pre-2026-09 location of the notification toggles; adopted once, then removed. */
+const LEGACY_NOTIF_KEY = "macote.notifications";
+const IDB_BACKUP_KEY = "profile_backup";
+
+const MAX_ATTEMPTS_BEFORE_NOTIFY = 5;
+const MAX_OUTBOX_RECORDS = 50;
+const BACKOFF_BASE_MS = 2_000;
+const BACKOFF_MAX_MS = 5 * 60_000;
 
 export const DEFAULT_PROFILE: StudentProfile = {
   cegepId: null,
@@ -48,21 +87,42 @@ export const DEFAULT_PROFILE: StudentProfile = {
   selfTags: [],
   targetUniversityProgramIds: [],
   interestIds: [],
+  decProfileId: null,
+  goalSkipped: false,
+  notificationPrefs: DEFAULT_NOTIFICATION_PREFERENCES,
+};
+
+type ProfileMeta = {
+  /** `student_profiles.updated_at` at the last successful pull, for last-write-wins. */
+  lastPulledAt: string | null;
 };
 
 const listeners = new Set<() => void>();
-const errorListeners = new Set<(message: string) => void>();
+const errorListeners = new Set<(key: TranslationKey) => void>();
+const syncListeners = new Set<() => void>();
 
 let cache: StudentProfile | null = null;
 let outbox: MutationRecord[] = [];
+let syncState: SyncState = "unknown";
+let reconcilePromise: Promise<void> | null = null;
+
+/* ------------------------------------------------------------------ *
+ * Subscriptions
+ * ------------------------------------------------------------------ */
 
 function emit() {
   cache = null;
   for (const listener of listeners) listener();
 }
 
-function notifyError(message: string) {
-  for (const listener of errorListeners) listener(message);
+function setSyncState(next: SyncState) {
+  if (syncState === next) return;
+  syncState = next;
+  for (const listener of syncListeners) listener();
+}
+
+function notifyError(key: TranslationKey) {
+  for (const listener of errorListeners) listener(key);
 }
 
 function subscribe(listener: () => void) {
@@ -74,16 +134,56 @@ function subscribe(listener: () => void) {
   };
 }
 
-export function subscribeProfileError(listener: (message: string) => void) {
+function subscribeSync(listener: () => void) {
+  syncListeners.add(listener);
+  return () => {
+    syncListeners.delete(listener);
+  };
+}
+
+/** Fires with a dictionary key when queued edits keep failing to reach the server. */
+export function subscribeProfileError(listener: (key: TranslationKey) => void) {
   errorListeners.add(listener);
-  return () => errorListeners.delete(listener);
+  return () => {
+    errorListeners.delete(listener);
+  };
+}
+
+/* ------------------------------------------------------------------ *
+ * Local storage
+ * ------------------------------------------------------------------ */
+
+function migrateLegacyNotificationPrefs(profile: StudentProfile): StudentProfile {
+  try {
+    const raw = window.localStorage.getItem(LEGACY_NOTIF_KEY);
+    if (!raw) return profile;
+    const legacy = JSON.parse(raw) as Partial<NotificationPreferences>;
+    window.localStorage.removeItem(LEGACY_NOTIF_KEY);
+    const merged = { ...profile, notificationPrefs: { ...DEFAULT_NOTIFICATION_PREFERENCES, ...legacy } };
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+    return merged;
+  } catch {
+    return profile;
+  }
 }
 
 function read(): StudentProfile {
   if (cache) return cache;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    cache = raw ? { ...DEFAULT_PROFILE, ...(JSON.parse(raw) as Partial<StudentProfile>) } : DEFAULT_PROFILE;
+    if (!raw) {
+      cache = DEFAULT_PROFILE;
+    } else {
+      // Spread-merge is the migration: a profile written by an older build lacks the newer
+      // fields and takes their defaults; unknown fields from a newer build are carried along.
+      const parsed = JSON.parse(raw) as Partial<StudentProfile>;
+      const merged: StudentProfile = {
+        ...DEFAULT_PROFILE,
+        ...parsed,
+        notificationPrefs: { ...DEFAULT_NOTIFICATION_PREFERENCES, ...(parsed.notificationPrefs ?? {}) },
+      };
+      cache = parsed.notificationPrefs ? merged : migrateLegacyNotificationPrefs(merged);
+    }
   } catch {
     cache = DEFAULT_PROFILE;
   }
@@ -107,11 +207,28 @@ function readServer(): StudentProfile {
 function write(next: StudentProfile) {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    idbSet("reference_catalog", "profile_backup", next).catch(() => {});
+    idbSet("reference_catalog", IDB_BACKUP_KEY, next).catch(() => {});
   } catch {
     /* storage quota exceeded or blocked */
   }
   emit();
+}
+
+function readMeta(): ProfileMeta {
+  try {
+    const raw = window.localStorage.getItem(META_KEY);
+    return raw ? { lastPulledAt: null, ...(JSON.parse(raw) as Partial<ProfileMeta>) } : { lastPulledAt: null };
+  } catch {
+    return { lastPulledAt: null };
+  }
+}
+
+function writeMeta(meta: ProfileMeta) {
+  try {
+    window.localStorage.setItem(META_KEY, JSON.stringify(meta));
+  } catch {
+    /* ignore */
+  }
 }
 
 function saveOutbox() {
@@ -129,142 +246,221 @@ function loadOutbox() {
   } catch {
     outbox = [];
   }
+  // A record left "processing" by a tab that closed mid-flight is pending again.
+  for (const record of outbox) if (record.status === "processing") record.status = "pending";
 }
 
-// Background sync worker for flushing offline mutations
-async function flushOutbox() {
-  if (outbox.length === 0 || typeof navigator === "undefined" || !navigator.onLine) {
+function pendingRecords(): MutationRecord[] {
+  return outbox.filter((m) => m.status === "pending" || m.status === "failed");
+}
+
+function mergePatches(records: MutationRecord[]): Partial<StudentProfile> {
+  return records.reduce<Partial<StudentProfile>>((acc, record) => ({ ...acc, ...record.patch }), {});
+}
+
+/* ------------------------------------------------------------------ *
+ * Server session helpers
+ * ------------------------------------------------------------------ */
+
+type Supabase = ReturnType<typeof createClient>;
+
+async function currentSession(supabase: Supabase) {
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    return session;
+  } catch {
+    return null;
+  }
+}
+
+function online(): boolean {
+  return typeof navigator === "undefined" || navigator.onLine;
+}
+
+/* ------------------------------------------------------------------ *
+ * Outbox
+ * ------------------------------------------------------------------ */
+
+/**
+ * Pushes every pending edit as one merged write. Guests (no session) keep their records
+ * pending: they are what a later sign-in has to carry over, so dropping them "completed" —
+ * the previous behaviour — silently lost the whole funnel for anyone who created their
+ * account on the last screen.
+ *
+ * Failures back off exponentially and, after MAX_ATTEMPTS_BEFORE_NOTIFY, tell the student
+ * once. The local copy is never reverted: it is their data, and the server being unreachable
+ * is not a reason to delete it. Records stay queued and retry on the next mount or reconnect.
+ */
+async function flushOutbox(supabase?: Supabase, sessionUserId?: string): Promise<boolean> {
+  if (!online()) return false;
+  const now = Date.now();
+  const due = pendingRecords().filter((m) => !m.nextAttemptAt || m.nextAttemptAt <= now);
+  if (due.length === 0) return pendingRecords().length === 0;
+
+  const client = supabase ?? createClient();
+  const userId = sessionUserId ?? (await currentSession(client))?.user.id;
+  if (!userId) return false; // guest: keep everything pending
+
+  for (const record of due) {
+    record.status = "processing";
+    record.attempts += 1;
+  }
+  saveOutbox();
+
+  try {
+    await syncProfileToServer(client, userId, read(), mergePatches(due));
+    const flushed = new Set(due.map((m) => m.id));
+    outbox = outbox.filter((m) => !flushed.has(m.id));
+    saveOutbox();
+    return pendingRecords().length === 0;
+  } catch {
+    const worst = Math.max(...due.map((m) => m.attempts));
+    const delay = Math.min(BACKOFF_BASE_MS * 2 ** (worst - 1), BACKOFF_MAX_MS);
+    for (const record of due) {
+      record.status = "failed";
+      record.nextAttemptAt = Date.now() + delay;
+    }
+    saveOutbox();
+    if (worst === MAX_ATTEMPTS_BEFORE_NOTIFY) notifyError("sync.unsaved");
+    return false;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Reconcile: push, pull, adopt
+ * ------------------------------------------------------------------ */
+
+function profilesEqual(a: StudentProfile, b: StudentProfile): boolean {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
+async function reconcile(): Promise<void> {
+  if (typeof window === "undefined") return;
+  if (!online()) {
+    if (syncState === "unknown") setSyncState("guest");
     return;
   }
 
-  const pending = outbox.filter((m) => m.status === "pending" || m.status === "failed");
-  if (pending.length === 0) return;
-
-  // Local session check, no network round-trip — guests (no account) have nothing to push
-  // yet, matching "no account required" by design; only signed-in devices sync.
-  const supabase = createClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  for (const mutation of pending) {
-    mutation.status = "processing";
-    mutation.attempts += 1;
-    saveOutbox();
-
-    try {
-      if (session) {
-        await syncProfileToServer(supabase, session.user.id, read());
-      }
-      mutation.status = "completed";
-      outbox = outbox.filter((m) => m.id !== mutation.id);
-      saveOutbox();
-    } catch {
-      mutation.status = "failed";
-      saveOutbox();
-
-      if (mutation.attempts >= 5) {
-        // Rollback after 5 failed attempts and notify user
-        write(mutation.previousSnapshot);
-        outbox = outbox.filter((m) => m.id !== mutation.id);
-        saveOutbox();
-        notifyError("Impossible d'enregistrer les modifications après plusieurs tentatives. Rétablissement de l'état précédent.");
-      }
-    }
+  let supabase: Supabase;
+  try {
+    supabase = createClient();
+  } catch {
+    setSyncState("guest");
+    return;
   }
+  const session = await currentSession(supabase);
+  if (!session) {
+    setSyncState("guest");
+    return;
+  }
+
+  setSyncState("syncing");
+  try {
+    // 1. Push: anything the student did on this device goes up first, so the pull below
+    //    cannot undo it.
+    const hadPending = pendingRecords().length > 0;
+    if (hadPending) await flushOutbox(supabase, session.user.id);
+    const stillPending = pendingRecords().length > 0;
+
+    // 2. Pull.
+    const server = await pullProfileFromServer(supabase, session.user.id, read());
+    const now = new Date().toISOString();
+
+    if (!server) {
+      // First sign-in: the server row is created from the funnel the student just finished.
+      await syncProfileToServer(supabase, session.user.id, read());
+      writeMeta({ lastPulledAt: now });
+      setSyncState("synced");
+      return;
+    }
+
+    // 3. Adopt the server copy only when this device has nothing queued and the server has
+    //    moved since it last looked. Otherwise the local copy wins and is pushed if it differs.
+    const meta = readMeta();
+    const serverIsNewer =
+      meta.lastPulledAt === null || (server.updatedAt !== null && server.updatedAt > meta.lastPulledAt);
+    if (!stillPending && serverIsNewer) {
+      if (!profilesEqual(read(), server.profile)) write(server.profile);
+    } else if (!stillPending && !profilesEqual(read(), server.profile)) {
+      await syncProfileToServer(supabase, session.user.id, read());
+    }
+    writeMeta({ lastPulledAt: server.updatedAt ?? now });
+    setSyncState(stillPending ? "error" : "synced");
+  } catch {
+    setSyncState("error");
+  }
+}
+
+/** One reconcile at a time; concurrent callers share it. */
+export function ensureReconciled(): Promise<void> {
+  reconcilePromise ??= reconcile().finally(() => {
+    reconcilePromise = null;
+  });
+  return reconcilePromise;
 }
 
 if (typeof window !== "undefined") {
   loadOutbox();
   window.addEventListener("online", () => {
-    flushOutbox().catch(() => {});
+    ensureReconciled().catch(() => {});
   });
+  // The guest outbox drains the moment the account exists, not on the next page load.
+  try {
+    createClient().auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") ensureReconciled().catch(() => {});
+      if (event === "SIGNED_OUT") setSyncState("guest");
+    });
+  } catch {
+    /* env missing in this build: local-only */
+  }
 }
 
+/* ------------------------------------------------------------------ *
+ * Public API
+ * ------------------------------------------------------------------ */
+
 /**
- * Pushes the current local profile up regardless of outbox state — covers the moment right
- * after signing in, when everything already synced as a no-op guest and there's nothing
- * queued, but a server row still needs to exist for the now-authenticated user.
- */
-/**
- * Wipes the local profile back to a fresh guest state: clears the outbox, clears storage,
- * and — critically — clears the in-memory `cache` and notifies subscribers. Without this,
- * a raw `localStorage.removeItem` leaves the module-level cache holding the old profile, so
- * every mounted component keeps rendering the deleted account until a hard reload.
+ * Wipes the local profile back to a fresh guest state: clears the outbox, storage, the
+ * IndexedDB backup, and — critically — the in-memory `cache`, then notifies subscribers.
+ * Without that last step every mounted component keeps rendering the deleted account until a
+ * hard reload.
  */
 export function resetProfile() {
   outbox = [];
   try {
     window.localStorage.removeItem(STORAGE_KEY);
     window.localStorage.removeItem(OUTBOX_KEY);
+    window.localStorage.removeItem(META_KEY);
+    window.localStorage.removeItem(LEGACY_NOTIF_KEY);
   } catch {
     /* storage blocked — nothing local to clear */
   }
+  idbDelete("reference_catalog", IDB_BACKUP_KEY).catch(() => {});
+  setSyncState("guest");
   write(DEFAULT_PROFILE);
 }
 
-export async function syncNow() {
-  if (typeof navigator === "undefined" || !navigator.onLine) return;
-  const supabase = createClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  if (!session) return;
-  await syncProfileToServer(supabase, session.user.id, read());
+/** Pushes the local profile now (used right after sign-in on this device). */
+export async function syncNow(): Promise<void> {
+  await ensureReconciled();
 }
 
-export async function fetchProfileFromServer() {
-  if (typeof window === "undefined" || !navigator.onLine) return;
-  try {
-    const supabase = createClient();
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (!session) return;
+export function getSyncState(): SyncState {
+  return syncState;
+}
 
-    const [profileRes, confirmRes, targetsRes] = await Promise.all([
-      supabase.from("student_profiles").select("*").eq("user_id", session.user.id).maybeSingle(),
-      supabase
-        .from("student_r_score_confirmations")
-        .select("*")
-        .eq("user_id", session.user.id)
-        .order("session", { ascending: false })
-        .limit(1)
-        .maybeSingle(),
-      supabase.from("student_targets").select("catalog_slug").eq("user_id", session.user.id),
-    ]);
-
-    if (profileRes.data) {
-      const p = profileRes.data;
-      const current = read();
-      const serverProfile: StudentProfile = {
-        cegepId: p.cegep_short_code ?? current.cegepId,
-        cegepProgramId: p.cegep_program_code ?? current.cegepProgramId,
-        currentSession: p.current_session ?? current.currentSession,
-        rScore: confirmRes.data?.official_cote_r ?? current.rScore,
-        rScoreStatus:
-          (p.r_score_status as "confirmed" | "estimated" | null) ?? current.rScoreStatus,
-        selfTags: (p.self_tags as SelfTagId[]) ?? current.selfTags,
-        targetUniversityProgramIds: targetsRes.data && targetsRes.data.length > 0
-          ? targetsRes.data.map((t) => t.catalog_slug).filter((slug): slug is string => Boolean(slug))
-          : current.targetUniversityProgramIds,
-        interestIds: current.interestIds,
-      };
-      write(serverProfile);
-    }
-  } catch {
-    /* server fetch failed or offline */
-  }
+export function useSyncState(): SyncState {
+  return useSyncExternalStore(subscribeSync, getSyncState, () => "unknown" as SyncState);
 }
 
 export function useStudentProfile() {
   const profile = useSyncExternalStore(subscribe, read, readServer);
+  const sync = useSyncState();
 
   useEffect(() => {
-    // Initial sync and server load check on mount
-    fetchProfileFromServer().catch(() => {});
-    flushOutbox().catch(() => {});
-    syncNow().catch(() => {});
+    ensureReconciled().catch(() => {});
   }, []);
 
   // Optimistic by construction: local state updates and renders before anything else.
@@ -275,30 +471,42 @@ export function useStudentProfile() {
     // 1. Optimistic apply
     write(next);
 
-    // 2. Queue mutation for background sync
-    const mutation: MutationRecord = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-      timestamp: Date.now(),
-      patch,
-      previousSnapshot: previous,
-      attempts: 0,
-      status: "pending",
-    };
-
-    outbox.push(mutation);
+    // 2. Queue for background sync, coalescing into the last still-pending record so a burst
+    //    of edits is one write, not N identical ones.
+    const last = outbox[outbox.length - 1];
+    if (last && last.status === "pending") {
+      last.patch = { ...last.patch, ...patch };
+      last.timestamp = Date.now();
+    } else {
+      outbox.push({
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        timestamp: Date.now(),
+        patch,
+        previousSnapshot: previous,
+        attempts: 0,
+        status: "pending",
+      });
+    }
+    while (outbox.length > MAX_OUTBOX_RECORDS) {
+      const [oldest, second, ...rest] = outbox;
+      outbox = [{ ...second, patch: { ...oldest.patch, ...second.patch }, previousSnapshot: oldest.previousSnapshot }, ...rest];
+    }
     saveOutbox();
 
     // 3. Reconcile in background
     flushOutbox().catch(() => {});
   }, []);
 
-  const toggleTag = useCallback((tagId: SelfTagId) => {
-    const current = read();
-    const selfTags = current.selfTags.includes(tagId)
-      ? current.selfTags.filter((t) => t !== tagId)
-      : [...current.selfTags, tagId];
-    update({ selfTags });
-  }, [update]);
+  const toggleTag = useCallback(
+    (tagId: SelfTagId) => {
+      const current = read();
+      const selfTags = current.selfTags.includes(tagId)
+        ? current.selfTags.filter((t) => t !== tagId)
+        : [...current.selfTags, tagId];
+      update({ selfTags });
+    },
+    [update],
+  );
 
-  return { profile, update, toggleTag };
+  return { profile, update, toggleTag, sync };
 }

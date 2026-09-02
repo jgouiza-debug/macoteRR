@@ -1,4 +1,5 @@
 import type { SelfTagId } from "@/lib/tags/taxonomy";
+import { daysUntil } from "@/lib/dates";
 
 /**
  * Deterministic, rules-based bursary matching. Implements the six-step evaluation and the
@@ -146,13 +147,17 @@ function compare<T extends BursaryCriteria>(
   b: BursaryMatch<T>,
   today: Date,
 ): number {
-  const aTime = a.bursary.deadlineIso ? new Date(a.bursary.deadlineIso).getTime() : Infinity;
-  const bTime = b.bursary.deadlineIso ? new Date(b.bursary.deadlineIso).getTime() : Infinity;
-  const now = today.getTime();
-
-  // Past deadlines sink below upcoming ones rather than sorting to the top.
-  const aKey = aTime < now ? Infinity : aTime;
-  const bKey = bTime < now ? Infinity : bTime;
+  // Calendar days in local time (src/lib/dates.ts), the same clock the dashboard's
+  // "DANS 3 JOURS" uses, so a deadline never reads as upcoming on one screen and past on another.
+  const key = (iso: string | null) => {
+    if (!iso) return Infinity;
+    const days = daysUntil(iso, today);
+    if (days === null) return Infinity;
+    // Past deadlines sink below upcoming ones rather than sorting to the top.
+    return days < 0 ? Infinity : days;
+  };
+  const aKey = key(a.bursary.deadlineIso);
+  const bKey = key(b.bursary.deadlineIso);
   if (aKey !== bKey) return aKey - bKey;
 
   return (b.bursary.amountMax ?? 0) - (a.bursary.amountMax ?? 0);

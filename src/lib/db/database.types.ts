@@ -389,6 +389,14 @@ export type Database = {
           current_session: number | null;
           self_tags: string[] | null;
           r_score_status: RScoreStatus | null;
+          // Added by supabase/migrations/20260902120000_*.sql. Absent on an un-migrated
+          // project, which src/lib/profile/sync.ts tolerates (PGRST204 fallback).
+          interest_ids: string[] | null;
+          dec_profile_id: string | null;
+          goal_skipped: boolean | null;
+          /** The student's own estimate. Never a confirmed figure — those live in
+           *  student_r_score_confirmations (guardrail #2). */
+          estimated_cote_r: number | null;
           created_at: string | null;
           updated_at: string | null;
         };
@@ -401,6 +409,10 @@ export type Database = {
           current_session?: number | null;
           self_tags?: string[] | null;
           r_score_status?: RScoreStatus | null;
+          interest_ids?: string[] | null;
+          dec_profile_id?: string | null;
+          goal_skipped?: boolean | null;
+          estimated_cote_r?: number | null;
           created_at?: string | null;
           updated_at?: string | null;
         };

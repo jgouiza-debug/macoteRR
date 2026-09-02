@@ -1,6 +1,7 @@
 "use client";
 
 import { SITE_URL } from "@/lib/site-config";
+import { safePath } from "@/lib/safe-path";
 
 /**
  * Where a magic link should send the student back to.
@@ -43,6 +44,6 @@ export function authRedirectOrigin(): string {
 
 /** Full callback URL for `signInWithOtp`, carrying where to land after the exchange. */
 export function authCallbackUrl(next: string): string {
-  const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+  const safeNext = safePath(next) ?? "/dashboard";
   return `${authRedirectOrigin()}/auth/callback?next=${encodeURIComponent(safeNext)}`;
 }

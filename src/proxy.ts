@@ -1,21 +1,18 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { safePath } from "@/lib/safe-path";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 /**
  * Routes that require a signed-in student. Onboarding itself stays open — the funnel builds
- * the profile that the account is created to hold, so gating it would be circular — but
- * everything the funnel leads to is behind the session.
+ * the profile that the account is created to hold, so gating it would be circular — and so
+ * does /programs: it is public, source-stamped fact about universities, and "je veux juste
+ * voir les seuils" has to be a promise the app can keep. Everything personal is behind the
+ * session.
  */
-const PROTECTED_PREFIXES = [
-  "/dashboard",
-  "/programs",
-  "/bursaries",
-  "/profile",
-  "/counselor-prep",
-];
+const PROTECTED_PREFIXES = ["/dashboard", "/bursaries", "/profile", "/counselor-prep"];
 
 /**
  * Where a signed-out visitor is sent. Deliberately the funnel's entry point, not the sign-up
@@ -27,6 +24,15 @@ const PROTECTED_PREFIXES = [
 const ONBOARDING_ENTRY = "/onboarding";
 const SIGN_UP_PATH = "/onboarding/account";
 
+/**
+ * Local development without a Supabase project (docs/SETUP-CLOUD.md § "Local without
+ * Supabase"): serve the protected pages to a guest so the screenshot harness can render them
+ * against a seeded profile. `NODE_ENV` is fixed at build time, so this branch does not exist
+ * in a production bundle whatever the variable says.
+ */
+const DEV_AUTH_BYPASS =
+  process.env.NODE_ENV !== "production" && process.env.MACOTE_DEV_AUTH_BYPASS === "1";
+
 function isProtected(pathname: string) {
   return PROTECTED_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
@@ -34,7 +40,11 @@ function isProtected(pathname: string) {
 }
 
 export async function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
+
+  if (DEV_AUTH_BYPASS) {
+    return NextResponse.next();
+  }
 
   // Misconfiguration, not an anonymous visitor. Previously this failed open, which was safe
   // only while the proxy did nothing but refresh a cookie. Now that it gates routes, failing
@@ -77,19 +87,25 @@ export async function proxy(request: NextRequest) {
 
   if (!user && isProtected(pathname)) {
     const redirectUrl = new URL(ONBOARDING_ENTRY, request.url);
-    // Remember where they were headed so the callback can finish the trip after sign-in.
+    // Remember where they were headed so the funnel and the callback can finish the trip.
     redirectUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(redirectUrl);
   }
 
-  // A signed-in student landing back on sign-up has already finished the funnel.
+  // A signed-in student landing back on sign-up has already finished the funnel. Honour the
+  // destination the funnel was carrying rather than always dropping them on the dashboard.
   if (user && pathname === SIGN_UP_PATH) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    const next = safePath(searchParams.get("next")) ?? "/dashboard";
+    return NextResponse.redirect(new URL(next, request.url));
   }
 
   return response;
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|icons/|sw.js|manifest.webmanifest).*)"],
+  // Static assets, the service worker, the manifest, and the brand/icon folders never need a
+  // session lookup; each one that slipped through here cost a Supabase round-trip per request.
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|icons/|brand/|sw.js|swe-worker|manifest.webmanifest|og.png|qr-code.svg).*)",
+  ],
 };
