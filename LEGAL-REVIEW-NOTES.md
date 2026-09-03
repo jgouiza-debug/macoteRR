@@ -99,8 +99,10 @@ The former bracket placeholders (`[Nom du/de la responsable]`, `[courriel de con
 `NEXT_PUBLIC_*` variable in `src/lib/site-config.ts` (`SITE_CONFIG`) and rendered through
 `src/components/marketing/PendingValue.tsx`. **Nothing is invented as a default: while a
 variable is unset, empty or whitespace, the page shows a small dashed "à confirmer" /
-"to be confirmed" chip (aria-label "valeur à confirmer avant le lancement") exactly where the
-value will appear.** That is deliberate — a reviewer or the site owner can see at a glance what
+"to be confirmed" chip exactly where the value will appear — announced to screen readers as
+"valeur à confirmer avant le lancement" / "value to be confirmed before launch" (visually hidden
+text, since a plain `<span>` cannot carry an `aria-label`), and marked with a
+`data-pending-value` attribute.** That is deliberate — a reviewer or the site owner can see at a glance what
 is still missing on the live page instead of trusting this file. Set them in `.env.local`
 (template in `.env.local.example`) or the host's environment; they are `NEXT_PUBLIC_` because
 they are published page text, not secrets.
@@ -111,8 +113,8 @@ they are published page text, not secrets.
 | `NEXT_PUBLIC_PILOT_EMAIL` | The address the cégep pilot form mails to | `/pour-les-cegeps` contact form (mailto: only, never displayed) | Submit disabled with the same one-line note; no mailto: is built |
 | `NEXT_PUBLIC_PRIVACY_OFFICER` | Name and title of the person responsible for the protection of personal information (Loi 25, statutory) | `/confidentialite` §"Responsable de la protection…" | Chip at the start of the sentence |
 | `NEXT_PUBLIC_DATA_REGION` | Where the data is physically hosted (Supabase region / provider) — see §2 q.1 | `/confidentialite` summary point "Hébergement : …" and §"Qui a accès à tes données" ("Hébergement technique : …") | Chip; the sentence about the Canadian-hosting goal stays |
-| `NEXT_PUBLIC_FOUNDER_NAME` | The founder's name | `/a-propos` identity card | Chip |
-| `NEXT_PUBLIC_FOUNDER_CEGEP` | The founder's cégep | `/a-propos` identity card | Chip |
+| `NEXT_PUBLIC_FOUNDER_NAME` | The founder's name | `/a-propos` identity card (the `{founderName}` token in `src/content/a-propos.ts` `identity.name`) | Chip |
+| `NEXT_PUBLIC_FOUNDER_CEGEP` | The founder's cégep | `/a-propos` identity card (the `{founderCegep}` token in `src/content/a-propos.ts` `identity.cegep`) | Chip |
 
 `NEXT_PUBLIC_SITE_URL` (same file) overrides the canonical `https://www.macote.xyz` origin for
 local/preview builds; it is not page text and has a real default.
@@ -121,9 +123,8 @@ Before launch: the bracket/address grep
 `grep -rn "\[Nom\|\[courriel\|\[à confirmer\|\[Ton nom\|\[ton cégep\|\[Your name\|\[your cégep\|\[contact email\|\[Responsible\|@macote.xyz" src`
 must return nothing (it does as of this update), and a production build with all six
 variables set must render no chip on any page. `scripts/screenshots/walk.ts` flags leftover
-bracket placeholders but not the chips — check the chips by eye, or add a check for the
-chip's aria-label ("valeur à confirmer avant le lancement" / "value to be confirmed before
-launch"). The one-line form notes in `src/content/contact.ts` and `pour-les-cegeps.ts`
+bracket placeholders but not the chips — check the chips by eye, or add a check that no
+`[data-pending-value]` element is rendered on any page. The one-line form notes in `src/content/contact.ts` and `pour-les-cegeps.ts`
 ("Adresse de contact à confirmer avant le lancement.") only render while the matching
 address variable is unset.
 

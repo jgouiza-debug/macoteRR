@@ -10,9 +10,11 @@ export type AProposContent = {
   title: string;
   intro: string;
   sections: AProposSection[];
-  /** Bordered identity card. `name` and `cegep` are the {founderName} / {founderCegep} SITE_CONFIG
-   *  tokens (NEXT_PUBLIC_FOUNDER_NAME / NEXT_PUBLIC_FOUNDER_CEGEP); AProposPage renders a
-   *  PendingValue for each, so an unset one shows an "à confirmer" chip, never an invented identity. */
+  /** Bordered identity card. `name` and `cegep` are the single source for the founder's identity:
+   *  they hold the {founderName} / {founderCegep} SITE_CONFIG tokens (NEXT_PUBLIC_FOUNDER_NAME /
+   *  NEXT_PUBLIC_FOUNDER_CEGEP) and AProposPage renders each through renderTemplate(), so an unset
+   *  one shows an "à confirmer" chip, never an invented identity. Any consumer of these fields must
+   *  go through renderTemplate() too — printed raw, they leak the token text. */
   identity: {
     heading: string;
     name: string;

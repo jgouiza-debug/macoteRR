@@ -3,9 +3,11 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ScreenShell } from "@/components/onboarding/ScreenShell";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { useFormat } from "@/lib/i18n/useFormat";
 import { useStudentProfile } from "@/lib/profile/store";
 import { useOnboardingGuard } from "@/lib/profile/onboarding";
 import { useFunnelNav } from "@/lib/profile/funnel-nav";
+import { useHydrated } from "@/lib/hooks/useHydrated";
 
 const FORM_ID = "cote-r-form";
 
@@ -15,8 +17,10 @@ const FORM_ID = "cote-r-form";
  */
 export function ConfirmScoreScreen() {
   const { t } = useLocale();
-  const { profile, update } = useStudentProfile();
+  const f = useFormat();
+  const { profile, update, sync } = useStudentProfile();
   const { hrefFor, finishStep } = useFunnelNav();
+  const hydrated = useHydrated();
   const inputRef = useRef<HTMLInputElement>(null);
   // Starts EMPTY. It used to default to "28,4", which meant a student could tap straight
   // through and get results for a number that was never theirs — in a product whose whole
@@ -31,12 +35,19 @@ export function ConfirmScoreScreen() {
     if (window.matchMedia("(pointer: fine)").matches) inputRef.current?.focus();
   }, []);
 
+  // The store's hydration snapshot is the empty profile, and a signed-in student's first
+  // reconcile may still be pulling the server copy. Submitting on either writes
+  // `currentSession: 1` over the session the server already has (and races the pull), so the
+  // submit waits. Typing is fine meanwhile. Hooks all sit above this.
+  const ready = hydrated && sync !== "syncing";
+
   const numeric = Number(value.replace(",", "."));
   const isValid = Number.isFinite(numeric) && numeric >= 15 && numeric <= 50;
   const showError = touched && value.length > 0 && !isValid;
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!ready) return;
     if (!isValid) {
       setTouched(true);
       return;
@@ -60,7 +71,7 @@ export function ConfirmScoreScreen() {
           <button
             type="submit"
             form={FORM_ID}
-            disabled={!isValid}
+            disabled={!isValid || !ready}
             className="flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40"
           >
             {t("entry.cta")}
@@ -94,7 +105,7 @@ export function ConfirmScoreScreen() {
             inputMode="decimal"
             autoComplete="off"
             enterKeyHint="go"
-            placeholder="28,4"
+            placeholder={f.score(28.4)}
             aria-invalid={showError}
             aria-describedby="cote-r-help"
             className="w-full bg-transparent font-display text-[40px] font-bold leading-tight tracking-tight text-ink outline-none tabular-nums placeholder:text-ink/20"

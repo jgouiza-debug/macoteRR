@@ -12,7 +12,6 @@ export const DICTIONARY = {
     "common.confirm": "Confirmer",
     "common.retry": "Réessayer",
     "common.loading": "Chargement…",
-    "common.toBeConfirmed": "à confirmer",
     "sync.unsaved":
       "Tes changements sont enregistrés sur cet appareil, mais pas encore sur ton compte. On réessaie automatiquement.",
     "sync.guestNotice": "Connecte-toi pour synchroniser sur tes autres appareils.",
@@ -85,16 +84,13 @@ export const DICTIONARY = {
     "prof.tagsHelp": "Sert à faire remonter des bourses auxquelles tu pourrais être admissible. Jamais partagé ni vendu.",
     "prof.tagsNoFinance": "Aucune donnée financière n'est demandée, ici ou ailleurs.",
     "prof.tagsCount": "{n} sélectionnée(s)",
-    "prof.unlocks": "Débloque {n} bourse(s)",
-    "prof.notifications": "Notifications et alertes",
 
     "notif.title": "Notifications",
     "notif.subtitle": "Reste au courant, sans le bruit.",
     "notif.framing":
       "On t'écrit seulement quand une bourse que tu débloques apparaît, ou qu'une échéance que tu suis approche. Rien d'autre.",
     "notif.deadlinesTitle": "Rappels d'échéances",
-    "notif.deadlinesDesc":
-      "Pour tes programmes cibles et les bourses à ta portée (à 14 jours et 3 jours).",
+    "notif.deadlinesDesc": "Pour tes programmes cibles et les bourses à ta portée, jusqu'à 14 jours avant l'échéance.",
     "notif.cutoffsTitle": "Mises à jour des seuils",
     "notif.cutoffsDesc":
       "Dès qu'un seuil officiel d'admission change pour l'un de tes programmes cibles.",
@@ -106,19 +102,6 @@ export const DICTIONARY = {
       "Un rappel en fin de session (décembre et avril) pour mettre à jour ta cote.",
     "notif.saveSuccess": "Préférences enregistrées",
 
-    "landing.title": "Ta cote R, et ce qu'elle t'ouvre vraiment.",
-    "landing.body":
-      "Entre ta cote. Vois immédiatement les programmes universitaires que tu dépasses déjà. Gratuit, sans compte.",
-    "landing.cta": "Voir ce que je dépasse déjà",
-    "landing.chartCaption":
-      "Ta cote R est une position dans une distribution. Pas une barre de progression.",
-    "landing.f1t": "Les seuils publiés, sourcés et datés",
-    "landing.f1d": "Chaque chiffre porte sa date et son lien.",
-    "landing.f2t": "Les seuils par cours que personne n'affiche",
-    "landing.f2d": "Certains programmes exigent une note minimale dans un cours précis.",
-    "landing.f3t": "Les bourses de la fondation de ton cégep",
-    "landing.f3d": "Plus de 1 000 $ par année à Sainte-Foy seulement.",
-    "landing.credit": "Fait par un étudiant de cégep, pas par une école.",
 
     "bif.title": "Tu connais ta cote R?",
     "bif.body": "Elle est dans Omnivox ou sur ton dernier relevé de notes.",
@@ -136,7 +119,6 @@ export const DICTIONARY = {
     "starting.body2": "En attendant, tu peux explorer dès maintenant les programmes universitaires qui t'intéressent, vérifier leurs préalables et découvrir les bourses auxquelles tu as droit !",
     "starting.cta": "Continuer",
     "account.logout": "Se déconnecter",
-    "account.logoutConfirm": "Êtes-vous sûr de vouloir vous déconnecter ?",
     "mkt.navMentions": "Mentions légales",
     "mkt.navMethodologie": "Méthodologie & Sources",
 
@@ -156,7 +138,7 @@ export const DICTIONARY = {
     "est.coursePlaceholder": "Ex : Philosophie 101",
     "est.addCourse": "Ajouter un cours",
     "est.remove": "Supprimer ce cours",
-    "est.current": "Estimation actuelle",
+    "est.current": "Estimation actuelle :",
     "est.needsGrade": "Entre au moins une note pour continuer.",
     "est.cta": "Estimer ma cote",
     "est.caveat":
@@ -217,11 +199,8 @@ export const DICTIONARY = {
       "Un compte gratuit garde ta cote session après session et te montre ta courbe.",
     "account.email": "Courriel",
     "account.create": "Créer mon compte",
-    "account.later": "Plus tard",
     "account.noCard": "Aucune carte de crédit. Aucune donnée financière, jamais.",
     "account.noPassword": "Pas de mot de passe : on t'envoie un lien.",
-    "account.haveAccount": "Tu as déjà un compte?",
-    "account.signIn": "Se connecter",
     "account.sending": "Envoi...",
     "account.checkEmailTitle": "Vérifie tes courriels",
     "account.checkEmailBody":
@@ -242,10 +221,7 @@ export const DICTIONARY = {
     "dash.estimateTitle": "Estimation actuelle de ta cote R",
     "dash.confirmedTitle": "Ta cote R confirmée",
     "dash.yourScore": "Ta cote",
-    "dash.estimateBasis": "Basée sur la session",
     "dash.estimated": "ESTIMATION",
-    "dash.confirmed": "CONFIRMÉE",
-    "dash.officialSessions": "Sessions officielles",
     "dash.currentGrades": "Notes de la session en cours",
     "dash.course": "Cours",
     "dash.grade": "Note",
@@ -262,9 +238,7 @@ export const DICTIONARY = {
     "dash.programGoal": "Objectifs programme",
     "dash.noGoals": "Aucun programme ciblé pour l'instant.",
     "dash.addGoal": "Explorer les programmes",
-    "dash.noEstimate": "Entre ou estime ta cote R pour voir ton tableau de bord.",
     "dash.startOnboarding": "Commencer",
-    "dash.yourCegep": "Ton cégep",
     "dash.yourEst": "Ton estimation",
     "dash.unofficial":
       "Estimation non officielle — confirme avec ton cégep ou le portail SRAM pour les données officielles.",
@@ -277,9 +251,6 @@ export const DICTIONARY = {
     "prog.subjectFloor": "SEUIL PAR COURS",
     "prog.placementRate": "TAUX DE PLACEMENT",
     "prog.prerequisites": "Préalables",
-    "prog.met": "ACQUIS",
-    "prog.missing": "MANQUANT",
-    "prog.inProgress": "EN COURS",
     "prog.inDecCore": "AU TRONC COMMUN",
     "prog.notInDecCore": "PAS AU TRONC COMMUN",
     "prog.professionalOrders": "Ordres professionnels",
@@ -297,15 +268,11 @@ export const DICTIONARY = {
     "burs.close": "À portée",
     "burs.explore": "À explorer",
     "burs.apply": "Postuler",
-    "burs.details": "Détails",
-    "burs.exploreCta": "Explorer",
-    "burs.why": "Pourquoi",
     "burs.rCegep": "Ton cégep",
     "burs.rProgram": "Ton programme",
     "burs.rScore": "Ta cote R",
     "burs.rTarget": "Ton programme cible",
     "burs.rOpen": "Ouvert à tous",
-    "burs.rTagged": "Tagué",
     "burs.rGap": "À {gap} de la cote requise",
     "burs.noLink": "Pas de formulaire en ligne. Contacte les services aux étudiants de ton cégep.",
     "burs.essay": "Texte à rédiger",
@@ -369,9 +336,6 @@ export const DICTIONARY = {
     "mkt.installBarHeading": "Prêt à voir ta cote?",
     "mkt.installBarCta": "Ouvrir MaCote",
     "mkt.installBarDismiss": "Fermer",
-    "mkt.tocTitle": "Sur cette page",
-    "mkt.notFoundLine": "Page introuvable.",
-    "mkt.notFoundButton": "Retour à l'accueil",
 
     // ---- added 2026-09-02 (scripts/i18n/apply-keys.ts) ----
     "account.linkExpired": "Ce lien ne fonctionne plus. Demande un nouveau code ci-dessous.",
@@ -448,6 +412,9 @@ export const DICTIONARY = {
     "starting.wipeBody": "Tu as déjà une cote R enregistrée. Continuer ici l'efface et remet ta session à la 1ère. Tu pourras la réentrer plus tard.",
     "starting.wipeConfirm": "Effacer et continuer",
     "starting.wipeTitle": "Effacer ta cote R?",
+
+    // ---- added 2026-09-03 (scripts/i18n/apply-keys.ts) ----
+    "mkt.legalDraftBanner": "Brouillon — en révision. Ce document n'est pas un avis juridique et n'a pas encore été révisé par un ou une avocat·e. Voir LEGAL-REVIEW-NOTES.md.",
   },
   en: {
 
@@ -461,7 +428,6 @@ export const DICTIONARY = {
     "common.confirm": "Confirm",
     "common.retry": "Try again",
     "common.loading": "Loading…",
-    "common.toBeConfirmed": "to be confirmed",
     "sync.unsaved":
       "Your changes are saved on this device, but not on your account yet. We'll keep retrying automatically.",
     "sync.guestNotice": "Sign in to sync across your devices.",
@@ -534,16 +500,13 @@ export const DICTIONARY = {
     "prof.tagsHelp": "Used to surface bursaries you might qualify for. Never shared or sold.",
     "prof.tagsNoFinance": "No financial information is ever requested, here or anywhere else.",
     "prof.tagsCount": "{n} selected",
-    "prof.unlocks": "Unlocks {n} bursary/ies",
-    "prof.notifications": "Notifications & alerts",
 
     "notif.title": "Notifications",
     "notif.subtitle": "Stay informed, without the noise.",
     "notif.framing":
       "We only message you when a bursary you unlock appears, or when a deadline you follow is approaching. Nothing else.",
     "notif.deadlinesTitle": "Deadline reminders",
-    "notif.deadlinesDesc":
-      "For your target programs and bursaries within reach (at 14 days and 3 days).",
+    "notif.deadlinesDesc": "For your target programs and bursaries within reach, up to 14 days before the deadline.",
     "notif.cutoffsTitle": "Cutoff updates",
     "notif.cutoffsDesc":
       "Whenever an official admission cutoff changes for one of your target programs.",
@@ -555,19 +518,6 @@ export const DICTIONARY = {
       "A reminder at the end of the session (December and April) to update your score.",
     "notif.saveSuccess": "Preferences saved",
 
-    "landing.title": "Your R-score, and what it actually opens up.",
-    "landing.body":
-      "Enter your score. Instantly see the university programs you already clear. Free, no account.",
-    "landing.cta": "Show me what I already clear",
-    "landing.chartCaption":
-      "Your R-score is a position in a distribution. Not a progress bar.",
-    "landing.f1t": "Published cutoffs, sourced and dated",
-    "landing.f1d": "Every figure carries its date and its link.",
-    "landing.f2t": "The per-course cutoffs nobody displays",
-    "landing.f2d": "Some programs require a minimum grade in one specific course.",
-    "landing.f3t": "Your cégep foundation's bursaries",
-    "landing.f3d": "Over $1,000 a year at Sainte-Foy alone.",
-    "landing.credit": "Built by a cégep student, not by a school.",
 
     "bif.title": "Do you know your R-score?",
     "bif.body": "It's in Omnivox or on your latest transcript.",
@@ -585,7 +535,6 @@ export const DICTIONARY = {
     "starting.body2": "In the meantime, you can explore university programs of interest, check prerequisite courses, and discover bursaries available right now!",
     "starting.cta": "Continue",
     "account.logout": "Log out",
-    "account.logoutConfirm": "Are you sure you want to log out?",
     "mkt.navMentions": "Legal Notice",
     "mkt.navMethodologie": "Methodology & Sources",
 
@@ -605,7 +554,7 @@ export const DICTIONARY = {
     "est.coursePlaceholder": "e.g. Philosophy 101",
     "est.addCourse": "Add a course",
     "est.remove": "Remove this course",
-    "est.current": "Current estimate",
+    "est.current": "Current estimate:",
     "est.needsGrade": "Enter at least one grade to continue.",
     "est.cta": "Estimate my score",
     "est.caveat":
@@ -666,11 +615,8 @@ export const DICTIONARY = {
       "A free account keeps your score session after session and shows you your curve.",
     "account.email": "Email",
     "account.create": "Create my account",
-    "account.later": "Later",
     "account.noCard": "No credit card. No financial data, ever.",
     "account.noPassword": "No password: we send you a link.",
-    "account.haveAccount": "Already have an account?",
-    "account.signIn": "Sign in",
     "account.sending": "Sending...",
     "account.checkEmailTitle": "Check your email",
     "account.checkEmailBody":
@@ -691,10 +637,7 @@ export const DICTIONARY = {
     "dash.estimateTitle": "Current R-Score Estimate",
     "dash.confirmedTitle": "Your confirmed R-score",
     "dash.yourScore": "Your score",
-    "dash.estimateBasis": "Based on",
     "dash.estimated": "ESTIMATED",
-    "dash.confirmed": "CONFIRMED",
-    "dash.officialSessions": "Official Sessions",
     "dash.currentGrades": "Current Session Grades",
     "dash.course": "Course",
     "dash.grade": "Grade",
@@ -711,9 +654,7 @@ export const DICTIONARY = {
     "dash.programGoal": "Program goals",
     "dash.noGoals": "No target programs yet.",
     "dash.addGoal": "Explore programs",
-    "dash.noEstimate": "Enter or estimate your R-score to see your dashboard.",
     "dash.startOnboarding": "Get started",
-    "dash.yourCegep": "Your cégep",
     "dash.yourEst": "Your Est.",
     "dash.unofficial":
       "Unofficial estimate — consult your cégep or the SRAM portal for official data.",
@@ -726,9 +667,6 @@ export const DICTIONARY = {
     "prog.subjectFloor": "SUBJECT FLOOR",
     "prog.placementRate": "PLACEMENT RATE",
     "prog.prerequisites": "Prerequisites",
-    "prog.met": "MET",
-    "prog.missing": "MISSING",
-    "prog.inProgress": "IN PROGRESS",
     "prog.inDecCore": "IN YOUR DEC CORE",
     "prog.notInDecCore": "NOT IN YOUR DEC CORE",
     "prog.professionalOrders": "Professional Orders",
@@ -746,15 +684,11 @@ export const DICTIONARY = {
     "burs.close": "Within reach",
     "burs.explore": "Worth exploring",
     "burs.apply": "Apply",
-    "burs.details": "Details",
-    "burs.exploreCta": "Explore",
-    "burs.why": "Why",
     "burs.rCegep": "Your cégep",
     "burs.rProgram": "Your program",
     "burs.rScore": "Your R-score",
     "burs.rTarget": "Your target program",
     "burs.rOpen": "Open to all",
-    "burs.rTagged": "Tagged",
     "burs.rGap": "{gap} from the required score",
     "burs.noLink": "No online form. Contact your cégep's student services.",
     "burs.essay": "Written statement",
@@ -818,9 +752,6 @@ export const DICTIONARY = {
     "mkt.installBarHeading": "Ready to see your score?",
     "mkt.installBarCta": "Open MaCote",
     "mkt.installBarDismiss": "Dismiss",
-    "mkt.tocTitle": "On this page",
-    "mkt.notFoundLine": "Page not found.",
-    "mkt.notFoundButton": "Back to home",
 
     // ---- added 2026-09-02 (scripts/i18n/apply-keys.ts) ----
     "account.linkExpired": "That link no longer works. Request a new code below.",
@@ -897,6 +828,9 @@ export const DICTIONARY = {
     "starting.wipeBody": "You already have an R-score saved. Continuing here erases it and resets your term to the 1st. You can enter it again later.",
     "starting.wipeConfirm": "Erase and continue",
     "starting.wipeTitle": "Erase your R-score?",
+
+    // ---- added 2026-09-03 (scripts/i18n/apply-keys.ts) ----
+    "mkt.legalDraftBanner": "Draft — under review. This document is not legal advice and has not yet been reviewed by a lawyer. See LEGAL-REVIEW-NOTES.md.",
   },
 } as const;
 

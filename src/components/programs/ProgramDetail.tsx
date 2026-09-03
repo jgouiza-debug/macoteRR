@@ -1,6 +1,5 @@
 "use client";
 
-import { notFound } from "next/navigation";
 import { TrendingUp } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { DistributionCurve } from "@/components/rscore/DistributionCurve";
@@ -16,7 +15,7 @@ import {
 } from "@/lib/matching/program-eligibility";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
-import { UNIVERSITY_PROGRAMS, type CutoffFigureType } from "@/lib/sample-data";
+import type { CutoffFigureType, UniversityProgram } from "@/lib/sample-data";
 import { getCutoffRange, formatRangeYears } from "@/lib/rscore/cutoff-range";
 import type { TranslationKey } from "@/lib/i18n/dictionary";
 
@@ -29,7 +28,7 @@ const FIGURE_TYPE_KEY: Record<CutoffFigureType, TranslationKey> = {
   range_high: "cutoff.figureType.range_high",
 };
 
-export function ProgramDetail({ programId }: { programId: string }) {
+export function ProgramDetail({ program: shipped }: { program: UniversityProgram }) {
   const { t } = useLocale();
   // The student's own score, read here rather than passed in: the route is statically
   // prerendered, so a server-supplied score could only ever be a hardcoded sample one —
@@ -45,15 +44,13 @@ export function ProgramDetail({ programId }: { programId: string }) {
   const score = settled ? profile.rScore : null;
   const isConfirmed = profile.rScoreStatus === "confirmed";
   const f = useFormat();
-  // The programme is read from the live catalogue rather than the shipped constant the route
-  // was prerendered from, so a cutoff re-verified and promoted after the deploy shows here on
-  // the next boot. The shipped entry is the fallback (the route already 404s for an id it
-  // lacks), and every hook above stays above this early return on purpose.
+  // The server page resolved `shipped` from the constant the route was prerendered from
+  // (static params, metadata and the 404 all live there). The figures shown come from the
+  // live catalogue looked up by that id, so a cutoff re-verified and promoted after the
+  // deploy shows here on the next boot; the shipped entry is the fallback when the live
+  // bundle does not carry the id.
   const { universityPrograms } = useReferenceCatalog();
-  const program =
-    universityPrograms.find((p) => p.id === programId) ??
-    UNIVERSITY_PROGRAMS.find((p) => p.id === programId);
-  if (!program) notFound();
+  const program = universityPrograms.find((p) => p.id === shipped.id) ?? shipped;
   const range = getCutoffRange(program.cutoffHistory);
   const rangeLabel = range ? `${t("common.seuil")} ${formatRangeYears(range)}` : t("cutoff.unverified");
   const prereqKindByName = new Map(
@@ -129,9 +126,11 @@ export function ProgramDetail({ programId }: { programId: string }) {
           ) : score === null ? (
             <p className="py-6 text-center text-[12.5px] text-ink/50">{t("prog.noScoreYet")}</p>
           ) : (
+            // GUARDRAIL #2: the curve's marker label carries the "≈ " of an estimate too.
             <DistributionCurve
               score={score}
               range={range}
+              estimated={!isConfirmed}
               youLabel={t("common.toi")}
               rangeLabel={rangeLabel}
             />

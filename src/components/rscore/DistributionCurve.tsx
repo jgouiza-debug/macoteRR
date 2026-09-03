@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, memo } from "react";
 import { clampScore, R_MAX, R_MIN } from "@/lib/rscore/scale";
 import { compareToCutoffRange, type CutoffRange } from "@/lib/rscore/cutoff-range";
+import { useFormat } from "@/lib/i18n/useFormat";
 
 const VIEW_W = 312;
 const VIEW_H = 130;
@@ -61,20 +62,28 @@ export const DistributionCurve = memo(function DistributionCurve({
   score,
   range,
   caption,
-  youLabel = "toi",
+  youLabel,
   rangeLabel,
+  estimated = false,
 }: {
   score: number;
   /** null when nothing is verified yet — renders a hatched placeholder, no comparison claim. */
   range: CutoffRange | null;
   caption?: string;
-  youLabel?: string;
+  /** Localised by the caller (`t("common.toi")`); required so nothing falls back to French. */
+  youLabel: string;
   /**
    * Fully composed by the caller, word included — `${t("common.seuil")} ${formatRangeYears(range)}`
    * — so the annotation reads "seuil 2020–2022" in French and "cutoff 2020–2022" in English.
    * Rendered exactly as given: nothing is prefixed here.
    */
   rangeLabel: string;
+  /**
+   * True when `score` is an estimate. The marker label then carries the leading "≈ " like
+   * every other place the figure appears (guardrail #2): the curve must never turn an
+   * estimate into a confirmed-looking number.
+   */
+  estimated?: boolean;
 }) {
   const status = compareToCutoffRange(score, range);
   const markerColor =
@@ -99,6 +108,7 @@ export const DistributionCurve = memo(function DistributionCurve({
   const pathRef = useRef<SVGPathElement>(null);
   const [shouldAnimate, setShouldAnimate] = useState(false);
   const [pathLength, setPathLength] = useState(340);
+  const f = useFormat();
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -127,8 +137,10 @@ export const DistributionCurve = memo(function DistributionCurve({
     }
   }, []);
 
-  const formattedScore = score.toFixed(1).replace(".", ",");
-  const studentFullLabel = `${youLabel}, ${formattedScore}`;
+  // Same Intl formatter as the position block beside the curve, so "32,5" and "32.5" never
+  // share a screen; an estimate keeps its "≈ " here too (guardrail #2).
+  const formattedScore = f.score(score);
+  const studentFullLabel = `${youLabel}, ${estimated ? "≈ " : ""}${formattedScore}`;
 
   return (
     <figure className="m-0 flex w-full flex-col gap-2.5 [content-visibility:auto] [contain-intrinsic-size:0_160px]">

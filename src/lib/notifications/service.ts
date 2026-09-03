@@ -1,5 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/db/database.types";
+import { formatScore } from "@/lib/format";
+import { formatRangeYears, type CutoffRange } from "@/lib/rscore/cutoff-range";
 import type {
   NotificationCategory,
   NotificationPayload,
@@ -61,7 +63,45 @@ export function getNotificationDeepLink(params: {
 }
 
 /**
+ * A published range as src/lib/notifications/derive.ts carries it in a cutoff_update payload
+ * (`oldRange` / `newRange`: the getCutoffRange shape, or null when nothing was published).
+ * Anything that is not that shape reads as null — "not yet verified" — never as a number.
+ */
+function readCutoffRange(value: unknown): CutoffRange | null {
+  if (typeof value !== "object" || value === null) return null;
+  const { low, high, years } = value as Record<string, unknown>;
+  if (typeof low !== "number" || !Number.isFinite(low)) return null;
+  if (typeof high !== "number" || !Number.isFinite(high)) return null;
+  if (!Array.isArray(years) || !years.every((year) => typeof year === "number")) return null;
+  return { low, high, years };
+}
+
+/**
+ * "22,0–22,5 (2024–2025)": both ends of the range and its years, even when the ends coincide —
+ * universities publish ranges, never one figure (src/lib/rscore/cutoff-range.ts), so the copy
+ * never collapses one. A null side is an em dash, the same "not yet verified" every screen
+ * shows; it never reads as open admission.
+ */
+function formatCutoffRange(value: unknown, locale: "fr" | "en"): string {
+  const range = readCutoffRange(value);
+  if (!range) return "—";
+  const span = `${formatScore(range.low, locale)}–${formatScore(range.high, locale)}`;
+  return range.years.length > 0 ? `${span} (${formatRangeYears(range)})` : span;
+}
+
+/** The deadline's title in the reader's language; `title` (French) is the pre-locale fallback. */
+function readDeadlineTitle(payload: NotificationPayload, locale: "fr" | "en"): string | undefined {
+  const localized = locale === "en" ? payload.titleEn : payload.titleFr;
+  return typeof localized === "string" && localized.length > 0 ? localized : payload.title;
+}
+
+/**
  * Formats notification copy per the French (and English) copy templates in the product specification.
+ *
+ * Payload fields read, per category (derive.ts writes exactly these):
+ *   - deadline_reminder: titleFr / titleEn picked by locale (`title` as fallback), daysLeft, gap;
+ *   - new_bursary_match: newMatchesCount, foundationName, daysLeft (absent once the deadline passed);
+ *   - cutoff_update: programName, oldRange / newRange rendered as "low–high (years)" or an em dash.
  */
 export function formatNotificationCopy(
   category: NotificationCategory,
@@ -80,7 +120,7 @@ export function formatNotificationCopy(
         };
       }
       case "deadline_reminder": {
-        const title = payload.title ?? "Deadline";
+        const title = readDeadlineTitle(payload, "en") ?? "Deadline";
         const days = payload.daysLeft ?? 14;
         const gapText = payload.gap !== undefined ? ` You are ${payload.gap} from the required score.` : "";
         return {
@@ -95,8 +135,8 @@ export function formatNotificationCopy(
         };
       case "cutoff_update": {
         const prog = payload.programName ?? "Target program";
-        const oldC = payload.oldCutoff !== undefined ? String(payload.oldCutoff).replace(".", ",") : "—";
-        const newC = payload.newCutoff !== undefined ? String(payload.newCutoff).replace(".", ",") : "—";
+        const oldC = formatCutoffRange(payload.oldRange, "en");
+        const newC = formatCutoffRange(payload.newRange, "en");
         return {
           title: "Cutoff changed",
           body: `The cutoff for ${prog} changed: ${oldC} → ${newC}. Check where you stand.`,
@@ -122,7 +162,7 @@ export function formatNotificationCopy(
       };
     }
     case "deadline_reminder": {
-      const title = payload.title ?? "Échéance";
+      const title = readDeadlineTitle(payload, "fr") ?? "Échéance";
       const days = payload.daysLeft ?? 14;
       const gapText = payload.gap !== undefined ? ` Tu es à ${payload.gap} de la cote requise.` : "";
       return {
@@ -137,8 +177,8 @@ export function formatNotificationCopy(
       };
     case "cutoff_update": {
       const prog = payload.programName ?? "Programme cible";
-      const oldC = payload.oldCutoff !== undefined ? String(payload.oldCutoff).replace(".", ",") : "—";
-      const newC = payload.newCutoff !== undefined ? String(payload.newCutoff).replace(".", ",") : "—";
+      const oldC = formatCutoffRange(payload.oldRange, "fr");
+      const newC = formatCutoffRange(payload.newRange, "fr");
       return {
         title: "Mise à jour d'un seuil",
         body: `Le seuil de ${prog} a changé : ${oldC} → ${newC}. Vérifie où tu te situes.`,

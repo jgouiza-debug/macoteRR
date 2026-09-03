@@ -50,10 +50,22 @@ export type DerivedNotification = {
   scheduledFor: string;
   deepLink: string;
   /**
-   * What formatNotificationCopy reads (title, daysLeft, foundationName, newMatchesCount,
-   * programName), plus the source and verification date behind every figure. Typed as
-   * NotificationPayload rather than a bare Record so the copy formatter takes it as is; its
-   * index signature keeps it a `Record<string, unknown>` for the DB's `payload` column.
+   * What formatNotificationCopy (./service.ts) reads, plus the source and verification date
+   * behind every figure:
+   *   - deadline_reminder: `titleFr` / `titleEn`, picked by locale (`title` is the French
+   *     fallback), `daysLeft`, `dateIso`;
+   *   - new_bursary_match: `foundationName`, `newMatchesCount`, `daysLeft` (only while the
+   *     deadline is still ahead), `amountMin` / `amountMax`, `deadlineIso`;
+   *   - cutoff_update: `programName`, `oldRange` / `newRange` — the getCutoffRange shape or
+   *     null, rendered as "low–high (years)" or an em dash. Never `oldCutoff` / `newCutoff`:
+   *     a published range is not one figure, and a single number would conflate.
+   *
+   * `daysLeft` is a snapshot relative to `now` on the day of derivation, while `dedupeKey` is
+   * stable across nightly runs: an inbox that shows an event later must recompute it from
+   * `dateIso` / `deadlineIso` and its own clock, never read the stored value verbatim.
+   *
+   * Typed as NotificationPayload rather than a bare Record so the copy formatter takes it as
+   * is; its index signature keeps it a `Record<string, unknown>` for the DB's `payload` column.
    */
   payload: NotificationPayload;
 };
@@ -117,6 +129,7 @@ export function deriveNotificationEvents(input: DeriveNotificationInput): Derive
             titleFr: deadline.titleFr,
             titleEn: deadline.titleEn,
             dateIso: deadline.dateIso,
+            // A snapshot of `now`; see the payload doc on DerivedNotification.
             daysLeft,
             sourceUrl: deadline.sourceUrl,
             lastVerifiedAt: deadline.lastVerifiedAt,
@@ -125,10 +138,13 @@ export function deriveNotificationEvents(input: DeriveNotificationInput): Derive
       );
     }
 
-    // Explore-tier bursaries are a baseline the student did not qualify for; only the two
-    // tiers the student can actually act on are worth an interruption.
+    // Explore-tier bursaries are the open, criteria-free baseline every student sees; only the
+    // two tiers that matched something in this student's own profile are worth an interruption.
     for (const { bursary } of [...(matches?.matched ?? []), ...(matches?.close ?? [])]) {
       if (!bursary.deadlineIso) continue;
+      // A month- or year-precise deadline has no honest day count: never turn its placeholder
+      // day into "ferme dans 3 jours" (guardrail #1 — a figure nobody published).
+      if ((bursary.deadlinePrecision ?? "day") !== "day") continue;
       const daysLeft = daysUntil(bursary.deadlineIso, now);
       if (!inReminderWindow(daysLeft)) continue;
       add(
@@ -162,6 +178,12 @@ export function deriveNotificationEvents(input: DeriveNotificationInput): Derive
     for (const { bursary } of matches.matched) {
       if (seen.has(bursary.id)) continue;
       const daysLeft = bursary.deadlineIso ? daysUntil(bursary.deadlineIso, now) : null;
+      const precision = bursary.deadlineIso ? (bursary.deadlinePrecision ?? "day") : null;
+      // Deviation from the brief, on purpose: "nouvelle bourse admissible" for a competition
+      // that closed on a known day is misleading copy, so a day-precise deadline already past
+      // is skipped — it fires the day the catalogue publishes a new date. A month- or
+      // year-precise deadline is too coarse to call closed from `daysUntil`, so it stays.
+      if (precision === "day" && daysLeft !== null && daysLeft < 0) continue;
       add(
         buildEvent(userId, {
           category: "new_bursary_match",
@@ -175,8 +197,9 @@ export function deriveNotificationEvents(input: DeriveNotificationInput): Derive
             amountMin: bursary.amountMin,
             amountMax: bursary.amountMax,
             deadlineIso: bursary.deadlineIso,
-            deadlinePrecision: bursary.deadlineIso ? (bursary.deadlinePrecision ?? "day") : null,
-            // Only a deadline still ahead is worth a "closes in N days"; a past one is not.
+            deadlinePrecision: precision,
+            // Only a deadline still ahead is worth a "closes in N days"; a coarse past one is
+            // not. A snapshot of `now`: see the payload doc on DerivedNotification.
             ...(daysLeft !== null && daysLeft >= 0 ? { daysLeft } : {}),
             sourceUrl: bursary.sourceUrl,
             lastVerifiedAt: bursary.lastVerifiedAt,
@@ -234,13 +257,17 @@ function inReminderWindow(daysLeft: number | null): daysLeft is number {
   return daysLeft !== null && daysLeft >= 0 && daysLeft <= DEADLINE_REMINDER_WINDOW_DAYS;
 }
 
+/**
+ * Object.is, not ===: a NaN cutoff present identically on both sides is the same range, and
+ * byte-identical catalogues must never report an update.
+ */
 function sameRange(a: CutoffRange | null, b: CutoffRange | null): boolean {
   if (a === null || b === null) return a === b;
   return (
-    a.low === b.low &&
-    a.high === b.high &&
+    Object.is(a.low, b.low) &&
+    Object.is(a.high, b.high) &&
     a.years.length === b.years.length &&
-    a.years.every((year, i) => year === b.years[i])
+    a.years.every((year, i) => Object.is(year, b.years[i]))
   );
 }
 

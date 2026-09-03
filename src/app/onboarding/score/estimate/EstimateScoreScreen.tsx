@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore, type FormEvent } from "react";
+import { useEffect, useSyncExternalStore, type FormEvent } from "react";
 import { Info, Plus, X } from "lucide-react";
 import { ScreenShell, ScreenHeading } from "@/components/onboarding/ScreenShell";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
@@ -8,6 +8,7 @@ import { useFormat } from "@/lib/i18n/useFormat";
 import { useStudentProfile } from "@/lib/profile/store";
 import { useOnboardingGuard } from "@/lib/profile/onboarding";
 import { useFunnelNav } from "@/lib/profile/funnel-nav";
+import { useHydrated } from "@/lib/hooks/useHydrated";
 
 type Row = { name: string; grade: string };
 
@@ -67,6 +68,9 @@ function readStoredRows(): Row[] | null {
 const draftListeners = new Set<() => void>();
 /** In-memory truth for this tab once first read; storage is the mirror that survives a reload. */
 let draftRows: Row[] | null = null;
+// Set by a successful submit: the next mount must start empty even when sessionStorage is
+// blocked. Any other unmount (back-navigation, refresh) keeps the in-memory draft alive.
+let draftSubmitted = false;
 
 function getDraftRows(): Row[] {
   draftRows ??= readStoredRows() ?? INITIAL_ROWS;
@@ -94,8 +98,38 @@ function setDraftRows(next: Row[] | ((prev: Row[]) => Row[])) {
   for (const listener of draftListeners) listener();
 }
 
+/**
+ * Called once the estimate is on the profile. Only storage is cleared here, and nobody is
+ * notified: the profile write already re-renders this screen before the route changes, and
+ * dropping the in-memory rows now would flash three empty rows under the student's eyes on the
+ * way out. The in-memory copy goes on unmount instead (see useDraftRows). Without any of this,
+ * the next person on the same tab — after a sign-out or a deleted account — found someone
+ * else's courses and grades pre-filled, and a student coming back later saw an old draft
+ * presented as their current estimate.
+ */
+function clearDraftRows() {
+  draftSubmitted = true;
+  try {
+    window.sessionStorage.removeItem(ROWS_STORAGE_KEY);
+  } catch {
+    /* storage blocked: nothing was mirrored there, and the memory copy is dropped on unmount */
+  }
+}
+
 function useDraftRows() {
   const rows = useSyncExternalStore(subscribeDraft, getDraftRows, getServerDraftRows);
+  // The in-memory rows survive an unmount unless a submit cleared the draft: then the next visit
+  // starts empty (storage blocked or not), while a render still in flight is never yanked to
+  // empty rows. An abandoned draft (back-navigation, refresh) is still restored.
+  useEffect(
+    () => () => {
+      if (draftSubmitted) {
+        draftRows = null;
+        draftSubmitted = false;
+      }
+    },
+    [],
+  );
   return [rows, setDraftRows] as const;
 }
 
@@ -107,10 +141,17 @@ function useDraftRows() {
 export function EstimateScoreScreen() {
   const { t } = useLocale();
   const f = useFormat();
-  const { profile, update: updateProfile } = useStudentProfile();
+  const { profile, update: updateProfile, sync } = useStudentProfile();
   const { hrefFor, finishStep } = useFunnelNav();
+  const hydrated = useHydrated();
   const [rows, setRows] = useDraftRows();
   useOnboardingGuard("score");
+
+  // The store's hydration snapshot is the empty profile, and a signed-in student's first
+  // reconcile may still be pulling the server copy. Submitting on either writes
+  // `currentSession: 1` over the session the server already has (and races the pull), so the
+  // submit waits. Typing is fine meanwhile. Hooks all sit above this.
+  const ready = hydrated && sync !== "syncing";
 
   const grades = rows
     .map((r) => Number(r.grade))
@@ -123,7 +164,7 @@ export function EstimateScoreScreen() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!canSubmit) return;
+    if (!canSubmit || !ready) return;
     const scoreVal = parseFloat(estimate.toFixed(2));
     updateProfile({
       rScore: scoreVal,
@@ -134,6 +175,7 @@ export function EstimateScoreScreen() {
     // step 2, so results already know which prerequisites this student covers and can go
     // straight up, score in the URL.
     finishStep(`/onboarding/results?score=${scoreVal}&status=estimated`);
+    clearDraftRows();
   }
 
   return (
@@ -156,7 +198,7 @@ export function EstimateScoreScreen() {
           >
             {canSubmit ? (
               <>
-                <span>{t("est.current")} :</span>
+                <span>{t("est.current")}</span>
                 {/* "≈ " + dashed border + ESTIMATION badge, matching results and the
                     dashboard, so this number never looks like a confirmed one. */}
                 <span className="inline-flex items-center gap-1.5 rounded border border-dashed border-moss/60 px-2 py-0.5">
@@ -176,7 +218,7 @@ export function EstimateScoreScreen() {
           <button
             type="submit"
             form={FORM_ID}
-            disabled={!canSubmit}
+            disabled={!canSubmit || !ready}
             className="flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40"
           >
             {t("est.cta")}

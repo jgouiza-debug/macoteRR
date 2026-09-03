@@ -32,7 +32,7 @@ export function TopNav({
           <Link
             href={backHref}
             aria-label={t("common.back")}
-            className="-ml-2 flex h-10 min-w-[48px] items-center gap-1 rounded-full pl-1 pr-2 text-ink transition-colors active:bg-ink/10"
+            className="-ml-2 -my-1 flex min-h-[48px] min-w-[48px] items-center gap-1 rounded-full pl-1 pr-2 text-ink transition-colors active:bg-ink/10"
           >
             <ChevronLeft className="h-5 w-5" />
             <LogoMark size={16} />

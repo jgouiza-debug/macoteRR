@@ -82,7 +82,11 @@ export type WhatIfChange = { index: number; grade: number };
 export type WhatIfResult = {
   before: number | null;
   after: number | null;
-  /** after − before, 2 decimals; null when either side has no value. */
+  /**
+   * after − before, 2 decimals; null when either side has no value — except that a rejected
+   * change (index out of range, invalid grade) always reports 0, even with no value on either
+   * side: "nothing changed" is the honest answer to a change that was never applied.
+   */
   delta: number | null;
 };
 
@@ -118,10 +122,14 @@ export const COTE_R_MAX = 50;
  * The calibration used when no confirmed session exists: the crude default, labelled as such.
  * A shared constant — treat it as read-only (deriveCalibration hands out fresh objects).
  */
+// Frozen too: a caller that pushed into the shared array would make every later uncalibrated
+// result report sessions it never used.
+const NO_SESSIONS = Object.freeze([]) as unknown as number[];
+
 export const UNCALIBRATED: Readonly<Calibration> = Object.freeze({
   ratio: DEFAULT_RATIO,
   basis: "uncalibrated",
-  sessionsUsed: [],
+  sessionsUsed: NO_SESSIONS,
   residual: null,
   clamped: false,
 });
@@ -229,8 +237,9 @@ export function deriveCalibration(
 
   if (points.length === 1) {
     const [{ mean, cote }] = points;
-    const { ratio, clamped } = clampRatio(cote / mean);
-    if (!Number.isFinite(ratio)) return uncalibrated();
+    const raw = cote / mean;
+    if (!Number.isFinite(raw)) return uncalibrated();
+    const { ratio, clamped } = clampRatio(raw);
     // One point is reproduced exactly by the fitted ratio, so the fit's residual is 0.
     return { ratio, basis: "single_session", sessionsUsed, residual: 0, clamped };
   }

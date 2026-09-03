@@ -1,14 +1,14 @@
-/* The founder's name and cégep are never invented here: they come from SITE_CONFIG
-   (NEXT_PUBLIC_FOUNDER_NAME / NEXT_PUBLIC_FOUNDER_CEGEP) and render as a visible
-   "à confirmer" chip until set. */
+/* The founder's name and cégep are never invented here. The content file is the single
+   source: identity.name / identity.cegep hold the {founderName} / {founderCegep} tokens, which
+   renderTemplate resolves from SITE_CONFIG (NEXT_PUBLIC_FOUNDER_NAME / NEXT_PUBLIC_FOUNDER_CEGEP)
+   and renders as a visible "à confirmer" chip until set. */
 
 import { SiteHeader } from "./SiteHeader";
 import { SiteFooter } from "./SiteFooter";
 import { InstallBar } from "./InstallBar";
 import { SetHtmlLang } from "./SetHtmlLang";
-import { PendingValue, renderTemplate } from "./PendingValue";
+import { renderTemplate } from "./PendingValue";
 import { A_PROPOS_CONTENT } from "@/content/a-propos";
-import { SITE_CONFIG } from "@/lib/site-config";
 import { mt } from "@/lib/i18n/marketing-copy";
 import type { Locale } from "@/lib/i18n/dictionary";
 
@@ -63,7 +63,7 @@ export function AProposPage({ locale }: { locale: Locale }) {
                   </div>
                   <div>
                     <p className="font-display text-[18px] font-bold leading-tight text-ink">
-                      <PendingValue value={SITE_CONFIG.founderName} locale={locale} kind="text" />
+                      {renderTemplate(c.identity.name, locale)}
                     </p>
                     <p className="mt-0.5 text-[13.5px] text-secondary">{c.identity.roleLabel}</p>
                   </div>
@@ -73,7 +73,7 @@ export function AProposPage({ locale }: { locale: Locale }) {
                     {c.identity.cegepLabel}
                   </p>
                   <p className="mt-1 text-[15px] text-ink">
-                    <PendingValue value={SITE_CONFIG.founderCegep} locale={locale} kind="text" />
+                    {renderTemplate(c.identity.cegep, locale)}
                   </p>
                 </div>
               </div>

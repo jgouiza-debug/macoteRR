@@ -9,7 +9,7 @@ import type { UniversityProgram } from "@/lib/sample-data";
 import { useReferenceCatalog } from "@/lib/data/reference-store";
 import { decOfferingsAtCegep } from "@/lib/data/cegep-institutions";
 import { resolveCegepName } from "@/lib/data/resolve-names";
-import { UNIVERSITIES } from "@/lib/data/universities";
+import { universityLabel } from "@/lib/data/universities";
 import { INTERESTS, interestLabel, type InterestId } from "@/lib/tags/interests";
 import { INTEREST_QUIZ, tallyInterests } from "@/lib/matching/interest-quiz";
 import { suggestTopUniversityPrograms } from "@/lib/matching/program-suggestions";
@@ -133,10 +133,14 @@ type Formatter = ReturnType<typeof useFormat>;
  * nothing is published. Neither a prediction nor "open admission" — a missing range only means
  * we have not verified one (docs/00-BUILD-PROMPT.md, guardrail #5). `figure` flags the case
  * that shows a number, so the caller can put a SourceStamp beside it (guardrail #1).
+ *
+ * `estimated` is guardrail #2: a position measured from an estimate carries the leading "≈ "
+ * and the dashed border, so it never reads as the position of a confirmed score.
  */
 function cutoffChip(
   program: UniversityProgram,
   score: number | null,
+  estimated: boolean,
   t: Translate,
   f: Formatter,
 ): { label: string; cls: string; figure: boolean } {
@@ -159,8 +163,8 @@ function cutoffChip(
   }
   const status = compareToCutoffRange(score, range);
   return {
-    label: t(CUTOFF_STATUS_LABEL_KEY[status]),
-    cls: `border border-ink/15 bg-paper font-semibold ${CUTOFF_STATUS_COLOR_CLASS[status]}`,
+    label: `${estimated ? "≈ " : ""}${t(CUTOFF_STATUS_LABEL_KEY[status])}`,
+    cls: `border ${estimated ? "border-dashed" : ""} border-ink/15 bg-paper font-semibold ${CUTOFF_STATUS_COLOR_CLASS[status]}`,
     figure: false,
   };
 }
@@ -235,6 +239,9 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
   }
 
   const cegepName = resolveCegepName(profile.cegepId);
+  // Guardrail #2: a score whose status is not "confirmed" — estimated, or null for a profile
+  // written before statuses existed — is shown as an estimate everywhere on this screen.
+  const isConfirmed = profile.rScoreStatus === "confirmed";
   const decOfferings = useMemo(() => decOfferingsAtCegep(profile.cegepId), [profile.cegepId]);
   const selectedDec = decOfferings.find((p) => p.programCode === cegepProgramId);
 
@@ -289,9 +296,18 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
     [selectedDec, universityPrograms],
   );
 
+  // The chips come from the same list the filters run on (strict equality on `institution`),
+  // so an institution the live bundle adds or corrects cannot leave a chip that filters to
+  // nothing, or programmes reachable only under "all".
   const universities = useMemo(
-    () => [{ id: "all", label: t("goal.allUniversities") }, ...UNIVERSITIES],
-    [t],
+    () => [
+      { id: "all", label: t("goal.allUniversities") },
+      ...[...new Set(universityPrograms.map((p) => p.institution))].map((id) => ({
+        id,
+        label: universityLabel(id),
+      })),
+    ],
+    [t, universityPrograms],
   );
 
   const filteredPrograms = useMemo(() => {
@@ -538,7 +554,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
   /** A selectable university program row: the whole row toggles; the stamp sits beside it. */
   const programRow = (p: UniversityProgram, extraChips?: string[]) => {
     const selected = targetIds.includes(p.id);
-    const chip = cutoffChip(p, profile.rScore, t, f);
+    const chip = cutoffChip(p, profile.rScore, !isConfirmed, t, f);
     return (
       <li key={p.id} className="flex flex-col gap-1">
         <button
@@ -580,6 +596,22 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
       </li>
     );
   };
+
+  // What every cutoff chip below is measured against. The three screens that show chips say
+  // so once, under their heading, the way the programme list and the dashboard targets do:
+  // an estimate is named as one, with the "≈" and the ESTIMATION badge (guardrail #2).
+  const scoreLine =
+    profile.rScore !== null ? (
+      <p className="-mt-3 mb-5 text-[12.5px] text-ink/60">
+        {t(isConfirmed ? "dash.yourScore" : "dash.yourEst")} : {!isConfirmed && "≈ "}
+        <span className="font-semibold tabular-nums">{f.score(profile.rScore)}</span>
+        {!isConfirmed && (
+          <span className="ml-1.5 rounded-full border border-dashed border-moss/60 px-1.5 text-[10px] font-semibold uppercase tracking-wider text-moss">
+            {t("dash.estimated")}
+          </span>
+        )}
+      </p>
+    ) : null;
 
   if (!ready) {
     return (
@@ -757,6 +789,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
     return (
       <ScreenShell backHref={hrefFor(resultsHref)}>
         {heading(t("goal.futureTitle"), t("goal.futureBody"))}
+        {scoreLine}
         <div className="flex flex-col gap-2.5">
           <button type="button" onClick={() => pushStep("specific")} className={CHOICE_ROW}>
             {t("goal.specific")}
@@ -801,7 +834,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
             <ul aria-label={t("goal.catalogSuggestions")} className="flex list-none flex-col gap-2.5">
               {topSuggestions.map(({ item, match }) => {
                 const isSelected = targetIds.includes(item.id);
-                const chip = cutoffChip(item, profile.rScore, t, f);
+                const chip = cutoffChip(item, profile.rScore, !isConfirmed, t, f);
                 return (
                   <li
                     key={item.id}
@@ -930,6 +963,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
         }
       >
         {heading(t("goal.specificTitle"), t("goal.specificBody"))}
+        {scoreLine}
 
         <div className="relative mb-3">
           <Search
@@ -975,6 +1009,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
         fromQuiz ? t("goal.quizResultTitle") : t("goal.generalTitle"),
         fromQuiz ? t("goal.quizResultBody") : t("goal.generalBody"),
       )}
+      {scoreLine}
       <ul aria-label={t("goal.generalTitle")} className="mb-4 flex list-none flex-wrap gap-2">
         {INTERESTS.map((interest) => {
           const selected = interestIds.includes(interest.id);

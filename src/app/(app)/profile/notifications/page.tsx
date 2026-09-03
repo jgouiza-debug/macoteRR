@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { ArrowLeft, Check, Bell } from "lucide-react";
+import { Check, Bell } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
-import { useStudentProfile } from "@/lib/profile/store";
+import { readProfile, useStudentProfile } from "@/lib/profile/store";
 import { useHydrated } from "@/lib/hooks/useHydrated";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import type { TranslationKey } from "@/lib/i18n/dictionary";
@@ -49,7 +48,10 @@ export default function NotificationSettingsPage() {
   );
 
   function handleToggle(key: ToggleKey) {
-    const current = profile.notificationPrefs;
+    // Read at click time, not from the render closure: update() replaces the whole
+    // notificationPrefs object, so a value refreshed between render and click (cross-tab storage
+    // event, reconcile write) must not be overwritten by a stale snapshot.
+    const current = readProfile().notificationPrefs;
     const next: NotificationPreferences = { ...current };
     next[key] = !current[key];
     update({ notificationPrefs: next });
@@ -67,15 +69,18 @@ export default function NotificationSettingsPage() {
       backHref="/profile"
     >
       <div className="mx-auto flex w-full max-w-[480px] flex-col gap-6 px-4 py-6">
-        <div className="flex min-h-[48px] items-center justify-between">
-          <Link
-            href="/profile"
-            className="inline-flex min-h-[48px] items-center gap-1.5 text-[13.5px] font-semibold text-ink/70 hover:text-ink"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            {t("prof.title")}
-          </Link>
-          <div aria-live="polite">
+        {/* The back affordance is TopNav's chevron (AppShell backHref); the "saved" chip sits
+            beside the title so no empty band waits above it. */}
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h1 className="font-display text-[26px] font-bold leading-tight tracking-tight text-ink">
+              {t("notif.title")}
+            </h1>
+            <p className="mt-1 font-display text-[15px] font-semibold text-ultramarine">
+              {t("notif.subtitle")}
+            </p>
+          </div>
+          <div aria-live="polite" className="shrink-0 pt-1">
             {saved && (
               <span className="inline-flex items-center gap-1.5 rounded-full border border-moss/20 bg-moss/10 px-2.5 py-1 text-[12px] font-semibold text-moss animate-pop-in">
                 <Check className="h-3.5 w-3.5 stroke-[2.5]" />
@@ -83,15 +88,6 @@ export default function NotificationSettingsPage() {
               </span>
             )}
           </div>
-        </div>
-
-        <div>
-          <h1 className="font-display text-[26px] font-bold leading-tight tracking-tight text-ink">
-            {t("notif.title")}
-          </h1>
-          <p className="mt-1 font-display text-[15px] font-semibold text-ultramarine">
-            {t("notif.subtitle")}
-          </p>
         </div>
 
         <div className="rounded border border-ink/12 bg-paper p-4 shadow-card">

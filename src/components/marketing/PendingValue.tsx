@@ -5,7 +5,9 @@ import type { Locale } from "@/lib/i18n/dictionary";
 type PendingKind = "text" | "email";
 
 const CHIP_LABEL: Record<Locale, string> = { fr: "à confirmer", en: "to be confirmed" };
-const CHIP_ARIA: Record<Locale, string> = {
+// What assistive tech reads for the chip. A bare <span> has the generic role, which cannot take
+// aria-label, so this is rendered as real (visually hidden) text rather than an attribute.
+const CHIP_ACCESSIBLE_NAME: Record<Locale, string> = {
   fr: "valeur à confirmer avant le lancement",
   en: "value to be confirmed before launch",
 };
@@ -26,13 +28,15 @@ export function PendingValue({
   kind?: PendingKind;
 }) {
   if (value === null) {
+    // `data-pending-value` lets a build check find every chip still rendering on a page.
     return (
       <span
-        aria-label={CHIP_ARIA[locale]}
-        title={CHIP_ARIA[locale]}
+        title={CHIP_ACCESSIBLE_NAME[locale]}
+        data-pending-value="true"
         className="inline-flex rounded-full border border-dashed border-ember/50 bg-ember/[0.06] px-2 py-0.5 align-baseline text-[12px] font-semibold leading-tight text-ember"
       >
-        {CHIP_LABEL[locale]}
+        <span aria-hidden="true">{CHIP_LABEL[locale]}</span>
+        <span className="sr-only">{CHIP_ACCESSIBLE_NAME[locale]}</span>
       </span>
     );
   }

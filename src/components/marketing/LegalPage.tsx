@@ -17,11 +17,6 @@ type LegalContent = {
 /** Shared shell for /confidentialite, /conditions, /accessibilite — all three are draft
  *  legal documents with the same summary-box-then-sections shape. See LEGAL-REVIEW-NOTES.md. */
 export function LegalPage({ locale, path, content }: { locale: Locale; path: string; content: LegalContent }) {
-  const draftBanner =
-    locale === "fr"
-      ? "Brouillon — en révision. Ce document n'est pas un avis juridique et n'a pas encore été révisé par un ou une avocat·e. Voir LEGAL-REVIEW-NOTES.md."
-      : "Draft — under review. This document is not legal advice and has not yet been reviewed by a lawyer. See LEGAL-REVIEW-NOTES.md.";
-
   return (
     <div className="flex min-h-[100dvh] flex-col bg-chalk text-ink">
       {locale === "en" && <SetHtmlLang lang="en" />}
@@ -36,7 +31,7 @@ export function LegalPage({ locale, path, content }: { locale: Locale; path: str
       <main id="main" className="mx-auto w-full max-w-[1120px] flex-1 px-3 py-6 md:px-10 md:py-10">
         <div className="mx-auto max-w-[720px]">
           <div className="rounded-[3px] border border-border bg-paper p-4 text-[13px] leading-relaxed text-secondary">
-            {draftBanner}
+            {mt(locale, "mkt.legalDraftBanner")}
           </div>
 
           <h1 className="mt-6 font-display text-[32px] font-extrabold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[38px]">

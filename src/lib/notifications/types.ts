@@ -1,4 +1,5 @@
 import type { NotificationCategory, NotificationSubjectType } from "@/lib/db/database.types";
+import type { CutoffRange } from "@/lib/rscore/cutoff-range";
 
 export type { NotificationCategory, NotificationSubjectType };
 
@@ -23,8 +24,12 @@ export type NotificationPayload = {
   daysLeft?: number;
   foundationName?: string;
   programName?: string;
-  oldCutoff?: number;
-  newCutoff?: number;
+  /** cutoff_update: the published range before and after; a range is never one figure. */
+  oldRange?: CutoffRange | null;
+  newRange?: CutoffRange | null;
+  /** deadline_reminder: the title in both languages; the formatter picks by locale. */
+  titleFr?: string;
+  titleEn?: string;
   sessionName?: string;
   cegepName?: string;
   gap?: number;

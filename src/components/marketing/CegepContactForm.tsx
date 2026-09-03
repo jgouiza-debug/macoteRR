@@ -76,7 +76,7 @@ export function CegepContactForm({ labels }: { labels: PourLesCegepsContactLabel
           onChange={(e) => setMessage(e.target.value)}
           placeholder={labels.messagePlaceholder}
           rows={4}
-          className="w-full resize-none rounded-[3px] border border-ink/50 bg-chalk px-3.5 py-2.5 text-[15px] leading-relaxed text-ink transition-colors placeholder:text-secondary/70 focus:border-ultramarine"
+          className="w-full resize-none rounded-[3px] border border-ink/50 bg-chalk px-3.5 py-2.5 text-[16px] leading-relaxed text-ink transition-colors placeholder:text-secondary/70 focus:border-ultramarine"
         />
       </label>
 
@@ -128,7 +128,7 @@ function TextField({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         autoComplete={autoComplete}
-        className="h-11 w-full rounded-[3px] border border-ink/50 bg-chalk px-3.5 text-[15px] text-ink transition-colors placeholder:text-secondary/70 focus:border-ultramarine"
+        className="h-12 min-h-[48px] w-full rounded-[3px] border border-ink/50 bg-chalk px-3.5 text-[16px] text-ink transition-colors placeholder:text-secondary/70 focus:border-ultramarine"
       />
     </label>
   );

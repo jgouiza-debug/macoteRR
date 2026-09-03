@@ -16,6 +16,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { DEFAULT_CATALOG, type ReferenceCatalog } from "../../src/lib/data/reference-catalog";
 import { daysUntil, todayIso } from "../../src/lib/dates";
+import { formatScore } from "../../src/lib/format";
 import { matchBursaries } from "../../src/lib/matching/match";
 import {
   DEADLINE_REMINDER_WINDOW_DAYS,
@@ -31,7 +32,7 @@ import {
   type NotificationPreferences,
 } from "../../src/lib/notifications/types";
 import type { StudentProfile } from "../../src/lib/profile/store";
-import { getCutoffRange } from "../../src/lib/rscore/cutoff-range";
+import { formatRangeYears, getCutoffRange, type CutoffRange } from "../../src/lib/rscore/cutoff-range";
 import type { CutoffEntry } from "../../src/lib/sample-data";
 
 const ROOT = path.resolve(__dirname, "../..");
@@ -127,6 +128,38 @@ function ofKind(events: DerivedNotification[], category: NotificationCategory, s
 
 function compareStrings(a: string, b: string): number {
   return a < b ? -1 : a > b ? 1 : 0;
+}
+
+/** Mirrors derive.ts: a day-precise deadline strictly before `now` is closed; anything else is open. */
+function isClosedAt(bursary: { deadlineIso: string | null; deadlinePrecision?: string }, now: Date): boolean {
+  if (!bursary.deadlineIso || (bursary.deadlinePrecision ?? "day") !== "day") return false;
+  const days = daysUntil(bursary.deadlineIso, now);
+  return days !== null && days < 0;
+}
+
+function isRange(value: unknown): value is CutoffRange {
+  return typeof value === "object" && value !== null && "low" in value && "high" in value && "years" in value;
+}
+
+/**
+ * How the copy must show a published range: both ends, the years, in the reader's decimal
+ * convention — or an em dash for "not yet verified". Never one figure (guardrail #2).
+ */
+function expectRange(value: unknown, locale: "fr" | "en"): string {
+  if (!isRange(value)) return "—";
+  return `${formatScore(value.low, locale)}–${formatScore(value.high, locale)} (${formatRangeYears(value)})`;
+}
+
+/** Guardrail #5 wording; a stated probability is matched separately, a bare "%" is not chance wording. */
+const FORBIDDEN_PHRASES = ["tu as tes chances", "très accessible", "cible ambitieuse", "good chance", "tu devrais", "you should"];
+const PROBABILITY_RE = /\d+\s?%\s*(de\s+)?chances?/;
+
+function assertNoChanceWording(text: string, where: string) {
+  const lower = text.toLowerCase();
+  for (const phrase of FORBIDDEN_PHRASES) {
+    assert.ok(!lower.includes(phrase), `${where} carries "${phrase}"`);
+  }
+  assert.ok(!PROBABILITY_RE.test(lower), `${where} states a probability`);
 }
 
 let passed = 0;
@@ -248,6 +281,15 @@ check("a matched bursary's deadline 14 days out is a bursary reminder that leads
   assert.equal(ofKind(derive({ now: daysFrom(MATCHED_DEADLINE, 1) }), "deadline_reminder", bursary.id).length, 0);
 });
 
+check("a month- or year-precise bursary deadline never becomes a day count", () => {
+  const copy = structuredClone(DEFAULT_CATALOG);
+  const coarse = copy.bursaries.find((b) => b.id === MATCHED_WITH_DEADLINE.id);
+  assert.ok(coarse, "fixture bursary missing from the catalogue copy");
+  coarse.deadlinePrecision = "month";
+  const events = derive({ now: daysFrom(MATCHED_DEADLINE, -14), catalog: copy });
+  assert.equal(ofKind(events, "deadline_reminder", coarse.id).length, 0, "a coarse deadline produced a reminder");
+});
+
 check("a close-tier bursary is reminded too; an explore-tier one is not", () => {
   const close = ofKind(derive({ now: daysFrom(CLOSE_DEADLINE, -5) }), "deadline_reminder", CLOSE_WITH_DEADLINE.id);
   assert.equal(close.length, 1, `no reminder for close-tier ${CLOSE_WITH_DEADLINE.id}`);
@@ -257,15 +299,18 @@ check("a close-tier bursary is reminded too; an explore-tier one is not", () => 
 });
 
 // --- new_bursary_match --------------------------------------------------------------
-check("a seen matched bursary is suppressed; every unseen one is emitted, dated today", () => {
+check("a seen matched bursary is suppressed; every unseen, still-open one is emitted, dated today", () => {
   const matchedIds = MATCHES.matched.map((m) => m.bursary.id);
   const [seen, ...unseen] = matchedIds;
   const events = ofKind(derive({ seenBursaryIds: [seen] }), "new_bursary_match");
 
-  assert.deepEqual(
-    events.map((e) => e.subjectId).sort(compareStrings),
-    [...unseen].sort(compareStrings),
-  );
+  const open = unseen.filter((id) => {
+    const bursary = DEFAULT_CATALOG.bursaries.find((b) => b.id === id);
+    assert.ok(bursary);
+    return !isClosedAt(bursary, NOW);
+  });
+  assert.ok(open.length > 0, "the fixture needs at least one open unseen match");
+  assert.deepEqual(events.map((e) => e.subjectId).sort(compareStrings), [...open].sort(compareStrings));
   for (const event of events) {
     const bursary = DEFAULT_CATALOG.bursaries.find((b) => b.id === event.subjectId);
     assert.ok(bursary);
@@ -294,13 +339,33 @@ check("close- and explore-tier bursaries are never announced as matches; all see
   assert.equal(ofKind(derive({ seenBursaryIds: allSeen }), "new_bursary_match").length, 0);
 });
 
-check("a new match carries daysLeft only while its deadline is still ahead", () => {
+check("a new match is never a closed bursary and carries daysLeft only while its deadline is ahead", () => {
   for (const event of ofKind(derive(), "new_bursary_match")) {
     const iso = event.payload.deadlineIso;
-    const days = typeof iso === "string" ? daysUntil(iso, NOW) : null;
-    if (days !== null && days >= 0) assert.equal(event.payload.daysLeft, days);
-    else assert.equal(event.payload.daysLeft, undefined);
+    if (typeof iso !== "string") {
+      assert.equal(iso, null);
+      assert.equal(event.payload.daysLeft, undefined);
+      continue;
+    }
+    const days = daysUntil(iso, NOW);
+    assert.ok(days !== null, `${event.subjectId}: unparseable deadline`);
+    if (event.payload.deadlinePrecision === "day") {
+      assert.ok(days >= 0, `${event.subjectId} closed ${-days} days ago and must not be announced`);
+    }
+    assert.equal(event.payload.daysLeft, days >= 0 ? days : undefined);
   }
+});
+
+check("a matched bursary whose day-precise deadline passed yesterday is not announced; the day itself is", () => {
+  const bursary = MATCHED_WITH_DEADLINE;
+  assert.equal(bursary.deadlinePrecision ?? "day", "day", "the fixture bursary must carry a day-precise deadline");
+  assert.equal(ofKind(derive({ now: daysFrom(MATCHED_DEADLINE, 1) }), "new_bursary_match", bursary.id).length, 0);
+  const [onTheDay] = ofKind(derive({ now: daysFrom(MATCHED_DEADLINE, 0) }), "new_bursary_match", bursary.id);
+  assert.ok(onTheDay, "the deadline day itself is still open");
+  assert.equal(onTheDay.payload.daysLeft, 0);
+  const [ahead] = ofKind(derive({ now: daysFrom(MATCHED_DEADLINE, -3) }), "new_bursary_match", bursary.id);
+  assert.ok(ahead);
+  assert.equal(ahead.payload.daysLeft, 3);
 });
 
 // --- cutoff_update ------------------------------------------------------------------
@@ -337,6 +402,13 @@ check("a target whose published range moved between catalogues emits exactly one
 
 check("an identical deep copy, no previous catalogue, or the toggle off → no cutoff_update", () => {
   assert.equal(ofKind(derive({ previousCatalog: structuredClone(DEFAULT_CATALOG) }), "cutoff_update").length, 0);
+  // structuredClone preserves NaN; byte-identical input must stay silent even then (Object.is, not ===).
+  const withNaN = catalogWith(TARGET.id, (history) => history.map((entry) => ({ ...entry, cutoff: Number.NaN })));
+  assert.equal(
+    ofKind(derive({ catalog: withNaN, previousCatalog: structuredClone(withNaN) }), "cutoff_update").length,
+    0,
+    "a NaN cutoff present identically in both catalogues is not an update",
+  );
   assert.equal(ofKind(derive({ previousCatalog: null }), "cutoff_update").length, 0);
   assert.equal(ofKind(derive(), "cutoff_update").length, 0);
   const previousCatalog = catalogWith(TARGET.id, shiftedByOne);
@@ -364,6 +436,10 @@ check("a range appearing where none was published counts, with a null old side",
   assert.equal(rest.length, 0);
   assert.equal(update.payload.oldRange, null);
   assert.deepEqual(update.payload.newRange, getCutoffRange(TARGET.cutoffHistory));
+  for (const locale of ["fr", "en"] as const) {
+    const { body } = formatNotificationCopy("cutoff_update", update.payload, locale);
+    assert.ok(body.includes(`— → ${expectRange(update.payload.newRange, locale)}`), `${locale}: ${body}`);
+  }
 });
 
 // --- invariants over several runs --------------------------------------------------
@@ -425,12 +501,8 @@ check("guardrail #1: every payload with a figure or a date carries sourceUrl and
 });
 
 check("guardrail #5: no payload string ranks, recommends, or implies a chance", () => {
-  const forbidden = ["tu as tes chances", "très accessible", "cible ambitieuse", "good chance", "tu devrais", "you should", "%"];
   for (const event of ALL_EVENTS) {
-    const text = JSON.stringify(event.payload).toLowerCase();
-    for (const phrase of forbidden) {
-      assert.ok(!text.includes(phrase), `${event.dedupeKey} carries "${phrase}"`);
-    }
+    assertNoChanceWording(JSON.stringify(event.payload), event.dedupeKey);
   }
 });
 
@@ -440,25 +512,66 @@ check("`now` is the only clock: derive.ts never calls new Date() without an argu
   assert.ok(!/Date\.now\(/.test(source));
 });
 
-check("formatNotificationCopy renders every derived event in both languages", () => {
+check("formatNotificationCopy renders every event with its figures, in the reader's language", () => {
   for (const event of ALL_EVENTS) {
+    const rendered = { fr: formatNotificationCopy(event.category, event.payload, "fr"), en: formatNotificationCopy(event.category, event.payload, "en") };
+    assert.notEqual(rendered.fr.title, rendered.en.title, `${event.dedupeKey}: the headline must be translated`);
     for (const locale of ["fr", "en"] as const) {
-      const copy = formatNotificationCopy(event.category, event.payload, locale);
-      assert.ok(copy.title.length > 0 && copy.body.length > 0, `${event.dedupeKey} (${locale})`);
+      const copy = rendered[locale];
+      const where = `${event.dedupeKey} (${locale})`;
+      assert.ok(copy.title.length > 0 && copy.body.length > 0, where);
+      assert.doesNotMatch(copy.body, /NaN|undefined|null|\[object/, `${where} renders a placeholder value: ${copy.body}`);
+      assertNoChanceWording(`${copy.title} ${copy.body}`, where);
       switch (event.category) {
-        case "deadline_reminder":
-          assert.ok(copy.body.includes(String(event.payload.title)));
+        case "deadline_reminder": {
+          const title = locale === "fr" ? event.payload.titleFr : event.payload.titleEn;
+          assert.equal(typeof title, "string", `${where}: title${locale === "fr" ? "Fr" : "En"} missing`);
+          assert.ok(copy.body.includes(title as string), `${where} lacks its ${locale} title: ${copy.body}`);
           assert.ok(copy.body.includes(String(event.payload.daysLeft)));
           break;
+        }
         case "new_bursary_match":
           assert.ok(copy.body.includes(String(event.payload.foundationName)));
+          if (event.payload.daysLeft !== undefined) assert.ok(copy.body.includes(String(event.payload.daysLeft)));
           break;
-        case "cutoff_update":
+        case "cutoff_update": {
           assert.ok(copy.body.includes(String(event.payload.programName)));
+          const expected = `${expectRange(event.payload.oldRange, locale)} → ${expectRange(event.payload.newRange, locale)}`;
+          assert.ok(copy.body.includes(expected), `${where} lacks "${expected}": ${copy.body}`);
           break;
+        }
       }
     }
   }
+});
+
+check("a deadline reminder is titled in the reader's language, not always in French", () => {
+  assert.notEqual(OPEN_DATE.titleFr, OPEN_DATE.titleEn, "the fixture date needs two distinct titles");
+  const [event] = ofKind(derive(), "deadline_reminder", OPEN_DATE.id);
+  assert.ok(event);
+  assert.ok(formatNotificationCopy(event.category, event.payload, "fr").body.includes(OPEN_DATE.titleFr));
+  assert.ok(formatNotificationCopy(event.category, event.payload, "en").body.includes(OPEN_DATE.titleEn));
+});
+
+check("a moved range renders both ends and the years on each side, never one figure", () => {
+  const previousCatalog = catalogWith(TARGET.id, shiftedByOne);
+  const [update] = ofKind(derive({ previousCatalog }), "cutoff_update");
+  assert.ok(update);
+  const oldRange = update.payload.oldRange;
+  const newRange = update.payload.newRange;
+  assert.ok(isRange(oldRange) && isRange(newRange));
+  for (const locale of ["fr", "en"] as const) {
+    const { body } = formatNotificationCopy("cutoff_update", update.payload, locale);
+    for (const range of [oldRange, newRange]) {
+      assert.ok(body.includes(formatScore(range.low, locale)), `${locale}: low end missing in ${body}`);
+      assert.ok(body.includes(formatScore(range.high, locale)), `${locale}: high end missing in ${body}`);
+      assert.ok(body.includes(`(${formatRangeYears(range)})`), `${locale}: years missing in ${body}`);
+    }
+  }
+  // The decimal separator follows the locale: 22,5 in French, 22.5 in English.
+  const half = { ...update.payload, newRange: { ...newRange, high: newRange.high + 0.5 } };
+  assert.ok(formatNotificationCopy("cutoff_update", half, "fr").body.includes(","));
+  assert.ok(!formatNotificationCopy("cutoff_update", half, "en").body.includes(","));
 });
 
 console.log(`\n${passed} checks passed.`);
