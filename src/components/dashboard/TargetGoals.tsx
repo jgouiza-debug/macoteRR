@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { X } from "lucide-react";
 import { AxisRow } from "@/components/rscore/AxisRow";
+import { ScoreValue } from "@/components/rscore/ScoreValue";
 import { SourceStamp } from "@/components/SourceStamp";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useReferenceCatalog } from "@/lib/data/reference-store";
@@ -153,8 +154,8 @@ export function TargetGoals({
                     {rScore !== null && status !== null && (
                       <div className="flex justify-between text-[11.5px] text-ink/55 tabular-nums">
                         <span>
-                          {t(isConfirmed ? "dash.yourScore" : "dash.yourEst")} : {!isConfirmed && "≈ "}
-                          {f.score(rScore)}
+                          {t(isConfirmed ? "dash.yourScore" : "dash.yourEst")} :{" "}
+                          <ScoreValue value={rScore} status={rScoreStatus} size="inline" />
                         </span>
                         <span className={`font-semibold ${CUTOFF_STATUS_COLOR_CLASS[status]}`}>
                           {t(CUTOFF_STATUS_LABEL_KEY[status])}

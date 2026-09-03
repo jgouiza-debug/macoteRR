@@ -1,8 +1,10 @@
 "use client";
 
 import { TrendingUp } from "lucide-react";
+import { formatScore } from "@/lib/format";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import type { Locale } from "@/lib/i18n/dictionary";
 
 type Size = "hero" | "lg" | "md" | "sm" | "inline";
 
@@ -33,6 +35,7 @@ export function ScoreValue({
   framed = false,
   badge = "auto",
   decimals,
+  locale,
   className = "",
 }: {
   value: number;
@@ -43,6 +46,8 @@ export function ScoreValue({
   /** "auto" shows the ESTIMATION badge only when framed; "always" / "never" override. */
   badge?: "auto" | "always" | "never";
   decimals?: number;
+  /** Force a number locale (the counselor sheet is fr-CA on paper whatever the UI locale). */
+  locale?: Locale;
   className?: string;
 }) {
   const f = useFormat();
@@ -60,7 +65,7 @@ export function ScoreValue({
           <span aria-hidden="true">≈ </span>
         </>
       )}
-      {f.score(value, decimals)}
+      {locale ? formatScore(value, locale, decimals) : f.score(value, decimals)}
     </span>
   );
 

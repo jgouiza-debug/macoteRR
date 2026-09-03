@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Bell, ChevronRight, LogOut, GraduationCap, Edit3, TrendingUp, X } from "lucide-react";
+import { Bell, ChevronRight, LogOut, GraduationCap, Edit3, X } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useReferenceCatalog } from "@/lib/data/reference-store";
@@ -14,7 +14,7 @@ import { withFunnelParams } from "@/lib/profile/funnel-nav";
 import { useHydrated } from "@/lib/hooks/useHydrated";
 import { SELF_TAGS, tagLabel } from "@/lib/tags/taxonomy";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
-import { useFormat } from "@/lib/i18n/useFormat";
+import { ScoreValue } from "@/components/rscore/ScoreValue";
 import { createClient } from "@/lib/db/client";
 
 /** "Modifier" on the profile re-enters one funnel step and comes straight back here. */
@@ -27,7 +27,6 @@ const editLinkClass =
 export default function ProfilePage() {
   const router = useRouter();
   const { t, locale } = useLocale();
-  const f = useFormat();
   const { profile, toggleTag, sync } = useStudentProfile();
   const targets = useTargets();
   const hydrated = useHydrated();
@@ -176,16 +175,16 @@ export default function ProfilePage() {
                 <span className="text-right text-[14px] font-semibold text-ink">{t("prof.scorePending")}</span>
               ) : isConfirmed ? (
                 <span className="text-right text-[14px] font-semibold text-ink tabular-nums">
-                  {t("prof.scoreConfirmed").replace("{score}", f.score(profile.rScore))}
+                  <ScoreValue value={profile.rScore} status="confirmed" size="inline" /> {t("prof.scoreConfirmed")}
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1.5 rounded-md border border-dashed border-moss/60 bg-paper px-2 py-1 text-[14px] font-semibold text-ink tabular-nums">
-                  <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-moss">
-                    <TrendingUp className="h-3 w-3" aria-hidden="true" />
-                    {t("dash.estimated")}
-                  </span>
-                  {t("prof.scoreEstimated").replace("{score}", f.score(profile.rScore))}
-                </span>
+                <ScoreValue
+                  value={profile.rScore}
+                  status={profile.rScoreStatus}
+                  size="sm"
+                  framed
+                  className="text-ink"
+                />
               )}
               <Link href={EDIT_SCORE_HREF} aria-label={t("prof.editScore")} className={editLinkClass}>
                 <Edit3 className="h-3 w-3" aria-hidden="true" />

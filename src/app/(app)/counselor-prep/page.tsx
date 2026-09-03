@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, TriangleAlert, CheckCircle2, Printer } from "lucide-react";
 import { SourceStamp } from "@/components/SourceStamp";
+import { ScoreValue } from "@/components/rscore/ScoreValue";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { BottomNav } from "@/components/app-shell/BottomNav";
 import { useReferenceCatalog } from "@/lib/data/reference-store";
@@ -224,13 +225,7 @@ export default function CounselorPrepPage() {
           {/* Guardrail #2: an estimate is never mistakable for the cégep's own figure — it
               carries the "≈ " prefix, the dashed border and the ESTIMATION caption; a confirmed
               score carries none of them. */}
-          <div
-            className={
-              score !== null && !isConfirmed
-                ? "self-start rounded-lg border border-dashed border-moss/60 px-3 py-2"
-                : ""
-            }
-          >
+          <div className="flex flex-col gap-1">
             <p className="text-[10.5px] font-semibold uppercase tracking-wider text-ink/50">
               {session ? `${session.labelFr} · ` : ""}
               {score === null
@@ -239,9 +234,24 @@ export default function CounselorPrepPage() {
                   ? "confirmée par le cégep"
                   : "estimation non officielle"}
             </p>
-            <p className="font-display text-[24px] font-bold text-ink tabular-nums">
-              {score === null ? "—" : `${isConfirmed ? "" : "≈ "}${formatScore(score, "fr", 2)}`}
-            </p>
+            {/* French-only printed sheet: force fr-CA numbers and no badge (the caption above
+                already says "estimation non officielle"). Guardrail #2: dashed frame for an estimate. */}
+            {score === null ? (
+              <p className="font-display text-[24px] font-bold text-ink tabular-nums">—</p>
+            ) : (
+              <span className="self-start">
+                <ScoreValue
+                  value={score}
+                  status={profile.rScoreStatus}
+                  size="md"
+                  framed={!isConfirmed}
+                  badge="never"
+                  decimals={2}
+                  locale="fr"
+                  className="text-ink"
+                />
+              </span>
+            )}
           </div>
           {score === null && (
             <p className="text-[12px] leading-relaxed text-ink/55">

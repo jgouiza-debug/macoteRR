@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRight, ChevronLeft, Info } from "lucide-react";
 import { useState } from "react";
 import { DistributionCurve } from "@/components/rscore/DistributionCurve";
+import { ScoreValue } from "@/components/rscore/ScoreValue";
 import { RScoreBandSheet } from "@/components/rscore/RScoreBandSheet";
 import { bandForScore, bandLabel } from "@/lib/rscore/bands";
 import { AxisRow } from "@/components/rscore/AxisRow";
@@ -84,12 +85,12 @@ export function ResultsView({
     ? `${t("common.seuil")} ${formatRangeYears(hero.range)}`
     : t("cutoff.unverified");
 
-  // An estimate never appears without its "≈" — in the headline as much as on the card
-  // (guardrail #2).
-  const displayScore = `${isEstimated ? "≈ " : ""}${f.score(score)}`;
-  const headline = t(HEADLINE_KEY[status][cleared === 1 ? "one" : "many"])
-    .replace("{score}", displayScore)
-    .replace("{n}", String(cleared));
+  // The score in the headline goes through ScoreValue too, so an estimate carries its "≈"
+  // there as much as on the card (guardrail #2). Split the copy on {score} and drop the
+  // renderer in between.
+  const [headBefore, headAfter = ""] = t(HEADLINE_KEY[status][cleared === 1 ? "one" : "many"])
+    .replace("{n}", String(cleared))
+    .split("{score}");
 
   return (
     <div className="flex min-h-[100dvh] flex-col bg-chalk">
@@ -111,29 +112,20 @@ export function ResultsView({
 
       <main className="mx-auto flex w-full max-w-[430px] flex-1 flex-col gap-5 px-5 pt-3 pb-[calc(2.5rem+env(safe-area-inset-bottom,0px))]">
         <h1 className="font-display text-[24px] font-bold leading-[1.18] tracking-tight text-ink">
-          {headline}
+          {headBefore}
+          <ScoreValue value={score} status={status} size="inline" />
+          {headAfter}
         </h1>
 
         {/* Dashed accent border + ESTIMATION badge on an estimate, matching the dashboard,
             so the two kinds of number never look alike (guardrail #2). */}
-        <section
-          className={`rounded border bg-paper p-4 shadow-card ${
-            isEstimated ? "border-dashed border-moss/60" : "border-ink/12"
-          }`}
-        >
+        <section className="rounded border border-ink/12 bg-paper p-4 shadow-card">
           <div className="mb-1 flex items-end justify-between gap-4">
             <div>
               <p className="text-[11px] text-ink/50">{t("entry.label")}</p>
-              <div className="flex items-center gap-2">
-                <p className="font-display text-[24px] font-bold leading-tight text-ultramarine tabular-nums">
-                  {isEstimated && "≈ "}
-                  {f.score(score)}
-                </p>
-                {isEstimated && (
-                  <span className="rounded-full bg-moss/[0.08] px-2 py-0.5 text-[10.5px] font-semibold uppercase tracking-wider text-moss">
-                    {t("dash.estimated")}
-                  </span>
-                )}
+              {/* GUARDRAIL #2 lives in ScoreValue: framed = dashed border + badge for an estimate. */}
+              <div className="mt-1">
+                <ScoreValue value={score} status={status} size="md" framed={isEstimated} className="text-ultramarine" />
               </div>
             </div>
             <div className="text-right">
@@ -146,6 +138,7 @@ export function ResultsView({
           <DistributionCurve
             score={score}
             range={hero?.range ?? null}
+            estimated={isEstimated}
             youLabel={t("common.toi")}
             rangeLabel={heroRangeLabel}
           />

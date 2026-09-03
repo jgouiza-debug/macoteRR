@@ -1,8 +1,8 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { DistributionCurve } from "@/components/rscore/DistributionCurve";
+import { ScoreValue } from "@/components/rscore/ScoreValue";
 import { SourceStamp } from "@/components/SourceStamp";
 import { AddTargetButton } from "./AddTargetButton";
 import { useHydrated } from "@/lib/hooks/useHydrated";
@@ -99,24 +99,14 @@ export function ProgramDetail({ program: shipped }: { program: UniversityProgram
                   —
                 </p>
               ) : (
-                // GUARDRAIL #2: an estimate carries "≈ ", a dashed border and the badge; a
-                // confirmed score carries none of them.
-                <div
-                  className={`flex flex-col items-end ${
-                    isConfirmed ? "" : "rounded-lg border border-dashed border-moss/60 px-2 py-0.5"
-                  }`}
-                >
-                  {!isConfirmed && (
-                    <span className="flex items-center gap-1 text-[9.5px] font-semibold uppercase tracking-wider text-moss">
-                      <TrendingUp className="h-3 w-3" aria-hidden="true" />
-                      {t("dash.estimated")}
-                    </span>
-                  )}
-                  <p className="font-display text-[26px] font-bold leading-tight text-ultramarine tabular-nums">
-                    {!isConfirmed && "≈ "}
-                    {f.score(score)}
-                  </p>
-                </div>
+                // GUARDRAIL #2 lives in ScoreValue: framed = dashed border + badge for an estimate.
+                <ScoreValue
+                  value={score}
+                  status={profile.rScoreStatus}
+                  size="md"
+                  framed={!isConfirmed}
+                  className="text-ultramarine"
+                />
               )}
             </div>
           </div>

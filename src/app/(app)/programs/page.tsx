@@ -2,7 +2,7 @@
 
 import { memo, useCallback, useMemo, useState } from "react";
 import Link from "next/link";
-import { Search, TrendingUp } from "lucide-react";
+import { Search } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { AxisRow } from "@/components/rscore/AxisRow";
 import { SourceStamp } from "@/components/SourceStamp";
@@ -26,6 +26,7 @@ import { useStudentProfile } from "@/lib/profile/store";
 import { withFunnelParams } from "@/lib/profile/funnel-nav";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { useFormat } from "@/lib/i18n/useFormat";
+import { ScoreValue } from "@/components/rscore/ScoreValue";
 
 const TIERS: CutoffStatus[] = ["above", "inside", "below", "unknown"];
 
@@ -46,14 +47,14 @@ const ProgramRow = memo(function ProgramRow({
   range,
   cutoffStatus,
   score,
-  isConfirmed,
+  rScoreStatus,
   first,
 }: {
   program: UniversityProgram;
   range: CutoffRange | null;
   cutoffStatus: CutoffStatus;
   score: number | null;
-  isConfirmed: boolean;
+  rScoreStatus: "confirmed" | "estimated" | null;
   first: boolean;
 }) {
   const { t } = useLocale();
@@ -87,10 +88,10 @@ const ProgramRow = memo(function ProgramRow({
         <div className="flex justify-between gap-3 text-[11.5px] leading-4 text-ink/55 tabular-nums">
           {score !== null ? (
             <>
-              {/* GUARDRAIL #2: an estimate never reads as the cégep's figure. */}
+              {/* GUARDRAIL #2: ScoreValue marks an estimate; it never reads as the cégep's figure. */}
               <span className="truncate">
-                {t(isConfirmed ? "dash.yourScore" : "dash.yourEst")} : {!isConfirmed && "≈ "}
-                {f.score(score)}
+                {t(rScoreStatus === "confirmed" ? "dash.yourScore" : "dash.yourEst")} :{" "}
+                <ScoreValue value={score} status={rScoreStatus} size="inline" />
               </span>
               <span className={`shrink-0 font-semibold ${CUTOFF_STATUS_COLOR_CLASS[cutoffStatus]}`}>
                 {t(CUTOFF_STATUS_LABEL_KEY[cutoffStatus])}
@@ -129,7 +130,6 @@ function SkeletonRows() {
 
 export default function ProgramsPage() {
   const { t } = useLocale();
-  const f = useFormat();
   const { profile, sync } = useStudentProfile();
   // The live catalogue, not the shipped constant: a cutoff re-verified and promoted after
   // this deploy reaches the list on the next boot.
@@ -202,11 +202,11 @@ export default function ProgramsPage() {
         range={row.range}
         cutoffStatus={row.tier}
         score={score}
-        isConfirmed={isConfirmed}
+        rScoreStatus={profile.rScoreStatus}
         first={index === 0}
       />
     ),
-    [score, isConfirmed],
+    [score, profile.rScoreStatus],
   );
 
   const clearFilters = () => {
@@ -225,11 +225,7 @@ export default function ProgramsPage() {
     >
       <div className="mx-auto flex w-full max-w-[480px] flex-col gap-5 px-4 py-6">
         {/* Score or exploration header */}
-        <div
-          className={`rounded-xl border bg-paper px-5 py-4 shadow-card ${
-            score !== null && !isConfirmed ? "border-dashed border-moss/60" : "border-ink/12"
-          }`}
-        >
+        <div className="rounded-xl border border-ink/12 bg-paper px-5 py-4 shadow-card">
           {!settled ? (
             <div aria-busy="true" className="flex flex-col gap-2">
               <div className="h-3.5 w-44 animate-pulse rounded bg-ink/8" />
@@ -238,18 +234,10 @@ export default function ProgramsPage() {
           ) : score !== null ? (
             <div>
               <p className="text-[12px] font-medium text-ink/55">{t("plist.calcWith")}</p>
-              {/* GUARDRAIL #2: an estimate carries "≈ ", the dashed border and the badge;
-                  a confirmed score carries none of them. */}
-              {!isConfirmed && (
-                <span className="mt-1 flex items-center gap-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-moss">
-                  <TrendingUp className="h-3.5 w-3.5" aria-hidden="true" />
-                  {t("dash.estimated")}
-                </span>
-              )}
-              <p className="mt-0.5 font-display text-[26px] font-extrabold text-ink tabular-nums">
-                {!isConfirmed && "≈ "}
-                {f.score(score)}
-              </p>
+              {/* GUARDRAIL #2 lives in ScoreValue: framed = dashed border + badge for an estimate. */}
+              <div className="mt-1">
+                <ScoreValue value={score} status={profile.rScoreStatus} size="lg" framed={!isConfirmed} className="text-ink" />
+              </div>
             </div>
           ) : (
             <div>
