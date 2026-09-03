@@ -23,7 +23,10 @@
     "check:schema": "tsx scripts/db/build-full-schema.ts --check",
     "i18n:unused": "tsx scripts/i18n/unused-keys.ts",
     "gen:types": "tsx scripts/db/gen-types.ts",
-    "check:store": "tsx scripts/checks/store-shape.check.ts"
+    "check:store": "tsx scripts/checks/store-shape.check.ts",
+    "gauntlet:capture": "tsx scripts/gauntlet/capture.ts",
+    "gauntlet:pair": "tsx scripts/gauntlet/pair.ts",
+    "gauntlet:progress": "tsx scripts/gauntlet/progress.ts"
   },
   "dependencies": {
     "@serwist/next": "^9.5.12",

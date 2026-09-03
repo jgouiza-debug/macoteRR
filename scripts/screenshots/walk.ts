@@ -23,10 +23,10 @@ import { spawn, type ChildProcess } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
-type Viewport = { name: "phone" | "desktop"; width: number; height: number; isMobile: boolean; deviceScaleFactor: number };
-type Locale = "fr" | "en";
+export type Viewport = { name: "phone" | "desktop"; width: number; height: number; isMobile: boolean; deviceScaleFactor: number };
+export type Locale = "fr" | "en";
 
-const VIEWPORTS: Viewport[] = [
+export const VIEWPORTS: Viewport[] = [
   { name: "phone", width: 390, height: 844, isMobile: true, deviceScaleFactor: 2 },
   { name: "desktop", width: 1280, height: 800, isMobile: false, deviceScaleFactor: 1 },
 ];
@@ -43,7 +43,9 @@ const TARGET_ARCHITECTURE_ULAVAL = "universite-baccalaureat-en-architecture";
  * ignored by the store's spread-merge and missing keys take DEFAULT_PROFILE values, so an
  * older or newer profile shape here is exactly the migration case the store must survive.
  */
-const STATES: Record<string, { profile: Record<string, unknown> | null; seenWelcome: boolean; extra?: Record<string, string> }> = {
+export type StateSeed = { profile: Record<string, unknown> | null; seenWelcome: boolean; extra?: Record<string, string> };
+
+export const STATES: Record<string, StateSeed> = {
   new: { profile: null, seenWelcome: false },
   "first-session": {
     profile: { cegepId: "sainte-foy", cegepProgramId: "200.B1", currentSession: 1, rScore: null, rScoreStatus: null, selfTags: [], targetUniversityProgramIds: [], interestIds: [] },
@@ -103,7 +105,7 @@ const MARKETING_ROUTES = ["/", "/en", "/confidentialite", "/a-propos"];
 const DEFAULT_ROUTES = [...ONBOARDING_ROUTES, ...APP_ROUTES, ...MARKETING_ROUTES];
 
 /** Text a student must never see rendered. */
-const FORBIDDEN_TEXT: { label: string; pattern: RegExp }[] = [
+export const FORBIDDEN_TEXT: { label: string; pattern: RegExp }[] = [
   { label: "R : ??", pattern: /R\s*:\s*\?\?/ },
   { label: "bracket placeholder", pattern: /\[(Nom du|courriel|à confirmer|Ton nom|Your name|ton cégep|your cégep|Responsible person|contact email)/i },
   { label: "TODO", pattern: /\bTODO\b/ },
@@ -140,7 +142,7 @@ function parseArgs(argv: string[]): Args {
   };
 }
 
-function chromiumExecutable(): string | undefined {
+export function chromiumExecutable(): string | undefined {
   if (process.env.PLAYWRIGHT_CHROMIUM_PATH) return process.env.PLAYWRIGHT_CHROMIUM_PATH;
   const expected = chromium.executablePath();
   if (existsSync(expected)) return undefined; // Playwright's own build is present.
@@ -182,7 +184,7 @@ function slug(route: string) {
   return route.replace(/^\//, "").replace(/[^a-z0-9]+/gi, "_").replace(/^_+|_+$/g, "") || "root";
 }
 
-async function newContext(browser: Browser, viewport: Viewport, locale: Locale, state: string): Promise<BrowserContext> {
+export async function newContext(browser: Browser, viewport: Viewport, locale: Locale, seed: StateSeed): Promise<BrowserContext> {
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
     isMobile: viewport.isMobile,
@@ -193,7 +195,6 @@ async function newContext(browser: Browser, viewport: Viewport, locale: Locale, 
     reducedMotion: "reduce",
     colorScheme: "light",
   });
-  const seed = STATES[state];
   await context.addInitScript(
     ({ profile, seenWelcome, locale, extra }) => {
       try {
@@ -214,7 +215,7 @@ async function newContext(browser: Browser, viewport: Viewport, locale: Locale, 
   return context;
 }
 
-async function capture(page: Page, url: string, file: string, fullPage: boolean) {
+export async function capture(page: Page, url: string, file: string, fullPage: boolean) {
   const errors: string[] = [];
   const hydration: string[] = [];
   const onConsole = (msg: { type(): string; text(): string }) => {
@@ -258,7 +259,7 @@ async function main() {
       if (!STATES[state]) throw new Error(`unknown state "${state}" (have: ${Object.keys(STATES).join(", ")})`);
       for (const locale of args.locales) {
         for (const viewport of args.viewports) {
-          const context = await newContext(browser, viewport, locale, state);
+          const context = await newContext(browser, viewport, locale, STATES[state]);
           const page = await context.newPage();
           const dir = path.join(args.out, state, locale, viewport.name);
           mkdirSync(dir, { recursive: true });
@@ -308,7 +309,10 @@ async function main() {
   process.exitCode = findings.some((f) => f.kind === "navigation") ? 1 : 0;
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+// Runs only when invoked directly (`npm run shots`); scripts/gauntlet/* import the helpers.
+if (process.argv[1] && /walk\.ts$/.test(process.argv[1])) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
