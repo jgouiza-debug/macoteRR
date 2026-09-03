@@ -8,8 +8,9 @@ import { AxisRow } from "@/components/rscore/AxisRow";
 import { SourceStamp } from "@/components/SourceStamp";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { VirtualList } from "@/components/ui/VirtualList";
-import { UNIVERSITY_PROGRAMS, type UniversityProgram } from "@/lib/sample-data";
+import type { UniversityProgram } from "@/lib/sample-data";
 import { UNIVERSITIES, universityLabel } from "@/lib/data/universities";
+import { useReferenceCatalog } from "@/lib/data/reference-store";
 import {
   compareToCutoffRange,
   getCutoffRange,
@@ -22,6 +23,7 @@ import {
 } from "@/lib/rscore/cutoff-range";
 import { useHydrated } from "@/lib/hooks/useHydrated";
 import { useStudentProfile } from "@/lib/profile/store";
+import { withFunnelParams } from "@/lib/profile/funnel-nav";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { useFormat } from "@/lib/i18n/useFormat";
 
@@ -129,6 +131,9 @@ export default function ProgramsPage() {
   const { t } = useLocale();
   const f = useFormat();
   const { profile, sync } = useStudentProfile();
+  // The live catalogue, not the shipped constant: a cutoff re-verified and promoted after
+  // this deploy reaches the list on the next boot.
+  const { universityPrograms } = useReferenceCatalog();
   const hydrated = useHydrated();
   const [tier, setTier] = useState<CutoffStatus | "all">("all");
   const [selectedUniversity, setSelectedUniversity] = useState("all");
@@ -146,12 +151,12 @@ export default function ProgramsPage() {
   const isVisitor = settled && profile.cegepId === null;
 
   const allRows = useMemo<Row[]>(() => {
-    return UNIVERSITY_PROGRAMS.map((program) => {
+    return universityPrograms.map((program) => {
       const range = getCutoffRange(program.cutoffHistory);
       const rowTier: CutoffStatus = score !== null ? compareToCutoffRange(score, range) : "unknown";
       return { program, range, tier: rowTier };
     }).sort((a, b) => CUTOFF_STATUS_ORDER[a.tier] - CUTOFF_STATUS_ORDER[b.tier]);
-  }, [score]);
+  }, [universityPrograms, score]);
 
   // Narrowed by the university chips and the search box, but NOT by the tier buttons — the
   // tier counts have to describe the same set the list below them shows. Counting all 237
@@ -250,11 +255,13 @@ export default function ProgramsPage() {
             <div>
               <p className="text-[12px] font-medium text-ink/55">{t("plist.exploreTitle")}</p>
               <p className="mt-0.5 font-display text-[22px] font-bold text-ink">
-                {t("plist.programCount").replace("{n}", String(UNIVERSITY_PROGRAMS.length))}
+                {t("plist.programCount").replace("{n}", String(universityPrograms.length))}
               </p>
               {isVisitor && (
+                // ?next= brings the visitor back to the list they were browsing once the
+                // funnel completes, instead of the default landing.
                 <Link
-                  href="/onboarding"
+                  href={withFunnelParams("/onboarding", { next: "/programs" })}
                   className="mt-1 inline-flex min-h-[48px] items-center text-[13px] font-semibold text-ultramarine underline-offset-2 hover:underline"
                 >
                   {t("prog.noScoreYet")}

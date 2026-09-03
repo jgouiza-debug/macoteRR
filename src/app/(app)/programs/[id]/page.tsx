@@ -16,10 +16,15 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return program ? { title: `${program.name} · ${program.institution}` } : {};
 }
 
+/**
+ * The shipped constant decides which ids exist (static params, metadata, 404); the client
+ * component reads the programme itself from the live reference catalogue by id, so a
+ * correction promoted after this deploy shows without a rebuild.
+ */
 export default async function ProgramDetailPage({ params }: { params: Params }) {
   const { id } = await params;
   const program = UNIVERSITY_PROGRAMS.find((p) => p.id === id);
   if (!program) notFound();
 
-  return <ProgramDetail program={program} />;
+  return <ProgramDetail programId={program.id} />;
 }

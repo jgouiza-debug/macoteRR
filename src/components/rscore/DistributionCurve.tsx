@@ -69,7 +69,11 @@ export const DistributionCurve = memo(function DistributionCurve({
   range: CutoffRange | null;
   caption?: string;
   youLabel?: string;
-  /** Fully composed by the caller (locale + year formatting), e.g. "seuil 2020–2022" or "seuil 28,5". */
+  /**
+   * Fully composed by the caller, word included — `${t("common.seuil")} ${formatRangeYears(range)}`
+   * — so the annotation reads "seuil 2020–2022" in French and "cutoff 2020–2022" in English.
+   * Rendered exactly as given: nothing is prefixed here.
+   */
   rangeLabel: string;
 }) {
   const status = compareToCutoffRange(score, range);
@@ -220,7 +224,7 @@ export const DistributionCurve = memo(function DistributionCurve({
                 fontFamily="var(--font-sans), sans-serif"
                 className="tabular-nums"
               >
-                {rangeLabel.startsWith("seuil") ? rangeLabel : `seuil ${rangeLabel}`}
+                {rangeLabel}
               </text>
             </g>
           )}

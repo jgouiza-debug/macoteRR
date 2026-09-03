@@ -5,7 +5,8 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Search, Check, ChevronRight, Plus } from "lucide-react";
 import { ScreenShell } from "@/components/onboarding/ScreenShell";
 import { SourceStamp } from "@/components/SourceStamp";
-import { UNIVERSITY_PROGRAMS, type UniversityProgram } from "@/lib/sample-data";
+import type { UniversityProgram } from "@/lib/sample-data";
+import { useReferenceCatalog } from "@/lib/data/reference-store";
 import { decOfferingsAtCegep } from "@/lib/data/cegep-institutions";
 import { resolveCegepName } from "@/lib/data/resolve-names";
 import { UNIVERSITIES } from "@/lib/data/universities";
@@ -183,6 +184,9 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
   const targets = useTargets();
   const { edit, next, hrefFor, finishStep } = useFunnelNav();
   const hydrated = useHydrated();
+  // The live catalogue, not the shipped constant: a re-verified cutoff reaches this list on
+  // the next boot without a redeploy (see reference-store.ts).
+  const { universityPrograms } = useReferenceCatalog();
 
   useOnboardingGuard(startStep === "program" ? "program" : "goal");
 
@@ -278,11 +282,11 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
     () =>
       suggestTopUniversityPrograms(
         selectedDec?.programName || "Sciences",
-        UNIVERSITY_PROGRAMS,
+        universityPrograms,
         8,
         selectedDec?.programCode,
       ),
-    [selectedDec],
+    [selectedDec, universityPrograms],
   );
 
   const universities = useMemo(
@@ -292,7 +296,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
 
   const filteredPrograms = useMemo(() => {
     const q = query.trim().toLowerCase();
-    let list = UNIVERSITY_PROGRAMS;
+    let list = universityPrograms;
     if (selectedUniversity !== "all") {
       list = list.filter((p) => p.institution === selectedUniversity);
     }
@@ -302,7 +306,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
       );
     }
     return list;
-  }, [query, selectedUniversity]);
+  }, [query, selectedUniversity, universityPrograms]);
 
   const filteredDecs = useMemo(() => {
     const q = decQuery.trim().toLowerCase();
@@ -317,12 +321,12 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
     let list =
       interestIds.length === 0
         ? []
-        : UNIVERSITY_PROGRAMS.filter((p) => p.interestIds.some((id) => interestIds.includes(id)));
+        : universityPrograms.filter((p) => p.interestIds.some((id) => interestIds.includes(id)));
     if (selectedUniversity !== "all") {
       list = list.filter((p) => p.institution === selectedUniversity);
     }
     return list;
-  }, [interestIds, selectedUniversity]);
+  }, [interestIds, selectedUniversity, universityPrograms]);
 
   /* ------------------------------------------------------------------ *
    * Sub-step navigation

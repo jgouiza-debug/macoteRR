@@ -1,5 +1,6 @@
 "use client";
 
+import { notFound } from "next/navigation";
 import { TrendingUp } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { DistributionCurve } from "@/components/rscore/DistributionCurve";
@@ -7,6 +8,7 @@ import { SourceStamp } from "@/components/SourceStamp";
 import { AddTargetButton } from "./AddTargetButton";
 import { useHydrated } from "@/lib/hooks/useHydrated";
 import { useStudentProfile } from "@/lib/profile/store";
+import { useReferenceCatalog } from "@/lib/data/reference-store";
 import {
   evaluatePrerequisites,
   findDecCoreCourses,
@@ -14,7 +16,7 @@ import {
 } from "@/lib/matching/program-eligibility";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
-import type { CutoffFigureType, UniversityProgram } from "@/lib/sample-data";
+import { UNIVERSITY_PROGRAMS, type CutoffFigureType } from "@/lib/sample-data";
 import { getCutoffRange, formatRangeYears } from "@/lib/rscore/cutoff-range";
 import type { TranslationKey } from "@/lib/i18n/dictionary";
 
@@ -27,24 +29,35 @@ const FIGURE_TYPE_KEY: Record<CutoffFigureType, TranslationKey> = {
   range_high: "cutoff.figureType.range_high",
 };
 
-export function ProgramDetail({ program }: { program: UniversityProgram }) {
+export function ProgramDetail({ programId }: { programId: string }) {
   const { t } = useLocale();
   // The student's own score, read here rather than passed in: the route is statically
   // prerendered, so a server-supplied score could only ever be a hardcoded sample one —
   // which is exactly what this page used to show every visitor.
-  const { profile } = useStudentProfile();
-  // On the server pass and the hydration render the store still holds the empty profile, so
-  // nothing about the student is known yet. The position block shows a neutral skeleton until
-  // then — never the "enter your score" copy for a student who has one, never a curve for one
-  // who does not.
+  const { profile, sync } = useStudentProfile();
+  // On the server pass and the hydration render the store still holds the empty profile, and
+  // on a signed-in student's fresh device it stays empty until the first reconcile lands. In
+  // both windows nothing about the student is known yet, so the position block and the
+  // prerequisite badges show a neutral skeleton — never the "enter your score" copy for a
+  // student who has one, never a curve for one who does not, never badges against no DEC.
   const hydrated = useHydrated();
-  const score = hydrated ? profile.rScore : null;
+  const settled = hydrated && sync !== "syncing";
+  const score = settled ? profile.rScore : null;
   const isConfirmed = profile.rScoreStatus === "confirmed";
   const f = useFormat();
+  // The programme is read from the live catalogue rather than the shipped constant the route
+  // was prerendered from, so a cutoff re-verified and promoted after the deploy shows here on
+  // the next boot. The shipped entry is the fallback (the route already 404s for an id it
+  // lacks), and every hook above stays above this early return on purpose.
+  const { universityPrograms } = useReferenceCatalog();
+  const program =
+    universityPrograms.find((p) => p.id === programId) ??
+    UNIVERSITY_PROGRAMS.find((p) => p.id === programId);
+  if (!program) notFound();
   const range = getCutoffRange(program.cutoffHistory);
   const rangeLabel = range ? `${t("common.seuil")} ${formatRangeYears(range)}` : t("cutoff.unverified");
   const prereqKindByName = new Map(
-    evaluatePrerequisites(findDecCoreCourses(hydrated ? profile.cegepProgramId : null), program).reasons
+    evaluatePrerequisites(findDecCoreCourses(settled ? profile.cegepProgramId : null), program).reasons
       .filter((r) => r.name)
       .map((r) => [r.name as string, r.kind]),
   );
@@ -54,7 +67,7 @@ export function ProgramDetail({ program }: { program: UniversityProgram }) {
       backHref="/programs"
       rScore={score}
       rScoreStatus={profile.rScoreStatus}
-      currentSession={hydrated ? profile.currentSession : null}
+      currentSession={settled ? profile.currentSession : null}
     >
       <div className="mx-auto flex w-full max-w-[480px] flex-col gap-4 px-4 py-5">
         <span className="w-fit rounded-full border border-ink/15 bg-paper px-3 py-1 text-[11px] font-semibold text-ink/70">
@@ -82,7 +95,7 @@ export function ProgramDetail({ program }: { program: UniversityProgram }) {
               <p className="text-[9.5px] font-semibold uppercase tracking-wider text-ink/50">
                 {t("prog.yourPosition")}
               </p>
-              {!hydrated ? (
+              {!settled ? (
                 <div aria-busy="true" className="mt-1 h-7 w-16 animate-pulse rounded bg-ink/8" />
               ) : score === null ? (
                 <p className="font-display text-[26px] font-bold leading-tight text-ultramarine tabular-nums">
@@ -111,7 +124,7 @@ export function ProgramDetail({ program }: { program: UniversityProgram }) {
             </div>
           </div>
 
-          {!hydrated ? (
+          {!settled ? (
             <div aria-busy="true" className="my-2 h-[130px] w-full animate-pulse rounded bg-ink/5" />
           ) : score === null ? (
             <p className="py-6 text-center text-[12.5px] text-ink/50">{t("prog.noScoreYet")}</p>
