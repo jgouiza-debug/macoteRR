@@ -1,0 +1,182 @@
+[
+  {
+    "piece": "S1",
+    "url": "https://github.com/TeamNewPipe/NewPipe/blob/bbbac9b223f21a1a5a714044353cf0412de57b98/fastlane/metadata/android/en-US/images/phoneScreenshots/00.png",
+    "step": "NewPipe: What's New feed with top app bar and three-tab bottom nav",
+    "viewport": "mobile",
+    "file": "S1/mobile.jpg",
+    "capturedAt": "2026-09-03",
+    "notes": "a shell with one active tab, a titled header and dense but readable rows"
+  },
+  {
+    "piece": "S2",
+    "url": "https://github.com/wikimedia/apps-android-wikipedia/blob/2054c804922adb548d5383a3b48d365835dff1d0/fastlane/metadata/android/en-US/images/phoneScreenshots/1_en-US.png",
+    "step": "Wikipedia: empty reading list with a single 'Create new' action",
+    "viewport": "mobile",
+    "file": "S2/mobile.jpg",
+    "capturedAt": "2026-09-03",
+    "notes": "an empty state that names exactly one next action"
+  },
+  {
+    "piece": "O1",
+    "url": "https://github.com/tuskyapp/Tusky/blob/43ae0bb4556392393a3d759ce42a93f3a003e83a/fastlane/metadata/android/en-US/images/phoneScreenshots/00_login.png",
+    "step": "Tusky: welcome / login: illustration, one field, one button, one help link",
+    "viewport": "mobile",
+    "file": "O1/mobile.jpg",
+    "capturedAt": "2026-09-03",
+    "notes": "one promise, one action, nothing to scroll"
+  },
+  {
+    "piece": "O2",
+    "url": "https://github.com/wikimedia/apps-android-wikipedia/blob/2054c804922adb548d5383a3b48d365835dff1d0/fastlane/metadata/android/en-US/images/phoneScreenshots/6_en-US.png",
+    "step": "Wikipedia: language picker, a long searchable list",
+    "viewport": "mobile",
+    "file": "O2/mobile.jpg",
+    "capturedAt": "2026-09-03",
+    "notes": "a long list of institutions the student scans and filters"
+  },
+  {
+    "piece": "O3",
+    "url": "https://github.com/streetcomplete/StreetComplete/blob/88b7fe432a47928911600af3470ff21117c43e72/metadata/en/images/phoneScreenshots/screenshot3.png",
+    "step": "StreetComplete: 'What kind of building is this?' typed list with descriptions",
+    "viewport": "mobile",
+    "file": "O3/mobile.jpg",
+    "capturedAt": "2026-09-03",
+    "notes": "a typed pick where every row carries a one-line explanation"
+  },
+  {
+    "piece": "O4",
+    "url": "https://github.com/FossifyOrg/Calendar/blob/d985d5e9011cb01bb8634e2387ebb908a80979c0/fastlane/metadata/android/en-US/images/phoneScreenshots/2_en-US.png",
+    "step": "Fossify Calendar: view chooser: a short radio list in a sheet",
+    "viewport": "mobile",
+    "file": "O4/mobile.jpg",
+    "capturedAt": "2026-09-03",
+    "notes": "three or four ranked paths, one tap each"
+  },
+  {
+    "piece": "O5",
+    "url": "https://github.com/streetcomplete/StreetComplete/blob/88b7fe432a47928911600af3470ff21117c43e72/metadata/en/images/phoneScreenshots/screenshot4.png",
+    "step": "StreetComplete: house-number quest: one big field and a type dropdown",
+    "viewport": "mobile",
+    "file": "O5/mobile.jpg",
+    "capturedAt": "2026-09-03",
+    "notes": "a single-field entry that makes the keypad the whole screen"
+  },
+  {
+    "piece": "O6",
+    "url": "https://github.com/streetcomplete/StreetComplete/blob/88b7fe432a47928911600af3470ff21117c43e72/metadata/en/images/phoneScreenshots/screenshot6.png",
+    "step": "StreetComplete: opening-hours rows with add/other/no/yes",
+    "viewport": "mobile",
+    "file": "O6/mobile.jpg",
+    "capturedAt": "2026-09-03",
+    "notes": "rows of structured values with a confirm at the bottom"
+  },
+  {
+    "piece": "O7",
+    "url": "https://github.com/mastodon/mastodon-android/blob/d5d02a781a947031101ea1f90156ad0f82d6ea10/fastlane/metadata/android/en-US/images/phoneScreenshots/5.png",
+    "step": "Mastodon: server rules: a numbered list you accept before continuing",
+    "viewport": "mobile",
+    "file": "O7/mobile.jpg",
+    "capturedAt": "2026-09-03",
+    "notes": "a recap the user reads once, then a single CTA"
+  },
+  {
+    "piece": "O8",
+    "url": "https://github.com/iSoron/uhabits/blob/7e993e17b2b674d4b5b1291ebd18677b74810df2/screenshots/3.png",
+    "step": "Loop Habit Tracker: habit history: bar chart and calendar",
+    "viewport": "mobile",
+    "file": "O8/mobile.jpg",
+    "capturedAt": "2026-09-03",
+    "notes": "a result page built from charts with a plain reading"
+  },
+  {
+    "piece": "O9",
+    "url": "https://github.com/streetcomplete/StreetComplete/blob/88b7fe432a47928911600af3470ff21117c43e72/metadata/en/images/phoneScreenshots/screenshot2.png",
+    "step": "StreetComplete: quest question with illustration and 'other answers / confirm'",
+    "viewport": "mobile",
+    "file": "O9/mobile.jpg",
+    "capturedAt": "2026-09-03",
+    "notes": "one question per screen, answers visibly answers"
+  },
+  {
+    "piece": "O10",
+    "url": "https://github.com/element-hq/element-android/blob/2725aba55e37d949715402f67aa1b23bea79e66f/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png",
+    "step": "Element: sign-up form (username, password, create)",
+    "viewport": "mobile",
+    "file": "O10/mobile.jpg",
+    "capturedAt": "2026-09-03",
+    "notes": "the account step: few fields, primary action, no distraction"
+  },
+  {
+    "piece": "A1",
+    "url": "https://github.com/iSoron/uhabits/blob/7e993e17b2b674d4b5b1291ebd18677b74810df2/screenshots/2.png",
+    "step": "Loop Habit Tracker: habit detail: score, month, year, total strip over a chart",
+    "viewport": "mobile",
+    "file": "A1/mobile.jpg",
+    "capturedAt": "2026-09-03",
+    "notes": "a stat bar where one number leads and the rest support it"
+  },
+  {
+    "piece": "A2",
+    "url": "https://github.com/iSoron/uhabits/blob/7e993e17b2b674d4b5b1291ebd18677b74810df2/screenshots/1.png",
+    "step": "Loop Habit Tracker: habit list: rows with per-day status marks and numbers",
+    "viewport": "mobile",
+    "file": "A2/mobile.jpg",
+    "capturedAt": "2026-09-03",
+    "notes": "many tracked items, each with a status readable at a glance"
+  },
+  {
+    "piece": "A3",
+    "url": "https://github.com/FossifyOrg/Calendar/blob/d985d5e9011cb01bb8634e2387ebb908a80979c0/fastlane/metadata/android/en-US/images/phoneScreenshots/3_en-US.png",
+    "step": "Fossify Calendar: day view with timed events",
+    "viewport": "mobile",
+    "file": "A3/mobile.jpg",
+    "capturedAt": "2026-09-03",
+    "notes": "dated items on a rail, nearest first"
+  },
+  {
+    "piece": "A4",
+    "url": "https://github.com/TeamNewPipe/NewPipe/blob/bbbac9b223f21a1a5a714044353cf0412de57b98/fastlane/metadata/android/en-US/images/phoneScreenshots/02.png",
+    "step": "NewPipe: search results list with tabs and rich rows",
+    "viewport": "mobile",
+    "file": "A4/mobile.jpg",
+    "capturedAt": "2026-09-03",
+    "notes": "a filtered list of many similar rows with metadata"
+  },
+  {
+    "piece": "A5",
+    "url": "https://github.com/TeamNewPipe/NewPipe/blob/bbbac9b223f21a1a5a714044353cf0412de57b98/fastlane/metadata/android/en-US/images/phoneScreenshots/08.png",
+    "step": "NewPipe: channel page: header, primary action, tabs, list",
+    "viewport": "mobile",
+    "file": "A5/mobile.jpg",
+    "capturedAt": "2026-09-03",
+    "notes": "a detail page with its main action above the fold"
+  },
+  {
+    "piece": "A6",
+    "url": "https://github.com/wikimedia/apps-android-wikipedia/blob/2054c804922adb548d5383a3b48d365835dff1d0/fastlane/metadata/android/en-US/images/phoneScreenshots/5_en-US.png",
+    "step": "Wikipedia: Explore feed: several visibly different card kinds",
+    "viewport": "mobile",
+    "file": "A6/mobile.jpg",
+    "capturedAt": "2026-09-03",
+    "notes": "sections that look different because they are different"
+  },
+  {
+    "piece": "A7",
+    "url": "https://github.com/tuskyapp/Tusky/blob/43ae0bb4556392393a3d759ce42a93f3a003e83a/fastlane/metadata/android/en-US/images/phoneScreenshots/03_profile.png",
+    "step": "Tusky: profile: header, identity block, stats, tabs",
+    "viewport": "mobile",
+    "file": "A7/mobile.jpg",
+    "capturedAt": "2026-09-03",
+    "notes": "a profile page whose facts and actions are separable at a glance"
+  },
+  {
+    "piece": "A8",
+    "url": "https://github.com/beemdevelopment/Aegis/blob/17a87a4e1f87ca97e13fa56f2df755609b34b8a4/metadata/en-US/images/phoneScreenshots/screenshot2.png",
+    "step": "Aegis: Appearance settings: sections, values, one toggle",
+    "viewport": "mobile",
+    "file": "A8/mobile.jpg",
+    "capturedAt": "2026-09-03",
+    "notes": "a settings list where each row says what it changes"
+  }
+]

@@ -85,10 +85,10 @@ table{border-collapse:collapse;width:100%;background:var(--paper);font-size:13px
 .win{font-size:13px;color:#444}.note{font-size:13px;color:var(--ember)}.history{font-size:12.5px;color:#333}.viol{color:var(--ember)}
 .dev{font-size:12px;color:#666;margin:6px 0 14px}
 </style>
-<h1>MaCote gauntlet loop — bar: Duolingo web</h1>
+<h1>MaCote gauntlet loop — bar: real screens of public open-source apps (bar-sources.ts)</h1>
 <p class="dev">Builder + separate blind critic per piece; a piece is done only on a blind win with zero guardrail violations. <b>Deliberate deviation from the skill:</b> a soft cap of 6 rounds per piece, after which it is parked and the user calls for more rounds. Updated ${esc(state.updatedAt)}.</p>
 <div class="summary"><span>won ${counts.won}</span><span>parked ${counts.parked}</span><span>running ${counts.running}</span><span>pending ${counts.pending}</span><span>descoped ${counts.descoped}</span><span>checklist ${counts.checklist}</span></div>
-<div style="overflow-x:auto"><table><thead><tr><th>#</th><th>Piece</th><th>Duolingo bar</th><th>Status</th><th>Rounds</th><th>Latest gap</th><th>Violations</th></tr></thead><tbody>${rows.join("")}</tbody></table></div>
+<div style="overflow-x:auto"><table><thead><tr><th>#</th><th>Piece</th><th>Bar</th><th>Status</th><th>Rounds</th><th>Latest gap</th><th>Violations</th></tr></thead><tbody>${rows.join("")}</tbody></table></div>
 ${cards.join("\n")}`;
   const dir = path.join(out, "progress");
   mkdirSync(dir, { recursive: true });

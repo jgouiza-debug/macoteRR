@@ -1,5 +1,5 @@
 /**
- * Builds the BLIND pair for a piece and round: our capture and the Duolingo bar, copied to
+ * Builds the BLIND pair for a piece and round: our capture and the bar, copied to
  * a.jpg / b.jpg with a random assignment the critic never sees. The assignment is recorded in
  * pair.json so the orchestrator can map the critic's pick back.
  *
