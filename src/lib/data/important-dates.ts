@@ -241,8 +241,11 @@ export const ALL_IMPORTANT_DATES: ImportantDate[] = [
   },
 ];
 
-export function getDeadlinesForStudent(targetProgramIds: string[] = []): ImportantDate[] {
-  return ALL_IMPORTANT_DATES.filter((d) => {
+export function getDeadlinesForStudent(
+  targetProgramIds: string[] = [],
+  dates: ImportantDate[] = ALL_IMPORTANT_DATES,
+): ImportantDate[] {
+  return dates.filter((d) => {
     if (!d.programIds || d.programIds.length === 0) return true;
     return d.programIds.some((pId) => targetProgramIds.includes(pId));
   });

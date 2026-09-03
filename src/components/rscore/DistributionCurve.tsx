@@ -282,28 +282,6 @@ export const DistributionCurve = memo(function DistributionCurve({
         </svg>
       </div>
 
-      {/* Percentile benchmarks underneath the chart (Top 50%, Top 25%, Top 10%, Top 1%) */}
-      <div className="grid grid-cols-4 gap-1.5">
-        {[
-          { label: "Top 50%", score: 25.0 },
-          { label: "Top 25%", score: 28.5 },
-          { label: "Top 10%", score: 31.5 },
-          { label: "Top 1%", score: 35.0 },
-        ].map((b) => (
-          <div
-            key={b.label}
-            className="flex flex-col items-center justify-center rounded-lg border border-ink/10 bg-paper px-1 py-1.5 text-center shadow-xs"
-          >
-            <span className="text-[10px] font-bold text-ink/50 uppercase tracking-tight">
-              {b.label}
-            </span>
-            <span className="font-display text-[12px] font-extrabold text-ink tabular-nums">
-              ≥ {b.score.toFixed(1).replace(".", ",")}
-            </span>
-          </div>
-        ))}
-      </div>
-
       {caption && (
         <figcaption className="text-center text-[11px] leading-relaxed text-ink/50">
           {caption}

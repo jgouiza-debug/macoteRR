@@ -15,8 +15,14 @@ import { useLocale } from "@/lib/i18n/LocaleProvider";
  *
  * Android gets a button that genuinely works. iOS gets the link and the two taps that do it,
  * because no API can force a Meta WebView to hand off to Safari — see lib/in-app-browser.ts.
+ *
+ * `inline` is for a host that is already sticky and already carries the top safe-area inset
+ * (the onboarding top bar renders the banner inside itself, above the bar row). As a sibling
+ * it was a second `sticky top-0` with its own pt-safe: the notch inset was applied twice and,
+ * once scrolled, the banner sat on top of the back button. Standalone (the default) keeps the
+ * sticky, safe-area-padded behaviour for shells that mount it on its own.
  */
-export function InAppBrowserBanner() {
+export function InAppBrowserBanner({ inline = false }: { inline?: boolean }) {
   const { t } = useLocale();
   const [info, setInfo] = useState<InAppBrowser | null>(null);
   const [dismissed, setDismissed] = useState(false);
@@ -48,7 +54,9 @@ export function InAppBrowserBanner() {
     <div
       role="region"
       aria-label={t("inapp.title")}
-      className="sticky top-0 z-[60] border-b border-ink/10 bg-ember/[0.07] px-4 py-3 backdrop-blur-sm pt-safe"
+      className={`border-b border-ink/10 bg-ember/[0.07] px-4 py-3 ${
+        inline ? "" : "sticky top-0 z-[60] backdrop-blur-sm pt-safe"
+      }`}
     >
       <div className="mx-auto flex w-full max-w-[430px] items-start gap-3">
         <ExternalLink className="mt-0.5 h-[18px] w-[18px] flex-shrink-0 text-ember" />

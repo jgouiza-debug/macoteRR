@@ -2,9 +2,16 @@
 
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+import { InAppBrowserBanner } from "@/components/InAppBrowserBanner";
 import { LangToggle } from "@/components/ui/LangToggle";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
+/**
+ * The funnel's only sticky element, and the only one that pads for the notch. The
+ * in-app-browser banner renders inside it, above the bar row: as a sibling it was a second
+ * `sticky top-0` with its own pt-safe, so the inset was applied twice and, once scrolled, the
+ * banner covered the back button.
+ */
 export function OnboardingTopBar({
   backHref,
   onBack,
@@ -18,6 +25,7 @@ export function OnboardingTopBar({
 
   return (
     <header className="sticky top-0 z-50 bg-chalk/90 backdrop-blur-sm pt-safe">
+      <InAppBrowserBanner inline />
       <div className="mx-auto flex h-14 w-full max-w-[430px] items-center justify-between px-5">
         {brand ? (
           <span className="font-display text-[19px] font-bold tracking-tight text-ink">
@@ -41,7 +49,8 @@ export function OnboardingTopBar({
             <ChevronLeft className="h-6 w-6" />
           </Link>
         ) : (
-          <span className="h-10 w-10" aria-hidden="true" />
+          // Same footprint as the 48px back button, so the toggle does not shift between steps.
+          <span className="h-12 w-12" aria-hidden="true" />
         )}
         <LangToggle />
       </div>

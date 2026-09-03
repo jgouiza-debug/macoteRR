@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { ResultsView } from "@/components/rscore/ResultsView";
+
+export const metadata: Metadata = { title: "Tes résultats" };
 
 export default async function OnboardingResultsPage({
   searchParams,

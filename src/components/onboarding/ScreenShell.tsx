@@ -1,10 +1,12 @@
 import type { ReactNode } from "react";
 import { OnboardingTopBar } from "./OnboardingTopBar";
-import { InAppBrowserBanner } from "@/components/InAppBrowserBanner";
 
 /**
  * Single-column funnel screen. Uses 100dvh rather than 100vh so the layout tracks
  * mobile browser chrome as it collapses, instead of overshooting by the toolbar height.
+ *
+ * The in-app-browser banner is rendered by the top bar (see OnboardingTopBar), not here, so
+ * the screen has exactly one sticky, safe-area-padded element at the top.
  */
 export function ScreenShell({
   children,
@@ -21,12 +23,18 @@ export function ScreenShell({
 }) {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-chalk">
-      <InAppBrowserBanner />
       <OnboardingTopBar backHref={backHref} onBack={onBack} brand={brand} />
       {/* justify-center pulls short funnel screens (two choices, one input) into the optical
           centre instead of stranding them at the top above ~900px of empty chalk. Long
-          screens overflow past centre and scroll normally, so this costs them nothing. */}
-      <main className="mx-auto flex w-full max-w-[430px] flex-1 flex-col justify-center px-5 pt-2">
+          screens overflow past centre and scroll normally, so this costs them nothing.
+          Without a footer the content itself can reach the home indicator, so main carries
+          the bottom safe-area inset; with one, the sticky footer already does. */}
+      <main
+        id="main"
+        className={`mx-auto flex w-full max-w-[430px] flex-1 flex-col justify-center px-5 pt-2 ${
+          footer ? "" : "pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))]"
+        }`}
+      >
         {children}
       </main>
       {footer && (

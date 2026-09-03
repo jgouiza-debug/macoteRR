@@ -89,6 +89,9 @@ export async function proxy(request: NextRequest) {
     const redirectUrl = new URL(ONBOARDING_ENTRY, request.url);
     // Remember where they were headed so the funnel and the callback can finish the trip.
     redirectUrl.searchParams.set("next", pathname);
+    // A locale hand-off (/app?lang=en from the English site) must survive the bounce too.
+    const lang = searchParams.get("lang");
+    if (lang === "en" || lang === "fr") redirectUrl.searchParams.set("lang", lang);
     return NextResponse.redirect(redirectUrl);
   }
 

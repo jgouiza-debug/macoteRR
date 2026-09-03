@@ -1,13 +1,16 @@
 "use client";
 
-import { useMemo, memo } from "react";
-import Link from "next/link";
+import { useEffect, useMemo, memo } from "react";
+import { useRouter } from "next/navigation";
 import { ExternalLink } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { SourceStamp } from "@/components/SourceStamp";
-import { BURSARIES, type Bursary } from "@/lib/sample-data";
-import { CEGEPS } from "@/lib/sample-data";
+import { EmptyState } from "@/components/ui/EmptyState";
+import type { Bursary } from "@/lib/sample-data";
+import { useReferenceCatalog } from "@/lib/data/reference-store";
+import { resolveCegepName } from "@/lib/data/resolve-names";
 import { matchBursaries, type BursaryMatch, type MatchReason, type MatchTier } from "@/lib/matching/match";
+import { useHydrated } from "@/lib/hooks/useHydrated";
 import { useStudentProfile } from "@/lib/profile/store";
 import { tagLabel } from "@/lib/tags/taxonomy";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
@@ -21,11 +24,27 @@ const TIERS: { id: MatchTier; title: TranslationKey; accent: string }[] = [
 ];
 
 export default function BursariesPage() {
+  const router = useRouter();
   const { t, locale } = useLocale();
   const f = useFormat();
-  const { profile } = useStudentProfile();
+  const { profile, sync } = useStudentProfile();
+  const hydrated = useHydrated();
+  const { bursaries } = useReferenceCatalog();
 
-  // Local arithmetic over a small dataset with referentially stable memoization.
+  // The hydration pass renders the server snapshot (an empty profile), and a signed-in
+  // student's first reconcile may still be pulling a newer copy. Matching against either
+  // paints one set of tiers and reshuffles them a frame later, so nothing below decides
+  // until both have settled.
+  const ready = hydrated && sync !== "syncing";
+
+  // No cégep means onboarding was never finished on this device — nothing real to show.
+  useEffect(() => {
+    if (ready && profile.cegepId === null) router.replace("/onboarding");
+  }, [ready, profile.cegepId, router]);
+
+  // Every hook sits ABOVE the early return below: `ready` flips between renders, and a hook
+  // placed after the guard would be skipped once and then called — "Rendered more hooks than
+  // during the previous render".
   const studentContext = useMemo(
     () => ({
       cegepId: profile.cegepId,
@@ -45,10 +64,15 @@ export default function BursariesPage() {
     ],
   );
 
-  const matches = useMemo(() => matchBursaries(BURSARIES, studentContext), [studentContext]);
+  // Local arithmetic over a small dataset with referentially stable memoization. Null until
+  // the profile is trustworthy, so no tier is ever computed from the transient snapshot.
+  const matches = useMemo(
+    () => (ready ? matchBursaries(bursaries, studentContext) : null),
+    [ready, studentContext, bursaries],
+  );
 
-  const cegepName =
-    CEGEPS.find((c) => c.id === profile.cegepId)?.name ?? t("prof.cegep");
+  // Null when unknown or unset: the line is omitted rather than filled with a placeholder.
+  const cegepName = resolveCegepName(profile.cegepId);
 
   function reasonText(reason: MatchReason): string {
     switch (reason.kind) {
@@ -63,20 +87,35 @@ export default function BursariesPage() {
       case "open":
         return t("burs.rOpen");
       case "tag":
-        return `${t("burs.rTagged")} : ${reason.tagId ? tagLabel(reason.tagId, locale) : ""}`;
+        return t("burs.rTag").replace("{tag}", reason.tagId ? tagLabel(reason.tagId, locale) : "");
       case "rscore_gap":
         return t("burs.rGap").replace("{gap}", f.score(reason.gap ?? 0));
     }
   }
 
+  const shellProps = {
+    rScore: profile.rScore,
+    rScoreStatus: profile.rScoreStatus,
+    currentSession: profile.currentSession,
+  };
+
+  // Also covers the frame between "no cégep" being known and the redirect landing.
+  if (matches === null || profile.cegepId === null) {
+    return (
+      <AppShell {...shellProps}>
+        <BursariesSkeleton label={t("common.loading")} />
+      </AppShell>
+    );
+  }
+
   return (
-    <AppShell rScore={profile.rScore ?? undefined}>
+    <AppShell {...shellProps}>
       <div className="mx-auto flex w-full max-w-[480px] flex-col gap-7 px-4 py-6">
         <div className="flex flex-col gap-1">
           <h1 className="font-display text-[27px] font-bold leading-tight tracking-tight text-ink">
             {t("burs.title")}
           </h1>
-          <p className="text-[13px] text-ink/55">{cegepName}</p>
+          {cegepName && <p className="text-[13px] text-ink/55">{cegepName}</p>}
         </div>
 
         {TIERS.map(({ id, title, accent }) => {
@@ -86,19 +125,16 @@ export default function BursariesPage() {
               <h2 className={`font-display text-[17px] font-bold ${accent}`}>{t(title)}</h2>
 
               {items.length === 0 ? (
-                <div className="rounded border border-dashed border-ink/20 p-4">
-                  <p className="text-[12.5px] leading-relaxed text-ink/55">
-                    {id === "matched" ? t("burs.emptyMatched") : t("burs.emptyTier")}
-                  </p>
-                  {id === "matched" && (
-                    <Link
-                      href="/profile"
-                      className="mt-2 inline-block text-[13px] font-semibold text-ultramarine"
-                    >
-                      {t("burs.editTags")}
-                    </Link>
-                  )}
-                </div>
+                id === "matched" ? (
+                  <EmptyState
+                    compact
+                    title={t("burs.emptyMatchedTitle")}
+                    body={t("burs.emptyMatched")}
+                    action={{ href: "/profile", label: t("burs.editTags") }}
+                  />
+                ) : (
+                  <EmptyState compact title={t("burs.emptyTier")} />
+                )
               ) : (
                 items.map((match) => (
                   <BursaryCard
@@ -123,6 +159,30 @@ export default function BursariesPage() {
         })}
       </div>
     </AppShell>
+  );
+}
+
+/**
+ * Geometry-matched placeholder: the title, the cégep line, and three card blocks at the
+ * heights the real tiers use, so the swap to content moves nothing. No spinner, on purpose.
+ */
+function BursariesSkeleton({ label }: { label: string }) {
+  const block = "animate-pulse motion-reduce:animate-none";
+  return (
+    <div
+      className="mx-auto flex w-full max-w-[480px] flex-col gap-7 px-4 py-6"
+      aria-busy="true"
+      aria-live="polite"
+    >
+      <span className="sr-only">{label}</span>
+      <div className="flex flex-col gap-2">
+        <div className={`h-8 w-32 rounded bg-ink/8 ${block}`} />
+        <div className={`h-4 w-44 rounded bg-ink/8 ${block}`} />
+      </div>
+      <div className={`h-44 rounded border border-ink/8 bg-paper ${block}`} />
+      <div className={`h-44 rounded border border-ink/8 bg-paper ${block}`} />
+      <div className={`h-44 rounded border border-ink/8 bg-paper ${block}`} />
+    </div>
   );
 }
 
@@ -207,6 +267,7 @@ const BursaryCard = memo(function BursaryCard({
         </p>
       )}
 
+      {/* Guardrail #1: the amount and the deadline above share this one stamp. */}
       <SourceStamp date={bursary.lastVerifiedAt} href={bursary.sourceUrl} />
     </article>
   );

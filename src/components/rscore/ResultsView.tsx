@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, Info } from "lucide-react";
 import { useState } from "react";
-import { Info } from "lucide-react";
 import { DistributionCurve } from "@/components/rscore/DistributionCurve";
 import { RScoreBandSheet } from "@/components/rscore/RScoreBandSheet";
 import { bandForScore, bandLabel } from "@/lib/rscore/bands";
@@ -11,7 +10,7 @@ import { AxisRow } from "@/components/rscore/AxisRow";
 import { SourceStamp } from "@/components/SourceStamp";
 import { Logo } from "@/components/ui/Logo";
 import { LangToggle } from "@/components/ui/LangToggle";
-import { UNIVERSITY_PROGRAMS } from "@/lib/sample-data";
+import { useReferenceCatalog } from "@/lib/data/reference-store";
 import {
   formatRangeYears,
   CUTOFF_STATUS_LABEL_KEY,
@@ -23,6 +22,7 @@ import {
   type PrerequisiteCoverage,
 } from "@/lib/matching/program-eligibility";
 import { useStudentProfile } from "@/lib/profile/store";
+import { useFunnelNav } from "@/lib/profile/funnel-nav";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import type { TranslationKey } from "@/lib/i18n/dictionary";
@@ -31,6 +31,15 @@ const PREREQ_LABEL_KEY: Record<PrerequisiteCoverage, TranslationKey> = {
   prerequisites_met: "prereq.met",
   prerequisites_partial: "prereq.partial",
   prerequisites_unknown: "prereq.unknown",
+};
+
+/**
+ * "Ta cote de 28,4 dépasse le seuil publié dans 3 programmes" — one key per
+ * status × plural form, so neither language has to fake agreement with string surgery.
+ */
+const HEADLINE_KEY: Record<"confirmed" | "estimated", { one: TranslationKey; many: TranslationKey }> = {
+  confirmed: { one: "results.headlineConfirmedOne", many: "results.headlineConfirmed" },
+  estimated: { one: "results.headlineEstimatedOne", many: "results.headlineEstimated" },
 };
 
 export function ResultsView({
@@ -43,10 +52,15 @@ export function ResultsView({
   const { t, locale } = useLocale();
   const f = useFormat();
   const { profile } = useStudentProfile();
+  const { universityPrograms } = useReferenceCatalog();
+  // Every link between funnel steps carries ?edit= / ?next= through here, so a student who
+  // came from the profile to redo their score returns there, not to the goal step.
+  const { hrefFor } = useFunnelNav();
   // "What does 28,4 actually mean?" — the question every student asks the moment they see
   // their number, and the one this screen previously left unanswered.
   const [bandOpen, setBandOpen] = useState(false);
   const band = bandForScore(score);
+  const isEstimated = status === "estimated";
 
   // Two independent dimensions — the published-cutoff range and whether this student's DEC
   // core covers the program's recorded prerequisites — ranked together but never blended
@@ -54,7 +68,7 @@ export function ResultsView({
   const ranked = rankProgramsForStudent({
     decProgramCode: profile.cegepProgramId,
     rScore: score,
-    universityPrograms: UNIVERSITY_PROGRAMS,
+    universityPrograms,
   }).map((row) => ({
     program: row.program,
     range: row.cutoff.range,
@@ -70,48 +84,54 @@ export function ResultsView({
     ? `${t("common.seuil")} ${formatRangeYears(hero.range)}`
     : t("cutoff.unverified");
 
-  const headline =
-    locale === "fr"
-      ? `${status === "confirmed" ? "Ta cote" : "Ton estimation"} de ${f.score(score)} dépasse le seuil publié dans ${cleared} programme${cleared === 1 ? "" : "s"} de notre base.`
-      : `Your ${status === "confirmed" ? "score" : "estimate"} of ${f.score(score)} clears the published cutoff in ${cleared} program${cleared === 1 ? "" : "s"} in our database.`;
-
-  const percentileText =
-    score >= 35.0
-      ? locale === "fr" ? "Top 1% provincial" : "Top 1% province-wide"
-      : score >= 32.5
-        ? locale === "fr" ? "Top 5% provincial" : "Top 5% province-wide"
-        : score >= 29.5
-          ? locale === "fr" ? "Top 20% provincial" : "Top 20% province-wide"
-          : score >= 26.0
-            ? locale === "fr" ? "Moitié supérieure (Top 50%)" : "Upper half (Top 50%)"
-            : null;
+  // An estimate never appears without its "≈" — in the headline as much as on the card
+  // (guardrail #2).
+  const displayScore = `${isEstimated ? "≈ " : ""}${f.score(score)}`;
+  const headline = t(HEADLINE_KEY[status][cleared === 1 ? "one" : "many"])
+    .replace("{score}", displayScore)
+    .replace("{n}", String(cleared));
 
   return (
     <div className="flex min-h-[100dvh] flex-col bg-chalk">
       <header className="sticky top-0 z-50 bg-chalk/90 backdrop-blur-sm pt-safe">
         <div className="mx-auto flex h-14 w-full max-w-[430px] items-center justify-between px-5">
-          <Logo size={22} />
+          <div className="flex items-center gap-1">
+            <Link
+              href={hrefFor("/onboarding/score")}
+              aria-label={t("common.back")}
+              className="-ml-2 flex min-h-[48px] min-w-[48px] items-center justify-center rounded-full text-ink transition-colors active:bg-ink/10"
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </Link>
+            <Logo size={22} />
+          </div>
           <LangToggle />
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-[430px] flex-1 flex-col gap-5 px-5 pb-10 pt-3">
+      <main className="mx-auto flex w-full max-w-[430px] flex-1 flex-col gap-5 px-5 pt-3 pb-[calc(2.5rem+env(safe-area-inset-bottom,0px))]">
         <h1 className="font-display text-[24px] font-bold leading-[1.18] tracking-tight text-ink">
           {headline}
         </h1>
 
-        <section className="rounded border border-ink/12 bg-paper p-4 shadow-card">
+        {/* Dashed accent border + ESTIMATION badge on an estimate, matching the dashboard,
+            so the two kinds of number never look alike (guardrail #2). */}
+        <section
+          className={`rounded border bg-paper p-4 shadow-card ${
+            isEstimated ? "border-dashed border-moss/60" : "border-ink/12"
+          }`}
+        >
           <div className="mb-1 flex items-end justify-between gap-4">
             <div>
               <p className="text-[11px] text-ink/50">{t("entry.label")}</p>
               <div className="flex items-center gap-2">
                 <p className="font-display text-[24px] font-bold leading-tight text-ultramarine tabular-nums">
-                  {status === "estimated" && "≈ "}
+                  {isEstimated && "≈ "}
                   {f.score(score)}
                 </p>
-                {percentileText && (
-                  <span className="rounded-full bg-ultramarine/[0.08] px-2 py-0.5 text-[11px] font-bold text-ultramarine">
-                    {percentileText}
+                {isEstimated && (
+                  <span className="rounded-full bg-moss/[0.08] px-2 py-0.5 text-[10.5px] font-semibold uppercase tracking-wider text-moss">
+                    {t("dash.estimated")}
                   </span>
                 )}
               </div>
@@ -130,13 +150,15 @@ export function ResultsView({
             rangeLabel={heroRangeLabel}
           />
 
+          {/* The band (sourced and disclaimed in src/lib/rscore/bands.ts) is the only
+              interpretation this screen offers — no percentiles, nothing unsourced. */}
           <button
             type="button"
             onClick={() => setBandOpen(true)}
-            className="mt-2 flex w-full items-center justify-center gap-1.5 rounded border border-ink/15 py-2.5 text-[13px] font-semibold text-ink/70 transition-transform active:scale-[0.99]"
+            className="mt-2 flex min-h-[48px] w-full items-center justify-center gap-1.5 rounded border border-ink/15 px-3 py-2.5 text-[13px] font-semibold text-ink/70 transition-transform active:scale-[0.99]"
           >
             <Info className="h-4 w-4 text-ink/45" />
-            {bandLabel(band, locale)} — {locale === "fr" ? "ce que ça veut dire" : "what that means"}
+            {bandLabel(band, locale)} — {t("results.whatItMeans")}
           </button>
         </section>
 
@@ -186,7 +208,7 @@ export function ResultsView({
         {/* The cégep was chosen in step 1, so the next thing the funnel owes the student is
             the goal step — where they're headed, or the quiz if they don't yet know. */}
         <Link
-          href="/onboarding/goal"
+          href={hrefFor("/onboarding/goal")}
           className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98]"
         >
           {t("common.continue")}

@@ -22,9 +22,13 @@ function subscribe(listener: () => void) {
   };
 }
 
+function isLocale(value: string | null): value is Locale {
+  return value === "en" || value === "fr";
+}
+
 function readLocale(): Locale {
   const stored = window.localStorage.getItem(STORAGE_KEY);
-  return stored === "en" || stored === "fr" ? stored : DEFAULT_LOCALE;
+  return isLocale(stored) ? stored : DEFAULT_LOCALE;
 }
 
 // The server has no localStorage, so it always renders the default. useSyncExternalStore
@@ -32,6 +36,11 @@ function readLocale(): Locale {
 // would cause.
 function serverLocale(): Locale {
   return DEFAULT_LOCALE;
+}
+
+function writeLocale(next: Locale) {
+  window.localStorage.setItem(STORAGE_KEY, next);
+  emit();
 }
 
 type LocaleContextValue = {
@@ -49,9 +58,21 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     document.documentElement.lang = locale;
   }, [locale]);
 
+  // `?lang=en` hands the locale across a boundary that has no other way to carry it: the
+  // English marketing site pushing into the (path-less) funnel, or a shared link. It is read
+  // once per page load and then dropped from the URL, so the stored preference stays the
+  // source of truth afterwards.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const requested = url.searchParams.get("lang");
+    if (!isLocale(requested)) return;
+    if (requested !== readLocale()) writeLocale(requested);
+    url.searchParams.delete("lang");
+    window.history.replaceState(window.history.state, "", url.toString());
+  }, []);
+
   const setLocale = useCallback((next: Locale) => {
-    window.localStorage.setItem(STORAGE_KEY, next);
-    emit();
+    writeLocale(next);
   }, []);
 
   const t = useCallback((key: TranslationKey) => DICTIONARY[locale][key], [locale]);

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { InstallCard } from "@/components/InstallCard";
+import { IosInstallGuide } from "@/components/pwa/IosInstallGuide";
 import { SiteHeader } from "./SiteHeader";
 import { SiteFooter } from "./SiteFooter";
 import { SetHtmlLang } from "./SetHtmlLang";
@@ -69,14 +70,20 @@ export function HomePage({ locale }: { locale: Locale }) {
             onInstallClick={install}
             onContinueInBrowser={() => {
               // /app is the interactive app itself, not a marketing page — it isn't
-              // URL-locale-prefixed, it uses its own client-side language toggle.
-              router.push("/app");
+              // URL-locale-prefixed, it uses its own client-side language toggle. The
+              // English site hands its locale across that boundary with ?lang (the proxy
+              // carries it through the sign-in bounce, the LocaleProvider consumes it), so
+              // an English visitor is not dropped into a French funnel.
+              router.push(locale === "en" ? "/app?lang=en" : "/app");
             }}
           />
         </div>
       </main>
 
       <SiteFooter locale={locale} />
+      {/* The iOS "add to home screen" sheet belongs to the install page. Mounted in the root
+          layout it popped over the dashboard and every funnel step. */}
+      <IosInstallGuide />
     </div>
   );
 }

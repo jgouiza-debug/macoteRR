@@ -1,42 +1,44 @@
 "use client";
 
-import { useEffect, useSyncExternalStore } from "react";
+/**
+ * FRENCH-ONLY BODY, ON PURPOSE.
+ *
+ * This is the one page a student prints and hands to a Quebec guidance counsellor. The sheet
+ * itself (headings, field labels, the score caption, the risk sentences, the footer
+ * disclaimer, fr-CA number formatting) is deliberately written as French literals rather than
+ * routed through t(): its reader is the counsellor, not the student, and the counsellor's
+ * working language is French whatever the student picked in the app. Only the chrome that
+ * exists on screen and never reaches paper — the back link, the print button, the bottom nav,
+ * the empty state — follows the UI locale through t(). The cutoff status labels go through
+ * the shared CUTOFF_STATUS_LABEL_KEY vocabulary so this sheet can never drift from the app's
+ * "Au-dessus / Dans la fourchette / En dessous / Pas encore vérifié" wording.
+ */
+
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import dynamic from "next/dynamic";
-import { ChevronLeft, TriangleAlert, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, TriangleAlert, CheckCircle2, Printer } from "lucide-react";
 import { SourceStamp } from "@/components/SourceStamp";
-import { CEGEPS, CEGEP_PROGRAMS, SESSIONS, UNIVERSITY_PROGRAMS } from "@/lib/sample-data";
-import { CEGEP_DEC_PROGRAMS } from "@/lib/data/cegep-catalog";
-import { findCegepInstitution, findDecProgramName } from "@/lib/data/cegep-institutions";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { BottomNav } from "@/components/app-shell/BottomNav";
+import { useReferenceCatalog } from "@/lib/data/reference-store";
+import { resolveCegepName, resolveDecName } from "@/lib/data/resolve-names";
 import { useStudentProfile } from "@/lib/profile/store";
+import { useHydrated } from "@/lib/hooks/useHydrated";
+import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { formatScore } from "@/lib/format";
 import {
   getCutoffRange,
   compareToCutoffRange,
   formatRangeYears,
+  CUTOFF_STATUS_LABEL_KEY,
+  CUTOFF_STATUS_COLOR_CLASS,
   type CutoffStatus,
 } from "@/lib/rscore/cutoff-range";
 import { evaluatePrerequisites, findDecCoreCourses } from "@/lib/matching/program-eligibility";
 
-/** FR-only: this document is handed to a Quebec guidance counsellor, printed. */
-const STATUS_LABEL: Record<CutoffStatus, string> = {
-  above: "Au-dessus",
-  inside: "Dans la fourchette",
-  below: "En dessous",
-  unknown: "Non vérifié",
-};
-
-const STATUS_COLOR: Record<CutoffStatus, string> = {
-  above: "text-moss",
-  inside: "text-ultramarine",
-  below: "text-ember",
-  unknown: "text-ink/40",
-};
-
-const PrintButton = dynamic(
-  () => import("@/components/PrintButton").then((mod) => mod.PrintButton),
-);
+/** Same clearance AppShell gives its <main> so the fixed BottomNav never covers the footer. */
+const BOTTOM_NAV_CLEARANCE = "pb-[calc(3.125rem+env(safe-area-inset-bottom)*0.5)] md:pb-0 print:pb-0";
 
 /**
  * The one page a student PRINTS and hands to a guidance counsellor. It used to render
@@ -47,15 +49,14 @@ const PrintButton = dynamic(
  */
 export default function CounselorPrepPage() {
   const router = useRouter();
-  const { profile } = useStudentProfile();
+  const { t } = useLocale();
+  const { profile, sync } = useStudentProfile();
+  const hydrated = useHydrated();
+  const { sessions, universityPrograms } = useReferenceCatalog();
 
-  // Same hydration-safe pattern as /dashboard and /programs: the first client render matches
-  // the server snapshot (rScore: null) before correcting to the real localStorage value.
-  const hydrated = useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false,
-  );
+  // Nothing below may be decided on the hydration snapshot (an empty profile) or while a
+  // signed-in student's first reconcile is still pulling their real profile onto this device.
+  const settled = hydrated && sync !== "syncing";
 
   // Gated on the cégep, NOT on the score. Since 0ea3aa4 a first-session student deliberately
   // has no cote R — the ministry has not computed one yet — so gating here on `rScore === null`
@@ -63,33 +64,56 @@ export default function CounselorPrepPage() {
   // "Préparer ma rencontre" did nothing but eject them from the app. A missing score is
   // something the document reports as unknown, which is what the rest of it already does.
   useEffect(() => {
-    if (hydrated && profile.cegepId === null) router.replace("/onboarding");
-  }, [hydrated, profile.cegepId, router]);
+    if (settled && profile.cegepId === null) router.replace("/onboarding");
+  }, [settled, profile.cegepId, router]);
 
-  if (!hydrated || profile.cegepId === null) {
+  if (!settled) {
     return (
-      <div className="flex min-h-[100dvh] items-center justify-center bg-chalk px-5">
-        <p className="text-[14px] text-ink/60">Chargement…</p>
+      <div className={`min-h-screen bg-chalk ${BOTTOM_NAV_CLEARANCE}`}>
+        <div
+          className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-6 md:px-8"
+          aria-busy="true"
+          aria-live="polite"
+        >
+          <div className="h-12 w-40 animate-pulse rounded-full bg-ink/8" />
+          <div className="flex flex-col gap-6 rounded-xl bg-paper px-4 py-7 shadow-card sm:px-6 sm:py-10 md:px-12">
+            <div className="h-10 w-56 animate-pulse rounded bg-ink/8" />
+            <div className="h-16 animate-pulse rounded bg-ink/8" />
+            <div className="h-24 animate-pulse rounded bg-ink/8" />
+            <div className="h-40 animate-pulse rounded bg-ink/8" />
+          </div>
+        </div>
+        <div className="print:hidden">
+          <BottomNav />
+        </div>
+      </div>
+    );
+  }
+
+  // The effect above is already sending this student to onboarding; until it lands (and in
+  // case it never does), the page names the next action instead of a bare loading line.
+  if (profile.cegepId === null) {
+    return (
+      <div className={`min-h-screen bg-chalk ${BOTTOM_NAV_CLEARANCE}`}>
+        <EmptyState
+          title={t("prep.emptyTitle")}
+          body={t("prep.emptyBody")}
+          action={{ href: "/onboarding", label: t("dash.startOnboarding") }}
+        />
+        <div className="print:hidden">
+          <BottomNav />
+        </div>
       </div>
     );
   }
 
   const score = profile.rScore;
   const isConfirmed = profile.rScoreStatus === "confirmed";
-  // Same three-catalogue lookup the dashboard uses. sample-data's six-entry stub was the only
-  // source here, so a real DEC code like 200.B1 matched nothing and the printed sheet told the
-  // counsellor the student's programme was "Non précisé".
-  const cegepName =
-    CEGEPS.find((c) => c.id === profile.cegepId)?.name ??
-    findCegepInstitution(profile.cegepId)?.name ??
-    null;
-  const cegepProgramName =
-    findDecProgramName(profile.cegepProgramId) ??
-    CEGEP_DEC_PROGRAMS.find((p) => p.code === profile.cegepProgramId)?.nameFr ??
-    CEGEP_PROGRAMS.find((p) => p.id === profile.cegepProgramId)?.name ??
-    null;
-  const session = SESSIONS.find((s) => s.id === profile.currentSession);
-  const targets = UNIVERSITY_PROGRAMS.filter((p) =>
+  // The sheet is French, so the DEC name is resolved in French whatever the UI locale.
+  const cegepName = resolveCegepName(profile.cegepId);
+  const cegepProgramName = resolveDecName(profile.cegepProgramId, "fr");
+  const session = sessions.find((s) => s.id === profile.currentSession);
+  const targets = universityPrograms.filter((p) =>
     profile.targetUniversityProgramIds.includes(p.id),
   );
   const dec = findDecCoreCourses(profile.cegepProgramId);
@@ -100,21 +124,27 @@ export default function CounselorPrepPage() {
   // program-eligibility deliberately ignores that field, and so does this page: a flag is
   // raised only when a prerequisite resolves to a course absent from a VERIFIED DEC core,
   // which is a statement about two catalogues, phrased as such.
+  //
+  // Only `prereq_not_in_core` is a talking point. `dec_only` (the programme asks for the DEC
+  // itself, no specific course) and `prereq_outside_catalogue` (an accepted alternative this
+  // product cannot see) are NOT gaps and must never be printed as one.
   const risks = targets.flatMap((program) => {
-    const flags: { program: string; text: string }[] = [];
+    const flags: { program: string; text: string; date: string; href: string }[] = [];
+    const stamp = { date: program.lastVerifiedAt, href: program.sourceUrl };
     if (program.courseFloor) {
       flags.push({
         program: program.name,
         text: `${program.courseFloor.course} : seuil de ${formatScore(program.courseFloor.minGrade, "fr")}`,
+        ...stamp,
       });
     }
     for (const reason of evaluatePrerequisites(dec, program).reasons) {
-      if (reason.kind === "prereq_not_in_core" && reason.name) {
-        flags.push({
-          program: program.name,
-          text: `${reason.name} ne fait pas partie du tronc commun de ton programme — à confirmer avec ton cégep.`,
-        });
-      }
+      if (reason.kind !== "prereq_not_in_core" || !reason.name) continue;
+      flags.push({
+        program: program.name,
+        text: `${reason.name} ne fait pas partie du tronc commun de ton programme — à confirmer avec ton cégep.`,
+        ...stamp,
+      });
     }
     return flags;
   });
@@ -128,8 +158,8 @@ export default function CounselorPrepPage() {
     return {
       program,
       status,
-      label: STATUS_LABEL[status],
-      color: STATUS_COLOR[status],
+      label: t(CUTOFF_STATUS_LABEL_KEY[status]),
+      color: CUTOFF_STATUS_COLOR_CLASS[status],
       rangeLabel: range
         ? `${formatScore(range.low, "fr")}–${formatScore(range.high, "fr")} (${formatRangeYears(range)})`
         : "—",
@@ -137,16 +167,23 @@ export default function CounselorPrepPage() {
   });
 
   return (
-    <div className="min-h-screen bg-chalk">
-      <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-6 print:hidden md:px-8">
+    <div className={`min-h-screen bg-chalk ${BOTTOM_NAV_CLEARANCE}`}>
+      <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-4 print:hidden md:px-8">
         <Link
           href="/profile"
-          className="flex items-center gap-1.5 text-[13px] font-semibold text-ink/60 hover:text-ink"
+          className="flex min-h-[48px] items-center gap-1.5 text-[13px] font-semibold text-ink/60 hover:text-ink"
         >
           <ChevronLeft className="h-5 w-5" />
-          Retour au profil
+          {t("prep.backToProfile")}
         </Link>
-        <PrintButton />
+        <button
+          type="button"
+          onClick={() => window.print()}
+          className="inline-flex h-12 items-center gap-2 rounded-full bg-ultramarine px-6 text-sm font-semibold text-paper shadow-card transition-colors hover:bg-ink"
+        >
+          <Printer className="h-[18px] w-[18px]" />
+          {t("prep.print")}
+        </button>
       </div>
 
       <main className="mx-auto flex max-w-3xl flex-col gap-6 bg-paper px-4 py-7 shadow-card print:shadow-none sm:gap-8 sm:px-6 sm:py-10 md:px-12">
@@ -184,7 +221,16 @@ export default function CounselorPrepPage() {
 
         <section className="flex flex-col gap-3">
           <h2 className="font-display text-[17px] font-bold text-ink">Cote R</h2>
-          <div>
+          {/* Guardrail #2: an estimate is never mistakable for the cégep's own figure — it
+              carries the "≈ " prefix, the dashed border and the ESTIMATION caption; a confirmed
+              score carries none of them. */}
+          <div
+            className={
+              score !== null && !isConfirmed
+                ? "self-start rounded-lg border border-dashed border-moss/60 px-3 py-2"
+                : ""
+            }
+          >
             <p className="text-[10.5px] font-semibold uppercase tracking-wider text-ink/50">
               {session ? `${session.labelFr} · ` : ""}
               {score === null
@@ -308,10 +354,14 @@ export default function CounselorPrepPage() {
                   className="flex items-start gap-3 rounded border border-ember/40 bg-ember/5 p-3 text-[13px]"
                 >
                   <TriangleAlert className="mt-0.5 h-4 w-4 flex-shrink-0 text-ember" />
-                  <span className="text-ink">
-                    <span className="font-semibold">{risk.program} — </span>
-                    {risk.text}
-                  </span>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-ink">
+                      <span className="font-semibold">{risk.program} — </span>
+                      {risk.text}
+                    </span>
+                    {/* Guardrail #1: the grade floor is a figure, so it carries its source. */}
+                    <SourceStamp date={risk.date} href={risk.href} />
+                  </div>
                 </li>
               ))}
             </ul>
@@ -328,6 +378,10 @@ export default function CounselorPrepPage() {
           </p>
         </footer>
       </main>
+
+      <div className="print:hidden">
+        <BottomNav />
+      </div>
     </div>
   );
 }
