@@ -420,6 +420,17 @@ export const DICTIONARY = {
     "estimate.calibratedOne": "Calibrée sur {n} session confirmée de ton historique.",
     "estimate.clamped": "Ta cote confirmée et tes notes s'accordent mal : vérifie-les.",
     "estimate.uncalibrated": "Estimation brute : aucune cote R confirmée pour la calibrer.",
+
+    // ---- added 2026-09-03 (scripts/i18n/apply-keys.ts) ----
+    "common.reset": "Réinitialiser",
+    "dash.whatIf": "Et si… ?",
+    "dash.whatIfAfter": "Après",
+    "dash.whatIfBefore": "Avant",
+    "dash.whatIfBody": "Change une note pour voir comment ton estimation bougerait. Rien n'est enregistré.",
+    "dash.whatIfChange": "Écart",
+    "dash.whatIfDecrease": "Baisser {course} d'un point",
+    "dash.whatIfIncrease": "Monter {course} d'un point",
+    "estimate.disclaimer": "Estimation non officielle. Confirme avec ton cégep.",
   },
   en: {
 
@@ -841,6 +852,17 @@ export const DICTIONARY = {
     "estimate.calibratedOne": "Calibrated on {n} confirmed session of your history.",
     "estimate.clamped": "Your confirmed score and your grades line up poorly: double-check them.",
     "estimate.uncalibrated": "Rough estimate: no confirmed R-score to calibrate it.",
+
+    // ---- added 2026-09-03 (scripts/i18n/apply-keys.ts) ----
+    "common.reset": "Reset",
+    "dash.whatIf": "What if…?",
+    "dash.whatIfAfter": "After",
+    "dash.whatIfBefore": "Before",
+    "dash.whatIfBody": "Change a grade to see how your estimate would move. Nothing is saved.",
+    "dash.whatIfChange": "Change",
+    "dash.whatIfDecrease": "Lower {course} by one point",
+    "dash.whatIfIncrease": "Raise {course} by one point",
+    "estimate.disclaimer": "Unofficial estimate. Confirm with your cégep.",
   },
 } as const;
 

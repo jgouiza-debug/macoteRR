@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Info, TrendingUp } from "lucide-react";
+import { Info, SlidersHorizontal } from "lucide-react";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { useFormat } from "@/lib/i18n/useFormat";
+import { ScoreValue } from "@/components/rscore/ScoreValue";
 import { withFunnelParams } from "@/lib/profile/funnel-nav";
 
 /**
@@ -30,12 +31,16 @@ export function ScoreCard({
   cegepName,
   cegepProgramName,
   onOpenBands,
+  canWhatIf = false,
+  onOpenWhatIf,
 }: {
   rScore: number | null;
   rScoreStatus: "confirmed" | "estimated" | null;
   cegepName: string | null;
   cegepProgramName: string | null;
   onOpenBands: () => void;
+  canWhatIf?: boolean;
+  onOpenWhatIf?: () => void;
 }) {
   const { t } = useLocale();
   const f = useFormat();
@@ -72,25 +77,35 @@ export function ScoreCard({
             isConfirmed ? "border-moss/60 bg-moss/[0.02]" : "border-dashed border-moss/60 bg-paper"
           }`}
         >
-          {/* Only the estimate is badged. "CONFIRMÉE" restated the heading directly above it
-              and boxed the number in for no gain; "ESTIMATION" earns its place, because an
-              estimate must never be mistakable for the cégep's own figure. */}
-          {!isConfirmed && (
-            <span className="flex items-center gap-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-moss">
-              <TrendingUp className="h-3.5 w-3.5" aria-hidden="true" />
-              {t("dash.estimated")}
-            </span>
-          )}
-          <span className="font-display text-[46px] font-extrabold leading-none tracking-tight text-ultramarine tabular-nums">
-            {!isConfirmed && "≈ "}
-            {f.score(rScore, 2)}
-          </span>
+          {/* GUARDRAIL #2 lives in ScoreValue: the estimate is badged and "≈"-prefixed, the
+              confirmed number is not. */}
+          <ScoreValue
+            value={rScore}
+            status={rScoreStatus}
+            size="hero"
+            badge={isConfirmed ? "never" : "always"}
+            decimals={2}
+            className="text-ultramarine"
+          />
           <span className="mt-1 flex items-center gap-1 text-[11px] font-medium text-ink/45">
             <Info className="h-3 w-3" aria-hidden="true" />
             {t("common.seuil")}
           </span>
         </button>
-      ) : (
+      ) : null}
+
+      {rScore !== null && canWhatIf && onOpenWhatIf && (
+        <button
+          type="button"
+          onClick={onOpenWhatIf}
+          className="mt-3 inline-flex min-h-[48px] items-center gap-1.5 rounded-full px-3 text-[12.5px] font-semibold text-ultramarine tap-spring hover:underline"
+        >
+          <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
+          {t("dash.whatIf")}
+        </button>
+      )}
+
+      {rScore === null && (
         <div className="mt-3 flex min-w-[200px] flex-col items-center gap-1.5 rounded-xl border border-dashed border-ink/20 bg-chalk/30 px-5 py-4">
           <span className="flex items-center gap-1.5 rounded-full bg-ink/8 px-2.5 py-0.5 text-[10.5px] font-bold uppercase tracking-wider text-ink/60">
             {t("dash.pending")}

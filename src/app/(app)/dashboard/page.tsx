@@ -6,6 +6,7 @@ import AppLoading from "@/app/(app)/loading";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { ImportantDates } from "@/components/dashboard/ImportantDates";
 import { ScoreCard } from "@/components/dashboard/ScoreCard";
+import { WhatIfSheet } from "@/components/dashboard/WhatIfSheet";
 import { TargetGoals } from "@/components/dashboard/TargetGoals";
 import { RScoreBandSheet } from "@/components/rscore/RScoreBandSheet";
 import { resolveCegepName, resolveDecName } from "@/lib/data/resolve-names";
@@ -19,6 +20,7 @@ export default function DashboardPage() {
   const { profile, sync } = useStudentProfile();
   const hydrated = useHydrated();
   const [bandOpen, setBandOpen] = useState(false);
+  const [whatIfOpen, setWhatIfOpen] = useState(false);
 
   // Two transient states must never drive a redirect: the hydration render (the store still
   // shows the server's empty profile) and a signed-in student's first reconcile (the local
@@ -39,6 +41,18 @@ export default function DashboardPage() {
   // should still see that their pick is on file.
   const cegepProgramName = resolveDecName(profile.cegepProgramId, locale) ?? profile.cegepProgramId;
 
+  // The session the what-if sheet works on: the current one if it has grades, else the most
+  // recent session that does. null when no grades exist anywhere (the button is hidden).
+  const sessionsWithGrades = profile.courseGrades.map((g) => g.session);
+  const whatIfSession =
+    profile.currentSession !== null && sessionsWithGrades.includes(profile.currentSession)
+      ? profile.currentSession
+      : sessionsWithGrades.length > 0
+        ? Math.max(...sessionsWithGrades)
+        : null;
+  const whatIfGrades =
+    whatIfSession === null ? [] : profile.courseGrades.filter((g) => g.session === whatIfSession);
+
   return (
     <AppShell
       rScore={profile.rScore}
@@ -52,6 +66,8 @@ export default function DashboardPage() {
           cegepName={cegepName}
           cegepProgramName={cegepProgramName}
           onOpenBands={() => setBandOpen(true)}
+          canWhatIf={whatIfSession !== null}
+          onOpenWhatIf={() => setWhatIfOpen(true)}
         />
 
         <TargetGoals rScore={profile.rScore} rScoreStatus={profile.rScoreStatus} />
@@ -64,6 +80,15 @@ export default function DashboardPage() {
           score={profile.rScore}
           open={bandOpen}
           onClose={() => setBandOpen(false)}
+        />
+      )}
+
+      {whatIfOpen && whatIfSession !== null && (
+        <WhatIfSheet
+          open={whatIfOpen}
+          onClose={() => setWhatIfOpen(false)}
+          grades={whatIfGrades}
+          confirmations={profile.confirmations}
         />
       )}
     </AppShell>
