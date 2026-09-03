@@ -66,7 +66,12 @@ export function generatePerformanceReport(): string {
   doc += `## Executive Summary\n\n`;
   doc += `- **Zero-Server Derived Computations**: R-score projection, program filtering, 3-tier eligibility sort, cutoff comparison, floor checks, and bursary matching run 100% client-side.\n`;
   doc += `- **Network Requests per Full Session**: **${networkReport.totalSessionRequests} requests** (down from 14+; well within single-digit target).\n`;
-  doc += `- **Database Performance**: Average query execution time improved from **17.8ms -> 0.8ms (22.2x speedup)**; all sequential scans on tables >1,000 rows eliminated via covering and composite B-tree/GIN indexes.\n`;
+  // Section 3 is a MODEL (scripts/benchmark/db-bench.ts), not a measurement against a running
+  // database, so the summary derives its figures from that model and says so. A hard-coded
+  // "17.8ms -> 0.8ms (22.2x)" used to sit here regardless of the data.
+  const dbMean = (rows: QueryBenchmarkResult[]) => rows.reduce((sum, r) => sum + r.meanTimeMs, 0) / Math.max(rows.length, 1);
+  const dbSpeedup = dbMean(dbAfter) > 0 ? (dbMean(dbBefore) / dbMean(dbAfter)).toFixed(1) : "n/a";
+  doc += `- **Database Performance (synthetic model, not measured)**: modelled mean query time **${dbMean(dbBefore).toFixed(1)}ms -> ${dbMean(dbAfter).toFixed(1)}ms (${dbSpeedup}x)** across the ${dbBefore.length} modelled queries in \`scripts/benchmark/db-bench.ts\`; the indexes it assumes exist in the migrations, the timings do not come from a database.\n`;
   doc += `- **RLS Policy Performance**: Subquery caching \`((select auth.uid()) = user_id)\` prevents per-row function re-evaluations while preserving 100% security boundary integrity.\n`;
   doc += `- **Interaction Latencies (p75)**: All interactions pass the latency budget under 4x CPU slowdown (e.g. tap feedback **${interactions[0].p75.toFixed(2)}ms** vs <100ms target; R-score estimate **${interactions[1].p75.toFixed(2)}ms** vs <100ms target).\n`;
   doc += `- **Bundle & Rendering**: Virtual list rendering for 200+ programs, memoized derived selectors, code-split PDF/print modules, CSS transition audit (transform/opacity only), preloaded subset fonts with metric-matched fallbacks.\n\n`;
@@ -85,7 +90,7 @@ export function generatePerformanceReport(): string {
   }
   doc += `\n`;
 
-  doc += `## 3. Database Query Optimization & EXPLAIN Plans (Top 10 Improvements)\n\n`;
+  doc += `## 3. Database Query Optimization & EXPLAIN Plans (Top 10 Improvements)\n\n> **Synthetic model.** These rows come from \`scripts/benchmark/db-bench.ts\`, a model of the query plans the indexes in the migrations should produce, not from EXPLAIN ANALYZE against a running database. Run \`npm run test:rls\` against the local bed for a real database check.\n\n`;
   doc += formatDbComparisonTable(dbBefore, dbAfter);
   doc += `\n`;
 
