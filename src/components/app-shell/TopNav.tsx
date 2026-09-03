@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
+import { Bell, ChevronLeft } from "lucide-react";
 import { LogoMark } from "@/components/ui/Logo";
 import { LangToggle } from "@/components/ui/LangToggle";
+import { ScoreValue } from "@/components/rscore/ScoreValue";
+import { NotificationInboxSheet } from "@/components/notifications/NotificationInboxSheet";
+import { useInbox } from "@/lib/notifications/inbox";
 import { NAV_ITEMS } from "./nav-items";
-import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 export function TopNav({
@@ -21,8 +24,9 @@ export function TopNav({
   backHref?: string;
 }) {
   const pathname = usePathname();
+  const { unread } = useInbox();
+  const [inboxOpen, setInboxOpen] = useState(false);
   const { t } = useLocale();
-  const f = useFormat();
   const hasScore = rScore !== undefined && rScore !== null;
 
   return (
@@ -71,21 +75,42 @@ export function TopNav({
               nothing to say. A first session gets its own honest chip instead. */}
           {hasScore ? (
             <span
-              className={`text-[13.5px] font-extrabold tracking-tight tabular-nums ${
+              className={`inline-flex items-center gap-0.5 text-[13.5px] font-extrabold tracking-tight ${
                 rScoreStatus === "estimated" ? "text-moss" : "text-ultramarine"
               }`}
               aria-label={rScoreStatus === "estimated" ? t("dash.estimateTitle") : t("dash.confirmedTitle")}
             >
-              {rScoreStatus === "estimated" && "≈ "}R : {f.score(rScore)}
+              R : <ScoreValue value={rScore} status={rScoreStatus} size="inline" />
             </span>
           ) : currentSession === 1 ? (
             <span className="rounded-full bg-ink/8 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-ink/60">
               {t("nav.firstSession")}
             </span>
           ) : null}
+
+          <button
+            type="button"
+            aria-haspopup="dialog"
+            aria-expanded={inboxOpen}
+            aria-label={unread > 0 ? t("nav.inboxUnread").replace("{n}", String(unread)) : t("nav.inbox")}
+            onClick={() => setInboxOpen(true)}
+            className="relative -my-1 flex min-h-[48px] min-w-[48px] items-center justify-center rounded-full text-ink transition-colors active:bg-ink/10"
+          >
+            <Bell className="h-5 w-5" aria-hidden="true" />
+            {unread > 0 && (
+              <span
+                aria-hidden="true"
+                className="absolute right-1.5 top-1.5 h-4 min-w-[16px] rounded-full bg-ember px-1 text-[10px] font-bold leading-4 text-paper tabular-nums"
+              >
+                {unread > 99 ? "99+" : unread}
+              </span>
+            )}
+          </button>
+
           <LangToggle />
         </div>
       </div>
+      <NotificationInboxSheet open={inboxOpen} onClose={() => setInboxOpen(false)} />
     </header>
   );
 }

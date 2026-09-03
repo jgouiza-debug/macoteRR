@@ -1,14 +1,10 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "@/lib/db/database.types";
 import { formatScore } from "@/lib/format";
 import { formatRangeYears, type CutoffRange } from "@/lib/rscore/cutoff-range";
 import type {
   NotificationCategory,
   NotificationPayload,
-  NotificationPreferences,
   NotificationSubjectType,
 } from "./types";
-import { DEFAULT_NOTIFICATION_PREFERENCES } from "./types";
 
 /**
  * Computes deterministic dedupe keys to ensure nightly/batch cron jobs never
@@ -196,48 +192,3 @@ export function formatNotificationCopy(
  * Loads the user's notification preferences from Supabase.
  * Returns default (all false) if no record exists yet.
  */
-export async function getNotificationPreferences(
-  supabase: SupabaseClient<Database>,
-  userId: string,
-): Promise<NotificationPreferences> {
-  const { data, error } = await supabase
-    .from("notification_preferences")
-    .select("deadline_reminders, cutoff_updates, new_bursary_matches, grade_window_reminders, updated_at")
-    .eq("user_id", userId)
-    .maybeSingle();
-
-  if (error || !data) {
-    return DEFAULT_NOTIFICATION_PREFERENCES;
-  }
-
-  return {
-    deadlineReminders: data.deadline_reminders,
-    cutoffUpdates: data.cutoff_updates,
-    newBursaryMatches: data.new_bursary_matches,
-    gradeWindowReminders: data.grade_window_reminders,
-    updatedAt: data.updated_at,
-  };
-}
-
-/**
- * Saves notification preferences to Supabase.
- */
-export async function saveNotificationPreferences(
-  supabase: SupabaseClient<Database>,
-  userId: string,
-  prefs: NotificationPreferences,
-): Promise<{ error: Error | null }> {
-  const { error } = await supabase.from("notification_preferences").upsert(
-    {
-      user_id: userId,
-      deadline_reminders: prefs.deadlineReminders,
-      cutoff_updates: prefs.cutoffUpdates,
-      new_bursary_matches: prefs.newBursaryMatches,
-      grade_window_reminders: prefs.gradeWindowReminders,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: "user_id" },
-  );
-
-  return { error: error ? new Error(error.message) : null };
-}

@@ -11,6 +11,7 @@ import { useReferenceCatalog } from "@/lib/data/reference-store";
 import { resolveCegepName } from "@/lib/data/resolve-names";
 import { matchBursaries, type BursaryMatch, type MatchReason, type MatchTier } from "@/lib/matching/match";
 import { useHydrated } from "@/lib/hooks/useHydrated";
+import { markBursariesSeen } from "@/lib/notifications/inbox";
 import { useStudentProfile } from "@/lib/profile/store";
 import { tagLabel } from "@/lib/tags/taxonomy";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
@@ -70,6 +71,12 @@ export default function BursariesPage() {
     () => (ready ? matchBursaries(bursaries, studentContext) : null),
     [ready, studentContext, bursaries],
   );
+
+  // Opening the bursaries page marks the matched-tier bursaries as seen, so the inbox stops
+  // announcing them as new. An effect, after render — never during.
+  useEffect(() => {
+    if (matches) markBursariesSeen(matches.matched.map((m) => m.bursary.id));
+  }, [matches]);
 
   // Null when unknown or unset: the line is omitted rather than filled with a placeholder.
   const cegepName = resolveCegepName(profile.cegepId);

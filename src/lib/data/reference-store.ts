@@ -17,6 +17,7 @@ import { idbGet, idbSet } from "./indexed-db";
 import { DEFAULT_CATALOG, isReferenceCatalog, type ReferenceCatalog } from "./reference-catalog";
 
 const IDB_KEY = "current";
+const PREVIOUS_IDB_KEY = "previous";
 const listeners = new Set<() => void>();
 const inFlightRequests = new Map<string, Promise<unknown>>();
 
@@ -92,6 +93,12 @@ export async function initReferenceCatalog(): Promise<ReferenceCatalog> {
       if (!bundleRes.ok) throw new Error(`bundle ${bundleRes.status}`);
       const bundle: unknown = await bundleRes.json();
       if (!isReferenceCatalog(bundle)) throw new Error("bundle has the wrong shape");
+      // Keep the bundle being replaced as "previous", so the notification layer can diff a
+      // target's cutoff range across catalogue versions. Only a real cached bundle is kept,
+      // never the shipped catalogue on a first-ever fetch.
+      if (cached && cached.version !== bundle.version && bundle.source !== "fallback") {
+        await idbSet("reference_catalog", PREVIOUS_IDB_KEY, cached).catch(() => {});
+      }
       // A fallback payload is the shipped data under another name; never pin it in the cache.
       if (bundle.source !== "fallback") await idbSet("reference_catalog", IDB_KEY, bundle).catch(() => {});
       publish(bundle);
@@ -109,6 +116,17 @@ export async function initReferenceCatalog(): Promise<ReferenceCatalog> {
 
 export function getReferenceCatalog(): ReferenceCatalog {
   return memoryCatalog;
+}
+
+/** The bundle replaced by the current one, for cross-version diffs (cutoff_update). */
+export async function getPreviousReferenceCatalog(): Promise<ReferenceCatalog | null> {
+  if (typeof window === "undefined") return null;
+  try {
+    const value = await idbGet<unknown>("reference_catalog", PREVIOUS_IDB_KEY);
+    return isReferenceCatalog(value) ? value : null;
+  } catch {
+    return null;
+  }
 }
 
 /** The current catalogue, re-rendering when a newer bundle lands. Server snapshot is the shipped one. */

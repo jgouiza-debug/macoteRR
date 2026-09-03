@@ -431,6 +431,13 @@ export const DICTIONARY = {
     "dash.whatIfDecrease": "Baisser {course} d'un point",
     "dash.whatIfIncrease": "Monter {course} d'un point",
     "estimate.disclaimer": "Estimation non officielle. Confirme avec ton cégep.",
+
+    // ---- added 2026-09-03 (scripts/i18n/apply-keys.ts) ----
+    "inbox.empty": "Rien pour l'instant. Les dates limites et les nouvelles bourses apparaîtront ici.",
+    "inbox.title": "Notifications",
+    "inbox.unread": "Non lu",
+    "nav.inbox": "Notifications",
+    "nav.inboxUnread": "{n} notification(s) non lue(s)",
   },
   en: {
 
@@ -863,6 +870,13 @@ export const DICTIONARY = {
     "dash.whatIfDecrease": "Lower {course} by one point",
     "dash.whatIfIncrease": "Raise {course} by one point",
     "estimate.disclaimer": "Unofficial estimate. Confirm with your cégep.",
+
+    // ---- added 2026-09-03 (scripts/i18n/apply-keys.ts) ----
+    "inbox.empty": "Nothing yet. Deadlines and new bursary matches will show up here.",
+    "inbox.title": "Notifications",
+    "inbox.unread": "Unread",
+    "nav.inbox": "Notifications",
+    "nav.inboxUnread": "{n} unread notification(s)",
   },
 } as const;
 
