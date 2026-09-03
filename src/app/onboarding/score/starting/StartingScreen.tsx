@@ -1,0 +1,139 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import { ArrowRight, BookOpen, GraduationCap, Award } from "lucide-react";
+import { ScreenShell } from "@/components/onboarding/ScreenShell";
+import { Sheet } from "@/components/ui/Sheet";
+import { useStudentProfile } from "@/lib/profile/store";
+import { useOnboardingGuard } from "@/lib/profile/onboarding";
+import { useFunnelNav } from "@/lib/profile/funnel-nav";
+import { useHydrated } from "@/lib/hooks/useHydrated";
+import { useLocale } from "@/lib/i18n/LocaleProvider";
+
+/**
+ * Step 3c: no cote R yet. Continuing records "1st session, no score", which is a wipe when a
+ * score already exists — so that case asks first. A student who lands here from the profile
+ * to change one thing should not lose a confirmed score to a mis-tap.
+ */
+export function StartingScreen() {
+  const { t } = useLocale();
+  const { profile, update, sync } = useStudentProfile();
+  const { hrefFor, finishStep } = useFunnelNav();
+  const hydrated = useHydrated();
+  const [wipeOpen, setWipeOpen] = useState(false);
+  // The CTA's busy state is the navigation's own pending state: it clears itself when the
+  // route lands. The previous `loading` flag was set on tap and never cleared, so a student
+  // who came back to this screen found a dead button.
+  const [isPending, startTransition] = useTransition();
+
+  useOnboardingGuard("score");
+
+  // The store's hydration snapshot is the empty profile (rScore null), and a signed-in
+  // student's first reconcile may still be pulling the server copy. Deciding "is there a
+  // score to protect" on either would skip the confirmation and wipe silently, so the CTA
+  // waits. Hooks all sit above this.
+  const ready = hydrated && sync !== "syncing";
+
+  function proceed() {
+    setWipeOpen(false);
+    update({ currentSession: 1, rScore: null, rScoreStatus: null });
+    startTransition(() => {
+      finishStep("/onboarding/goal");
+    });
+  }
+
+  function handleContinue() {
+    if (!ready || isPending) return;
+    if (profile.rScore !== null) {
+      setWipeOpen(true);
+      return;
+    }
+    proceed();
+  }
+
+  const cards = [
+    { icon: GraduationCap, color: "text-ultramarine", label: t("starting.card1") },
+    { icon: BookOpen, color: "text-moss", label: t("starting.card2") },
+    { icon: Award, color: "text-ember", label: t("starting.card3") },
+  ];
+
+  return (
+    <ScreenShell
+      backHref={hrefFor("/onboarding/score")}
+      footer={
+        <div className="flex flex-col items-center gap-2.5">
+          <button
+            type="button"
+            onClick={handleContinue}
+            disabled={!ready || isPending}
+            className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40"
+          >
+            <span>{t("starting.cta")}</span>
+            <ArrowRight className="h-4 w-4" aria-hidden />
+          </button>
+        </div>
+      }
+    >
+      <div className="flex flex-col gap-5 pt-2">
+        <div className="flex flex-col gap-1.5">
+          <h1 className="font-display text-[26px] font-bold leading-tight tracking-tight text-ink">
+            {t("starting.title")}
+          </h1>
+          <p className="text-[14px] font-medium text-ultramarine">{t("starting.subtitle")}</p>
+        </div>
+
+        {/* Highlight card for bursaries for program & future */}
+        <div className="flex flex-col gap-1 rounded-xl border border-ember/30 bg-ember/[0.06] p-4 shadow-sm">
+          <h2 className="text-[14px] font-bold text-ink">{t("starting.bursaryHighlight")}</h2>
+          <p className="text-[12.5px] leading-relaxed text-ink/75">
+            {t("starting.bursaryHighlightSub")}
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-3 rounded-xl border border-ink/10 bg-paper p-4 text-[13.5px] leading-relaxed text-ink/75 shadow-card">
+          <p>{t("starting.body1")}</p>
+          <p>{t("starting.body2")}</p>
+        </div>
+
+        <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+          {cards.map(({ icon: Icon, color, label }) => (
+            <li
+              key={label}
+              className="flex items-center gap-3 rounded-lg border border-ink/8 bg-paper/60 p-3"
+            >
+              <Icon className={`h-5 w-5 flex-shrink-0 ${color}`} aria-hidden />
+              <span className="text-[12.5px] font-semibold text-ink">{label}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <Sheet
+        open={wipeOpen}
+        onClose={() => setWipeOpen(false)}
+        title={t("starting.wipeTitle")}
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={proceed}
+              disabled={isPending}
+              className="flex h-14 w-full items-center justify-center rounded-full bg-ember text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40"
+            >
+              {t("starting.wipeConfirm")}
+            </button>
+            <button
+              type="button"
+              onClick={() => setWipeOpen(false)}
+              className="flex h-12 w-full items-center justify-center rounded-full text-[14px] font-semibold text-ink/60"
+            >
+              {t("common.cancel")}
+            </button>
+          </>
+        }
+      >
+        <p className="text-[13.5px] leading-relaxed text-ink/80">{t("starting.wipeBody")}</p>
+      </Sheet>
+    </ScreenShell>
+  );
+}

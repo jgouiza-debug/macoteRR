@@ -1,17 +1,16 @@
 "use client";
 
-import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
-import { Logo } from "@/components/ui/Logo";
-import { LangToggle } from "@/components/ui/LangToggle";
-import { BottomNav } from "@/components/app-shell/BottomNav";
+import { TrendingUp } from "lucide-react";
+import { AppShell } from "@/components/app-shell/AppShell";
 import { DistributionCurve } from "@/components/rscore/DistributionCurve";
 import { SourceStamp } from "@/components/SourceStamp";
 import { AddTargetButton } from "./AddTargetButton";
+import { useHydrated } from "@/lib/hooks/useHydrated";
 import { useStudentProfile } from "@/lib/profile/store";
 import {
   evaluatePrerequisites,
   findDecCoreCourses,
+  resolvePrerequisite,
 } from "@/lib/matching/program-eligibility";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
@@ -34,33 +33,30 @@ export function ProgramDetail({ program }: { program: UniversityProgram }) {
   // prerendered, so a server-supplied score could only ever be a hardcoded sample one —
   // which is exactly what this page used to show every visitor.
   const { profile } = useStudentProfile();
-  const score = profile.rScore;
+  // On the server pass and the hydration render the store still holds the empty profile, so
+  // nothing about the student is known yet. The position block shows a neutral skeleton until
+  // then — never the "enter your score" copy for a student who has one, never a curve for one
+  // who does not.
+  const hydrated = useHydrated();
+  const score = hydrated ? profile.rScore : null;
+  const isConfirmed = profile.rScoreStatus === "confirmed";
   const f = useFormat();
   const range = getCutoffRange(program.cutoffHistory);
   const rangeLabel = range ? `${t("common.seuil")} ${formatRangeYears(range)}` : t("cutoff.unverified");
-  const prereqByName = new Map(
-    evaluatePrerequisites(findDecCoreCourses(profile.cegepProgramId), program).reasons
+  const prereqKindByName = new Map(
+    evaluatePrerequisites(findDecCoreCourses(hydrated ? profile.cegepProgramId : null), program).reasons
       .filter((r) => r.name)
       .map((r) => [r.name as string, r.kind]),
   );
 
   return (
-    <div className="flex min-h-[100dvh] flex-col bg-chalk pb-16 md:pb-0">
-      <header className="sticky top-0 z-50 border-b border-ink/10 bg-paper pt-safe">
-        <div className="mx-auto flex h-14 w-full max-w-[480px] items-center justify-between px-4">
-          <Link
-            href="/programs"
-            aria-label={t("common.back")}
-            className="-ml-2 flex min-h-[48px] min-w-[48px] items-center justify-center rounded-full text-ink transition-colors active:bg-ink/10"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </Link>
-          <Logo size={20} />
-          <LangToggle />
-        </div>
-      </header>
-
-      <main className="mx-auto flex w-full max-w-[480px] flex-1 flex-col gap-4 px-4 py-5">
+    <AppShell
+      backHref="/programs"
+      rScore={score}
+      rScoreStatus={profile.rScoreStatus}
+      currentSession={hydrated ? profile.currentSession : null}
+    >
+      <div className="mx-auto flex w-full max-w-[480px] flex-col gap-4 px-4 py-5">
         <span className="w-fit rounded-full border border-ink/15 bg-paper px-3 py-1 text-[11px] font-semibold text-ink/70">
           {program.institution}
         </span>
@@ -82,17 +78,42 @@ export function ProgramDetail({ program }: { program: UniversityProgram }) {
                 {program.cohortLabel}
               </p>
             </div>
-            <div className="text-right">
+            <div className="flex flex-col items-end text-right">
               <p className="text-[9.5px] font-semibold uppercase tracking-wider text-ink/50">
                 {t("prog.yourPosition")}
               </p>
-              <p className="font-display text-[26px] font-bold leading-tight text-ultramarine tabular-nums">
-                {score === null ? "—" : f.score(score)}
-              </p>
+              {!hydrated ? (
+                <div aria-busy="true" className="mt-1 h-7 w-16 animate-pulse rounded bg-ink/8" />
+              ) : score === null ? (
+                <p className="font-display text-[26px] font-bold leading-tight text-ultramarine tabular-nums">
+                  —
+                </p>
+              ) : (
+                // GUARDRAIL #2: an estimate carries "≈ ", a dashed border and the badge; a
+                // confirmed score carries none of them.
+                <div
+                  className={`flex flex-col items-end ${
+                    isConfirmed ? "" : "rounded-lg border border-dashed border-moss/60 px-2 py-0.5"
+                  }`}
+                >
+                  {!isConfirmed && (
+                    <span className="flex items-center gap-1 text-[9.5px] font-semibold uppercase tracking-wider text-moss">
+                      <TrendingUp className="h-3 w-3" aria-hidden="true" />
+                      {t("dash.estimated")}
+                    </span>
+                  )}
+                  <p className="font-display text-[26px] font-bold leading-tight text-ultramarine tabular-nums">
+                    {!isConfirmed && "≈ "}
+                    {f.score(score)}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
-          {score === null ? (
+          {!hydrated ? (
+            <div aria-busy="true" className="my-2 h-[130px] w-full animate-pulse rounded bg-ink/5" />
+          ) : score === null ? (
             <p className="py-6 text-center text-[12.5px] text-ink/50">{t("prog.noScoreYet")}</p>
           ) : (
             <DistributionCurve
@@ -165,15 +186,19 @@ export function ProgramDetail({ program }: { program: UniversityProgram }) {
                 about two catalogues, not a claim the student hasn't taken the course. */}
             <ul className="flex flex-col">
               {program.prerequisites.map((req) => {
-                const covered = prereqByName.get(req.name);
-                // Only the two states that say something get a badge. The third fired whenever
-                // the DEC's core course list has not been researched yet — most programmes —
-                // so "À VÉRIFIER" sat next to a plain "DEC reconnu" and read as a warning
-                // about the prerequisite rather than an admission about our own catalogue.
-                const badge =
-                  covered === "prereq_covered"
+                const kind = prereqKindByName.get(req.name);
+                // "DEC reconnu" is the university asking for the diploma alone. That is a fact
+                // about the program, so it is badged for everyone — including a visitor with
+                // no DEC on file, for whom the evaluator cannot run at all. Only the two DEC
+                // findings that say something get a badge; every other kind (unresearched
+                // core, an alternative outside the catalogue, an unmapped name) says nothing
+                // about the student and must not look like a warning.
+                const decOnly = kind === "dec_only" || resolvePrerequisite(req.name).kind === "dec_only";
+                const badge = decOnly
+                  ? { label: t("prog.decOnly"), cls: "bg-ink/8 text-ink/70" }
+                  : kind === "prereq_covered"
                     ? { label: t("prog.inDecCore"), cls: "bg-moss/10 text-moss" }
-                    : covered === "prereq_not_in_core"
+                    : kind === "prereq_not_in_core"
                       ? { label: t("prog.notInDecCore"), cls: "bg-ember/10 text-ember" }
                       : null;
                 return (
@@ -249,30 +274,10 @@ export function ProgramDetail({ program }: { program: UniversityProgram }) {
           </section>
         )}
 
-        <div className="mt-2">
-          <AddTargetButton programId={program.id} />
+        <div className="mt-2 pb-[env(safe-area-inset-bottom)]">
+          <AddTargetButton programId={program.id} programName={program.name} />
         </div>
-
-        <footer className="mt-6 flex flex-col items-center gap-2 border-t border-ink/10 pt-6 text-center">
-          <span className="font-display text-[17px] font-bold tracking-tight text-ink">
-            MaCote
-          </span>
-          <p className="text-[11px] leading-relaxed text-ink/50">{t("prog.disclaimer")}</p>
-          <div className="mt-1 flex flex-wrap justify-center gap-4 text-[11px] font-medium text-ink/50">
-            <Link href="/conditions" className="inline-flex min-h-[44px] items-center underline-offset-2 hover:underline">
-              {t("prog.terms")}
-            </Link>
-            <Link href="/confidentialite" className="inline-flex min-h-[44px] items-center underline-offset-2 hover:underline">
-              {t("prog.privacy")}
-            </Link>
-            <Link href="/accessibilite" className="inline-flex min-h-[44px] items-center underline-offset-2 hover:underline">
-              {t("prog.dataPolicy")}
-            </Link>
-          </div>
-        </footer>
-      </main>
-
-      <BottomNav />
-    </div>
+      </div>
+    </AppShell>
   );
 }

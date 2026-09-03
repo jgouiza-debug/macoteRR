@@ -1,115 +1,73 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Check, Bell } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { useStudentProfile } from "@/lib/profile/store";
+import { useHydrated } from "@/lib/hooks/useHydrated";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
-import { createClient } from "@/lib/db/client";
-import {
-  type NotificationPreferences,
-  DEFAULT_NOTIFICATION_PREFERENCES,
-} from "@/lib/notifications/types";
-import {
-  getNotificationPreferences,
-  saveNotificationPreferences,
-} from "@/lib/notifications/service";
+import type { TranslationKey } from "@/lib/i18n/dictionary";
+import type { NotificationPreferences } from "@/lib/notifications/types";
 
-const NOTIF_STORAGE_KEY = "macote.notifications";
+type ToggleKey = "deadlineReminders" | "cutoffUpdates" | "newBursaryMatches" | "gradeWindowReminders";
 
-function readLocalNotifPrefs(): NotificationPreferences {
-  if (typeof window === "undefined") return DEFAULT_NOTIFICATION_PREFERENCES;
-  try {
-    const raw = window.localStorage.getItem(NOTIF_STORAGE_KEY);
-    return raw ? { ...DEFAULT_NOTIFICATION_PREFERENCES, ...(JSON.parse(raw) as Partial<NotificationPreferences>) } : DEFAULT_NOTIFICATION_PREFERENCES;
-  } catch {
-    return DEFAULT_NOTIFICATION_PREFERENCES;
-  }
-}
+const TOGGLES: { key: ToggleKey; titleKey: TranslationKey; descKey: TranslationKey }[] = [
+  { key: "deadlineReminders", titleKey: "notif.deadlinesTitle", descKey: "notif.deadlinesDesc" },
+  { key: "cutoffUpdates", titleKey: "notif.cutoffsTitle", descKey: "notif.cutoffsDesc" },
+  { key: "newBursaryMatches", titleKey: "notif.bursariesTitle", descKey: "notif.bursariesDesc" },
+  { key: "gradeWindowReminders", titleKey: "notif.gradesTitle", descKey: "notif.gradesDesc" },
+];
 
+/** How long the "saved" chip stays up after a toggle. */
+const SAVED_CHIP_MS = 2000;
+
+/**
+ * The four notification toggles. They live in `profile.notificationPrefs`: flipping one is a
+ * normal profile update, written locally at once and carried to the server by the store's
+ * outbox. There is no separate round-trip to wait for, so the local write IS the save and the
+ * chip confirms every toggle, guest or signed in.
+ */
 export default function NotificationSettingsPage() {
   const { t } = useLocale();
-  const { profile } = useStudentProfile();
-  const [prefs, setPrefs] = useState<NotificationPreferences>(readLocalNotifPrefs);
+  const { profile, update, sync } = useStudentProfile();
+  const hydrated = useHydrated();
   const [saved, setSaved] = useState(false);
+  const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+  // The hydration render sees the server snapshot (every toggle off) and a signed-in student's
+  // first reconcile may still be about to replace the local copy. Neither is a state to show as
+  // "off", and a toggle made mid-reconcile could be overwritten by the pull, so the switches are
+  // skeletons until both have settled. Every hook stays above this point (see useHydrated).
+  const ready = hydrated && sync !== "syncing";
 
-      if (user) {
-        const loaded = await getNotificationPreferences(supabase, user.id);
-        setPrefs(loaded);
-        try {
-          window.localStorage.setItem(NOTIF_STORAGE_KEY, JSON.stringify(loaded));
-        } catch {
-          /* ignore */
-        }
-      }
-    }
+  useEffect(
+    () => () => {
+      if (savedTimer.current) clearTimeout(savedTimer.current);
+    },
+    [],
+  );
 
-    load().catch(() => {});
-  }, []);
+  function handleToggle(key: ToggleKey) {
+    const current = profile.notificationPrefs;
+    const next: NotificationPreferences = { ...current };
+    next[key] = !current[key];
+    update({ notificationPrefs: next });
 
-  async function handleToggle(key: "deadlineReminders" | "cutoffUpdates" | "newBursaryMatches" | "gradeWindowReminders") {
-    const updated: NotificationPreferences = {
-      ...prefs,
-      [key]: !prefs[key],
-    };
-    setPrefs(updated);
-    try {
-      window.localStorage.setItem(NOTIF_STORAGE_KEY, JSON.stringify(updated));
-    } catch {
-      /* ignore */
-    }
-
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user) {
-      await saveNotificationPreferences(supabase, user.id, updated);
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
-    }
+    setSaved(true);
+    if (savedTimer.current) clearTimeout(savedTimer.current);
+    savedTimer.current = setTimeout(() => setSaved(false), SAVED_CHIP_MS);
   }
 
-  const toggles: {
-    key: "deadlineReminders" | "cutoffUpdates" | "newBursaryMatches" | "gradeWindowReminders";
-    title: string;
-    description: string;
-  }[] = [
-    {
-      key: "deadlineReminders",
-      title: t("notif.deadlinesTitle"),
-      description: t("notif.deadlinesDesc"),
-    },
-    {
-      key: "cutoffUpdates",
-      title: t("notif.cutoffsTitle"),
-      description: t("notif.cutoffsDesc"),
-    },
-    {
-      key: "newBursaryMatches",
-      title: t("notif.bursariesTitle"),
-      description: t("notif.bursariesDesc"),
-    },
-    {
-      key: "gradeWindowReminders",
-      title: t("notif.gradesTitle"),
-      description: t("notif.gradesDesc"),
-    },
-  ];
-
   return (
-    <AppShell rScore={profile.rScore ?? undefined}>
+    <AppShell
+      rScore={profile.rScore}
+      rScoreStatus={profile.rScoreStatus}
+      currentSession={profile.currentSession}
+      backHref="/profile"
+    >
       <div className="mx-auto flex w-full max-w-[480px] flex-col gap-6 px-4 py-6">
-        <div className="flex items-center justify-between">
+        <div className="flex min-h-[48px] items-center justify-between">
           <Link
             href="/profile"
             className="inline-flex min-h-[48px] items-center gap-1.5 text-[13.5px] font-semibold text-ink/70 hover:text-ink"
@@ -117,12 +75,14 @@ export default function NotificationSettingsPage() {
             <ArrowLeft className="h-4 w-4" />
             {t("prof.title")}
           </Link>
-          {saved && (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-moss/10 px-2.5 py-1 text-[12px] font-semibold text-moss animate-pop-in border border-moss/20">
-              <Check className="h-3.5 w-3.5 stroke-[2.5]" />
-              {t("notif.saveSuccess")}
-            </span>
-          )}
+          <div aria-live="polite">
+            {saved && (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-moss/20 bg-moss/10 px-2.5 py-1 text-[12px] font-semibold text-moss animate-pop-in">
+                <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+                {t("notif.saveSuccess")}
+              </span>
+            )}
+          </div>
         </div>
 
         <div>
@@ -143,42 +103,63 @@ export default function NotificationSettingsPage() {
           </div>
         </div>
 
-        <section className="flex flex-col overflow-hidden rounded border border-ink/12 bg-paper shadow-card">
-          {toggles.map((item, idx) => {
-            const checked = prefs[item.key];
+        <section
+          className="flex flex-col overflow-hidden rounded border border-ink/12 bg-paper shadow-card"
+          aria-busy={!ready}
+        >
+          {TOGGLES.map((item, idx) => {
+            const title = t(item.titleKey);
+            const checked = profile.notificationPrefs[item.key];
             return (
               <div
                 key={item.key}
-                className={`flex items-start justify-between gap-4 p-4 ${
+                className={`flex min-h-[48px] items-start justify-between gap-4 p-4 ${
                   idx > 0 ? "border-t border-ink/10" : ""
                 }`}
               >
                 <div className="flex-1 pr-2">
-                  <h2 className="text-[14.5px] font-semibold text-ink">{item.title}</h2>
-                  <p className="mt-1 text-[12.5px] leading-relaxed text-ink/60">{item.description}</p>
+                  <h2 className="text-[14.5px] font-semibold text-ink">{title}</h2>
+                  <p className="mt-1 text-[12.5px] leading-relaxed text-ink/60">{t(item.descKey)}</p>
                 </div>
-                <div className="-mr-2 flex min-h-[48px] min-w-[48px] items-center justify-center">
+                {ready ? (
                   <button
                     type="button"
                     role="switch"
                     aria-checked={checked}
-                    aria-label={item.title}
+                    aria-label={title}
                     onClick={() => handleToggle(item.key)}
-                    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ultramarine ${
-                      checked ? "bg-ultramarine" : "bg-ink/20"
-                    }`}
+                    className="-mr-2 inline-flex min-h-[48px] min-w-[48px] flex-shrink-0 cursor-pointer items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ultramarine"
                   >
                     <span
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-paper shadow-card ring-0 transition duration-200 ease-in-out ${
-                        checked ? "translate-x-5" : "translate-x-0"
+                      aria-hidden="true"
+                      className={`relative inline-flex h-6 w-11 rounded-full border-2 border-transparent transition-colors duration-200 ${
+                        checked ? "bg-ultramarine" : "bg-ink/20"
                       }`}
-                    />
+                    >
+                      <span
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-paper shadow-card transition duration-200 ease-in-out ${
+                          checked ? "translate-x-5" : "translate-x-0"
+                        }`}
+                      />
+                    </span>
                   </button>
-                </div>
+                ) : (
+                  // Same geometry as the switch, so nothing moves when the real state lands.
+                  <div
+                    className="-mr-2 flex min-h-[48px] min-w-[48px] flex-shrink-0 items-center justify-center"
+                    aria-hidden="true"
+                  >
+                    <span className="h-6 w-11 animate-pulse rounded-full bg-ink/12" />
+                  </div>
+                )}
               </div>
             );
           })}
         </section>
+
+        {sync === "guest" && (
+          <p className="text-[12.5px] leading-relaxed text-ink/60">{t("sync.guestNotice")}</p>
+        )}
       </div>
     </AppShell>
   );

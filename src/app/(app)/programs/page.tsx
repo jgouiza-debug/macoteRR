@@ -1,157 +1,154 @@
 "use client";
 
-import { memo, useMemo, useState, useSyncExternalStore, useEffect } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Search, ExternalLink } from "lucide-react";
+import { Search, TrendingUp } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { AxisRow } from "@/components/rscore/AxisRow";
+import { SourceStamp } from "@/components/SourceStamp";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { VirtualList } from "@/components/ui/VirtualList";
 import { UNIVERSITY_PROGRAMS, type UniversityProgram } from "@/lib/sample-data";
+import { UNIVERSITIES, universityLabel } from "@/lib/data/universities";
 import {
   compareToCutoffRange,
   getCutoffRange,
   formatRangeYears,
+  CUTOFF_STATUS_COLOR_CLASS,
+  CUTOFF_STATUS_LABEL_KEY,
+  CUTOFF_STATUS_ORDER,
   type CutoffRange,
   type CutoffStatus,
 } from "@/lib/rscore/cutoff-range";
+import { useHydrated } from "@/lib/hooks/useHydrated";
 import { useStudentProfile } from "@/lib/profile/store";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { useFormat } from "@/lib/i18n/useFormat";
 
 const TIERS: CutoffStatus[] = ["above", "inside", "below", "unknown"];
 
-const CUTOFF_STATUS_COLOR_CLASS: Record<CutoffStatus, string> = {
-  above: "text-moss",
-  inside: "text-ultramarine",
-  below: "text-ember",
-  unknown: "text-ink/40",
-};
+/**
+ * Every row is exactly this tall so the virtual list can place rows by index alone. Text
+ * truncates instead of wrapping: a name cut short is still readable in full on its detail
+ * page, whereas a row taller than its slot paints over the one below it.
+ *   py-3 (24) + name (20) + institution line (18) + axis with margins (28) + status line (16)
+ *   + source stamp with margin (22) = 128.
+ */
+const ROW_HEIGHT = 128;
+const SKELETON_ROWS = 5;
 
-const CUTOFF_STATUS_LABEL_KEY: Record<CutoffStatus, "cutoff.above" | "cutoff.inside" | "cutoff.below" | "cutoff.unverified"> = {
-  above: "cutoff.above",
-  inside: "cutoff.inside",
-  below: "cutoff.below",
-  unknown: "cutoff.unverified",
-};
-
-const CUTOFF_STATUS_ORDER: Record<CutoffStatus, number> = {
-  above: 0,
-  inside: 1,
-  below: 2,
-  unknown: 3,
-};
-
-const UNIVERSITIES_FILTER = [
-  { id: "all", label: "Toutes les universités" },
-  { id: "Université Laval", label: "ULaval" },
-  { id: "Université de Montréal", label: "UdeM" },
-  { id: "McGill University", label: "McGill" },
-  { id: "HEC Montréal", label: "HEC" },
-  { id: "Polytechnique Montréal", label: "Polytechnique" },
-  { id: "Université de Sherbrooke", label: "UdeS" },
-  { id: "Concordia University", label: "Concordia" },
-  { id: "Université du Québec à Montréal (UQAM)", label: "UQAM" },
-  { id: "École de technologie supérieure (ÉTS)", label: "ÉTS" },
-  { id: "Université du Québec à Trois-Rivières (UQTR)", label: "UQTR" },
-  { id: "Université du Québec à Chicoutimi (UQAC)", label: "UQAC" },
-  { id: "Université du Québec à Rimouski (UQAR)", label: "UQAR" },
-  { id: "Université du Québec en Outaouais (UQO)", label: "UQO" },
-  { id: "Université du Québec en Abitibi-Témiscamingue (UQAT)", label: "UQAT" },
-  { id: "Bishop's University", label: "Bishop's" },
-  { id: "Université TÉLUQ", label: "TÉLUQ" },
-];
+type Row = { program: UniversityProgram; range: CutoffRange | null; tier: CutoffStatus };
 
 const ProgramRow = memo(function ProgramRow({
   program,
   range,
   cutoffStatus,
   score,
+  isConfirmed,
+  first,
 }: {
   program: UniversityProgram;
   range: CutoffRange | null;
   cutoffStatus: CutoffStatus;
   score: number | null;
+  isConfirmed: boolean;
+  first: boolean;
 }) {
-  const { t, locale } = useLocale();
+  const { t } = useLocale();
   const f = useFormat();
 
   return (
-    <div className="border-t border-ink/10 p-4 first:border-t-0 hover:bg-chalk/30 transition-colors">
+    <div
+      className={`flex h-full flex-col overflow-hidden px-4 py-3 transition-colors hover:bg-chalk/30 ${
+        first ? "" : "border-t border-ink/10"
+      }`}
+    >
       <Link
         href={`/programs/${program.id}`}
-        className="flex flex-col gap-2 rounded tap-spring active:scale-[0.99]"
+        className="flex flex-col rounded tap-spring active:scale-[0.99]"
       >
-        <div className="flex items-baseline justify-between gap-3 text-[14px]">
-          <span className="font-semibold text-ink">
-            {program.name} · {program.institution}
-          </span>
-          <span className="text-[12.5px] text-ink/55 tabular-nums">
+        <span className="truncate text-[14px] font-semibold leading-5 text-ink">{program.name}</span>
+        <div className="mt-0.5 flex items-baseline justify-between gap-3 text-[12px] leading-4 text-ink/55">
+          <span className="shrink-0 font-medium">{universityLabel(program.institution)}</span>
+          {/* GUARDRAIL #5: a null range is "not yet verified", never "open admission". */}
+          <span className="min-w-0 truncate tabular-nums">
             {range
               ? `${t("cutoff.publishedRange")} ${formatRangeYears(range)} : ${f.score(range.low)}–${f.score(range.high)}`
               : t("cutoff.unverified")}
           </span>
         </div>
 
-        <AxisRow score={score} range={range} />
+        <div className="my-2">
+          <AxisRow score={score} range={range} />
+        </div>
 
-        {score !== null ? (
-          <div className="flex justify-between text-[11.5px] text-ink/55 tabular-nums">
-            <span>
-              {t("dash.yourScore")} : {f.score(score)}
-            </span>
-            <span className={`font-semibold ${CUTOFF_STATUS_COLOR_CLASS[cutoffStatus]}`}>
-              {t(CUTOFF_STATUS_LABEL_KEY[cutoffStatus])}
-            </span>
-          </div>
-        ) : (
-          <div className="flex justify-between text-[11.5px] text-ink/55 tabular-nums">
-            <span>{program.cohortLabel}</span>
-            <span className="font-semibold text-ultramarine">
-              {range ? `${locale === "fr" ? "Seuil visé" : "Target"} : ${range.low.toFixed(1)}–${range.high.toFixed(1)}` : (locale === "fr" ? "Non contingenté" : "Open admission")}
-            </span>
-          </div>
-        )}
+        <div className="flex justify-between gap-3 text-[11.5px] leading-4 text-ink/55 tabular-nums">
+          {score !== null ? (
+            <>
+              {/* GUARDRAIL #2: an estimate never reads as the cégep's figure. */}
+              <span className="truncate">
+                {t(isConfirmed ? "dash.yourScore" : "dash.yourEst")} : {!isConfirmed && "≈ "}
+                {f.score(score)}
+              </span>
+              <span className={`shrink-0 font-semibold ${CUTOFF_STATUS_COLOR_CLASS[cutoffStatus]}`}>
+                {t(CUTOFF_STATUS_LABEL_KEY[cutoffStatus])}
+              </span>
+            </>
+          ) : (
+            <span className="truncate">{program.cohortLabel}</span>
+          )}
+        </div>
       </Link>
 
-      <a
-        href={program.sourceUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-1 inline-flex items-center gap-1 text-[11px] text-ink/40 hover:text-ink/70"
-      >
-        <span>{locale === "fr" ? "Source officielle" : "Official source"}</span>
-        <ExternalLink className="h-3 w-3" />
-      </a>
+      {/* GUARDRAIL #1: the range figures above sit next to their source and verification date. */}
+      <SourceStamp date={program.lastVerifiedAt} href={program.sourceUrl} className="mt-1 truncate" />
     </div>
   );
 });
 
+function SkeletonRows() {
+  return (
+    <div aria-busy="true">
+      {Array.from({ length: SKELETON_ROWS }, (_, i) => (
+        <div
+          key={i}
+          style={{ height: `${ROW_HEIGHT}px` }}
+          className={`flex flex-col gap-2 px-4 py-3 ${i === 0 ? "" : "border-t border-ink/10"}`}
+        >
+          <div className="h-5 w-3/4 animate-pulse rounded bg-ink/8" />
+          <div className="h-4 w-1/2 animate-pulse rounded bg-ink/8" />
+          <div className="my-2 h-3 w-full animate-pulse rounded bg-ink/5" />
+          <div className="h-4 w-2/5 animate-pulse rounded bg-ink/8" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function ProgramsPage() {
-  const router = useRouter();
-  const { t, locale } = useLocale();
+  const { t } = useLocale();
   const f = useFormat();
-  const { profile } = useStudentProfile();
+  const { profile, sync } = useStudentProfile();
+  const hydrated = useHydrated();
   const [tier, setTier] = useState<CutoffStatus | "all">("all");
   const [selectedUniversity, setSelectedUniversity] = useState("all");
   const [query, setQuery] = useState("");
 
-  const hydrated = useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false,
-  );
+  // Public page: a visitor with no profile browses the whole catalogue and is never sent to
+  // onboarding. What waits is the score-dependent content — the header figure, the tier
+  // counts, the sort and each row's status line — until the store has left its hydration
+  // snapshot and a signed-in student's first reconcile is done. Rendering rows against the
+  // transient empty profile would label and order them for a student with no score, then
+  // reshuffle them a frame later. Every hook sits above this point, on purpose.
+  const settled = hydrated && sync !== "syncing";
+  const score = settled ? profile.rScore : null;
+  const isConfirmed = profile.rScoreStatus === "confirmed";
+  const isVisitor = settled && profile.cegepId === null;
 
-  // If no cegep selected on this device, route to onboarding
-  useEffect(() => {
-    if (hydrated && profile.cegepId === null) router.replace("/onboarding");
-  }, [hydrated, profile.cegepId, router]);
-
-  const score = profile.rScore;
-
-  const allRows = useMemo(() => {
+  const allRows = useMemo<Row[]>(() => {
     return UNIVERSITY_PROGRAMS.map((program) => {
       const range = getCutoffRange(program.cutoffHistory);
-      const rowTier = score !== null ? compareToCutoffRange(score, range) : "unknown";
+      const rowTier: CutoffStatus = score !== null ? compareToCutoffRange(score, range) : "unknown";
       return { program, range, tier: rowTier };
     }).sort((a, b) => CUTOFF_STATUS_ORDER[a.tier] - CUTOFF_STATUS_ORDER[b.tier]);
   }, [score]);
@@ -163,17 +160,14 @@ export default function ProgramsPage() {
   const scopedRows = useMemo(() => {
     const q = query.trim().toLowerCase();
     return allRows.filter((row) => {
-      if (
-        selectedUniversity !== "all" &&
-        row.program.institution !== selectedUniversity &&
-        !row.program.institution.includes(selectedUniversity)
-      ) {
+      if (selectedUniversity !== "all" && row.program.institution !== selectedUniversity) {
         return false;
       }
       if (q) {
         return (
           row.program.name.toLowerCase().includes(q) ||
-          row.program.institution.toLowerCase().includes(q)
+          row.program.institution.toLowerCase().includes(q) ||
+          universityLabel(row.program.institution).toLowerCase().includes(q)
         );
       }
       return true;
@@ -186,48 +180,86 @@ export default function ProgramsPage() {
     return res;
   }, [scopedRows]);
 
+  // The tier buttons only exist with a score; a tier picked earlier must not keep filtering
+  // an unlabelled list once the score is gone.
+  const activeTier = score === null ? "all" : tier;
+
   const filtered = useMemo(
-    () => (tier === "all" ? scopedRows : scopedRows.filter((row) => row.tier === tier)),
-    [scopedRows, tier],
+    () => (activeTier === "all" ? scopedRows : scopedRows.filter((row) => row.tier === activeTier)),
+    [scopedRows, activeTier],
   );
 
-  if (!hydrated || profile.cegepId === null) {
-    return (
-      <AppShell>
-        <div className="mx-auto flex w-full max-w-[480px] flex-col items-center gap-4 px-4 py-16 text-center">
-          <p className="text-[14px] text-ink/60">{t("dash.noEstimate")}</p>
-          <Link
-            href="/onboarding"
-            className="flex h-12 items-center justify-center rounded-full bg-ultramarine px-6 text-[14px] font-semibold text-paper shadow-card"
-          >
-            {t("dash.startOnboarding")}
-          </Link>
-        </div>
-      </AppShell>
-    );
-  }
+  const keyExtractor = useCallback((row: Row) => row.program.id, []);
+  const renderRow = useCallback(
+    (row: Row, index: number) => (
+      <ProgramRow
+        program={row.program}
+        range={row.range}
+        cutoffStatus={row.tier}
+        score={score}
+        isConfirmed={isConfirmed}
+        first={index === 0}
+      />
+    ),
+    [score, isConfirmed],
+  );
+
+  const clearFilters = () => {
+    setQuery("");
+    setSelectedUniversity("all");
+    setTier("all");
+  };
+
+  const universityChips = [{ id: "all", label: t("goal.allUniversities") }, ...UNIVERSITIES];
 
   return (
-    <AppShell rScore={score}>
+    <AppShell
+      rScore={score}
+      rScoreStatus={profile.rScoreStatus}
+      currentSession={settled ? profile.currentSession : null}
+    >
       <div className="mx-auto flex w-full max-w-[480px] flex-col gap-5 px-4 py-6">
-        {/* Score or Exploration Header */}
-        <div className="rounded-xl border border-ink/12 bg-paper px-5 py-4 shadow-card">
-          {score !== null ? (
+        {/* Score or exploration header */}
+        <div
+          className={`rounded-xl border bg-paper px-5 py-4 shadow-card ${
+            score !== null && !isConfirmed ? "border-dashed border-moss/60" : "border-ink/12"
+          }`}
+        >
+          {!settled ? (
+            <div aria-busy="true" className="flex flex-col gap-2">
+              <div className="h-3.5 w-44 animate-pulse rounded bg-ink/8" />
+              <div className="h-7 w-28 animate-pulse rounded bg-ink/8" />
+            </div>
+          ) : score !== null ? (
             <div>
               <p className="text-[12px] font-medium text-ink/55">{t("plist.calcWith")}</p>
+              {/* GUARDRAIL #2: an estimate carries "≈ ", the dashed border and the badge;
+                  a confirmed score carries none of them. */}
+              {!isConfirmed && (
+                <span className="mt-1 flex items-center gap-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-moss">
+                  <TrendingUp className="h-3.5 w-3.5" aria-hidden="true" />
+                  {t("dash.estimated")}
+                </span>
+              )}
               <p className="mt-0.5 font-display text-[26px] font-extrabold text-ink tabular-nums">
-                {profile.rScoreStatus !== "confirmed" && "≈ "}
+                {!isConfirmed && "≈ "}
                 {f.score(score)}
               </p>
             </div>
           ) : (
             <div>
-              <p className="text-[12px] font-medium text-ink/55">
-                {locale === "fr" ? "Exploration des programmes universitaires" : "University Programs Directory"}
-              </p>
+              <p className="text-[12px] font-medium text-ink/55">{t("plist.exploreTitle")}</p>
               <p className="mt-0.5 font-display text-[22px] font-bold text-ink">
-                {UNIVERSITY_PROGRAMS.length} {locale === "fr" ? "programmes au Québec" : "programs in Quebec"}
+                {t("plist.programCount").replace("{n}", String(UNIVERSITY_PROGRAMS.length))}
               </p>
+              {isVisitor && (
+                <Link
+                  href="/onboarding"
+                  className="mt-1 inline-flex min-h-[48px] items-center text-[13px] font-semibold text-ultramarine underline-offset-2 hover:underline"
+                >
+                  {t("prog.noScoreYet")}
+                </Link>
+              )}
             </div>
           )}
         </div>
@@ -241,15 +273,15 @@ export default function ProgramsPage() {
             aria-label={t("goal.searchProgram")}
             placeholder={t("goal.searchProgram")}
             autoComplete="off"
-            className="h-[48px] w-full rounded-xl border border-ink/20 bg-paper pl-11 pr-4 text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink/40 focus:border-[1.5px] focus:border-ultramarine"
+            className="h-[48px] w-full rounded-xl border border-ink/20 bg-paper pl-11 pr-4 text-[16px] text-ink outline-none transition-colors placeholder:text-ink/40 focus:border-[1.5px] focus:border-ultramarine"
           />
         </div>
 
-        {/* Tier Buttons if student has a score */}
+        {/* Tier buttons, only once there is a score to compare against */}
         {score !== null && (
           <div className="grid grid-cols-4 gap-2">
             {TIERS.map((option) => {
-              const active = tier === option;
+              const active = activeTier === option;
               return (
                 <button
                   key={option}
@@ -274,16 +306,18 @@ export default function ProgramsPage() {
           </div>
         )}
 
-        {/* University Filter Chips */}
-        <div className="flex flex-wrap gap-1.5">
-          {UNIVERSITIES_FILTER.map((uni) => {
+        {/* University filter chips: one scrolling row, so 17 chips at a 48px hit height do not
+            push the list below the fold. */}
+        <div className="-mx-4 flex gap-2 overflow-x-auto overflow-y-hidden px-4 pb-1 [scrollbar-width:none]">
+          {universityChips.map((uni) => {
             const isSelected = selectedUniversity === uni.id;
             return (
               <button
                 key={uni.id}
                 type="button"
                 onClick={() => setSelectedUniversity(uni.id)}
-                className={`rounded-full px-3 py-1 text-[11.5px] font-semibold transition-all ${
+                aria-pressed={isSelected}
+                className={`min-h-[48px] shrink-0 whitespace-nowrap rounded-full px-4 text-[12px] font-semibold tap-spring ${
                   isSelected
                     ? "bg-ultramarine text-paper shadow-sm"
                     : "border border-ink/15 bg-paper text-ink/70 hover:bg-chalk"
@@ -295,25 +329,33 @@ export default function ProgramsPage() {
           })}
         </div>
 
-        {/* Results List */}
+        {/* Results list */}
         <div className="overflow-hidden rounded-xl border border-ink/12 bg-paper shadow-card">
-          <div className="border-b border-ink/8 px-4 py-2.5 bg-chalk/30 text-[12px] font-bold uppercase tracking-wider text-ink/55 flex justify-between items-center">
-            <span>{locale === "fr" ? "Programmes trouvés" : "Programs found"}</span>
-            <span className="tabular-nums font-semibold">{filtered.length}</span>
+          <div className="flex items-center justify-between border-b border-ink/8 bg-chalk/30 px-4 py-2.5 text-[12px] font-bold uppercase tracking-wider text-ink/55">
+            <span>{t("plist.found")}</span>
+            <span className="tabular-nums font-semibold" aria-live="polite">
+              {settled ? filtered.length : ""}
+            </span>
           </div>
 
-          {filtered.length === 0 && (
-            <p className="p-8 text-center text-[13.5px] text-ink/50">{t("plist.empty")}</p>
-          )}
-          {filtered.map(({ program, range, tier: rowTier }) => (
-            <ProgramRow
-              key={program.id}
-              program={program}
-              range={range}
-              cutoffStatus={rowTier}
-              score={score}
+          {!settled ? (
+            <SkeletonRows />
+          ) : filtered.length === 0 ? (
+            <EmptyState
+              title={t("plist.empty")}
+              action={{ onClick: clearFilters, label: t("plist.clearFilters") }}
+              compact
             />
-          ))}
+          ) : (
+            <VirtualList
+              items={filtered}
+              itemHeight={ROW_HEIGHT}
+              keyExtractor={keyExtractor}
+              renderItem={renderRow}
+              scrollParent="window"
+              overscan={4}
+            />
+          )}
         </div>
       </div>
     </AppShell>

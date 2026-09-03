@@ -10,8 +10,10 @@ import { getGenericProgramProfile, type GenericProgramProfile } from "@/lib/data
  *
  * EXPLAINABILITY PRINCIPLE:
  * Deliberately NOT a predictive fit score or recommendation engine (Code des professions,
- * art. 37.1). Every suggestion includes its factual match rationale (`sharedWords` or `matchChip`)
- * showing *why* it appears ("matched on: informatique", "Profil : Administration").
+ * art. 37.1). Every suggestion carries its factual match rationale (`match`) showing *why* it
+ * appears: the word(s) the two titles share, as they are spelled in the title they came from,
+ * and whether the link runs through the DEC's own name or through one of its profiles. The
+ * screen phrases it ("lien : informatique"); this module never returns a sentence.
  */
 
 const STOPWORDS = new Set([
@@ -40,11 +42,16 @@ for (const group of SYNONYM_GROUPS) {
   for (const word of group) SYNONYM_OF.set(word, group);
 }
 
-function tokenize(name: string): Set<string> {
-  const words = name
+/** Accent-free, lower-case form of one word: the vocabulary every comparison runs in. */
+function fold(word: string): string {
+  return word
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
+    .toLowerCase();
+}
+
+function tokenize(name: string): Set<string> {
+  const words = fold(name)
     .replace(/[^a-z0-9]+/g, " ")
     .split(" ")
     .filter((word) => word.length > 2 && !STOPWORDS.has(word));
@@ -56,10 +63,44 @@ function tokenize(name: string): Set<string> {
   return expanded;
 }
 
+/** How many words a match label may carry before it stops reading as a label. */
+const MAX_LABEL_WORDS = 3;
+
+/**
+ * The words of `name`, spelled as they are in `name` ("Génie", not "genie"), that are — or
+ * are synonyms of — one of `shared`. This is what the student is shown as the link, so it
+ * has to be a word they can find in a title, not a folded token.
+ */
+function matchedWordsIn(name: string, shared: ReadonlySet<string>): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const raw of name.split(/[^\p{L}\p{N}]+/u)) {
+    const token = fold(raw);
+    if (token.length <= 2 || STOPWORDS.has(token) || seen.has(token)) continue;
+    const related = [token, ...(SYNONYM_OF.get(token) ?? [])];
+    if (!related.some((word) => shared.has(word))) continue;
+    seen.add(token);
+    out.push(raw);
+    if (out.length >= MAX_LABEL_WORDS) break;
+  }
+  return out;
+}
+
+/**
+ * Why a suggestion is on the list. `kind` says which title the link runs through — the DEC's
+ * own name ("program") or one of its ministerial profiles ("profile") — and `label` is the
+ * shared word(s) from that title, never a sentence, so the screen can phrase and translate
+ * the framing itself.
+ */
+export type SuggestionMatch = {
+  kind: "profile" | "program";
+  label: string;
+};
+
 export type ProgramSuggestion<T> = {
   item: T;
   sharedWords: string[];
-  matchChip?: string;
+  match: SuggestionMatch;
 };
 
 function suggest<T>(
@@ -72,12 +113,11 @@ function suggest<T>(
   const sourceWords = tokenize(sourceName);
 
   // If a generic profile exists (e.g. 300.A0 or 200.B0), include profile keywords
-  const profileWords = new Map<string, string>(); // word -> profile reason
+  const profileWords = new Map<string, string>(); // word -> the profile name it came from
   if (profile) {
     for (const p of profile.profils) {
-      const pWords = tokenize(p.name);
-      for (const w of pWords) {
-        profileWords.set(w, `Profil : ${p.name.split(" ")[0]}`);
+      for (const w of tokenize(p.name)) {
+        if (!profileWords.has(w)) profileWords.set(w, p.name);
       }
     }
   }
@@ -90,25 +130,31 @@ function suggest<T>(
       const sharedWords = [...itemWords].filter(
         (word) => sourceWords.has(word) || profileWords.has(word),
       );
-
-      let matchChip: string | undefined;
-      for (const word of sharedWords) {
-        if (profileWords.has(word)) {
-          matchChip = profileWords.get(word);
-          break;
-        }
-      }
-      if (!matchChip && sharedWords.length > 0) {
-        matchChip = `Programme : ${sourceName.split(" ")[0]}`;
-      }
-
-      return {
-        item,
-        sharedWords,
-        matchChip,
-      };
+      return { item, sharedWords };
     })
-    .filter((row) => row.sharedWords.length > 0);
+    .filter((row) => row.sharedWords.length > 0)
+    .map(({ item, sharedWords }) => {
+      const shared = new Set(sharedWords);
+      const profileName = sharedWords.map((word) => profileWords.get(word)).find(Boolean);
+
+      let match: SuggestionMatch;
+      if (profileName) {
+        const words = matchedWordsIn(profileName, shared);
+        match = { kind: "profile", label: words.length > 0 ? words.join(", ") : profileName };
+      } else {
+        const words = matchedWordsIn(sourceName, shared);
+        match = {
+          kind: "program",
+          label:
+            words.length > 0
+              ? words.join(", ")
+              : matchedWordsIn(nameOf(item), shared).join(", ") ||
+                sharedWords.slice(0, MAX_LABEL_WORDS).join(", "),
+        };
+      }
+
+      return { item, sharedWords, match };
+    });
 
   scored.sort((a, b) => b.sharedWords.length - a.sharedWords.length);
   return scored.slice(0, limit);
