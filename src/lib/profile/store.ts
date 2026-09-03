@@ -41,7 +41,25 @@ export type StudentProfile = {
   goalSkipped: boolean;
   /** The four notification toggles. Lived in a third localStorage key before; now one store. */
   notificationPrefs: NotificationPreferences;
+  /**
+   * Grades the student typed to estimate a cote R, kept per session so the calibration engine
+   * (src/lib/rscore/calibration.ts) can back out a personal ratio. GUARDRAIL #3: a course, a
+   * grade, and an optional group average only — never anything financial.
+   */
+  courseGrades: CourseGradeEntry[];
+  /** Every official cote R the student has confirmed, keyed by session, for the calibration. */
+  confirmations: ScoreConfirmation[];
 };
+
+export type CourseGradeEntry = {
+  session: number;
+  course: string;
+  grade: number;
+  /** The group's average for that course, if the student's report card gives it. Optional. */
+  groupAverage?: number | null;
+};
+
+export type ScoreConfirmation = { session: number; officialCoteR: number };
 
 export type MutationRecord = {
   id: string;
@@ -90,6 +108,8 @@ export const DEFAULT_PROFILE: StudentProfile = {
   decProfileId: null,
   goalSkipped: false,
   notificationPrefs: DEFAULT_NOTIFICATION_PREFERENCES,
+  courseGrades: [],
+  confirmations: [],
 };
 
 type ProfileMeta = {
@@ -167,6 +187,78 @@ function migrateLegacyNotificationPrefs(profile: StudentProfile): StudentProfile
   }
 }
 
+/* ------------------------------------------------------------------ *
+ * Normalisation and pure array helpers (exported for the shape check)
+ * ------------------------------------------------------------------ */
+
+/** Keeps only well-formed grade rows; a corrupt persisted value becomes []. */
+export function normaliseCourseGrades(value: unknown): CourseGradeEntry[] {
+  if (!Array.isArray(value)) return [];
+  const out: CourseGradeEntry[] = [];
+  for (const item of value) {
+    if (!item || typeof item !== "object") continue;
+    const g = item as Record<string, unknown>;
+    if (typeof g.session !== "number" || !Number.isFinite(g.session)) continue;
+    if (typeof g.grade !== "number" || !Number.isFinite(g.grade)) continue;
+    if (typeof g.course !== "string") continue;
+    const entry: CourseGradeEntry = { session: g.session, course: g.course, grade: g.grade };
+    if (typeof g.groupAverage === "number" && Number.isFinite(g.groupAverage)) {
+      entry.groupAverage = g.groupAverage;
+    }
+    out.push(entry);
+  }
+  return out;
+}
+
+/** Keeps only well-formed confirmations; a corrupt persisted value becomes []. */
+export function normaliseConfirmations(value: unknown): ScoreConfirmation[] {
+  if (!Array.isArray(value)) return [];
+  const out: ScoreConfirmation[] = [];
+  for (const item of value) {
+    if (!item || typeof item !== "object") continue;
+    const c = item as Record<string, unknown>;
+    if (typeof c.session !== "number" || !Number.isFinite(c.session)) continue;
+    if (typeof c.officialCoteR !== "number" || !Number.isFinite(c.officialCoteR)) continue;
+    out.push({ session: c.session, officialCoteR: c.officialCoteR });
+  }
+  return out;
+}
+
+/** The spread-merge migration plus the two array normalisations. A pre-change profile that
+ *  has neither field loads unchanged, with [] for both. */
+export function normaliseProfile(parsed: Partial<StudentProfile>): StudentProfile {
+  return {
+    ...DEFAULT_PROFILE,
+    ...parsed,
+    notificationPrefs: { ...DEFAULT_NOTIFICATION_PREFERENCES, ...(parsed.notificationPrefs ?? {}) },
+    courseGrades: normaliseCourseGrades(parsed.courseGrades),
+    confirmations: normaliseConfirmations(parsed.confirmations),
+  };
+}
+
+/** Replace-or-append a confirmation for one session, kept sorted by session. */
+export function withConfirmation(
+  list: ScoreConfirmation[],
+  session: number,
+  officialCoteR: number,
+): ScoreConfirmation[] {
+  return [...list.filter((c) => c.session !== session), { session, officialCoteR }].sort(
+    (a, b) => a.session - b.session,
+  );
+}
+
+/** Replace one session's grades with `entries` (session forced), kept sorted by session. */
+export function withSessionGrades(
+  list: CourseGradeEntry[],
+  session: number,
+  entries: CourseGradeEntry[],
+): CourseGradeEntry[] {
+  return [
+    ...list.filter((g) => g.session !== session),
+    ...entries.map((e) => ({ ...e, session })),
+  ].sort((a, b) => a.session - b.session);
+}
+
 function read(): StudentProfile {
   if (cache) return cache;
   try {
@@ -177,11 +269,7 @@ function read(): StudentProfile {
       // Spread-merge is the migration: a profile written by an older build lacks the newer
       // fields and takes their defaults; unknown fields from a newer build are carried along.
       const parsed = JSON.parse(raw) as Partial<StudentProfile>;
-      const merged: StudentProfile = {
-        ...DEFAULT_PROFILE,
-        ...parsed,
-        notificationPrefs: { ...DEFAULT_NOTIFICATION_PREFERENCES, ...(parsed.notificationPrefs ?? {}) },
-      };
+      const merged = normaliseProfile(parsed);
       cache = parsed.notificationPrefs ? merged : migrateLegacyNotificationPrefs(merged);
     }
   } catch {
@@ -422,6 +510,63 @@ if (typeof window !== "undefined") {
  * ------------------------------------------------------------------ */
 
 /**
+ * The optimistic-write + coalescing-outbox path, at module scope so the hook and the two
+ * helpers below (recordConfirmedScore, setSessionGrades) all reach the same queue.
+ */
+function applyPatch(patch: Partial<StudentProfile>) {
+  const previous = read();
+  const next = { ...previous, ...patch };
+
+  // 1. Optimistic apply
+  write(next);
+
+  // 2. Queue for background sync, coalescing into the last still-pending record so a burst
+  //    of edits is one write, not N identical ones.
+  const last = outbox[outbox.length - 1];
+  if (last && last.status === "pending") {
+    last.patch = { ...last.patch, ...patch };
+    last.timestamp = Date.now();
+  } else {
+    outbox.push({
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      timestamp: Date.now(),
+      patch,
+      previousSnapshot: previous,
+      attempts: 0,
+      status: "pending",
+    });
+  }
+  while (outbox.length > MAX_OUTBOX_RECORDS) {
+    const [oldest, second, ...rest] = outbox;
+    outbox = [{ ...second, patch: { ...oldest.patch, ...second.patch }, previousSnapshot: oldest.previousSnapshot }, ...rest];
+  }
+  saveOutbox();
+
+  // 3. Reconcile in background
+  flushOutbox().catch(() => {});
+}
+
+/**
+ * Records a confirmed official cote R for a session. A helper over applyPatch rather than
+ * logic inside update(), because update() must stay a dumb patch the reconcile/pull path can
+ * lean on. The confirmations array is what the calibration engine reads; rScore/rScoreStatus
+ * keep the single "current score" the rest of the app shows.
+ */
+export function recordConfirmedScore(session: number, officialCoteR: number) {
+  applyPatch({
+    rScore: officialCoteR,
+    rScoreStatus: "confirmed",
+    currentSession: session,
+    confirmations: withConfirmation(read().confirmations, session, officialCoteR),
+  });
+}
+
+/** Replaces one session's course grades (used by the estimate screen and future grade entry). */
+export function setSessionGrades(session: number, entries: CourseGradeEntry[]) {
+  applyPatch({ courseGrades: withSessionGrades(read().courseGrades, session, entries) });
+}
+
+/**
  * Wipes the local profile back to a fresh guest state: clears the outbox, storage, the
  * IndexedDB backup, and — critically — the in-memory `cache`, then notifies subscribers.
  * Without that last step every mounted component keeps rendering the deleted account until a
@@ -463,39 +608,8 @@ export function useStudentProfile() {
     ensureReconciled().catch(() => {});
   }, []);
 
-  // Optimistic by construction: local state updates and renders before anything else.
-  const update = useCallback((patch: Partial<StudentProfile>) => {
-    const previous = read();
-    const next = { ...previous, ...patch };
-
-    // 1. Optimistic apply
-    write(next);
-
-    // 2. Queue for background sync, coalescing into the last still-pending record so a burst
-    //    of edits is one write, not N identical ones.
-    const last = outbox[outbox.length - 1];
-    if (last && last.status === "pending") {
-      last.patch = { ...last.patch, ...patch };
-      last.timestamp = Date.now();
-    } else {
-      outbox.push({
-        id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-        timestamp: Date.now(),
-        patch,
-        previousSnapshot: previous,
-        attempts: 0,
-        status: "pending",
-      });
-    }
-    while (outbox.length > MAX_OUTBOX_RECORDS) {
-      const [oldest, second, ...rest] = outbox;
-      outbox = [{ ...second, patch: { ...oldest.patch, ...second.patch }, previousSnapshot: oldest.previousSnapshot }, ...rest];
-    }
-    saveOutbox();
-
-    // 3. Reconcile in background
-    flushOutbox().catch(() => {});
-  }, []);
+  // Optimistic by construction: applyPatch renders locally before anything reaches the server.
+  const update = useCallback((patch: Partial<StudentProfile>) => applyPatch(patch), []);
 
   const toggleTag = useCallback(
     (tagId: SelfTagId) => {

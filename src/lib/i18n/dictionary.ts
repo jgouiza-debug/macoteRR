@@ -414,6 +414,12 @@ export const DICTIONARY = {
 
     // ---- added 2026-09-03 (scripts/i18n/apply-keys.ts) ----
     "mkt.legalDraftBanner": "Brouillon — en révision. Ce document n'est pas un avis juridique et n'a pas encore été révisé par un ou une avocat·e. Voir LEGAL-REVIEW-NOTES.md.",
+
+    // ---- added 2026-09-03 (scripts/i18n/apply-keys.ts) ----
+    "estimate.calibratedMany": "Calibrée sur {n} sessions confirmées de ton historique.",
+    "estimate.calibratedOne": "Calibrée sur {n} session confirmée de ton historique.",
+    "estimate.clamped": "Ta cote confirmée et tes notes s'accordent mal : vérifie-les.",
+    "estimate.uncalibrated": "Estimation brute : aucune cote R confirmée pour la calibrer.",
   },
   en: {
 
@@ -829,6 +835,12 @@ export const DICTIONARY = {
 
     // ---- added 2026-09-03 (scripts/i18n/apply-keys.ts) ----
     "mkt.legalDraftBanner": "Draft — under review. This document is not legal advice and has not yet been reviewed by a lawyer. See LEGAL-REVIEW-NOTES.md.",
+
+    // ---- added 2026-09-03 (scripts/i18n/apply-keys.ts) ----
+    "estimate.calibratedMany": "Calibrated on {n} confirmed sessions of your history.",
+    "estimate.calibratedOne": "Calibrated on {n} confirmed session of your history.",
+    "estimate.clamped": "Your confirmed score and your grades line up poorly: double-check them.",
+    "estimate.uncalibrated": "Rough estimate: no confirmed R-score to calibrate it.",
   },
 } as const;
 

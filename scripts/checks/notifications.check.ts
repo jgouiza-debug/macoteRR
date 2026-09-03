@@ -75,6 +75,8 @@ const PROFILE: StudentProfile = {
   decProfileId: null,
   goalSkipped: false,
   notificationPrefs: DEFAULT_NOTIFICATION_PREFERENCES,
+  courseGrades: [],
+  confirmations: [],
 };
 
 /** Local noon on an ISO day, shifted by whole days — the calendar-day clock daysUntil uses. */

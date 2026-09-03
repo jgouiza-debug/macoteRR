@@ -4,8 +4,9 @@ import { useEffect, useSyncExternalStore, type FormEvent } from "react";
 import { Info, Plus, X } from "lucide-react";
 import { ScreenShell, ScreenHeading } from "@/components/onboarding/ScreenShell";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
-import { useFormat } from "@/lib/i18n/useFormat";
-import { useStudentProfile } from "@/lib/profile/store";
+import { setSessionGrades, useStudentProfile, type CourseGradeEntry } from "@/lib/profile/store";
+import { deriveCalibration, projectEstimate } from "@/lib/rscore/calibration";
+import { ScoreValue } from "@/components/rscore/ScoreValue";
 import { useOnboardingGuard } from "@/lib/profile/onboarding";
 import { useFunnelNav } from "@/lib/profile/funnel-nav";
 import { useHydrated } from "@/lib/hooks/useHydrated";
@@ -22,15 +23,6 @@ const INITIAL_ROWS: Row[] = [
   { name: "", grade: "" },
   { name: "", grade: "" },
 ];
-
-// Deliberately crude: a session average scaled into cote R range. The real calibration
-// engine (src/lib/rscore, Phase 4) replaces this once confirmed history exists to solve
-// against. Labelled as an estimate everywhere it surfaces (guardrail #2).
-function estimateFromGrades(grades: number[]): number {
-  if (grades.length === 0) return 0;
-  const average = grades.reduce((sum, g) => sum + g, 0) / grades.length;
-  return Math.min(Math.max(average * 0.334, 15), 36);
-}
 
 /* ------------------------------------------------------------------ *
  * Draft rows: a sessionStorage-backed external store.
@@ -140,7 +132,6 @@ function useDraftRows() {
  */
 export function EstimateScoreScreen() {
   const { t } = useLocale();
-  const f = useFormat();
   const { profile, update: updateProfile, sync } = useStudentProfile();
   const { hrefFor, finishStep } = useFunnelNav();
   const hydrated = useHydrated();
@@ -153,28 +144,45 @@ export function EstimateScoreScreen() {
   // submit waits. Typing is fine meanwhile. Hooks all sit above this.
   const ready = hydrated && sync !== "syncing";
 
-  const grades = rows
-    .map((r) => Number(r.grade))
-    .filter((g) => Number.isFinite(g) && g > 0 && g <= 100);
-  const estimate = estimateFromGrades(grades);
-  const canSubmit = grades.length > 0;
+  // The session these grades belong to, and the entries the calibration engine reads.
+  const session = profile.currentSession ?? 1;
+  const entries: CourseGradeEntry[] = rows
+    .map((r) => ({ session, course: r.name.trim(), grade: Number(r.grade) }))
+    .filter((e) => Number.isFinite(e.grade) && e.grade > 0 && e.grade <= 100);
+
+  // Calibrate against every confirmed session the student has, plus these grades for the
+  // current one; with no confirmed history the calibration falls back to the crude ratio and
+  // labels itself "uncalibrated". projectEstimate is the single source of the number and of
+  // the "≈"/dashed/badge rule (through ScoreValue).
+  const merged = profile.courseGrades.filter((g) => g.session !== session).concat(entries);
+  const calibration = deriveCalibration(profile.confirmations, merged);
+  const projection = projectEstimate(calibration, entries);
+  const estimate = projection.value;
+  const canSubmit = estimate !== null;
+
+  const basisKey =
+    calibration.basis === "uncalibrated"
+      ? "estimate.uncalibrated"
+      : calibration.sessionsUsed.length === 1
+        ? "estimate.calibratedOne"
+        : "estimate.calibratedMany";
 
   const update = (index: number, field: keyof Row, value: string) =>
     setRows((prev) => prev.map((r, i) => (i === index ? { ...r, [field]: value } : r)));
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!canSubmit || !ready) return;
-    const scoreVal = parseFloat(estimate.toFixed(2));
+    if (estimate === null || !ready) return;
+    setSessionGrades(session, entries);
     updateProfile({
-      rScore: scoreVal,
+      rScore: estimate,
       rScoreStatus: "estimated",
-      currentSession: profile.currentSession ?? 1,
+      currentSession: session,
     });
     // Edit mode returns to where the student came from. In the funnel, the DEC was chosen in
     // step 2, so results already know which prerequisites this student covers and can go
     // straight up, score in the URL.
-    finishStep(`/onboarding/results?score=${scoreVal}&status=estimated`);
+    finishStep(`/onboarding/results?score=${estimate}&status=estimated`);
     clearDraftRows();
   }
 
@@ -196,20 +204,18 @@ export function EstimateScoreScreen() {
             aria-live="polite"
             className="flex min-h-[24px] flex-wrap items-center justify-center gap-x-1.5 gap-y-1 text-center text-[12.5px] text-ink/60"
           >
-            {canSubmit ? (
-              <>
-                <span>{t("est.current")}</span>
-                {/* "≈ " + dashed border + ESTIMATION badge, matching results and the
-                    dashboard, so this number never looks like a confirmed one. */}
-                <span className="inline-flex items-center gap-1.5 rounded border border-dashed border-moss/60 px-2 py-0.5">
-                  <span className="font-display font-bold text-ink tabular-nums">
-                    {`≈ ${f.score(estimate)}`}
-                  </span>
-                  <span className="rounded-full bg-moss/[0.08] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-moss">
-                    {t("dash.estimated")}
-                  </span>
+            {estimate !== null ? (
+              <span className="inline-flex flex-col items-center gap-1">
+                <span className="inline-flex items-center gap-1.5">
+                  <span>{t("est.current")}</span>
+                  {/* GUARDRAIL #2 lives in ScoreValue: "≈" + dashed frame + badge for an estimate. */}
+                  <ScoreValue value={estimate} status="estimated" size="md" framed badge="always" decimals={2} />
                 </span>
-              </>
+                <span className="text-[11px] text-ink/50">
+                  {t(basisKey).replace("{n}", String(calibration.sessionsUsed.length))}
+                  {calibration.clamped ? ` ${t("estimate.clamped")}` : ""}
+                </span>
+              </span>
             ) : (
               <span className="text-ink/50">{t("est.needsGrade")}</span>
             )}

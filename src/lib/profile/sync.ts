@@ -3,7 +3,7 @@ import type { Database } from "@/lib/db/database.types";
 import type { SelfTagId } from "@/lib/tags/taxonomy";
 import type { InterestId } from "@/lib/tags/interests";
 import { DEFAULT_NOTIFICATION_PREFERENCES } from "@/lib/notifications/types";
-import type { StudentProfile } from "./store";
+import type { CourseGradeEntry, ScoreConfirmation, StudentProfile } from "./store";
 
 /**
  * The server side of the local-first profile: push what changed, pull what the server holds.
@@ -32,6 +32,19 @@ const NEW_PROFILE_COLUMNS = ["interest_ids", "dec_profile_id", "goal_skipped", "
 function isMissingColumnError(error: { code?: string; message?: string } | null): boolean {
   if (!error) return false;
   return error.code === "PGRST204" || /column .* (does not exist|not found)/i.test(error.message ?? "");
+}
+
+/**
+ * The table-level twin of isMissingColumnError: a project on a schema older than the
+ * 20260902120000 migration answers PGRST205 to a write against a table it does not have. Only
+ * student_course_grades is treated this way — the grades stay local until the migration runs.
+ */
+function isMissingTableError(error: { code?: string; message?: string } | null): boolean {
+  if (!error) return false;
+  return (
+    error.code === "PGRST205" ||
+    /(could not find the table|relation .* does not exist)/i.test(error.message ?? "")
+  );
 }
 
 function touches(patch: Partial<StudentProfile> | undefined, ...keys: (keyof StudentProfile)[]): boolean {
@@ -95,6 +108,24 @@ export async function syncProfileToServer(
     if (confirmError) throw new Error(`student_r_score_confirmations: ${confirmError.message}`);
   }
 
+  // Every confirmed session, not just the current one: the calibration engine needs the full
+  // history. Idempotent on the same (user_id, session) unique key as the single-score path.
+  if (touches(patch, "confirmations") && profile.confirmations.length > 0) {
+    const { error: confirmsError } = await supabase.from("student_r_score_confirmations").upsert(
+      profile.confirmations.map((c) => ({
+        user_id: userId,
+        session: c.session,
+        official_cote_r: c.officialCoteR,
+      })),
+      { onConflict: "user_id,session" },
+    );
+    if (confirmsError) throw new Error(`student_r_score_confirmations: ${confirmsError.message}`);
+  }
+
+  if (touches(patch, "courseGrades")) {
+    await syncCourseGrades(supabase, userId, profile.courseGrades);
+  }
+
   if (touches(patch, "targetUniversityProgramIds")) {
     await syncTargets(supabase, userId, profile.targetUniversityProgramIds);
   }
@@ -154,6 +185,68 @@ async function syncTargets(supabase: Client, userId: string, localSlugs: string[
   }
 }
 
+/**
+ * Mirrors the student's local course grades into student_course_grades. The patch carries the
+ * whole array, so the server is made to match it: for each session, the new rows are inserted
+ * BEFORE the old ids are deleted, so a failed insert leaves the previous rows in place rather
+ * than an empty session; any error throws so the outbox retries (a retry re-selects ids, so a
+ * duplicate left by a failed delete is cleaned up). A session present on the server but not
+ * locally is deleted. `groupAverage` is not written: student_course_grades has no column for
+ * it, so it stays a local-only display value.
+ */
+async function syncCourseGrades(
+  supabase: Client,
+  userId: string,
+  grades: CourseGradeEntry[],
+): Promise<void> {
+  const { data: existing, error } = await supabase
+    .from("student_course_grades")
+    .select("id, session")
+    .eq("user_id", userId);
+  if (isMissingTableError(error)) return; // older schema: keep grades local until the migration runs
+  if (error) throw new Error(`student_course_grades: ${error.message}`);
+
+  const oldIdsBySession = new Map<number, string[]>();
+  for (const row of existing ?? []) {
+    const list = oldIdsBySession.get(row.session) ?? [];
+    list.push(row.id);
+    oldIdsBySession.set(row.session, list);
+  }
+
+  const localBySession = new Map<number, CourseGradeEntry[]>();
+  for (const g of grades) {
+    const list = localBySession.get(g.session) ?? [];
+    list.push(g);
+    localBySession.set(g.session, list);
+  }
+
+  const sessions = new Set<number>([...oldIdsBySession.keys(), ...localBySession.keys()]);
+  for (const session of sessions) {
+    const rows = localBySession.get(session) ?? [];
+    if (rows.length > 0) {
+      const { error: insertError } = await supabase.from("student_course_grades").insert(
+        rows.map((g) => ({
+          user_id: userId,
+          session,
+          course_name_freetext: g.course || null,
+          course_id: null,
+          grade: g.grade,
+          cote_z: null,
+        })),
+      );
+      if (insertError) throw new Error(`student_course_grades: ${insertError.message}`);
+    }
+    const oldIds = oldIdsBySession.get(session) ?? [];
+    if (oldIds.length > 0) {
+      const { error: deleteError } = await supabase
+        .from("student_course_grades")
+        .delete()
+        .in("id", oldIds);
+      if (deleteError) throw new Error(`student_course_grades: ${deleteError.message}`);
+    }
+  }
+}
+
 export type ServerProfile = {
   profile: StudentProfile;
   /** `student_profiles.updated_at`, the server's own clock for last-write-wins. */
@@ -172,15 +265,19 @@ export async function pullProfileFromServer(
   userId: string,
   fallback: StudentProfile,
 ): Promise<ServerProfile | null> {
-  const [profileRes, confirmRes, targetsRes, prefsRes] = await Promise.all([
+  const [profileRes, confirmRes, gradesRes, targetsRes, prefsRes] = await Promise.all([
     supabase.from("student_profiles").select("*").eq("user_id", userId).maybeSingle(),
     supabase
       .from("student_r_score_confirmations")
       .select("session, official_cote_r")
       .eq("user_id", userId)
-      .order("session", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
+      .order("session", { ascending: true }),
+    supabase
+      .from("student_course_grades")
+      .select("session, course_name_freetext, grade, created_at")
+      .eq("user_id", userId)
+      .order("session", { ascending: true })
+      .order("created_at", { ascending: true }),
     supabase.from("student_targets").select("catalog_slug").eq("user_id", userId),
     supabase
       .from("notification_preferences")
@@ -196,9 +293,22 @@ export async function pullProfileFromServer(
   // defensively so the pull works against either schema.
   const p = profileRes.data as Partial<Database["public"]["Tables"]["student_profiles"]["Row"]>;
   const status = (p.r_score_status as StudentProfile["rScoreStatus"]) ?? null;
-  const confirmed = confirmRes.data?.official_cote_r ?? null;
+  // All confirmations for the calibration; the single displayed score is the highest session.
+  const confirmationRows = confirmRes.error ? [] : confirmRes.data ?? [];
+  const confirmations: ScoreConfirmation[] = confirmationRows.map((r) => ({
+    session: r.session,
+    officialCoteR: r.official_cote_r,
+  }));
+  const latestConfirmation = confirmations.length > 0 ? confirmations[confirmations.length - 1] : null;
+  const confirmed = latestConfirmation?.officialCoteR ?? null;
   const estimated = p.estimated_cote_r ?? null;
   const rScore = status === "confirmed" ? confirmed : status === "estimated" ? estimated : null;
+  // Missing table (older schema) or any grades error: keep whatever is local.
+  const courseGrades: CourseGradeEntry[] = gradesRes.error
+    ? fallback.courseGrades
+    : (gradesRes.data ?? [])
+        .filter((r) => r.grade !== null)
+        .map((r) => ({ session: r.session, course: r.course_name_freetext ?? "", grade: r.grade as number }));
 
   const targets = targetsRes.data
     ? targetsRes.data.map((t) => t.catalog_slug).filter((slug): slug is string => Boolean(slug))
@@ -217,7 +327,7 @@ export async function pullProfileFromServer(
     profile: {
       cegepId: p.cegep_short_code ?? null,
       cegepProgramId: p.cegep_program_code ?? null,
-      currentSession: p.current_session ?? confirmRes.data?.session ?? null,
+      currentSession: p.current_session ?? latestConfirmation?.session ?? null,
       rScore,
       rScoreStatus: rScore === null ? null : status,
       selfTags: (p.self_tags as SelfTagId[] | null) ?? [],
@@ -226,6 +336,8 @@ export async function pullProfileFromServer(
       decProfileId: p.dec_profile_id ?? fallback.decProfileId,
       goalSkipped: p.goal_skipped ?? fallback.goalSkipped,
       notificationPrefs: prefs,
+      courseGrades,
+      confirmations,
     },
     updatedAt: p.updated_at ?? null,
   };

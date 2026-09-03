@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ScreenShell } from "@/components/onboarding/ScreenShell";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { useFormat } from "@/lib/i18n/useFormat";
-import { useStudentProfile } from "@/lib/profile/store";
+import { recordConfirmedScore, useStudentProfile } from "@/lib/profile/store";
 import { useOnboardingGuard } from "@/lib/profile/onboarding";
 import { useFunnelNav } from "@/lib/profile/funnel-nav";
 import { useHydrated } from "@/lib/hooks/useHydrated";
@@ -18,7 +18,7 @@ const FORM_ID = "cote-r-form";
 export function ConfirmScoreScreen() {
   const { t } = useLocale();
   const f = useFormat();
-  const { profile, update, sync } = useStudentProfile();
+  const { profile, sync } = useStudentProfile();
   const { hrefFor, finishStep } = useFunnelNav();
   const hydrated = useHydrated();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -52,11 +52,9 @@ export function ConfirmScoreScreen() {
       setTouched(true);
       return;
     }
-    update({
-      rScore: numeric,
-      rScoreStatus: "confirmed",
-      currentSession: profile.currentSession ?? 1,
-    });
+    // Records the confirmed number AND appends it to the session history the calibration engine
+    // reads (recordConfirmedScore does both through the same outbox path update() uses).
+    recordConfirmedScore(profile.currentSession ?? 1, numeric);
     // Edit mode returns to where the student came from. In the funnel, the DEC was chosen in
     // step 2, so results already know which prerequisites this student covers and can go
     // straight up, score in the URL.
