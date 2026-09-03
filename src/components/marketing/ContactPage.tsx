@@ -5,14 +5,17 @@ import { SiteHeader } from "./SiteHeader";
 import { SiteFooter } from "./SiteFooter";
 import { InstallBar } from "./InstallBar";
 import { SetHtmlLang } from "./SetHtmlLang";
+import { PendingValue } from "./PendingValue";
 import { CONTACT_CONTENT } from "@/content/contact";
+import { SITE_CONFIG } from "@/lib/site-config";
 import { mt } from "@/lib/i18n/marketing-copy";
 import type { Locale } from "@/lib/i18n/dictionary";
 
-const CONTACT_EMAIL = "bonjour@macote.xyz"; // TODO: placeholder contact address
-
 export function ContactPage({ locale }: { locale: Locale }) {
   const c = CONTACT_CONTENT[locale];
+  // Null until NEXT_PUBLIC_CONTACT_EMAIL is set: the page then shows an "à confirmer" chip
+  // instead of an invented address, and the form cannot build a mailto: so submit is disabled.
+  const contactEmail = SITE_CONFIG.contactEmail;
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -21,12 +24,13 @@ export function ContactPage({ locale }: { locale: Locale }) {
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (contactEmail === null) return;
 
     const topicLabel = c.form.topicOptions.find((o) => o.value === topic)?.label ?? topic;
     const subject = `${c.form.subjectPrefix} — ${topicLabel}`;
     const body = [`${c.form.mailBodyName}: ${name}`, `${c.form.mailBodyEmail}: ${email}`, "", message].join("\n");
 
-    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = `mailto:${contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }
 
   return (
@@ -49,12 +53,18 @@ export function ContactPage({ locale }: { locale: Locale }) {
 
           <div className="mt-6 rounded-[3px] border border-border bg-paper p-4">
             <p className="text-[13px] font-medium text-secondary">{c.directEmailLabel}</p>
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="mt-1 inline-flex min-h-[48px] items-center text-[16px] font-semibold text-ultramarine transition-colors hover:text-pressed"
-            >
-              {CONTACT_EMAIL}
-            </a>
+            {contactEmail === null ? (
+              <p className="mt-2">
+                <PendingValue value={null} locale={locale} kind="email" />
+              </p>
+            ) : (
+              <a
+                href={`mailto:${contactEmail}`}
+                className="mt-1 inline-flex min-h-[48px] items-center text-[16px] font-semibold text-ultramarine transition-colors hover:text-pressed"
+              >
+                {contactEmail}
+              </a>
+            )}
           </div>
 
           <section className="mt-8">
@@ -135,10 +145,18 @@ export function ContactPage({ locale }: { locale: Locale }) {
 
               <button
                 type="submit"
-                className="mt-2 flex h-12 min-h-[48px] items-center justify-center self-start rounded-full bg-ultramarine px-6 text-[15px] font-semibold text-paper transition-[transform,background-color] hover:bg-pressed active:bg-pressed active:scale-[0.98]"
+                disabled={contactEmail === null}
+                aria-describedby={contactEmail === null ? "contact-pending-address" : undefined}
+                className="mt-2 flex h-12 min-h-[48px] items-center justify-center self-start rounded-full bg-ultramarine px-6 text-[15px] font-semibold text-paper transition-[transform,background-color] hover:bg-pressed active:bg-pressed active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-ultramarine disabled:active:scale-100"
               >
                 {c.form.submitLabel}
               </button>
+
+              {contactEmail === null && (
+                <p id="contact-pending-address" className="text-[13px] font-medium leading-relaxed text-ember">
+                  {c.pendingAddressNote}
+                </p>
+              )}
             </form>
           </section>
         </div>

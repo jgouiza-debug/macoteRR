@@ -26,6 +26,8 @@ export type PourLesCegepsContactLabels = {
   submitLabel: string;
   subjectPrefix: string;
   note: string;
+  /** Shown under the form while SITE_CONFIG.pilotEmail is unset — no mailto: can be built then. */
+  pendingAddressNote: string;
 };
 
 export type PourLesCegepsContent = {
@@ -92,6 +94,7 @@ export const POUR_LES_CEGEPS_CONTENT: Record<"fr" | "en", PourLesCegepsContent> 
       submitLabel: "Envoyer par courriel",
       subjectPrefix: "Projet pilote —",
       note: "Ce formulaire ouvre votre logiciel de courriel habituel avec un message prérempli; rien n'est transmis automatiquement depuis cette page.",
+      pendingAddressNote: "Adresse de contact à confirmer avant le lancement.",
     },
   },
   en: {
@@ -147,6 +150,7 @@ export const POUR_LES_CEGEPS_CONTENT: Record<"fr" | "en", PourLesCegepsContent> 
       submitLabel: "Send by email",
       subjectPrefix: "Pilot program —",
       note: "This form opens your usual email client with a pre-filled message; nothing is sent automatically from this page.",
+      pendingAddressNote: "Contact address to be confirmed before launch.",
     },
   },
 };

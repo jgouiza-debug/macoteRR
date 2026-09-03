@@ -10,7 +10,9 @@ export type AProposContent = {
   title: string;
   intro: string;
   sections: AProposSection[];
-  /** Bordered identity card — the founder's name/cégep are placeholders until filled in. */
+  /** Bordered identity card. `name` and `cegep` are the {founderName} / {founderCegep} SITE_CONFIG
+   *  tokens (NEXT_PUBLIC_FOUNDER_NAME / NEXT_PUBLIC_FOUNDER_CEGEP); AProposPage renders a
+   *  PendingValue for each, so an unset one shows an "à confirmer" chip, never an invented identity. */
   identity: {
     heading: string;
     name: string;
@@ -48,9 +50,9 @@ export const A_PROPOS_CONTENT: Record<"fr" | "en", AProposContent> = {
     ],
     identity: {
       heading: "Derrière l'app",
-      name: "[Ton nom]",
+      name: "{founderName}",
       cegepLabel: "Cégep",
-      cegep: "[ton cégep]",
+      cegep: "{founderCegep}",
       roleLabel: "Créateur de MaCote, étudiant de cégep",
     },
   },
@@ -81,9 +83,9 @@ export const A_PROPOS_CONTENT: Record<"fr" | "en", AProposContent> = {
     ],
     identity: {
       heading: "Behind the app",
-      name: "[Your name]",
+      name: "{founderName}",
       cegepLabel: "Cégep",
-      cegep: "[your cégep]",
+      cegep: "{founderCegep}",
       roleLabel: "Creator of MaCote, cégep student",
     },
   },

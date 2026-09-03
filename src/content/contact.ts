@@ -25,6 +25,8 @@ export type ContactContent = {
   title: string;
   intro: string;
   directEmailLabel: string;
+  /** Shown under the form while SITE_CONFIG.contactEmail is unset — no mailto: can be built then. */
+  pendingAddressNote: string;
   form: ContactFormContent;
 };
 
@@ -37,6 +39,7 @@ export const CONTACT_CONTENT: Record<"fr" | "en", ContactContent> = {
     intro:
       "Pas de chat en direct, pas de ligne de support. Juste un email qui se rend à quelqu'un qui va le lire. Dis-nous ce qui se passe — bug, question, idée — et on te répond dès qu'on peut.",
     directEmailLabel: "Tu préfères écrire directement?",
+    pendingAddressNote: "Adresse de contact à confirmer avant le lancement.",
     form: {
       heading: "Envoie-nous un message",
       nameLabel: "Ton nom",
@@ -66,6 +69,7 @@ export const CONTACT_CONTENT: Record<"fr" | "en", ContactContent> = {
     intro:
       "No live chat, no support line. Just an email that reaches an actual person who reads it. Tell us what's going on — a bug, a question, an idea — and we'll get back to you when we can.",
     directEmailLabel: "Would rather just email us?",
+    pendingAddressNote: "Contact address to be confirmed before launch.",
     form: {
       heading: "Send us a message",
       nameLabel: "Your name",

@@ -1,6 +1,9 @@
 // DRAFT — see LEGAL-REVIEW-NOTES.md at the repo root. Not legal advice. A human (ideally a
-// lawyer familiar with Quebec's Loi 25) must review this before the site goes live, and the
-// [placeholders] below must be filled in with real values first.
+// lawyer familiar with Quebec's Loi 25) must review this before the site goes live.
+//
+// The {contactEmail} {privacyOfficer} {dataRegion} tokens below are filled from SITE_CONFIG
+// (NEXT_PUBLIC_* variables — see .env.local.example) by renderTemplate() in PendingValue.tsx.
+// An unset one renders as a visible "à confirmer" chip on the page, never as an invented value.
 
 export type LegalSection = { heading: string; body: string[] };
 export type PrivacyContent = {
@@ -24,7 +27,7 @@ export const PRIVACY_CONTENT: Record<"fr" | "en", PrivacyContent> = {
       "Aucune donnée sur ton revenu, celui de ta famille, ou ta situation financière n'est jamais demandée ou collectée — nulle part sur MaCote.",
       "Tes notes et ta cote R sont associées à ton compte, ne sont jamais vendues, ni partagées avec qui que ce soit d'autre.",
       "Avant de créer un compte, ce que tu entres (cégep, programme, notes) reste seulement dans ton navigateur — rien n'est envoyé à un serveur tant que tu n'as pas de compte.",
-      "Hébergement : [à confirmer — voir LEGAL-REVIEW-NOTES.md]. L'objectif est un hébergement au Canada; ceci sera précisé ici dès que le fournisseur final est choisi.",
+      "Hébergement : {dataRegion}. L'objectif est un hébergement au Canada; ceci sera précisé ici dès que le fournisseur final est choisi.",
     ],
     sections: [
       {
@@ -46,7 +49,7 @@ export const PRIVACY_CONTENT: Record<"fr" | "en", PrivacyContent> = {
         heading: "Si tu as moins de 14 ans",
         body: [
           "MaCote s'adresse aux étudiantes et étudiants de cégep, généralement âgés de 16 à 19 ans. La loi québécoise exige un consentement parental pour recueillir des renseignements personnels auprès d'une personne de moins de 14 ans, sauf si la collecte est manifestement à son bénéfice.",
-          "Si tu as moins de 14 ans et que tu utilises MaCote, ou si un parent ou tuteur croit que nous avons recueilli des renseignements sur un enfant de moins de 14 ans sans consentement parental, contacte-nous à [courriel de contact — voir Contact] : nous supprimerons ces renseignements.",
+          "Si tu as moins de 14 ans et que tu utilises MaCote, ou si un parent ou tuteur croit que nous avons recueilli des renseignements sur un enfant de moins de 14 ans sans consentement parental, contacte-nous à {contactEmail} : nous supprimerons ces renseignements.",
         ],
       },
       {
@@ -59,14 +62,14 @@ export const PRIVACY_CONTENT: Record<"fr" | "en", PrivacyContent> = {
         heading: "Qui a accès à tes données, et où elles sont hébergées",
         body: [
           "Personne d'autre que toi n'a accès à tes notes, ta cote R ou tes cibles de programme — ces données sont protégées par des règles d'accès (Row Level Security) qui limitent chaque compte à ses propres données.",
-          "Hébergement technique : [à confirmer — voir LEGAL-REVIEW-NOTES.md pour le statut exact]. Une évaluation des facteurs relatifs à la vie privée sera complétée avant la mise en service définitive d'un fournisseur d'hébergement, particulièrement si des données quittent le Québec.",
+          "Hébergement technique : {dataRegion}. Une évaluation des facteurs relatifs à la vie privée sera complétée avant la mise en service définitive d'un fournisseur d'hébergement, particulièrement si des données quittent le Québec.",
         ],
       },
       {
         heading: "Tes droits : accès, portabilité, suppression",
         body: [
           "Tu peux demander une copie de tes renseignements personnels dans un format structuré et couramment utilisé (par exemple JSON), et tu peux demander la suppression complète de ton compte et de tes données à tout moment.",
-          "En ce moment, ces demandes se font par courriel à [courriel de contact — voir Contact] plutôt que par un bouton en libre-service dans l'application — un outil en libre-service est prévu mais n'est pas encore construit. Voir LEGAL-REVIEW-NOTES.md pour le statut exact.",
+          "En ce moment, ces demandes se font par courriel à {contactEmail} plutôt que par un bouton en libre-service dans l'application — un outil en libre-service est prévu mais n'est pas encore construit. Voir LEGAL-REVIEW-NOTES.md pour le statut exact.",
         ],
       },
       {
@@ -78,7 +81,7 @@ export const PRIVACY_CONTENT: Record<"fr" | "en", PrivacyContent> = {
       {
         heading: "Responsable de la protection des renseignements personnels",
         body: [
-          "[Nom du/de la responsable] est responsable de la protection des renseignements personnels chez MaCote. Pour toute question ou plainte, écris à [courriel de contact — voir Contact].",
+          "{privacyOfficer} est responsable de la protection des renseignements personnels chez MaCote. Pour toute question ou plainte, écris à {contactEmail}.",
         ],
       },
     ],
@@ -93,7 +96,7 @@ export const PRIVACY_CONTENT: Record<"fr" | "en", PrivacyContent> = {
       "No data about your income, your family's income, or your financial situation is ever asked for or collected — anywhere on MaCote.",
       "Your grades and R-score are tied to your account, never sold, never shared with anyone else.",
       "Before you create an account, what you enter (cégep, program, grades) stays only in your browser — nothing is sent to a server until you have an account.",
-      "Hosting: [to be confirmed — see LEGAL-REVIEW-NOTES.md]. The goal is Canadian hosting; this will be finalized here once a provider is confirmed.",
+      "Hosting: {dataRegion}. The goal is Canadian hosting; this will be finalized here once a provider is confirmed.",
     ],
     sections: [
       {
@@ -115,7 +118,7 @@ export const PRIVACY_CONTENT: Record<"fr" | "en", PrivacyContent> = {
         heading: "If you're under 14",
         body: [
           "MaCote is built for cégep students, generally aged 16 to 19. Quebec law requires parental consent to collect personal information from anyone under 14, unless the collection is manifestly for that minor's benefit.",
-          "If you're under 14 and using MaCote, or if a parent or guardian believes we've collected information about a child under 14 without parental consent, contact us at [contact email — see Contact]: we'll delete that information.",
+          "If you're under 14 and using MaCote, or if a parent or guardian believes we've collected information about a child under 14 without parental consent, contact us at {contactEmail}: we'll delete that information.",
         ],
       },
       {
@@ -128,14 +131,14 @@ export const PRIVACY_CONTENT: Record<"fr" | "en", PrivacyContent> = {
         heading: "Who can access your data, and where it's hosted",
         body: [
           "Nobody but you can access your grades, R-score, or program targets — this data is protected by access rules (Row Level Security) that restrict every account to its own data.",
-          "Technical hosting: [to be confirmed — see LEGAL-REVIEW-NOTES.md for the exact status]. A privacy impact assessment will be completed before finalizing a hosting provider, particularly if any data leaves Quebec.",
+          "Technical hosting: {dataRegion}. A privacy impact assessment will be completed before finalizing a hosting provider, particularly if any data leaves Quebec.",
         ],
       },
       {
         heading: "Your rights: access, portability, deletion",
         body: [
           "You can request a copy of your personal information in a structured, commonly used format (e.g. JSON), and you can request full deletion of your account and data at any time.",
-          "Right now, these requests go through email to [contact email — see Contact] rather than a self-serve button in the app — a self-serve tool is planned but not yet built. See LEGAL-REVIEW-NOTES.md for the exact status.",
+          "Right now, these requests go through email to {contactEmail} rather than a self-serve button in the app — a self-serve tool is planned but not yet built. See LEGAL-REVIEW-NOTES.md for the exact status.",
         ],
       },
       {
@@ -147,7 +150,7 @@ export const PRIVACY_CONTENT: Record<"fr" | "en", PrivacyContent> = {
       {
         heading: "Person responsible for the protection of personal information",
         body: [
-          "[Responsible person's name] is responsible for the protection of personal information at MaCote. For any question or complaint, write to [contact email — see Contact].",
+          "{privacyOfficer} is responsible for the protection of personal information at MaCote. For any question or complaint, write to {contactEmail}.",
         ],
       },
     ],

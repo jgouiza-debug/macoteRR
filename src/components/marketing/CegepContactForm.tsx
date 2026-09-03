@@ -2,16 +2,20 @@
 
 import { useState, type FormEvent } from "react";
 import type { PourLesCegepsContactLabels } from "@/content/pour-les-cegeps";
-
-// TODO: placeholder contact address — replace with the real one before launch.
-const CONTACT_EMAIL = "pilotes@macote.xyz";
+import { SITE_CONFIG } from "@/lib/site-config";
 
 /**
  * No backend exists for this static site, so the "submit" is a mailto: link built from the
  * field values and handed to the browser — it opens the visitor's own mail client with a
  * pre-filled draft; nothing is transmitted from this page itself.
+ *
+ * The destination is SITE_CONFIG.pilotEmail (NEXT_PUBLIC_PILOT_EMAIL). While it is unset no
+ * mailto: can be built, so submit is disabled and the form says the address is still to be
+ * confirmed — it never mails an invented address.
  */
 export function CegepContactForm({ labels }: { labels: PourLesCegepsContactLabels }) {
+  const pilotEmail = SITE_CONFIG.pilotEmail;
+
   const [name, setName] = useState("");
   const [institution, setInstitution] = useState("");
   const [email, setEmail] = useState("");
@@ -19,6 +23,7 @@ export function CegepContactForm({ labels }: { labels: PourLesCegepsContactLabel
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (pilotEmail === null) return;
 
     const subject = `${labels.subjectPrefix} ${institution}`.trim();
     const body = [
@@ -29,7 +34,7 @@ export function CegepContactForm({ labels }: { labels: PourLesCegepsContactLabel
       message,
     ].join("\n");
 
-    const href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const href = `mailto:${pilotEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.location.href = href;
   }
 
@@ -77,10 +82,18 @@ export function CegepContactForm({ labels }: { labels: PourLesCegepsContactLabel
 
       <button
         type="submit"
-        className="mt-1 flex h-12 min-h-[48px] items-center justify-center self-start rounded-full bg-ultramarine px-6 text-[14px] font-semibold text-paper transition-[transform,background-color] hover:bg-pressed active:bg-pressed active:scale-[0.98]"
+        disabled={pilotEmail === null}
+        aria-describedby={pilotEmail === null ? "cegep-contact-pending-address" : undefined}
+        className="mt-1 flex h-12 min-h-[48px] items-center justify-center self-start rounded-full bg-ultramarine px-6 text-[14px] font-semibold text-paper transition-[transform,background-color] hover:bg-pressed active:bg-pressed active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-ultramarine disabled:active:scale-100"
       >
         {labels.submitLabel}
       </button>
+
+      {pilotEmail === null && (
+        <p id="cegep-contact-pending-address" className="text-[13px] font-medium leading-relaxed text-ember">
+          {labels.pendingAddressNote}
+        </p>
+      )}
 
       <p className="text-[12.5px] leading-relaxed text-secondary">{labels.note}</p>
     </form>

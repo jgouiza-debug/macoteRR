@@ -1,6 +1,7 @@
 import { SiteHeader } from "./SiteHeader";
 import { SiteFooter } from "./SiteFooter";
 import { SetHtmlLang } from "./SetHtmlLang";
+import { renderTemplate } from "./PendingValue";
 import { mt } from "@/lib/i18n/marketing-copy";
 import type { Locale } from "@/lib/i18n/dictionary";
 import type { LegalSection } from "@/content/confidentialite";
@@ -53,7 +54,7 @@ export function LegalPage({ locale, path, content }: { locale: Locale; path: str
                   <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#12795A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mt-1 shrink-0" aria-hidden="true">
                     <polyline points="4 10 8 14 16 5" />
                   </svg>
-                  <span>{point}</span>
+                  <span>{renderTemplate(point, locale)}</span>
                 </li>
               ))}
             </ul>
@@ -68,7 +69,7 @@ export function LegalPage({ locale, path, content }: { locale: Locale; path: str
                 <div className="mt-3 flex flex-col gap-3">
                   {s.body.map((p, i) => (
                     <p key={i} className="max-w-[68ch] text-[15.5px] leading-relaxed text-ink/85">
-                      {p}
+                      {renderTemplate(p, locale)}
                     </p>
                   ))}
                 </div>

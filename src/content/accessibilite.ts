@@ -42,7 +42,7 @@ export const ACCESSIBILITY_CONTENT: Record<"fr" | "en", AccessibilityContent> = 
       {
         heading: "Signaler un problème",
         body: [
-          "Si tu rencontres un obstacle à l'accessibilité sur MaCote, écris-nous à [courriel de contact — voir Contact]. Décris la page et ce qui ne fonctionne pas (par exemple : un élément inatteignable au clavier, un contraste insuffisant, un lecteur d'écran qui ne lit pas correctement un élément) — ça nous aide à corriger le problème plus vite.",
+          "Si tu rencontres un obstacle à l'accessibilité sur MaCote, écris-nous à {contactEmail}. Décris la page et ce qui ne fonctionne pas (par exemple : un élément inatteignable au clavier, un contraste insuffisant, un lecteur d'écran qui ne lit pas correctement un élément) — ça nous aide à corriger le problème plus vite.",
         ],
       },
     ],
@@ -74,7 +74,7 @@ export const ACCESSIBILITY_CONTENT: Record<"fr" | "en", AccessibilityContent> = 
       {
         heading: "Report an issue",
         body: [
-          "If you run into an accessibility barrier on MaCote, write to us at [contact email — see Contact]. Describe the page and what isn't working (e.g. an element you can't reach by keyboard, insufficient contrast, a screen reader not reading something correctly) — it helps us fix it faster.",
+          "If you run into an accessibility barrier on MaCote, write to us at {contactEmail}. Describe the page and what isn't working (e.g. an element you can't reach by keyboard, insufficient contrast, a screen reader not reading something correctly) — it helps us fix it faster.",
         ],
       },
     ],

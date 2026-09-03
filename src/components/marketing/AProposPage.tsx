@@ -1,11 +1,14 @@
-/* TODO: replace the [Ton nom]/[your name] placeholders below with the real founder's name,
-   cégep, and personal story before this page goes live. */
+/* The founder's name and cégep are never invented here: they come from SITE_CONFIG
+   (NEXT_PUBLIC_FOUNDER_NAME / NEXT_PUBLIC_FOUNDER_CEGEP) and render as a visible
+   "à confirmer" chip until set. */
 
 import { SiteHeader } from "./SiteHeader";
 import { SiteFooter } from "./SiteFooter";
 import { InstallBar } from "./InstallBar";
 import { SetHtmlLang } from "./SetHtmlLang";
+import { PendingValue, renderTemplate } from "./PendingValue";
 import { A_PROPOS_CONTENT } from "@/content/a-propos";
+import { SITE_CONFIG } from "@/lib/site-config";
 import { mt } from "@/lib/i18n/marketing-copy";
 import type { Locale } from "@/lib/i18n/dictionary";
 
@@ -28,7 +31,7 @@ export function AProposPage({ locale }: { locale: Locale }) {
           <h1 className="font-display text-[34px] font-extrabold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[42px]">
             {c.title}
           </h1>
-          <p className="mt-4 text-[17px] leading-relaxed text-secondary">{c.intro}</p>
+          <p className="mt-4 text-[17px] leading-relaxed text-secondary">{renderTemplate(c.intro, locale)}</p>
 
           <article className="mt-8 flex flex-col gap-8">
             {c.sections.map((s) => (
@@ -39,7 +42,7 @@ export function AProposPage({ locale }: { locale: Locale }) {
                 <div className="mt-3 flex flex-col gap-3">
                   {s.body.map((p, i) => (
                     <p key={i} className="max-w-[68ch] text-[16px] leading-relaxed text-ink/85">
-                      {p}
+                      {renderTemplate(p, locale)}
                     </p>
                   ))}
                 </div>
@@ -59,7 +62,9 @@ export function AProposPage({ locale }: { locale: Locale }) {
                     ?
                   </div>
                   <div>
-                    <p className="font-display text-[18px] font-bold leading-tight text-ink">{c.identity.name}</p>
+                    <p className="font-display text-[18px] font-bold leading-tight text-ink">
+                      <PendingValue value={SITE_CONFIG.founderName} locale={locale} kind="text" />
+                    </p>
                     <p className="mt-0.5 text-[13.5px] text-secondary">{c.identity.roleLabel}</p>
                   </div>
                 </div>
@@ -67,7 +72,9 @@ export function AProposPage({ locale }: { locale: Locale }) {
                   <p className="text-[12px] font-semibold uppercase tracking-wide text-secondary">
                     {c.identity.cegepLabel}
                   </p>
-                  <p className="mt-1 text-[15px] text-ink">{c.identity.cegep}</p>
+                  <p className="mt-1 text-[15px] text-ink">
+                    <PendingValue value={SITE_CONFIG.founderCegep} locale={locale} kind="text" />
+                  </p>
                 </div>
               </div>
             </section>

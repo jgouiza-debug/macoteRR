@@ -3,6 +3,7 @@ import { SiteFooter } from "./SiteFooter";
 import { InstallBar } from "./InstallBar";
 import { SetHtmlLang } from "./SetHtmlLang";
 import { CegepContactForm } from "./CegepContactForm";
+import { renderTemplate } from "./PendingValue";
 import { POUR_LES_CEGEPS_CONTENT } from "@/content/pour-les-cegeps";
 import { mt } from "@/lib/i18n/marketing-copy";
 import type { Locale } from "@/lib/i18n/dictionary";
@@ -26,7 +27,7 @@ export function PourLesCegepsPage({ locale }: { locale: Locale }) {
           <h1 className="font-display text-[34px] font-extrabold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[42px]">
             {c.title}
           </h1>
-          <p className="mt-4 text-[17px] leading-relaxed text-secondary">{c.intro}</p>
+          <p className="mt-4 text-[17px] leading-relaxed text-secondary">{renderTemplate(c.intro, locale)}</p>
 
           <article className="mt-8 flex flex-col gap-8">
             {c.sections.map((s) => (
@@ -37,7 +38,7 @@ export function PourLesCegepsPage({ locale }: { locale: Locale }) {
                 <div className="mt-3 flex flex-col gap-3">
                   {s.body.map((p, i) => (
                     <p key={i} className="max-w-[68ch] text-[16px] leading-relaxed text-ink/85">
-                      {p}
+                      {renderTemplate(p, locale)}
                     </p>
                   ))}
                 </div>
@@ -49,12 +50,12 @@ export function PourLesCegepsPage({ locale }: { locale: Locale }) {
                 {c.pilot.heading}
               </h2>
               <div className="mt-3 flex flex-col gap-3">
-                <p className="max-w-[68ch] text-[16px] leading-relaxed text-ink/85">{c.pilot.intro}</p>
+                <p className="max-w-[68ch] text-[16px] leading-relaxed text-ink/85">{renderTemplate(c.pilot.intro, locale)}</p>
                 <ul className="flex flex-col gap-2.5">
                   {c.pilot.points.map((point) => (
                     <li key={point} className="flex items-start gap-2.5 text-[15px] leading-relaxed text-ink/85">
                       <span aria-hidden="true" className="mt-[9px] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-moss" />
-                      {point}
+                      <span>{renderTemplate(point, locale)}</span>
                     </li>
                   ))}
                 </ul>
@@ -65,7 +66,7 @@ export function PourLesCegepsPage({ locale }: { locale: Locale }) {
               <h2 className="font-display text-[22px] font-bold leading-tight tracking-[-0.02em] text-ink">
                 {c.contact.heading}
               </h2>
-              <p className="mt-3 max-w-[68ch] text-[16px] leading-relaxed text-ink/85">{c.contact.intro}</p>
+              <p className="mt-3 max-w-[68ch] text-[16px] leading-relaxed text-ink/85">{renderTemplate(c.contact.intro, locale)}</p>
               <CegepContactForm labels={c.contact} />
             </section>
           </article>
