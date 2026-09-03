@@ -116,3 +116,32 @@ changed. So: promote a corrected row through `scripts/collectors/promote`, inser
 - Row Level Security is enabled on every table (see the migrations, and `npm run test:rls`
   for the proof) — the student-data cluster restricts to `auth.uid()`, the catalogue clusters
   are public-read-only, staging is service-role only.
+
+## Web Push (partial)
+
+What is built and live:
+
+- The service worker (`src/app/sw.ts`) has `push` and `notificationclick` handlers, so once a
+  device is subscribed and something sends a message, the reminder shows and tapping it focuses
+  or opens the app. The tap URL is resolved against this origin, so a payload can never open an
+  off-site tab.
+- An offline fallback page (`/~offline`) is precached and served when a navigation misses both
+  the network and the cache.
+- Runtime caches are versioned by `NEXT_PUBLIC_BUILD_ID` (the deploy's commit sha), so a deploy
+  never serves a previous build's assets.
+
+What still needs building before push actually reaches a phone (the plan is in the session
+handoff, group `push`):
+
+1. `src/lib/notifications/push.ts` — `subscribeToPush` / `unsubscribeFromPush` storing to
+   `push_subscriptions` (RLS own rows), gated on `NEXT_PUBLIC_VAPID_PUBLIC_KEY`.
+2. A push section on `/profile/notifications`, shown only when the key is set and the browser
+   supports it (on iOS, only when installed to the Home Screen).
+3. `scripts/notifications/send-due.ts` — a cron that reads due `notification_events`, joins
+   `push_subscriptions`, and sends with the `web-push` package. It needs the service-role key
+   and the private VAPID key, which live only in the cron's environment: `SUPABASE_SERVICE_ROLE_KEY`
+   and `VAPID_PRIVATE_KEY` must never appear under `src/`.
+
+Until keys are set the push section does not render, so nothing here changes the app for a
+student today — the in-app notification inbox (the bell in the top bar) already surfaces the
+same reminders.
