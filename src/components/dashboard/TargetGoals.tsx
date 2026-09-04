@@ -13,7 +13,6 @@ import {
   getCutoffRange,
   compareToCutoffRange,
   formatRangeYears,
-  CUTOFF_STATUS_LABEL_KEY,
   CUTOFF_STATUS_COLOR_CLASS,
   cutoffStatusLabelKey,
   cutoffRangeLabelKey,
@@ -99,14 +98,11 @@ export function TargetGoals({
             className="-my-1 inline-flex min-h-[44px] items-center gap-1 rounded-full border border-ink/15 px-3 text-[12px] font-semibold text-ultramarine tap-spring hover:bg-chalk"
           >
             <Plus className="h-3.5 w-3.5" aria-hidden="true" />
-            {t("dash.addGoal")}
+            {t("dash.addGoalShort")}
           </Link>
         </div>
         {rows.length > 0 && (
-          <>
-            <p className="text-[11px] text-ink/45">{t("dash.axisLegend")}</p>
-            <p className="text-[11px] text-ink/45">{t("dash.removeHint")}</p>
-          </>
+          <p className="text-[11px] text-ink/45">{t("dash.axisLegend")}</p>
         )}
       </div>
 

@@ -84,8 +84,17 @@ export const CUTOFF_FLOOR_STATUS_LABEL_KEY: Record<CutoffStatus, TranslationKey>
 };
 
 /** The status word for a comparison against `range`: range vocabulary or floor vocabulary. */
+/** Status words for a published range, phrased in full so they never read as a clipped floor label. */
+export const CUTOFF_RANGE_STATUS_LABEL_KEY: Record<CutoffStatus, TranslationKey> = {
+  above: "cutoff.aboveRange",
+  inside: "cutoff.inside",
+  below: "cutoff.belowRange",
+  unknown: "cutoff.unverified",
+};
+
 export function cutoffStatusLabelKey(status: CutoffStatus, range: CutoffRange | null): TranslationKey {
-  return range?.kind === "floor" ? CUTOFF_FLOOR_STATUS_LABEL_KEY[status] : CUTOFF_STATUS_LABEL_KEY[status];
+  if (!range) return CUTOFF_STATUS_LABEL_KEY[status];
+  return range.kind === "floor" ? CUTOFF_FLOOR_STATUS_LABEL_KEY[status] : CUTOFF_RANGE_STATUS_LABEL_KEY[status];
 }
 
 /** "Cotes publiées" for a range, "Minimum publié" for a floor. */

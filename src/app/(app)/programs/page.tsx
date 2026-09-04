@@ -281,7 +281,7 @@ export default function ProgramsPage() {
 
         {/* Tier buttons, only once there is a score to compare against */}
         {score !== null && (
-          <div className="flex flex-wrap gap-2" role="group" aria-label={t("plist.found")}>
+          <div className="grid grid-cols-2 gap-2" role="group" aria-label={t("plist.found")}>
             {TIERS.map((option) => {
               const active = activeTier === option;
               return (
@@ -292,7 +292,7 @@ export default function ProgramsPage() {
                   aria-pressed={active}
                   // Border + shadow, like the university chips below: these are filters and
                   // must read as tappable, not as a stats strip.
-                  className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full border px-3 text-[12px] font-semibold tap-spring ${
+                  className={`flex min-h-[44px] w-full items-center gap-1.5 rounded-full border px-3 text-[12px] font-semibold tap-spring ${
                     active
                       ? "border-ultramarine bg-ultramarine text-paper shadow-sm"
                       : counts[option] === 0

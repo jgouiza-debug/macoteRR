@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, memo } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { SourceStamp } from "@/components/SourceStamp";
@@ -19,10 +18,10 @@ import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { useFormat } from "@/lib/i18n/useFormat";
 import type { TranslationKey } from "@/lib/i18n/dictionary";
 
-const TIERS: { id: MatchTier; title: TranslationKey; accent: string }[] = [
-  { id: "matched", title: "burs.matched", accent: "text-moss" },
-  { id: "close", title: "burs.close", accent: "text-ember" },
-  { id: "explore", title: "burs.explore", accent: "text-ink/55" },
+const TIERS: { id: MatchTier; title: TranslationKey; sub: TranslationKey; accent: string }[] = [
+  { id: "matched", title: "burs.matched", sub: "burs.matchedSub", accent: "text-moss" },
+  { id: "close", title: "burs.close", sub: "burs.closeSub", accent: "text-ember" },
+  { id: "explore", title: "burs.explore", sub: "burs.exploreSub", accent: "text-ink/55" },
 ];
 
 export default function BursariesPage() {
@@ -138,20 +137,27 @@ export default function BursariesPage() {
         {profile.rScore === null && (
           <div className="flex flex-col gap-3 rounded-xl border border-ink/12 bg-paper p-3.5">
             <p className="text-[12.5px] leading-relaxed text-ink/65">{t("burs.firstSessionNote")}</p>
-            <Link
-              href="/programs"
+            {/* The one thing a first-session student can act on is the list right below. */}
+            <a
+              href="#burs-matched"
               className="inline-flex min-h-[44px] w-fit items-center rounded-full border border-ink/15 px-4 text-[12.5px] font-semibold text-ultramarine tap-spring hover:bg-chalk"
             >
-              {t("dash.addGoal")}
-            </Link>
+              {t("burs.seeOpenNow").replace("{n}", String(matches.matched.length))}
+            </a>
           </div>
         )}
 
-        {TIERS.map(({ id, title, accent }) => {
+        {TIERS.map(({ id, title, sub, accent }) => {
           const items = matches[id];
           return (
-            <section key={id} className="flex flex-col gap-3">
-              <h2 className={`font-display text-[17px] font-bold ${accent}`}>{t(title)}</h2>
+            <section key={id} id={`burs-${id}`} className="flex flex-col gap-3 scroll-mt-16">
+              <div className="flex flex-col gap-0.5">
+                <h2 className={`font-display text-[17px] font-bold ${accent}`}>
+                  {t(title)}{" "}
+                  <span className="text-[13px] font-semibold tabular-nums text-ink/45">· {items.length}</span>
+                </h2>
+                <p className="text-[12px] leading-relaxed text-ink/55">{t(sub)}</p>
+              </div>
 
               {items.length === 0 ? (
                 id === "matched" ? (
@@ -173,9 +179,12 @@ export default function BursariesPage() {
                     amountLabel={amountLabel(match.bursary, f.amount)}
                     deadlineLabel={
                       match.bursary.deadlineIso
-                        ? f.date(
-                            match.bursary.deadlineIso,
-                            match.bursary.deadlinePrecision === "month" ? "month" : "day",
+                        ? t("burs.deadline").replace(
+                            "{date}",
+                            f.date(
+                              match.bursary.deadlineIso,
+                              match.bursary.deadlinePrecision === "month" ? "month" : "day",
+                            ),
                           )
                         : t("burs.noDeadline")
                     }

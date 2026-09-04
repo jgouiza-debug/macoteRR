@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { scorePercent } from "@/lib/rscore/scale";
+import { R_MAX, R_MIN, scorePercent } from "@/lib/rscore/scale";
 import { compareToCutoffRange, type CutoffRange } from "@/lib/rscore/cutoff-range";
 
 /**
@@ -27,7 +27,12 @@ export const AxisRow = memo(function AxisRow({
           : "bg-ink/30";
 
   return (
-    <div className="relative h-3 w-full">
+    // The scale's ends are printed so the track reads as a gauge with a domain, not a slider.
+    <div className="flex w-full items-center gap-1.5">
+      <span className="w-4 text-right text-[9px] leading-none tabular-nums text-ink/40" aria-hidden="true">
+        {R_MIN}
+      </span>
+      <div className="relative h-3 min-w-0 flex-1">
       <div className="absolute top-1/2 h-px w-full -translate-y-1/2 bg-ink/15" />
       {range && range.kind === "floor" ? (
         // A published minimum is one figure: a tick, so the legend's "bar" never lies.
@@ -56,6 +61,10 @@ export const AxisRow = memo(function AxisRow({
           style={{ left: `${scoreLeft}%` }}
         />
       )}
+      </div>
+      <span className="w-4 text-[9px] leading-none tabular-nums text-ink/40" aria-hidden="true">
+        {R_MAX}
+      </span>
     </div>
   );
 });

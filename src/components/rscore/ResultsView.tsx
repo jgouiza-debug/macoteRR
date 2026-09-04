@@ -14,7 +14,6 @@ import { LangToggle } from "@/components/ui/LangToggle";
 import { useReferenceCatalog } from "@/lib/data/reference-store";
 import {
   formatRangeYears,
-  CUTOFF_STATUS_LABEL_KEY,
   CUTOFF_STATUS_COLOR_CLASS,
   cutoffStatusLabelKey,
   cutoffRangeLabelKey,
@@ -244,7 +243,7 @@ export function ResultsView({
           href={hrefFor("/onboarding/goal")}
           className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98]"
         >
-          {t("common.continue")}
+          {t("results.nextGoal")}
           <ArrowRight className="h-[18px] w-[18px]" />
         </Link>
       </main>

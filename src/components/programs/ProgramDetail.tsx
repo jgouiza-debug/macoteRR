@@ -236,9 +236,10 @@ export function ProgramDetail({ program: shipped }: { program: UniversityProgram
         )}
 
         <section className="rounded border border-ink/12 bg-paper p-4 shadow-card">
-          <h2 className="mb-3 text-[14px] font-semibold text-ink">
+          <h2 className="text-[14px] font-semibold text-ink">
             {t("prog.cutoffHistory")}
           </h2>
+          <SourceStamp date={program.lastVerifiedAt} href={program.sourceUrl} hostAsLabel className="mb-2 mt-1" />
           {program.cutoffHistory.length > 0 ? (
             <ul className="flex flex-col">
               {[...program.cutoffHistory]
@@ -260,11 +261,6 @@ export function ProgramDetail({ program: shipped }: { program: UniversityProgram
           ) : (
             <p className="text-[12.5px] leading-relaxed text-ink/50">{t("cutoff.noDataYet")}</p>
           )}
-          <SourceStamp
-            date={program.lastVerifiedAt}
-            href={program.sourceUrl}
-            className="mt-3"
-          />
         </section>
 
         {program.professionalOrders && (

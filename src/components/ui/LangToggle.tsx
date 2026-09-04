@@ -26,7 +26,7 @@ export function LangToggle() {
             className="flex min-h-[44px] min-w-[44px] items-center justify-center"
           >
             <span
-              className={`flex min-h-[38px] items-center rounded-full px-2.5 text-[11px] font-semibold uppercase tracking-wide transition-colors ${
+              className={`flex min-h-[44px] items-center rounded-full px-2.5 text-[11px] font-semibold uppercase tracking-wide transition-colors ${
                 active ? "bg-ink text-paper" : "text-ink/55 hover:text-ink"
               }`}
             >

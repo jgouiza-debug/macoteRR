@@ -361,7 +361,7 @@ export default function ProfilePage() {
         <section className="flex flex-col gap-2 rounded-xl border border-ember/30 bg-ember/[0.04] p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           <h2 className="text-[14px] font-semibold text-ink">{t("account.deleteTitle")}</h2>
           <p className="text-[12.5px] leading-relaxed text-ink/60">
-            {t("account.deleteBody")} {t("account.deleteTwoStep")}
+            {t("account.deleteBody")}
           </p>
 
           {deleteError && (
@@ -395,7 +395,7 @@ export default function ProfilePage() {
               onClick={() => setConfirmingDelete(true)}
               className="mt-1 inline-flex min-h-[48px] items-center rounded-full border border-ember/40 px-4 text-[13px] font-semibold text-ember tap-spring hover:bg-ember/[0.06]"
             >
-              {t("account.deleteTitle")}
+              {t("account.deleteStart")}
             </button>
           )}
         </section>

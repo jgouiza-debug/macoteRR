@@ -17,7 +17,6 @@ import { suggestTopUniversityPrograms } from "@/lib/matching/program-suggestions
 import { getGenericProgramProfile } from "@/lib/data/generic-program-profiles";
 import { DecProgramProfileCard } from "@/components/programs/DecProgramProfileCard";
 import {
-  CUTOFF_STATUS_LABEL_KEY,
   compareToCutoffRange,
   formatRangeYears,
   getCutoffRange,
@@ -173,6 +172,19 @@ function cutoffChip(
     // Neutral ink, not green/red: a coloured verdict beside a suggestion reads as an admission signal.
     cls: `border ${estimated ? "border-dashed" : ""} border-ink/15 bg-paper font-semibold tabular-nums text-ink/75`,
     figure: true,
+  };
+}
+
+/**
+ * A suggestion is not the place for a verdict: the card shows the published figure it would be
+ * compared against, nothing else. The comparison lives on the dashboard once a target is picked.
+ */
+function publishedFigure(program: UniversityProgram, t: Translate, f: Formatter): { label: string; stamped: boolean } {
+  const range = getCutoffRange(program.cutoffHistory);
+  if (!range) return { label: t("cutoff.unverified"), stamped: false };
+  return {
+    label: `${t(cutoffRangeLabelKey(range))} ${formatRangeYears(range)} : ${formatCutoffValues(range, (v) => f.score(v))}`,
+    stamped: true,
   };
 }
 
@@ -832,7 +844,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
             <ul aria-label={t("goal.catalogSuggestions")} className="flex list-none flex-col gap-2.5">
               {topSuggestions.map(({ item, match }) => {
                 const isSelected = targetIds.includes(item.id);
-                const chip = cutoffChip(item, profile.rScore, !isConfirmed, t, f);
+                const figure = publishedFigure(item, t, f);
                 return (
                   <li
                     key={item.id}
@@ -841,19 +853,10 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
                     }`}
                   >
                     <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                        <span className="text-[14px] font-semibold text-ink">{item.name}</span>
-                        <span className="rounded-full bg-ultramarine/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-ultramarine">
-                          {t("goal.suggested")}
-                        </span>
-                      </div>
+                      <span className="block text-[14px] font-semibold text-ink">{item.name}</span>
                       <span className="mt-0.5 block text-[11.5px] text-ink/50">{item.institution}</span>
-                      <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                        <span className={`rounded-full px-2 py-0.5 text-[10.5px] ${chip.cls}`}>
-                          {chip.label}
-                        </span>
-                      </div>
-                      {chip.figure && (
+                      <p className="mt-1.5 text-[11.5px] tabular-nums text-ink/70">{figure.label}</p>
+                      {figure.stamped && (
                         <SourceStamp date={item.lastVerifiedAt} href={item.sourceUrl} hostAsLabel className="mt-1" />
                       )}
                       <p className="mt-1 text-[11px] text-ink/55">

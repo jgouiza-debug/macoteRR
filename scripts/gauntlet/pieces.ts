@@ -199,7 +199,21 @@ export const PIECES: Piece[] = [
     id: "A8", title: "Notifications settings", group: "profile", primaryViewport: "phone",
     bar: "Aegis: Appearance settings: sections, values, one toggle",
     win: "toggles persist offline, the guest state explained, the push section only when the key exists",
-    ours: [{ name: "notifications", route: "/profile/notifications", seed: STATES.confirmed, fullPage: true }],
+    ours: [
+      {
+        name: "notifications",
+        route: "/profile/notifications",
+        // Two switches on, two off: a capture with every toggle off cannot show what "on" looks like.
+        seed: {
+          ...STATES.confirmed,
+          profile: {
+            ...STATES.confirmed.profile,
+            notificationPrefs: { deadlineReminders: true, cutoffUpdates: false, newBursaryMatches: true, gradeWindowReminders: false },
+          },
+        },
+        fullPage: true,
+      },
+    ],
     files: ["src/app/(app)/profile/notifications/page.tsx"],
   },
   {

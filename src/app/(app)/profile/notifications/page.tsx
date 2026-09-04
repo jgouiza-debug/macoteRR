@@ -101,6 +101,18 @@ export default function NotificationSettingsPage() {
           </div>
         </div>
 
+        {sync === "guest" && (
+          <div className="flex flex-col gap-3 rounded border border-ink/12 bg-paper p-4 shadow-card">
+            <p className="text-[12.5px] leading-relaxed text-ink/60">{t("sync.guestNotice")}</p>
+            <Link
+              href={withFunnelParams("/onboarding/account", { next: "/profile/notifications" })}
+              className="inline-flex min-h-[44px] w-fit items-center rounded-full border border-ink/15 px-4 text-[12.5px] font-semibold text-ultramarine tap-spring hover:bg-chalk"
+            >
+              {t("account.signInCta")}
+            </Link>
+          </div>
+        )}
+
         <section
           className="flex flex-col overflow-hidden rounded border border-ink/12 bg-paper shadow-card"
           aria-busy={!ready}
@@ -155,17 +167,6 @@ export default function NotificationSettingsPage() {
           })}
         </section>
 
-        {sync === "guest" && (
-          <div className="flex flex-col gap-3 rounded border border-ink/12 bg-paper p-4 shadow-card">
-            <p className="text-[12.5px] leading-relaxed text-ink/60">{t("sync.guestNotice")}</p>
-            <Link
-              href={withFunnelParams("/onboarding/account", { next: "/profile/notifications" })}
-              className="inline-flex min-h-[44px] w-fit items-center rounded-full border border-ink/15 px-4 text-[12.5px] font-semibold text-ultramarine tap-spring hover:bg-chalk"
-            >
-              {t("account.signInCta")}
-            </Link>
-          </div>
-        )}
       </div>
     </AppShell>
   );

@@ -81,7 +81,7 @@ export function TopNav({
               }`}
               aria-label={rScoreStatus === "estimated" ? t("dash.estimateTitle") : t("dash.confirmedTitle")}
             >
-              <span className="text-[11px] font-semibold uppercase tracking-wider opacity-70">{t("entry.label")}</span>{" "}
+              <span className="text-[11px] font-semibold uppercase tracking-wider opacity-70">{t("nav.yourScore")}</span>{" "}
               <ScoreValue value={rScore} status={rScoreStatus} size="inline" />
               {rScoreStatus === "estimated" && (
                 <span className="ml-1 text-[10px] font-semibold uppercase tracking-wider opacity-70">

@@ -116,7 +116,7 @@ export function ImportantDates({ targetProgramIds }: { targetProgramIds: string[
                 className="group flex min-h-[48px] min-w-[48px] items-center justify-center tap-spring"
               >
                 <span
-                  className={`inline-flex min-h-[40px] items-center gap-1 rounded-full px-3 text-[11.5px] font-semibold tabular-nums transition-colors ${
+                  className={`inline-flex min-h-[44px] items-center gap-1 rounded-full px-3 text-[11.5px] font-semibold tabular-nums transition-colors ${
                     active
                       ? "bg-ultramarine text-paper shadow-sm"
                       : "border border-ink/15 bg-paper text-ink/65 group-hover:bg-chalk"
