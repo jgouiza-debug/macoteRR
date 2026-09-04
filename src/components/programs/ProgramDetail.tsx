@@ -16,7 +16,11 @@ import {
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import type { CutoffFigureType, UniversityProgram } from "@/lib/sample-data";
-import { getCutoffRange, formatRangeYears } from "@/lib/rscore/cutoff-range";
+import {
+  getCutoffRange,
+  formatRangeYears,
+  cutoffRangeLabelKey,
+} from "@/lib/rscore/cutoff-range";
 import { R_SCORE_BAND_SOURCE } from "@/lib/rscore/bands";
 import type { TranslationKey } from "@/lib/i18n/dictionary";
 
@@ -97,7 +101,7 @@ export function ProgramDetail({ program: shipped }: { program: UniversityProgram
               <p className="mt-1 font-display text-[18px] font-bold leading-tight text-ink tabular-nums">
                 {range ? `${f.score(range.low)}–${f.score(range.high)}` : "—"}
                 <span className="ml-1.5 font-sans text-[11px] font-medium text-ink/50">
-                  {range ? `${t("cutoff.publishedRange")} ${formatRangeYears(range)}` : t("cutoff.unverified")}
+                  {range ? `${t(cutoffRangeLabelKey(range))} ${formatRangeYears(range)}` : t("cutoff.unverified")}
                 </span>
               </p>
             </div>

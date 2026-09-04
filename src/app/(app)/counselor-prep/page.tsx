@@ -42,6 +42,7 @@ import {
   formatRangeYears,
   CUTOFF_STATUS_LABEL_KEY,
   CUTOFF_STATUS_COLOR_CLASS,
+  type CutoffKind,
   type CutoffStatus,
 } from "@/lib/rscore/cutoff-range";
 import { evaluatePrerequisites, findDecCoreCourses } from "@/lib/matching/program-eligibility";
@@ -60,12 +61,21 @@ const STATUS_WORD_FR: Record<CutoffStatus, string> = {
   unknown: DICTIONARY.fr[CUTOFF_STATUS_LABEL_KEY.unknown],
 };
 
-/** The status word, lower-cased for mid-sentence use ("+0,20 au-dessus de la fourchette"). */
-const STATUS_PHRASE_FR: Record<CutoffStatus, string> = {
-  above: "au-dessus de la fourchette",
-  inside: "dans la fourchette publiée",
-  below: "sous la fourchette",
-  unknown: "pas de cote publiée vérifiée",
+/** The status phrase for mid-sentence use ("+0,20 au-dessus de la fourchette"), per kind:
+ *  a university that published only a minimum gets minimum wording, never range wording. */
+const STATUS_PHRASE_FR: Record<CutoffKind, Record<CutoffStatus, string>> = {
+  range: {
+    above: "au-dessus de la fourchette",
+    inside: "dans la fourchette publiée",
+    below: "sous la fourchette",
+    unknown: "pas de cote publiée vérifiée",
+  },
+  floor: {
+    above: "au-dessus du minimum publié",
+    inside: "au niveau du minimum publié",
+    below: "sous le minimum publié",
+    unknown: "pas de cote publiée vérifiée",
+  },
 };
 
 /**
@@ -163,11 +173,11 @@ export default function CounselorPrepPage() {
       program,
       status,
       word: STATUS_WORD_FR[status],
-      phrase: score === null ? "sans cote R à comparer" : STATUS_PHRASE_FR[status],
+      phrase: score === null ? "sans cote R à comparer" : STATUS_PHRASE_FR[range?.kind ?? "range"][status],
       marginLabel: margin === null ? null : formatSignedScore(margin, "fr", 2),
       color: CUTOFF_STATUS_COLOR_CLASS[status],
       rangeLabel: range
-        ? `${formatScore(range.low, "fr")}–${formatScore(range.high, "fr")} (${formatRangeYears(range)})`
+        ? `${range.kind === "floor" ? "min. " : ""}${formatScore(range.low, "fr")}–${formatScore(range.high, "fr")} (${formatRangeYears(range)})`
         : "—",
     };
   });
@@ -413,9 +423,10 @@ export default function CounselorPrepPage() {
                 </tbody>
               </table>
               <p className="text-[11px] leading-relaxed text-ink/50">
-                Écart : cote R moins la borne haute (au-dessus) ou la borne basse (en dessous) de
-                la fourchette publiée. Un écart décrit deux chiffres, pas une probabilité
-                d&rsquo;admission.
+                Écart : cote R moins la borne haute (au-dessus) ou basse (en dessous) de la
+                fourchette publiée ; « min. » signale une université qui ne publie qu&rsquo;un
+                minimum, et l&rsquo;écart se mesure alors à ce minimum, pas à la cote du dernier
+                admis. Un écart décrit deux chiffres, pas une probabilité d&rsquo;admission.
               </p>
             </>
           )}

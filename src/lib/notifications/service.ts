@@ -65,11 +65,12 @@ export function getNotificationDeepLink(params: {
  */
 function readCutoffRange(value: unknown): CutoffRange | null {
   if (typeof value !== "object" || value === null) return null;
-  const { low, high, years } = value as Record<string, unknown>;
+  const { low, high, years, kind } = value as Record<string, unknown>;
   if (typeof low !== "number" || !Number.isFinite(low)) return null;
   if (typeof high !== "number" || !Number.isFinite(high)) return null;
   if (!Array.isArray(years) || !years.every((year) => typeof year === "number")) return null;
-  return { low, high, years };
+  // Payloads written before the kind existed described admitted-score ranges.
+  return { low, high, years, kind: kind === "floor" ? "floor" : "range" };
 }
 
 /**

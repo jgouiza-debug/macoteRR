@@ -16,6 +16,8 @@ import {
   formatRangeYears,
   CUTOFF_STATUS_LABEL_KEY,
   CUTOFF_STATUS_COLOR_CLASS,
+  cutoffStatusLabelKey,
+  cutoffRangeLabelKey,
 } from "@/lib/rscore/cutoff-range";
 import {
   rankProgramsForStudent,
@@ -152,7 +154,7 @@ export function ResultsView({
               </div>
             </div>
             <div className="text-right">
-              <p className="text-[11px] text-ink/50">{t("cutoff.publishedRange")}</p>
+              <p className="text-[11px] text-ink/50">{hero?.range ? t(cutoffRangeLabelKey(hero.range)) : t("cutoff.publishedRange")}</p>
               <p className="font-display text-[18px] font-bold leading-tight text-ink tabular-nums">
                 {hero?.range ? `${f.score(hero.range.low)}–${f.score(hero.range.high)}` : "—"}
               </p>
@@ -204,12 +206,12 @@ export function ResultsView({
                     <p className="mt-0.5 text-[11.5px] text-ink/50">
                       {program.institution} ·{" "}
                       {range
-                        ? `${t("cutoff.publishedRange")} ${formatRangeYears(range)} : ${f.score(range.low)}–${f.score(range.high)}`
+                        ? `${t(cutoffRangeLabelKey(range))} ${formatRangeYears(range)} : ${f.score(range.low)}–${f.score(range.high)}`
                         : t("cutoff.unverified")}
                     </p>
                   </div>
                   <span className={`text-[12px] font-bold uppercase tracking-wide ${CUTOFF_STATUS_COLOR_CLASS[cutoffStatus]}`}>
-                    {t(CUTOFF_STATUS_LABEL_KEY[cutoffStatus])}
+                    {t(cutoffStatusLabelKey(cutoffStatus, range))}
                   </span>
                 </div>
                 <AxisRow score={score} range={range} />

@@ -20,6 +20,8 @@ import {
   CUTOFF_STATUS_ORDER,
   type CutoffRange,
   type CutoffStatus,
+  cutoffStatusLabelKey,
+  cutoffRangeLabelKey,
 } from "@/lib/rscore/cutoff-range";
 import { useHydrated } from "@/lib/hooks/useHydrated";
 import { useStudentProfile } from "@/lib/profile/store";
@@ -78,7 +80,7 @@ const ProgramRow = memo(function ProgramRow({
           {/* GUARDRAIL #5: a null range is "not yet verified", never "open admission". */}
           <span className="min-w-0 truncate tabular-nums">
             {range
-              ? `${t("cutoff.publishedRange")} ${formatRangeYears(range)} : ${f.score(range.low)}–${f.score(range.high)}`
+              ? `${t(cutoffRangeLabelKey(range))} ${formatRangeYears(range)} : ${f.score(range.low)}–${f.score(range.high)}`
               : t("cutoff.unverified")}
           </span>
         </div>
@@ -96,7 +98,7 @@ const ProgramRow = memo(function ProgramRow({
                 <ScoreValue value={score} status={rScoreStatus} size="inline" />
               </span>
               <span className={`shrink-0 font-semibold ${CUTOFF_STATUS_COLOR_CLASS[cutoffStatus]}`}>
-                {t(CUTOFF_STATUS_LABEL_KEY[cutoffStatus])}
+                {t(cutoffStatusLabelKey(cutoffStatus, range))}
               </span>
             </>
           ) : (
