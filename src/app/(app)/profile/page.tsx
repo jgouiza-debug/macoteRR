@@ -160,9 +160,9 @@ export default function ProfilePage() {
         </div>
 
         <div className="overflow-hidden rounded-xl border border-ink/12 bg-paper shadow-card">
-          <div className="flex items-center justify-between border-b border-ink/10 bg-chalk/30 px-4">
+          <div className="flex flex-wrap items-center justify-start gap-x-3 gap-y-1 border-b border-ink/10 bg-chalk/30 px-4 py-2">
             <span className="text-[12px] font-semibold text-ink/60">{t("prof.pathwayTitle")}</span>
-            <Link href={EDIT_PATHWAY_HREF} className={editLinkClass}>
+            <Link href={EDIT_PATHWAY_HREF} className={`${editLinkClass} whitespace-nowrap`}>
               <Edit3 className="h-3 w-3" aria-hidden="true" />
               <span>{t("prof.editPathwayShort")}</span>
             </Link>

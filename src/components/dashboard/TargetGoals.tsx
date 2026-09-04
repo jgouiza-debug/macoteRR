@@ -151,7 +151,7 @@ export function TargetGoals({
                 key={program.id}
                 className="flex flex-col gap-2 border-t border-ink/10 pt-4 first:border-t-0 first:pt-0"
               >
-                <div className="flex items-start gap-1">
+                <div className="flex items-center gap-1">
                   <Link
                     href={`/programs/${program.id}`}
                     className="-ml-2.5 flex min-w-0 flex-1 flex-col gap-2 rounded-lg p-2.5 transition-[transform,background-color] duration-150 hover:bg-chalk/40 active:bg-chalk/70 active:scale-[0.99]"

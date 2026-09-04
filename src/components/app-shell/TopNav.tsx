@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { Bell, ChevronLeft } from "lucide-react";
 import { LogoMark } from "@/components/ui/Logo";
 import { LangToggle } from "@/components/ui/LangToggle";
-import { ScoreValue } from "@/components/rscore/ScoreValue";
 import { NotificationInboxSheet } from "@/components/notifications/NotificationInboxSheet";
 import { useInbox } from "@/lib/notifications/inbox";
 import { NAV_ITEMS } from "./nav-items";
@@ -14,7 +13,6 @@ import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 export function TopNav({
   rScore,
-  rScoreStatus = null,
   currentSession = null,
   backHref,
 }: {
@@ -44,7 +42,7 @@ export function TopNav({
         ) : (
           <Link href="/dashboard" className="flex items-center gap-2">
             <LogoMark size={18} />
-            <span className={`font-display text-[15px] font-bold tracking-tight text-ultramarine ${hasScore ? "hidden sm:inline" : ""}`}>
+            <span className="font-display text-[15px] font-bold tracking-tight text-ultramarine">
               MaCote
             </span>
           </Link>
@@ -70,26 +68,9 @@ export function TopNav({
         </nav>
 
         <div className="flex items-center gap-3">
-          {/* The score chip only exists when there is a score. "R : ??" told every first-session
-              student, on every page, that something was missing — it was the app that had
-              nothing to say. A first session gets its own honest chip instead. */}
-          {hasScore ? (
-            <Link
-              href="/dashboard"
-              className={`inline-flex min-h-[40px] items-center gap-0.5 whitespace-nowrap rounded-full border border-ink/15 bg-paper px-3 text-[13.5px] font-extrabold tracking-tight ${
-                rScoreStatus === "estimated" ? "text-moss" : "text-ultramarine"
-              }`}
-              aria-label={rScoreStatus === "estimated" ? t("dash.estimateTitle") : t("dash.confirmedTitle")}
-            >
-              <span className="text-[11px] font-semibold uppercase tracking-wider opacity-70">{t("nav.yourScore")}</span>{" "}
-              <ScoreValue value={rScore} status={rScoreStatus} size="inline" />
-              {rScoreStatus === "estimated" && (
-                <span className="ml-1 text-[10px] font-semibold uppercase tracking-wider opacity-70">
-                  {t("dash.estimated")}
-                </span>
-              )}
-            </Link>
-          ) : currentSession === 1 ? (
+          {/* The score lives on the dashboard, not in the top bar. First-session students with no
+              score yet still get one honest chip, so an empty session never reads as a missing figure. */}
+          {!hasScore && currentSession === 1 ? (
             <span className="rounded-full bg-ink/8 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-ink/60">
               {t("nav.firstSession")}
             </span>
