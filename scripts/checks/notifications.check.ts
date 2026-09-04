@@ -69,6 +69,7 @@ const PROFILE: StudentProfile = {
   currentSession: 3,
   rScore: 30,
   rScoreStatus: "confirmed",
+      rScoreUpdatedAt: null,
   selfTags: ["research", "leadership"],
   targetUniversityProgramIds: [TARGET.id],
   interestIds: [],

@@ -330,6 +330,8 @@ export async function pullProfileFromServer(
       currentSession: p.current_session ?? latestConfirmation?.session ?? null,
       rScore,
       rScoreStatus: rScore === null ? null : status,
+      // Not a server column: the reconcile carries the local date over when the number matches.
+      rScoreUpdatedAt: null,
       selfTags: (p.self_tags as SelfTagId[] | null) ?? [],
       targetUniversityProgramIds: targets,
       interestIds: (p.interest_ids as InterestId[] | null | undefined) ?? fallback.interestIds,
