@@ -96,6 +96,8 @@ export default function BursariesPage() {
         return t("burs.rOpen");
       case "tag":
         return t("burs.rTag").replace("{tag}", reason.tagId ? tagLabel(reason.tagId, locale) : "");
+      case "session":
+        return t("burs.rSession").replace("{n}", String(reason.session ?? ""));
       case "rscore_gap": {
         // The minimum the gap is measured against, so the chip is a checkable figure.
         const min = profile.rScore !== null && reason.gap !== undefined ? profile.rScore + reason.gap : null;

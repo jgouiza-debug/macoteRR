@@ -42,7 +42,8 @@ export type MatchReasonKind =
   | "tag"
   | "target"
   | "open"
-  | "rscore_gap";
+  | "rscore_gap"
+  | "session";
 
 export type MatchReason = {
   kind: MatchReasonKind;
@@ -50,6 +51,8 @@ export type MatchReason = {
   tagId?: SelfTagId;
   /** Set for `rscore_gap` so the UI can say how far off the student is. */
   gap?: number;
+  /** Set for `session`: the first session from which the bursary is open. */
+  session?: number;
 };
 
 export type BursaryMatch<T extends BursaryCriteria> = {
@@ -90,6 +93,9 @@ function evaluate(bursary: BursaryCriteria, student: StudentContext): Evaluation
     if (student.currentSession === null || student.currentSession < bursary.minSession) {
       return null;
     }
+    // A passed gate is a reason too: a bursary whose only criterion is the session used to
+    // land in "matched" with no chip saying why.
+    reasons.push({ kind: "session", session: bursary.minSession });
   }
 
   // 3. Target-program match — soft. A student may simply not have added the target yet,
