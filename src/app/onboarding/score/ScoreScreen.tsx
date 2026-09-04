@@ -93,8 +93,8 @@ export function ScoreScreen() {
       <ScreenHeading title={t("bif.title")} body={t("bif.body")} />
 
       {/* Session selector */}
-      <div className="mb-5 flex flex-col gap-2 rounded-xl border border-ink/10 bg-paper p-3.5 shadow-sm">
-        <p id={SESSION_PROMPT_ID} className="text-[12px] font-semibold text-ink/70">
+      <div className="mb-5 flex flex-col gap-2">
+        <p id={SESSION_PROMPT_ID} className="text-[12px] font-semibold uppercase tracking-wider text-ink/50">
           {t("bif.sessionPrompt")}
         </p>
         {ready ? (
@@ -115,10 +115,10 @@ export function ScoreScreen() {
                   tabIndex={isSelected ? 0 : -1}
                   data-session={s.id}
                   onClick={() => setTapped(s.id)}
-                  className={`flex min-h-[48px] items-center justify-center rounded-lg border text-[12px] font-semibold transition-all active:scale-[0.97] ${
+                  className={`flex min-h-[44px] items-center justify-center rounded-full border text-[12px] font-semibold transition-all active:scale-[0.97] ${
                     isSelected
                       ? "border-ultramarine bg-ultramarine text-paper shadow-sm"
-                      : "border-ink/15 bg-chalk/40 text-ink/70 hover:border-ink/30"
+                      : "border-ink/15 bg-paper text-ink/70 hover:border-ink/30"
                   }`}
                 >
                   {chipLabel(s.id)}

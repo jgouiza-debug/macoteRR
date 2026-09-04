@@ -60,23 +60,7 @@ export function ConfirmScoreScreen() {
   }
 
   return (
-    <ScreenShell
-      backHref={hrefFor("/onboarding/score")}
-      footer={
-        <div className="flex flex-col items-center gap-2.5">
-          <button
-            type="submit"
-            form={FORM_ID}
-            disabled={!ready}
-            aria-disabled={!isValid}
-            className="flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40"
-          >
-            {t("entry.cta")}
-          </button>
-          <span className="text-center text-[12px] text-ink/50">{t("entry.noAccount")}</span>
-        </div>
-      }
-    >
+    <ScreenShell backHref={hrefFor("/onboarding/score")}>
       <form id={FORM_ID} onSubmit={handleSubmit} noValidate>
         <h1 className="mb-6 pt-3 font-display text-[27px] font-bold leading-[1.15] tracking-tight text-ink">
           {t("entry.title")}
@@ -109,13 +93,28 @@ export function ConfirmScoreScreen() {
           />
         </label>
 
-        <p id="cote-r-help" className="mt-3 text-[13px] leading-relaxed text-ink/55">
+        <p id="cote-r-help" className="mt-3 min-h-[40px] text-[13px] leading-relaxed text-ink/55">
           {showError ? (
             <span className="font-medium text-ember">{t("entry.invalid")}</span>
           ) : (
             t("entry.help")
           )}
         </p>
+
+        {/* The action lives with the field: a sticky footer left ~400px of dead air between
+            the two on a phone. */}
+        <div className="mt-5 flex flex-col items-center gap-2.5">
+          <button
+            type="submit"
+            form={FORM_ID}
+            disabled={!ready}
+            aria-disabled={!isValid}
+            className="flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40"
+          >
+            {t("entry.cta")}
+          </button>
+          <span className="text-center text-[12px] text-ink/50">{t("entry.noAccount")}</span>
+        </div>
       </form>
     </ScreenShell>
   );

@@ -645,14 +645,11 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
       <ScreenShell
         backHref={hrefFor("/onboarding/cegep")}
         footer={
-          <button
-            type="button"
-            onClick={continueFromProgram}
-            disabled={!cegepProgramId}
-            className={PRIMARY_BUTTON}
-          >
-            {t("common.continue")}
-          </button>
+          cegepProgramId ? (
+            <button type="button" onClick={continueFromProgram} className={PRIMARY_BUTTON}>
+              {t("common.continue")}
+            </button>
+          ) : undefined
         }
       >
         {heading(
@@ -709,8 +706,10 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
                           {p.programCode}
                         </span>
                       </span>
-                      {selected && (
+                      {selected ? (
                         <Check aria-hidden="true" className="h-5 w-5 flex-shrink-0 text-ultramarine" />
+                      ) : (
+                        <ChevronRight aria-hidden="true" className="h-5 w-5 flex-shrink-0 text-ink/35" />
                       )}
                     </button>
                   );

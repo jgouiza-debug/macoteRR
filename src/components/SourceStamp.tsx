@@ -55,9 +55,9 @@ export function SourceStamp({
             href={href}
             target="_blank"
             rel="noreferrer noopener"
-            className="-my-[11px] inline-flex min-h-[44px] items-center py-[11px] align-middle"
+            className="-my-[6px] inline-flex min-h-[44px] items-center py-[6px] align-middle"
           >
-            <span className="rounded-md border border-ink/15 px-1.5 py-0.5 text-[11px] leading-4 text-ink/60 underline-offset-2 hover:border-ink/40 hover:text-ink"
+            <span className="inline-flex min-h-[32px] items-center rounded-md border border-ink/15 px-2 text-[11.5px] leading-4 text-ink/60 hover:border-ink/40 hover:text-ink"
           >
             {text}
             </span>

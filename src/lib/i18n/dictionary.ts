@@ -427,6 +427,7 @@ export const DICTIONARY = {
     "starting.wipeBody": "Tu as déjà une cote R enregistrée. Continuer ici l'efface et remet ta session à la 1ère. Tu pourras la réentrer plus tard.",
     "starting.wipeConfirm": "Effacer et continuer",
     "starting.wipeTitle": "Effacer ta cote R?",
+    "starting.wipeNote": "Si une cote R est déjà enregistrée, on te demande confirmation avant de l'effacer.",
 
     // ---- added 2026-09-03 (scripts/i18n/apply-keys.ts) ----
     "mkt.legalDraftBanner": "Brouillon — en révision. Ce document n'est pas un avis juridique et n'a pas encore été révisé par un ou une avocat·e. Voir LEGAL-REVIEW-NOTES.md.",
@@ -889,6 +890,7 @@ export const DICTIONARY = {
     "starting.wipeBody": "You already have an R-score saved. Continuing here erases it and resets your term to the 1st. You can enter it again later.",
     "starting.wipeConfirm": "Erase and continue",
     "starting.wipeTitle": "Erase your R-score?",
+    "starting.wipeNote": "If an R score is already on file, you are asked to confirm before it is cleared.",
 
     // ---- added 2026-09-03 (scripts/i18n/apply-keys.ts) ----
     "mkt.legalDraftBanner": "Draft — under review. This document is not legal advice and has not yet been reviewed by a lawyer. See LEGAL-REVIEW-NOTES.md.",

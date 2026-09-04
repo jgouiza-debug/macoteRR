@@ -137,10 +137,10 @@ export default function BursariesPage() {
           <div className="flex flex-col gap-3 rounded-xl border border-ink/12 bg-paper p-3.5">
             <p className="text-[12.5px] leading-relaxed text-ink/65">{t("burs.firstSessionNote")}</p>
             <Link
-              href="/profile"
+              href="/programs"
               className="inline-flex min-h-[44px] w-fit items-center rounded-full border border-ink/15 px-4 text-[12.5px] font-semibold text-ultramarine tap-spring hover:bg-chalk"
             >
-              {t("burs.editTags")}
+              {t("dash.addGoal")}
             </Link>
           </div>
         )}

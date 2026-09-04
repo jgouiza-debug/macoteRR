@@ -12,7 +12,7 @@ export function BottomNav() {
   return (
     // A 48px row (the iOS tab-bar height, and the product's minimum target) plus half the
     // home-indicator inset: the full inset hung ~34px of empty shell under the row.
-    <nav className="fixed bottom-0 z-50 w-full border-t border-ink/10 bg-shell pb-[calc(env(safe-area-inset-bottom)*0.5)] md:hidden">
+    <nav className="fixed bottom-0 z-50 w-full border-t border-ink/10 bg-shell pb-[max(env(safe-area-inset-bottom)*0.5,6px)] md:hidden">
       <div className="flex h-12 items-center justify-around px-2">
         {NAV_ITEMS.map((item) => {
           const active = pathname.startsWith(item.href);

@@ -143,6 +143,7 @@ export function StartingScreen() {
         <div className="flex flex-col gap-2 text-[13.5px] leading-relaxed text-ink/75">
           <p>{t("starting.body1")}</p>
           <p>{t("starting.bursaryHighlightSub")}</p>
+          <p className="text-[12px] text-ink/50">{t("starting.wipeNote")}</p>
         </div>
       </div>
 
