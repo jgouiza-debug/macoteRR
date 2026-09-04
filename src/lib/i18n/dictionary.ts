@@ -37,6 +37,7 @@ export const DICTIONARY = {
     "goal.decSpecial": "Cheminement particulier",
     "goal.programBodyAt": "Seuls les programmes offerts à {cegep} sont listés.",
     "goal.programThenProfile": "Si ton programme a des profils, tu le précises à l'étape suivante.",
+    "goal.aboutDec": "À propos de ce DEC (profils, domaines, exemples de carrières)",
 
     "warn.estTitle": "Une estimation, pas ta cote",
     "warn.estBody":
@@ -201,7 +202,7 @@ export const DICTIONARY = {
     "goal.decPreUniversity": "Préuniversitaire",
     "goal.decTechnical": "Technique",
     "goal.catalogSuggestions": "Programmes universitaires liés à ce DEC",
-    "goal.matchedOn": "lien :",
+    "goal.matchedOn": "Suggéré à cause du mot :",
     "goal.catalogSuggestionsCaveat":
       "Suggestions basées sur les mots des titres de programmes, pas une évaluation d'admissibilité. Vérifie chaque programme sur le site de l'université.",
 
@@ -368,6 +369,7 @@ export const DICTIONARY = {
     "burs.rTag": "Étiquette : {tag}",
     "dash.datesCount": "{n} dates",
     "dash.datesCountOne": "{n} date",
+    "dash.showMoreDates": "Afficher les {n} autres dates",
     "dash.editScore": "Modifier ma cote R",
     "dash.enterScore": "Entrer ma cote R",
     "dash.filter3Months": "3 mois",
@@ -500,6 +502,7 @@ export const DICTIONARY = {
     "goal.decSpecial": "Transition pathway",
     "goal.programBodyAt": "Only programs offered at {cegep} are listed.",
     "goal.programThenProfile": "If your programme has profiles, you pick one at the next step.",
+    "goal.aboutDec": "About this DEC (profiles, fields, career examples)",
 
     "warn.estTitle": "An estimate, not your score",
     "warn.estBody":
@@ -664,7 +667,7 @@ export const DICTIONARY = {
     "goal.decPreUniversity": "Pre-university",
     "goal.decTechnical": "Technical",
     "goal.catalogSuggestions": "University programs related to this DEC",
-    "goal.matchedOn": "matched on:",
+    "goal.matchedOn": "Suggested because of the word:",
     "goal.catalogSuggestionsCaveat":
       "Suggestions based on shared words in program titles, not an eligibility assessment. Verify each program on the university's site.",
 
@@ -831,6 +834,7 @@ export const DICTIONARY = {
     "burs.rTag": "Tag: {tag}",
     "dash.datesCount": "{n} dates",
     "dash.datesCountOne": "{n} date",
+    "dash.showMoreDates": "Show the {n} other dates",
     "dash.editScore": "Edit my R-score",
     "dash.enterScore": "Enter my R-score",
     "dash.filter3Months": "Next 3 months",

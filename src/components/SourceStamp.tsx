@@ -29,7 +29,7 @@ export function SourceStamp({
   label,
   className = "",
   locale,
-  hostAsLabel = false,
+  hostAsLabel = true,
 }: {
   date: string;
   href?: string;

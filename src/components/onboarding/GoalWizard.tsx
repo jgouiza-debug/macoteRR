@@ -17,7 +17,6 @@ import { suggestTopUniversityPrograms } from "@/lib/matching/program-suggestions
 import { getGenericProgramProfile } from "@/lib/data/generic-program-profiles";
 import { DecProgramProfileCard } from "@/components/programs/DecProgramProfileCard";
 import {
-  CUTOFF_STATUS_COLOR_CLASS,
   CUTOFF_STATUS_LABEL_KEY,
   compareToCutoffRange,
   formatRangeYears,
@@ -168,7 +167,8 @@ function cutoffChip(
   const status = compareToCutoffRange(score, range);
   return {
     label: `${estimated ? "≈ " : ""}${t(CUTOFF_STATUS_LABEL_KEY[status])} · ${t("cutoff.publishedRange").toLowerCase()} ${formatRangeYears(range)} : ${f.score(range.low)}–${f.score(range.high)}`,
-    cls: `border ${estimated ? "border-dashed" : ""} border-ink/15 bg-paper font-semibold tabular-nums ${CUTOFF_STATUS_COLOR_CLASS[status]}`,
+    // Neutral ink, not green/red: a coloured verdict beside a suggestion reads as an admission signal.
+    cls: `border ${estimated ? "border-dashed" : ""} border-ink/15 bg-paper font-semibold tabular-nums text-ink/75`,
     figure: true,
   };
 }
@@ -893,12 +893,18 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
         {/* The DEC reference card comes after the choices and the suggestions: it is background
             reading, and it used to push the programme picks four screens down. */}
         {selectedDec?.programCode && genericProfile && (
-          <div className="mt-6">
-            <DecProgramProfileCard
-              programCode={selectedDec.programCode}
-              cegepShortCode={profile.cegepId}
-            />
-          </div>
+          <details className="mt-6 rounded-xl border border-ink/12 bg-paper">
+            <summary className="flex min-h-[48px] cursor-pointer list-none items-center justify-between gap-3 px-4 text-[13.5px] font-semibold text-ink">
+              {t("goal.aboutDec")}
+              <ChevronRight aria-hidden="true" className="h-5 w-5 text-ink/40" />
+            </summary>
+            <div className="border-t border-ink/10 p-3">
+              <DecProgramProfileCard
+                programCode={selectedDec.programCode}
+                cegepShortCode={profile.cegepId}
+              />
+            </div>
+          </details>
         )}
 
         {/* Suggestions added here are only saved by continuing; skipping saves none, on purpose. */}

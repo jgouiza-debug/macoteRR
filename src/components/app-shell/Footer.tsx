@@ -12,8 +12,8 @@ export function Footer({ stackAboveBottomNav = false }: { stackAboveBottomNav?: 
         stackAboveBottomNav ? "mb-16 md:mb-0" : ""
       }`}
     >
-      <p className="text-[11px] leading-relaxed text-ink/50">{t("dash.unofficial")}</p>
-      <div className="mt-3 flex justify-center gap-5 text-[11px] font-medium text-ink/50">
+      <p className="mx-auto max-w-[62ch] text-[12px] leading-relaxed text-ink/65">{t("dash.unofficial")}</p>
+      <div className="mt-3 flex justify-center gap-5 text-[12px] font-medium text-ink/60">
         <Link href="/mentions-legales" className="underline-offset-2 hover:underline">
           {t("dash.legal")}
         </Link>

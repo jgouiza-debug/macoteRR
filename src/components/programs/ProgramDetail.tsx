@@ -17,6 +17,7 @@ import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import type { CutoffFigureType, UniversityProgram } from "@/lib/sample-data";
 import { getCutoffRange, formatRangeYears } from "@/lib/rscore/cutoff-range";
+import { R_SCORE_BAND_SOURCE } from "@/lib/rscore/bands";
 import type { TranslationKey } from "@/lib/i18n/dictionary";
 
 const FIGURE_TYPE_KEY: Record<CutoffFigureType, TranslationKey> = {
@@ -137,11 +138,13 @@ export function ProgramDetail({ program: shipped }: { program: UniversityProgram
               rangeLabel={rangeLabel}
             />
           )}
-          <SourceStamp
-            date={program.lastVerifiedAt}
-            href={program.sourceUrl}
-            className="mt-2"
-          />
+          {score !== null && (
+            <p className="mt-2 text-[11px] leading-relaxed text-ink/50">{t("results.curveNote")}</p>
+          )}
+          <SourceStamp date={program.lastVerifiedAt} href={program.sourceUrl} className="mt-2" />
+          {score !== null && (
+            <SourceStamp date={R_SCORE_BAND_SOURCE.lastVerifiedAt} href={R_SCORE_BAND_SOURCE.url} className="mt-1" />
+          )}
         </section>
 
         {program.courseFloor && (

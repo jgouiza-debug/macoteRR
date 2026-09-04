@@ -12,6 +12,8 @@ import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 /** Highlight a deadline in ember only when it's genuinely imminent. */
 const URGENT_WITHIN_DAYS = 14;
+/** The dashboard shows the next few; sixteen dates buried the targets block above them. */
+const VISIBLE_DATES = 5;
 
 const DATE_FILTERS = [
   { id: "all", labelKey: "dash.filterAll", maxDays: null },
@@ -36,6 +38,7 @@ export function ImportantDates({ targetProgramIds }: { targetProgramIds: string[
   const f = useFormat();
   const { deadlines } = useReferenceCatalog();
   const [dateFilter, setDateFilter] = useState<DateFilter>("all");
+  const [expanded, setExpanded] = useState(false);
 
   // Upcoming only, nearest first: the catalogue groups dates by theme, and a list that opened
   // on 13 novembre while 15 octobre sat seventh made the nearest deadline the last thing read.
@@ -129,7 +132,7 @@ export function ImportantDates({ targetProgramIds }: { targetProgramIds: string[
         />
       ) : (
         <ul className="relative flex flex-col gap-5 before:absolute before:bottom-2 before:left-[5px] before:top-2 before:w-px before:bg-ink/12">
-          {filteredDeadlines.map((d) => {
+          {(expanded ? filteredDeadlines : filteredDeadlines.slice(0, VISIBLE_DATES)).map((d) => {
             const days = daysUntil(d.dateIso);
             const isSoon = days !== null && days >= 0 && days <= URGENT_WITHIN_DAYS;
             const relative =
@@ -164,6 +167,15 @@ export function ImportantDates({ targetProgramIds }: { targetProgramIds: string[
             );
           })}
         </ul>
+      )}
+      {!expanded && filteredDeadlines.length > VISIBLE_DATES && (
+        <button
+          type="button"
+          onClick={() => setExpanded(true)}
+          className="inline-flex min-h-[48px] w-fit items-center rounded-full border border-ink/15 px-4 text-[12.5px] font-semibold text-ultramarine tap-spring hover:bg-chalk"
+        >
+          {t("dash.showMoreDates").replace("{n}", String(filteredDeadlines.length - VISIBLE_DATES))}
+        </button>
       )}
     </section>
   );
