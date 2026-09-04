@@ -4,30 +4,38 @@
  * FRENCH-ONLY BODY, ON PURPOSE.
  *
  * This is the one page a student prints and hands to a Quebec guidance counsellor. The sheet
- * itself (headings, field labels, the score caption, the risk sentences, the footer
+ * itself (headings, field labels, the score caption, the gap sentences, the footer
  * disclaimer, fr-CA number formatting) is deliberately written as French literals rather than
  * routed through t(): its reader is the counsellor, not the student, and the counsellor's
  * working language is French whatever the student picked in the app. Only the chrome that
  * exists on screen and never reaches paper — the back link, the print button, the bottom nav,
- * the empty state — follows the UI locale through t(). The cutoff status labels go through
- * the shared CUTOFF_STATUS_LABEL_KEY vocabulary so this sheet can never drift from the app's
- * "Au-dessus / Dans la fourchette / En dessous / Pas encore vérifié" wording.
+ * the empty state — follows the UI locale through t(). The cutoff status words come from the
+ * shared CUTOFF_STATUS_LABEL_KEY vocabulary (read in French) so this sheet can never drift
+ * from the app's "Au-dessus / Dans la fourchette / En dessous / Pas encore vérifié" wording.
+ *
+ * What the paper must do (the gauntlet's checklist for this piece): fit one Letter page, read
+ * in greyscale (a word or a signed number carries every status, never a colour or a tick), and
+ * stamp every figure with where it came from and when it was verified. It reports differences
+ * between the student's cote R and published ranges; it never issues a verdict on admission.
  */
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, TriangleAlert, CheckCircle2, Printer } from "lucide-react";
+import { ChevronLeft, Printer, TriangleAlert } from "lucide-react";
 import { SourceStamp } from "@/components/SourceStamp";
 import { ScoreValue } from "@/components/rscore/ScoreValue";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { BottomNav } from "@/components/app-shell/BottomNav";
 import { useReferenceCatalog } from "@/lib/data/reference-store";
+import { getDeadlinesForStudent } from "@/lib/data/important-dates";
 import { resolveCegepName, resolveDecName } from "@/lib/data/resolve-names";
 import { useStudentProfile } from "@/lib/profile/store";
 import { useHydrated } from "@/lib/hooks/useHydrated";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
-import { formatScore } from "@/lib/format";
+import { DICTIONARY } from "@/lib/i18n/dictionary";
+import { formatDate, formatScore, formatSignedScore } from "@/lib/format";
+import { daysUntil } from "@/lib/dates";
 import {
   getCutoffRange,
   compareToCutoffRange,
@@ -41,29 +49,44 @@ import { evaluatePrerequisites, findDecCoreCourses } from "@/lib/matching/progra
 /** Same clearance AppShell gives its <main> so the fixed BottomNav never covers the footer. */
 const BOTTOM_NAV_CLEARANCE = "pb-[calc(3.125rem+env(safe-area-inset-bottom)*0.5)] md:pb-0 print:pb-0";
 
+/** How many upcoming dates the sheet lists: enough for a meeting, few enough for one page. */
+const MAX_DATES = 6;
+
+/** The four status words, in French whatever the UI locale (the sheet is paper, in French). */
+const STATUS_WORD_FR: Record<CutoffStatus, string> = {
+  above: DICTIONARY.fr[CUTOFF_STATUS_LABEL_KEY.above],
+  inside: DICTIONARY.fr[CUTOFF_STATUS_LABEL_KEY.inside],
+  below: DICTIONARY.fr[CUTOFF_STATUS_LABEL_KEY.below],
+  unknown: DICTIONARY.fr[CUTOFF_STATUS_LABEL_KEY.unknown],
+};
+
+/** The status word, lower-cased for mid-sentence use ("+0,20 au-dessus de la fourchette"). */
+const STATUS_PHRASE_FR: Record<CutoffStatus, string> = {
+  above: "au-dessus de la fourchette",
+  inside: "dans la fourchette publiée",
+  below: "sous la fourchette",
+  unknown: "pas de cote publiée vérifiée",
+};
+
 /**
- * The one page a student PRINTS and hands to a guidance counsellor. It used to render
- * STUDENT_SAMPLE throughout — a fabricated cégep, program, session, score, confirmed-session
- * history and target list — so every student handed their counsellor the same fictional
- * person. Everything here now comes from the student's own profile, and anything the product
- * does not actually know is stated as unknown rather than filled in.
+ * The one page a student PRINTS and hands to a guidance counsellor. Everything here comes from
+ * the student's own profile and the verified catalogue; anything the product does not actually
+ * know is stated as unknown rather than filled in.
  */
 export default function CounselorPrepPage() {
   const router = useRouter();
   const { t } = useLocale();
   const { profile, sync } = useStudentProfile();
   const hydrated = useHydrated();
-  const { sessions, universityPrograms } = useReferenceCatalog();
+  const { sessions, universityPrograms, deadlines } = useReferenceCatalog();
 
   // Nothing below may be decided on the hydration snapshot (an empty profile) or while a
   // signed-in student's first reconcile is still pulling their real profile onto this device.
   const settled = hydrated && sync !== "syncing";
 
-  // Gated on the cégep, NOT on the score. Since 0ea3aa4 a first-session student deliberately
-  // has no cote R — the ministry has not computed one yet — so gating here on `rScore === null`
-  // threw exactly the cohort this page is most useful to straight back into onboarding, and
-  // "Préparer ma rencontre" did nothing but eject them from the app. A missing score is
-  // something the document reports as unknown, which is what the rest of it already does.
+  // Gated on the cégep, NOT on the score: a first-session student deliberately has no cote R
+  // (the ministry has not computed one yet), and this page is most useful to exactly them. A
+  // missing score is something the document reports as unknown.
   useEffect(() => {
     if (settled && profile.cegepId === null) router.replace("/onboarding");
   }, [settled, profile.cegepId, router]);
@@ -118,24 +141,46 @@ export default function CounselorPrepPage() {
     profile.targetUniversityProgramIds.includes(p.id),
   );
   const dec = findDecCoreCourses(profile.cegepProgramId);
+  const today = new Date();
 
-  // Risks are DERIVED, never asserted. `UniversityProgram.prerequisites[].status` is a
-  // hard-coded student-relative value in sample-data that is not tied to any real transcript
-  // — using it would print "prerequisite not completed" about a student nobody has assessed.
-  // program-eligibility deliberately ignores that field, and so does this page: a flag is
-  // raised only when a prerequisite resolves to a course absent from a VERIFIED DEC core,
-  // which is a statement about two catalogues, phrased as such.
-  //
-  // Only `prereq_not_in_core` is a talking point. `dec_only` (the programme asks for the DEC
-  // itself, no specific course) and `prereq_outside_catalogue` (an accepted alternative this
-  // product cannot see) are NOT gaps and must never be printed as one.
-  const risks = targets.flatMap((program) => {
+  // Derived once: the phone renders these as cards and everything wider renders them as table
+  // rows, and the two must never disagree about a student's standing. The "écart" is plain
+  // arithmetic against the published range (score minus the high bound when above it, minus
+  // the low bound when below it); it is printed as a signed number so a counsellor reads the
+  // difference instead of computing it, and so greyscale paper still carries it.
+  const targetRows = targets.map((program) => {
+    const range = getCutoffRange(program.cutoffHistory);
+    const status: CutoffStatus = score === null ? "unknown" : compareToCutoffRange(score, range);
+    const margin =
+      score !== null && range && status === "above"
+        ? score - range.high
+        : score !== null && range && status === "below"
+          ? score - range.low
+          : null;
+    return {
+      program,
+      status,
+      word: STATUS_WORD_FR[status],
+      phrase: score === null ? "sans cote R à comparer" : STATUS_PHRASE_FR[status],
+      marginLabel: margin === null ? null : formatSignedScore(margin, "fr", 2),
+      color: CUTOFF_STATUS_COLOR_CLASS[status],
+      rangeLabel: range
+        ? `${formatScore(range.low, "fr")}–${formatScore(range.high, "fr")} (${formatRangeYears(range)})`
+        : "—",
+    };
+  });
+
+  // Gaps are DERIVED, never asserted: a flag is raised only when a published prerequisite
+  // resolves to a course absent from a VERIFIED DEC core (a statement about two catalogues,
+  // phrased as such), or when the programme publishes a course-grade floor. `dec_only` and
+  // `prereq_outside_catalogue` are NOT gaps and are never printed as one.
+  const gaps = targets.flatMap((program) => {
     const flags: { program: string; text: string; date: string; href: string }[] = [];
     const stamp = { date: program.lastVerifiedAt, href: program.sourceUrl };
     if (program.courseFloor) {
       flags.push({
         program: program.name,
-        text: `${program.courseFloor.course} : seuil de ${formatScore(program.courseFloor.minGrade, "fr")}`,
+        text: `${program.courseFloor.course} : seuil publié de ${formatScore(program.courseFloor.minGrade, "fr")}`,
         ...stamp,
       });
     }
@@ -143,29 +188,23 @@ export default function CounselorPrepPage() {
       if (reason.kind !== "prereq_not_in_core" || !reason.name) continue;
       flags.push({
         program: program.name,
-        text: `${reason.name} ne fait pas partie du tronc commun de ton programme — à confirmer avec ton cégep.`,
+        text: `${reason.name} n'est pas dans le tronc commun vérifié du programme collégial — à confirmer avec le cégep.`,
         ...stamp,
       });
     }
     return flags;
   });
 
-  // Derived once: the phone renders these as cards and everything wider renders them as table
-  // rows, and the two must never disagree about a student's standing.
-  const targetRows = targets.map((program) => {
-    const range = getCutoffRange(program.cutoffHistory);
-    const status: CutoffStatus =
-      score === null ? "unknown" : compareToCutoffRange(score, range);
-    return {
-      program,
-      status,
-      label: t(CUTOFF_STATUS_LABEL_KEY[status]),
-      color: CUTOFF_STATUS_COLOR_CLASS[status],
-      rangeLabel: range
-        ? `${formatScore(range.low, "fr")}–${formatScore(range.high, "fr")} (${formatRangeYears(range)})`
-        : "—",
-    };
-  });
+  // Upcoming dates for the targets (and general ones), nearest first, capped for the page.
+  const upcoming = getDeadlinesForStudent(profile.targetUniversityProgramIds, deadlines)
+    .map((d) => ({ d, days: daysUntil(d.dateIso, today) }))
+    .filter((x) => x.days !== null && x.days >= 0)
+    .sort((a, b) => a.d.dateIso.localeCompare(b.d.dateIso))
+    .slice(0, MAX_DATES);
+
+  const stamp = (date: string, href?: string) => (
+    <SourceStamp date={date} href={href} locale="fr" hostAsLabel className="mt-0.5" />
+  );
 
   return (
     <div className={`min-h-screen bg-chalk ${BOTTOM_NAV_CLEARANCE}`}>
@@ -187,63 +226,58 @@ export default function CounselorPrepPage() {
         </button>
       </div>
 
-      <main className="mx-auto flex max-w-3xl flex-col gap-6 bg-paper px-4 py-7 shadow-card print:shadow-none sm:gap-8 sm:px-6 sm:py-10 md:px-12">
-        <header className="flex flex-col gap-2 border-b border-ink/10 pb-5 sm:flex-row sm:items-start sm:justify-between sm:gap-6 sm:pb-6">
+      <main className="print-sheet mx-auto flex max-w-3xl flex-col gap-6 bg-paper px-4 py-7 shadow-card print:gap-4 print:px-0 print:py-0 print:shadow-none sm:gap-7 sm:px-6 sm:py-9 md:px-12">
+        <header className="flex flex-col gap-3 border-b border-ink/10 pb-4 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
           <div>
-            <span className="font-display text-[20px] font-bold tracking-tight text-ink">
-              MaCote
-            </span>
-            <p className="mt-1 text-[12.5px] leading-snug text-ink/60 sm:text-[13px]">
-              Préparation de rencontre — conseiller d&rsquo;orientation
+            <p className="text-[10.5px] font-semibold uppercase tracking-wider text-ink/50">
+              MaCote · document d&rsquo;appui
+            </p>
+            <h1 className="font-display text-[20px] font-bold leading-tight tracking-tight text-ink">
+              Préparation de rencontre en orientation
+            </h1>
+          </div>
+          <div className="text-[11.5px] leading-relaxed text-ink/60 sm:text-right">
+            <p>
+              Généré le{" "}
+              {today.toLocaleDateString("fr-CA", { year: "numeric", month: "long", day: "numeric" })}
+            </p>
+            {/* A line to write the student's name on paper: the product never stores a name. */}
+            <p className="hidden print:block">
+              Étudiant·e :{" "}
+              <span aria-hidden="true" className="inline-block w-44 border-b border-ink/40 align-baseline" />
             </p>
           </div>
-          <p className="text-[11px] text-ink/50 sm:text-right">
-            Généré le{" "}
-            {new Date().toLocaleDateString("fr-CA", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
         </header>
 
-        <section className="grid grid-cols-1 gap-3.5 sm:grid-cols-3 sm:gap-4">
+        <section className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
           <Field label="Cégep" value={cegepName ?? "Non précisé"} />
           <Field
-            label="Programme"
+            label="Programme collégial"
             value={
               cegepProgramName
                 ? `${cegepProgramName}${profile.cegepProgramId ? ` (${profile.cegepProgramId})` : ""}`
                 : "Non précisé"
             }
           />
-          <Field label="Session" value={session?.labelFr ?? "Non précisée"} />
+          <Field label="Session en cours" value={session?.labelFr ?? "Non précisée"} />
         </section>
 
-        <section className="flex flex-col gap-3">
-          <h2 className="font-display text-[17px] font-bold text-ink">Cote R</h2>
-          {/* Guardrail #2: an estimate is never mistakable for the cégep's own figure — it
-              carries the "≈ " prefix, the dashed border and the ESTIMATION caption; a confirmed
-              score carries none of them. */}
+        {/* The score is the biggest thing on the page: a counsellor skimming for ten seconds
+            finds it first. Guardrail #2: an estimate carries "≈ ", the dashed frame and its
+            caption; a confirmed score carries none of them. */}
+        <section className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6 print:break-inside-avoid">
           <div className="flex flex-col gap-1">
-            <p className="text-[10.5px] font-semibold uppercase tracking-wider text-ink/50">
-              {session ? `${session.labelFr} · ` : ""}
-              {score === null
-                ? "pas encore calculée"
-                : isConfirmed
-                  ? "confirmée par le cégep"
-                  : "estimation non officielle"}
-            </p>
-            {/* French-only printed sheet: force fr-CA numbers and no badge (the caption above
-                already says "estimation non officielle"). Guardrail #2: dashed frame for an estimate. */}
+            <h2 className="text-[10.5px] font-semibold uppercase tracking-wider text-ink/50">Cote R</h2>
             {score === null ? (
-              <p className="font-display text-[24px] font-bold text-ink tabular-nums">—</p>
+              <p className="font-display text-[46px] font-extrabold leading-none tabular-nums text-ink/30">
+                —
+              </p>
             ) : (
               <span className="self-start">
                 <ScoreValue
                   value={score}
                   status={profile.rScoreStatus}
-                  size="md"
+                  size="hero"
                   framed={!isConfirmed}
                   badge="never"
                   decimals={2}
@@ -253,36 +287,43 @@ export default function CounselorPrepPage() {
               </span>
             )}
           </div>
-          {score === null && (
-            <p className="text-[12px] leading-relaxed text-ink/55">
-              L&rsquo;étudiant·e n&rsquo;a pas encore de cote R : elle est calculée par le
-              ministère après la transmission des notes de groupe de la première session. Les
-              programmes ciblés ci-dessous sont donc listés avec leurs cotes publiées, sans
-              comparaison.
-            </p>
-          )}
-          {score !== null && !isConfirmed && (
-            <p className="text-[12px] leading-relaxed text-ink/55">
-              Cette cote est une estimation calculée à partir des notes saisies par
-              l&rsquo;étudiant·e, et non un chiffre transmis par le cégep.
-            </p>
-          )}
+          <div className="flex flex-col gap-0.5 text-[12.5px] leading-snug text-ink/70">
+            <p className="font-semibold text-ink">{session?.labelFr ?? "Session non précisée"}</p>
+            {score === null ? (
+              <>
+                <p>Pas encore calculée par le ministère.</p>
+                <p className="text-ink/50">
+                  La première cote R suit la transmission des notes de groupe de la première
+                  session. Les programmes ciblés sont listés avec leurs cotes publiées, sans
+                  comparaison.
+                </p>
+              </>
+            ) : isConfirmed ? (
+              <>
+                <p>Confirmée par le cégep, saisie par l&rsquo;étudiant·e.</p>
+                <p className="text-ink/50">À vérifier sur le relevé de notes officiel.</p>
+              </>
+            ) : (
+              <>
+                <p>Estimation non officielle, calculée à partir des notes saisies.</p>
+                <p className="text-ink/50">
+                  Ce n&rsquo;est pas un chiffre transmis par le cégep.
+                </p>
+              </>
+            )}
+          </div>
         </section>
 
-        <section className="flex flex-col gap-3">
+        <section className="flex flex-col gap-3 print:break-inside-avoid">
           <h2 className="font-display text-[17px] font-bold text-ink">Programmes ciblés</h2>
           {targetRows.length === 0 ? (
-            <p className="text-[13px] text-ink/60">
-              Aucun programme ciblé pour l&rsquo;instant.
-            </p>
+            <p className="text-[13px] text-ink/60">Aucun programme ciblé pour l&rsquo;instant.</p>
           ) : (
             <>
-              {/* Cards on a phone, the table from sm up. Three columns cannot hold a programme
-                  name, a published range and a status inside 375px without every cell wrapping
-                  to three lines and the rows losing their alignment. Paper is always at least
-                  letter width, so what prints is still the table. */}
+              {/* Cards on a phone, the table from sm up. Paper is always at least letter width,
+                  so what prints is the table. */}
               <ul className="flex flex-col gap-2.5 sm:hidden print:hidden">
-                {targetRows.map(({ program, rangeLabel, status, label, color }) => (
+                {targetRows.map(({ program, rangeLabel, marginLabel, phrase, color }) => (
                   <li
                     key={program.id}
                     className="flex flex-col gap-2 rounded-lg border border-ink/12 p-3"
@@ -295,20 +336,21 @@ export default function CounselorPrepPage() {
                         {program.institution}
                       </p>
                     </div>
-                    <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-                      <span className="text-[12.5px] tabular-nums text-ink/70">{rangeLabel}</span>
-                      <span
-                        className={`inline-flex items-center gap-1 text-[11.5px] font-semibold ${color}`}
-                      >
-                        {status === "above" ? (
-                          <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
-                        ) : (
-                          <TriangleAlert className="h-4 w-4 flex-shrink-0" />
-                        )}
-                        {label}
-                      </span>
+                    <div className="flex items-end justify-between gap-3">
+                      <div>
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-ink/50">
+                          Cotes publiées
+                        </p>
+                        <p className="text-[13px] tabular-nums text-ink/80">{rangeLabel}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className={`font-display text-[17px] font-bold leading-none tabular-nums ${color}`}>
+                          {marginLabel ?? "—"}
+                        </p>
+                        <p className="mt-0.5 text-[11px] text-ink/60">{phrase}</p>
+                      </div>
                     </div>
-                    <SourceStamp date={program.lastVerifiedAt} href={program.sourceUrl} />
+                    {stamp(program.lastVerifiedAt, program.sourceUrl)}
                   </li>
                 ))}
               </ul>
@@ -316,61 +358,90 @@ export default function CounselorPrepPage() {
               <table className="hidden w-full border-collapse text-left text-[13px] sm:table print:table">
                 <thead>
                   <tr className="border-b border-ink/15 text-[10.5px] font-semibold uppercase tracking-wider text-ink/50">
-                    <th className="py-2">Programme</th>
-                    <th className="py-2">Cotes publiées</th>
-                    <th className="py-2 text-right">Statut</th>
+                    <th className="py-2 pr-3">Programme</th>
+                    <th className="py-2 pr-3">Cotes publiées</th>
+                    <th className="py-2 text-right">Écart</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {targetRows.map(({ program, rangeLabel, status, label, color }) => (
-                    <tr key={program.id} className="border-b border-ink/10">
-                      <td className="py-3 pr-3">
+                  {targetRows.map(({ program, rangeLabel, marginLabel, phrase, color }) => (
+                    <tr key={program.id} className="border-b border-ink/10 align-top">
+                      <td className="py-2.5 pr-3">
                         <div className="font-semibold text-ink">{program.name}</div>
                         <div className="text-[11.5px] text-ink/50">{program.institution}</div>
-                        <SourceStamp date={program.lastVerifiedAt} href={program.sourceUrl} />
+                        {stamp(program.lastVerifiedAt, program.sourceUrl)}
                       </td>
-                      <td className="py-3 pr-3 tabular-nums text-ink/70">{rangeLabel}</td>
-                      <td className="py-3 text-right">
-                        <span
-                          className={`inline-flex items-center gap-1 text-[11.5px] font-semibold ${color}`}
-                        >
-                          {status === "above" ? (
-                            <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
-                          ) : (
-                            <TriangleAlert className="h-4 w-4 flex-shrink-0" />
-                          )}
-                          {label}
-                        </span>
+                      <td className="py-2.5 pr-3 tabular-nums text-ink/80">{rangeLabel}</td>
+                      <td className="py-2.5 text-right">
+                        <div className={`font-display text-[17px] font-bold leading-none tabular-nums ${color}`}>
+                          {marginLabel ?? "—"}
+                        </div>
+                        <div className="mt-0.5 text-[11px] text-ink/60">{phrase}</div>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+              <p className="text-[11px] leading-relaxed text-ink/50">
+                Écart : cote R moins la borne haute (au-dessus) ou la borne basse (en dessous) de
+                la fourchette publiée. Un écart décrit deux chiffres, pas une probabilité
+                d&rsquo;admission.
+              </p>
             </>
           )}
         </section>
 
-        <section className="flex flex-col gap-3">
-          <h2 className="font-display text-[17px] font-bold text-ink">Points à discuter</h2>
-          {risks.length === 0 ? (
-            <p className="text-[13px] text-ink/60">
-              Aucun point signalé automatiquement pour les programmes ciblés.
+        {targets.length > 0 && (
+          <section className="flex flex-col gap-3 print:break-inside-avoid">
+            <h2 className="font-display text-[17px] font-bold text-ink">Préalables à vérifier</h2>
+            {gaps.length === 0 ? (
+              <p className="text-[12.5px] leading-relaxed text-ink/60">
+                Préalables publiés comparés au tronc commun vérifié du programme collégial : aucun
+                cours manquant repéré. Les autres conditions (entrevue, test, portfolio,
+                contingentement) ne sont pas couvertes par ce document.
+              </p>
+            ) : (
+              <ul className="flex flex-col gap-2">
+                {gaps.map((gap, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-3 rounded border border-ember/40 bg-ember/5 p-3 text-[13px] print:bg-transparent"
+                  >
+                    <TriangleAlert className="mt-0.5 h-4 w-4 flex-shrink-0 text-ember" aria-hidden="true" />
+                    <div className="flex flex-col gap-1">
+                      <span className="text-ink">
+                        <span className="font-semibold">{gap.program} — </span>
+                        {gap.text}
+                      </span>
+                      {/* Guardrail #1: the grade floor is a figure, so it carries its source. */}
+                      {stamp(gap.date, gap.href)}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        )}
+
+        <section className="flex flex-col gap-3 print:break-inside-avoid">
+          <h2 className="font-display text-[17px] font-bold text-ink">Dates à venir</h2>
+          {upcoming.length === 0 ? (
+            <p className="text-[12.5px] text-ink/60">
+              Aucune date à venir dans le calendrier vérifié pour ces programmes.
             </p>
           ) : (
-            <ul className="flex flex-col gap-2">
-              {risks.map((risk, i) => (
-                <li
-                  key={i}
-                  className="flex items-start gap-3 rounded border border-ember/40 bg-ember/5 p-3 text-[13px]"
-                >
-                  <TriangleAlert className="mt-0.5 h-4 w-4 flex-shrink-0 text-ember" />
-                  <div className="flex flex-col gap-1">
-                    <span className="text-ink">
-                      <span className="font-semibold">{risk.program} — </span>
-                      {risk.text}
-                    </span>
-                    {/* Guardrail #1: the grade floor is a figure, so it carries its source. */}
-                    <SourceStamp date={risk.date} href={risk.href} />
+            <ul className="flex flex-col divide-y divide-ink/10">
+              {upcoming.map(({ d }) => (
+                <li key={d.id} className="grid grid-cols-1 gap-x-4 py-2 sm:grid-cols-[9.5rem_1fr]">
+                  <p className="text-[12.5px] font-semibold tabular-nums text-ink">
+                    {formatDate(d.dateIso, "fr")}
+                  </p>
+                  <div>
+                    <p className="text-[13px] leading-snug text-ink">
+                      {d.titleFr}
+                      {d.institution ? ` · ${d.institution}` : ""}
+                    </p>
+                    {stamp(d.lastVerifiedAt, d.sourceUrl)}
                   </div>
                 </li>
               ))}
@@ -378,13 +449,13 @@ export default function CounselorPrepPage() {
           )}
         </section>
 
-        <footer className="border-t border-ink/10 pt-6">
+        <footer className="border-t border-ink/10 pt-4">
           <p className="text-[11px] leading-relaxed text-ink/50">
             Document généré par MaCote à partir des données saisies par l&rsquo;étudiant·e. Les
             cotes publiées proviennent de sources publiques, ne sont pas officielles et peuvent
             accuser plusieurs années de retard sur le cycle d&rsquo;admission en cours. Ce
-            document sert d&rsquo;appui à une rencontre — il ne remplace pas un avis
-            professionnel ni les données officielles du cégep.
+            document appuie une rencontre ; il ne remplace ni un avis professionnel ni les
+            données officielles du cégep.
           </p>
         </footer>
       </main>

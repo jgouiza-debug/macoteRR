@@ -225,3 +225,15 @@ button, a, input {
   }
 }
 
+
+/* The counselor-prep sheet is the one page a student prints: US Letter, modest margins, and
+   the sheet scaled so a full set of targets and dates still lands on one page. */
+@page {
+  size: letter;
+  margin: 10mm 12mm;
+}
+@media print {
+  .print-sheet {
+    zoom: 0.84;
+  }
+}
