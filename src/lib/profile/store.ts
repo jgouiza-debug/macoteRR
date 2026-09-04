@@ -1,5 +1,6 @@
 "use client";
 
+import { todayIso } from "@/lib/dates";
 import { useCallback, useEffect, useSyncExternalStore } from "react";
 import type { SelfTagId } from "@/lib/tags/taxonomy";
 import type { InterestId } from "@/lib/tags/interests";
@@ -32,6 +33,12 @@ export type StudentProfile = {
   currentSession: number | null;
   rScore: number | null;
   rScoreStatus: "confirmed" | "estimated" | null;
+  /**
+   * The day the student last entered or changed `rScore` (ISO date, local). Stamped by
+   * applyPatch, kept on this device, and carried over a pull when the server holds the same
+   * number: every screen that shows the score can say when it was entered.
+   */
+  rScoreUpdatedAt: string | null;
   selfTags: SelfTagId[];
   targetUniversityProgramIds: string[];
   interestIds: InterestId[];
@@ -102,6 +109,7 @@ export const DEFAULT_PROFILE: StudentProfile = {
   currentSession: null,
   rScore: null,
   rScoreStatus: null,
+  rScoreUpdatedAt: null,
   selfTags: [],
   targetUniversityProgramIds: [],
   interestIds: [],
@@ -470,7 +478,13 @@ async function reconcile(): Promise<void> {
     const serverIsNewer =
       meta.lastPulledAt === null || (server.updatedAt !== null && server.updatedAt > meta.lastPulledAt);
     if (!stillPending && serverIsNewer) {
-      if (!profilesEqual(read(), server.profile)) write(server.profile);
+      const local = read();
+      const adopted: StudentProfile = {
+        ...server.profile,
+        rScoreUpdatedAt:
+          server.profile.rScore === local.rScore ? local.rScoreUpdatedAt : (server.updatedAt?.slice(0, 10) ?? null),
+      };
+      if (!profilesEqual(local, adopted)) write(adopted);
     } else if (!stillPending && !profilesEqual(read(), server.profile)) {
       await syncProfileToServer(supabase, session.user.id, read());
     }
@@ -516,6 +530,9 @@ if (typeof window !== "undefined") {
 function applyPatch(patch: Partial<StudentProfile>) {
   const previous = read();
   const next = { ...previous, ...patch };
+  // A patch that changes the score stamps today on the local copy (not on the outbox patch: the
+  // server has no column for it, and pulls carry it over when the number is unchanged).
+  if ("rScore" in patch && patch.rScore !== previous.rScore) next.rScoreUpdatedAt = todayIso();
 
   // 1. Optimistic apply
   write(next);

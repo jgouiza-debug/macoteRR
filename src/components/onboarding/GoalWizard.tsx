@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Search, Check, ChevronRight, Plus } from "lucide-react";
 import { ScreenShell } from "@/components/onboarding/ScreenShell";
 import { SourceStamp } from "@/components/SourceStamp";
+import { ScoreValue } from "@/components/rscore/ScoreValue";
 import type { UniversityProgram } from "@/lib/sample-data";
 import { useReferenceCatalog } from "@/lib/data/reference-store";
 import { decOfferingsAtCegep } from "@/lib/data/cegep-institutions";
@@ -161,11 +162,13 @@ function cutoffChip(
       figure: true,
     };
   }
+  // The status word alone was a verdict with nothing to check it against; the chip now carries
+  // the published range it compares to, which makes it a figure and earns it the stamp below.
   const status = compareToCutoffRange(score, range);
   return {
-    label: `${estimated ? "≈ " : ""}${t(CUTOFF_STATUS_LABEL_KEY[status])}`,
-    cls: `border ${estimated ? "border-dashed" : ""} border-ink/15 bg-paper font-semibold ${CUTOFF_STATUS_COLOR_CLASS[status]}`,
-    figure: false,
+    label: `${estimated ? "≈ " : ""}${t(CUTOFF_STATUS_LABEL_KEY[status])} · ${f.score(range.low)}–${f.score(range.high)}`,
+    cls: `border ${estimated ? "border-dashed" : ""} border-ink/15 bg-paper font-semibold tabular-nums ${CUTOFF_STATUS_COLOR_CLASS[status]}`,
+    figure: true,
   };
 }
 
@@ -603,13 +606,14 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
   const scoreLine =
     profile.rScore !== null ? (
       <p className="-mt-3 mb-5 text-[12.5px] text-ink/60">
-        {t(isConfirmed ? "dash.yourScore" : "dash.yourEst")} : {!isConfirmed && "≈ "}
-        <span className="font-semibold tabular-nums">{f.score(profile.rScore)}</span>
+        {t(isConfirmed ? "dash.yourScore" : "dash.yourEst")} :{" "}
+        <ScoreValue value={profile.rScore} status={profile.rScoreStatus} size="inline" className="text-ink" />
         {!isConfirmed && (
           <span className="ml-1.5 rounded-full border border-dashed border-moss/60 px-1.5 text-[10px] font-semibold uppercase tracking-wider text-moss">
             {t("dash.estimated")}
           </span>
         )}
+        <span className="text-ink/45"> · {t("dash.scoreEntered").toLowerCase()}</span>
       </p>
     ) : null;
 

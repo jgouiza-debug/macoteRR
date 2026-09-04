@@ -10,11 +10,10 @@ export function BottomNav() {
   const { t } = useLocale();
 
   return (
-    // Half the home-indicator inset, not the whole of it. The full inset hung roughly 34px of
-    // empty shell beneath the row, and that gap — not the row — is what made the bar read as
-    // thick. Half of it still clears the indicator.
+    // A 48px row (the iOS tab-bar height, and the product's minimum target) plus half the
+    // home-indicator inset: the full inset hung ~34px of empty shell under the row.
     <nav className="fixed bottom-0 z-50 w-full border-t border-ink/10 bg-shell pb-[calc(env(safe-area-inset-bottom)*0.5)] md:hidden">
-      <div className="flex h-[40px] items-center justify-around px-2">
+      <div className="flex h-12 items-center justify-around px-2">
         {NAV_ITEMS.map((item) => {
           const active = pathname.startsWith(item.href);
           return (

@@ -77,6 +77,9 @@ export function ProgramDetail({ program: shipped }: { program: UniversityProgram
 
         <p className="text-[13px] leading-relaxed text-ink/60">{program.description}</p>
 
+        {/* The one action this page exists for sits above the fold, not two screens down. */}
+        <AddTargetButton programId={program.id} programName={program.name} />
+
         {/* Admissions distribution */}
         <section className="rounded border border-ink/12 bg-paper p-4 shadow-card">
           <div className="mb-1 flex items-start justify-between gap-4">
@@ -152,27 +155,19 @@ export function ProgramDetail({ program: shipped }: { program: UniversityProgram
         )}
 
         {program.placementRate && (
-          <section className="rounded bg-ultramarine p-4 text-paper">
-            <p className="text-[9.5px] font-semibold uppercase tracking-wider text-paper/70">
+          // Same register as the other cards: a placement rate is context, and a saturated blue
+          // block made it the loudest thing on a page that exists to show the cutoffs.
+          <section className="rounded border border-ink/12 bg-paper p-4 shadow-card">
+            <p className="text-[9.5px] font-semibold uppercase tracking-wider text-ink/50">
               {t("prog.placementRate")}
             </p>
-            <p className="mt-1 font-display text-[38px] font-extrabold leading-none tracking-tight tabular-nums">
+            <p className="mt-1 font-display text-[28px] font-extrabold leading-none tracking-tight text-ink tabular-nums">
               {program.placementRate.value}%
             </p>
-            <p className="mt-2 text-[12px] leading-relaxed text-paper/80">
+            <p className="mt-2 text-[12px] leading-relaxed text-ink/60">
               {program.placementRate.note}
             </p>
-            <p className="mt-2 text-[11px] leading-relaxed text-paper/60">
-              {t("common.verifiedOn")} {f.date(program.lastVerifiedAt)} ·{" "}
-              <a
-                href={program.sourceUrl}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="underline underline-offset-2"
-              >
-                {t("common.source")}
-              </a>
-            </p>
+            <SourceStamp date={program.lastVerifiedAt} href={program.sourceUrl} hostAsLabel className="mt-2" />
           </section>
         )}
 
@@ -276,9 +271,7 @@ export function ProgramDetail({ program: shipped }: { program: UniversityProgram
           </section>
         )}
 
-        <div className="mt-2 pb-[env(safe-area-inset-bottom)]">
-          <AddTargetButton programId={program.id} programName={program.name} />
-        </div>
+        <div className="pb-[env(safe-area-inset-bottom)]" />
       </div>
     </AppShell>
   );

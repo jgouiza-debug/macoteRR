@@ -9,6 +9,7 @@ import { ScoreCard } from "@/components/dashboard/ScoreCard";
 import { WhatIfSheet } from "@/components/dashboard/WhatIfSheet";
 import { TargetGoals } from "@/components/dashboard/TargetGoals";
 import { RScoreBandSheet } from "@/components/rscore/RScoreBandSheet";
+import { useReferenceCatalog } from "@/lib/data/reference-store";
 import { resolveCegepName, resolveDecName } from "@/lib/data/resolve-names";
 import { useHydrated } from "@/lib/hooks/useHydrated";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
@@ -19,6 +20,7 @@ export default function DashboardPage() {
   const { locale } = useLocale();
   const { profile, sync } = useStudentProfile();
   const hydrated = useHydrated();
+  const { sessions } = useReferenceCatalog();
   const [bandOpen, setBandOpen] = useState(false);
   const [whatIfOpen, setWhatIfOpen] = useState(false);
 
@@ -52,6 +54,8 @@ export default function DashboardPage() {
         : null;
   const whatIfGrades =
     whatIfSession === null ? [] : profile.courseGrades.filter((g) => g.session === whatIfSession);
+  const session = sessions.find((s) => s.id === profile.currentSession);
+  const sessionLabel = session ? (locale === "fr" ? session.labelFr : session.labelEn) : null;
 
   return (
     <AppShell
@@ -65,6 +69,8 @@ export default function DashboardPage() {
           rScoreStatus={profile.rScoreStatus}
           cegepName={cegepName}
           cegepProgramName={cegepProgramName}
+          sessionLabel={sessionLabel}
+          enteredOn={profile.rScoreUpdatedAt}
           onOpenBands={() => setBandOpen(true)}
           canWhatIf={whatIfSession !== null}
           onOpenWhatIf={() => setWhatIfOpen(true)}

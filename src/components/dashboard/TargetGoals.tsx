@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { AxisRow } from "@/components/rscore/AxisRow";
 import { ScoreValue } from "@/components/rscore/ScoreValue";
 import { SourceStamp } from "@/components/SourceStamp";
@@ -88,7 +88,19 @@ export function TargetGoals({
 
   return (
     <section className="flex flex-col gap-4 rounded-xl border border-ink/12 bg-paper p-4 shadow-card">
-      <h2 className="font-display text-[17px] font-bold text-ink">{t("dash.programGoal")}</h2>
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="font-display text-[17px] font-bold text-ink">{t("dash.programGoal")}</h2>
+          <Link
+            href="/programs"
+            className="-my-1 inline-flex min-h-[44px] items-center gap-1 rounded-full border border-ink/15 px-3 text-[12px] font-semibold text-ultramarine tap-spring hover:bg-chalk"
+          >
+            <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("dash.addGoal")}
+          </Link>
+        </div>
+        {rows.length > 0 && <p className="text-[11px] text-ink/45">{t("dash.axisLegend")}</p>}
+      </div>
 
       {rows.length === 0 ? (
         <EmptyState
@@ -140,7 +152,9 @@ export function TargetGoals({
                     href={`/programs/${program.id}`}
                     className="-ml-2.5 flex min-w-0 flex-1 flex-col gap-2 rounded-lg p-2.5 transition-[transform,background-color] duration-150 hover:bg-chalk/40 active:bg-chalk/70 active:scale-[0.99]"
                   >
-                    <div className="flex items-baseline justify-between gap-3 text-[13.5px]">
+                    {/* Stacked, not side by side: on a phone the range label wrapped to three
+                        lines beside the name and orphaned its colon. */}
+                    <div className="flex flex-col gap-0.5 text-[13.5px]">
                       <span className="font-semibold text-ink">{fullName}</span>
                       <span className="text-[12.5px] text-ink/55 tabular-nums">
                         {range
@@ -167,9 +181,10 @@ export function TargetGoals({
                     type="button"
                     onClick={() => handleRemove(program.id)}
                     aria-label={t("dash.removeTarget").replace("{name}", fullName)}
-                    className="-mr-2 -mt-1 flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-ink/45 tap-spring hover:bg-chalk hover:text-ink"
+                    className="inline-flex min-h-[48px] shrink-0 items-center gap-1 rounded-full border border-ink/15 px-3 text-[12px] font-semibold text-ink/60 tap-spring hover:bg-chalk hover:text-ink"
                   >
-                    <X className="h-[18px] w-[18px]" aria-hidden="true" />
+                    <X className="h-3.5 w-3.5" aria-hidden="true" />
+                    {t("common.remove")}
                   </button>
                 </div>
                 <SourceStamp date={program.lastVerifiedAt} href={program.sourceUrl} />

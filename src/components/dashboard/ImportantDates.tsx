@@ -37,8 +37,16 @@ export function ImportantDates({ targetProgramIds }: { targetProgramIds: string[
   const { deadlines } = useReferenceCatalog();
   const [dateFilter, setDateFilter] = useState<DateFilter>("all");
 
+  // Upcoming only, nearest first: the catalogue groups dates by theme, and a list that opened
+  // on 13 novembre while 15 octobre sat seventh made the nearest deadline the last thing read.
   const allDeadlines = useMemo(
-    () => getDeadlinesForStudent(targetProgramIds, deadlines),
+    () =>
+      getDeadlinesForStudent(targetProgramIds, deadlines)
+        .filter((d) => {
+          const days = daysUntil(d.dateIso);
+          return days !== null && days >= 0;
+        })
+        .sort((a, b) => a.dateIso.localeCompare(b.dateIso)),
     [targetProgramIds, deadlines],
   );
 
@@ -61,7 +69,10 @@ export function ImportantDates({ targetProgramIds }: { targetProgramIds: string[
             {t("dash.importantDates")}
           </h2>
           <span aria-live="polite" className="text-[12px] font-semibold text-ink/50 tabular-nums">
-            {t("dash.datesCount").replace("{n}", String(filteredDeadlines.length))}
+            {t(filteredDeadlines.length === 1 ? "dash.datesCountOne" : "dash.datesCount").replace(
+              "{n}",
+              String(filteredDeadlines.length),
+            )}
           </span>
         </div>
 

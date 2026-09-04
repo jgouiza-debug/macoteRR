@@ -4,22 +4,36 @@ import { useState, useTransition } from "react";
 import { ArrowRight, BookOpen, GraduationCap, Award } from "lucide-react";
 import { ScreenShell } from "@/components/onboarding/ScreenShell";
 import { Sheet } from "@/components/ui/Sheet";
+import { CEGEP_DEC_PROGRAMS } from "@/lib/data/cegep-catalog";
+import { useReferenceCatalog } from "@/lib/data/reference-store";
 import { useStudentProfile } from "@/lib/profile/store";
 import { useOnboardingGuard } from "@/lib/profile/onboarding";
 import { useFunnelNav } from "@/lib/profile/funnel-nav";
 import { useHydrated } from "@/lib/hooks/useHydrated";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { useFormat } from "@/lib/i18n/useFormat";
+
+/** The latest verification date in a list of stamped records, or null when the list is empty. */
+function latestVerifiedAt(items: { lastVerifiedAt: string }[]): string | null {
+  return items.reduce<string | null>((max, i) => (max === null || i.lastVerifiedAt > max ? i.lastVerifiedAt : max), null);
+}
 
 /**
  * Step 3c: no cote R yet. Continuing records "1st session, no score", which is a wipe when a
  * score already exists — so that case asks first. A student who lands here from the profile
  * to change one thing should not lose a confirmed score to a mis-tap.
+ *
+ * The three promises are counted and dated from the catalogue itself (guardrail #1): the
+ * screen says how many programmes, DEC cores and bursaries it actually holds, and when the
+ * figures were last verified, instead of three bare labels.
  */
 export function StartingScreen() {
   const { t } = useLocale();
+  const f = useFormat();
   const { profile, update, sync } = useStudentProfile();
   const { hrefFor, finishStep } = useFunnelNav();
   const hydrated = useHydrated();
+  const { universityPrograms, bursaries } = useReferenceCatalog();
   const [wipeOpen, setWipeOpen] = useState(false);
   // The CTA's busy state is the navigation's own pending state: it clears itself when the
   // route lands. The previous `loading` flag was set on tap and never cleared, so a student
@@ -51,10 +65,37 @@ export function StartingScreen() {
     proceed();
   }
 
+  const universities = new Set(universityPrograms.map((p) => p.institution)).size;
+  const verifiedCores = CEGEP_DEC_PROGRAMS.filter((p) => p.coreCoursesVerified).length;
+  const programsVerifiedAt = latestVerifiedAt(universityPrograms);
+  const bursariesVerifiedAt = latestVerifiedAt(bursaries);
+  const stamp = (iso: string | null) =>
+    iso ? t("starting.cardVerified").replace("{date}", f.date(iso)) : null;
+
   const cards = [
-    { icon: GraduationCap, color: "text-ultramarine", label: t("starting.card1") },
-    { icon: BookOpen, color: "text-moss", label: t("starting.card2") },
-    { icon: Award, color: "text-ember", label: t("starting.card3") },
+    {
+      icon: GraduationCap,
+      color: "text-ultramarine",
+      label: t("starting.card1"),
+      count: t("starting.card1Count")
+        .replace("{n}", String(universityPrograms.length))
+        .replace("{u}", String(universities)),
+      stamp: stamp(programsVerifiedAt),
+    },
+    {
+      icon: BookOpen,
+      color: "text-moss",
+      label: t("starting.card2"),
+      count: t("starting.card2Count").replace("{n}", String(verifiedCores)),
+      stamp: null,
+    },
+    {
+      icon: Award,
+      color: "text-ember",
+      label: t("starting.card3"),
+      count: t("starting.card3Count").replace("{n}", String(bursaries.length)),
+      stamp: stamp(bursariesVerifiedAt),
+    },
   ];
 
   return (
@@ -82,7 +123,6 @@ export function StartingScreen() {
           <p className="text-[14px] font-medium text-ultramarine">{t("starting.subtitle")}</p>
         </div>
 
-        {/* Highlight card for bursaries for program & future */}
         <div className="flex flex-col gap-1 rounded-xl border border-ember/30 bg-ember/[0.06] p-4 shadow-sm">
           <h2 className="text-[14px] font-bold text-ink">{t("starting.bursaryHighlight")}</h2>
           <p className="text-[12.5px] leading-relaxed text-ink/75">
@@ -96,13 +136,17 @@ export function StartingScreen() {
         </div>
 
         <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
-          {cards.map(({ icon: Icon, color, label }) => (
+          {cards.map(({ icon: Icon, color, label, count, stamp: verified }) => (
             <li
               key={label}
-              className="flex items-center gap-3 rounded-lg border border-ink/8 bg-paper/60 p-3"
+              className="flex items-start gap-3 rounded-lg border border-ink/8 bg-paper/60 p-3"
             >
-              <Icon className={`h-5 w-5 flex-shrink-0 ${color}`} aria-hidden />
-              <span className="text-[12.5px] font-semibold text-ink">{label}</span>
+              <Icon className={`mt-0.5 h-5 w-5 flex-shrink-0 ${color}`} aria-hidden />
+              <span className="flex flex-col gap-0.5">
+                <span className="text-[12.5px] font-semibold text-ink">{label}</span>
+                <span className="text-[12px] text-ink/60 tabular-nums">{count}</span>
+                {verified && <span className="text-[11px] text-ink/45">{verified}</span>}
+              </span>
             </li>
           ))}
         </ul>

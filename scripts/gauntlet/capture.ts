@@ -43,10 +43,16 @@ async function main() {
         await page.waitForLoadState("networkidle");
         await page.addStyleTag({ content: "nextjs-portal { display: none !important; }" }).catch(() => {});
         if (shot.fullPage) {
-          // A fixed bottom nav is painted at the viewport's bottom edge in a full-page capture,
-          // on top of whatever content sits there; in flow it lands where a reader who scrolled
-          // to the end actually sees it.
-          await page.addStyleTag({ content: "nav.fixed.bottom-0 { position: static !important; }" }).catch(() => {});
+          // A fixed or sticky bottom bar is painted at the viewport's bottom edge in a full-page
+          // capture, on top of whatever content sits there; in flow it lands where a reader who
+          // scrolled to the end actually sees it. Cards with content-visibility:auto are never
+          // scrolled into view either, so they would paint blank without the override.
+          await page
+            .addStyleTag({
+              content:
+                ".fixed.bottom-0, .sticky.bottom-0 { position: static !important; } * { content-visibility: visible !important; }",
+            })
+            .catch(() => {});
         }
         const file = path.join(dir, `ours-${shot.name}-${viewport.name}.jpg`);
         await page.screenshot({ path: file, fullPage: Boolean(shot.fullPage), type: "jpeg", quality: 80 });

@@ -14,6 +14,7 @@ import { withFunnelParams } from "@/lib/profile/funnel-nav";
 import { useHydrated } from "@/lib/hooks/useHydrated";
 import { SELF_TAGS, tagLabel } from "@/lib/tags/taxonomy";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { useFormat } from "@/lib/i18n/useFormat";
 import { ScoreValue } from "@/components/rscore/ScoreValue";
 import { createClient } from "@/lib/db/client";
 
@@ -22,11 +23,12 @@ const EDIT_PATHWAY_HREF = withFunnelParams("/onboarding/cegep", { edit: true, ne
 const EDIT_SCORE_HREF = withFunnelParams("/onboarding/score", { edit: true, next: "/profile" });
 
 const editLinkClass =
-  "-mr-2 inline-flex min-h-[48px] items-center gap-1 px-2 text-[12px] font-semibold text-ultramarine hover:underline";
+  "inline-flex min-h-[44px] items-center gap-1 rounded-full border border-ink/15 px-3 text-[12px] font-semibold text-ultramarine tap-spring hover:bg-chalk";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { t, locale } = useLocale();
+  const f = useFormat();
   const { profile, toggleTag, sync } = useStudentProfile();
   const targets = useTargets();
   const hydrated = useHydrated();
@@ -127,6 +129,9 @@ export default function ProfilePage() {
       : "—";
 
   const isConfirmed = profile.rScoreStatus === "confirmed";
+  const entered = profile.rScoreUpdatedAt
+    ? t("dash.scoreEnteredOn").replace("{date}", f.date(profile.rScoreUpdatedAt))
+    : t("dash.scoreEntered");
 
   const fields = [
     { label: t("prof.cegep"), value: cegepName },
@@ -168,7 +173,7 @@ export default function ProfilePage() {
           ))}
 
           {/* Score row: its own "Modifier", and an estimate is never dressed as the cégep's figure. */}
-          <div className="flex items-center justify-between gap-4 px-4 py-1.5">
+          <div className="flex items-center justify-between gap-4 px-4 pt-1.5 pb-1">
             <span className="text-[12px] font-semibold text-ink/50">{t("entry.label")}</span>
             <div className="flex items-center gap-3">
               {profile.rScore === null ? (
@@ -192,6 +197,12 @@ export default function ProfilePage() {
               </Link>
             </div>
           </div>
+          {/* GUARDRAIL #1 for the student's own figure: where it came from and when it was entered. */}
+          {profile.rScore !== null && (
+            <p className="px-4 pb-3 text-[11px] leading-snug text-ink/45">
+              {isConfirmed ? t("dash.scoreConfirmedBy") : t("dash.scoreEstimatedFrom")} · {entered}
+            </p>
+          )}
         </div>
 
         {/* Target University Programs */}
@@ -225,7 +236,7 @@ export default function ProfilePage() {
                   <Link
                     href={`/programs/${p.id}`}
                     aria-label={t("prof.viewTarget").replace("{name}", p.name)}
-                    className="inline-flex min-h-[48px] items-center px-2 text-[12px] font-semibold text-ultramarine hover:underline"
+                    className={editLinkClass}
                   >
                     {t("prof.view")}
                   </Link>
@@ -233,9 +244,10 @@ export default function ProfilePage() {
                     type="button"
                     onClick={() => targets.remove(p.id)}
                     aria-label={t("prof.removeTarget").replace("{name}", p.name)}
-                    className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full text-ink/50 tap-spring hover:bg-ink/6 hover:text-ink"
+                    className="inline-flex min-h-[44px] flex-shrink-0 items-center gap-1 rounded-full border border-ink/15 px-3 text-[12px] font-semibold text-ink/60 tap-spring hover:bg-chalk hover:text-ink"
                   >
-                    <X className="h-4 w-4" aria-hidden="true" />
+                    <X className="h-3.5 w-3.5" aria-hidden="true" />
+                    {t("common.remove")}
                   </button>
                 </li>
               ))}
@@ -252,6 +264,7 @@ export default function ProfilePage() {
           </div>
 
           <p className="text-[12.5px] leading-relaxed text-ink/60">{t("prof.tagsHelp")}</p>
+          <p className="text-[11.5px] leading-relaxed text-ink/50">{t("prof.tagsLegend")}</p>
 
           <ul className="flex flex-wrap gap-2">
             {SELF_TAGS.map((tag) => {

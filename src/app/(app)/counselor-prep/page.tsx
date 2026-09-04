@@ -47,7 +47,7 @@ import {
 import { evaluatePrerequisites, findDecCoreCourses } from "@/lib/matching/program-eligibility";
 
 /** Same clearance AppShell gives its <main> so the fixed BottomNav never covers the footer. */
-const BOTTOM_NAV_CLEARANCE = "pb-[calc(3.125rem+env(safe-area-inset-bottom)*0.5)] md:pb-0 print:pb-0";
+const BOTTOM_NAV_CLEARANCE = "pb-[calc(3.0625rem+env(safe-area-inset-bottom)*0.5)] md:pb-0 print:pb-0";
 
 /** How many upcoming dates the sheet lists: enough for a meeting, few enough for one page. */
 const MAX_DATES = 6;
@@ -142,6 +142,8 @@ export default function CounselorPrepPage() {
   );
   const dec = findDecCoreCourses(profile.cegepProgramId);
   const today = new Date();
+  const enteredOn = profile.rScoreUpdatedAt ? ` le ${formatDate(profile.rScoreUpdatedAt, "fr")}` : "";
+  const recordedFor = session ? `Cote enregistrée pour la ${session.labelFr} · ` : "";
 
   // Derived once: the phone renders these as cards and everything wider renders them as table
   // rows, and the two must never disagree about a student's standing. The "écart" is plain
@@ -308,15 +310,17 @@ export default function CounselorPrepPage() {
               </>
             ) : isConfirmed ? (
               <>
-                <p className="font-semibold text-ink">Confirmée par le cégep, saisie par l&rsquo;étudiant·e.</p>
-                <p className="text-ink/50">À vérifier sur le relevé de notes officiel.</p>
+                <p className="font-semibold text-ink">
+                  Confirmée par le cégep, saisie par l&rsquo;étudiant·e{enteredOn}.
+                </p>
+                <p className="text-ink/50">{recordedFor}À vérifier sur le relevé de notes officiel.</p>
               </>
             ) : (
               <>
-                <p className="font-semibold text-ink">Estimation non officielle, calculée à partir des notes saisies.</p>
-                <p className="text-ink/50">
-                  Ce n&rsquo;est pas un chiffre transmis par le cégep.
+                <p className="font-semibold text-ink">
+                  Estimation non officielle, calculée à partir des notes saisies{enteredOn}.
                 </p>
+                <p className="text-ink/50">{recordedFor}Ce n&rsquo;est pas un chiffre transmis par le cégep.</p>
               </>
             )}
           </div>
@@ -424,6 +428,12 @@ export default function CounselorPrepPage() {
               <p className="text-[12.5px] leading-relaxed text-ink/60">
                 Le tronc commun de ce programme collégial n&rsquo;est pas encore vérifié par MaCote :
                 seuls les préalables publiés par les universités sont listés, sans comparaison.
+              </p>
+            )}
+            {dec?.coreCoursesVerified && (
+              <p className="text-[11px] leading-relaxed text-ink/45">
+                Tronc commun {dec.code} : liste de cours du référentiel MaCote, à confirmer avec la
+                grille de cours du cégep.
               </p>
             )}
             {gaps.length === 0 ? (

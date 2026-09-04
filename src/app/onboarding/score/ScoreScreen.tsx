@@ -42,15 +42,18 @@ export function ScoreScreen() {
   // is not the student's real answer, so the chips show a skeleton and the three paths — each
   // of which reads the session on the way out — wait. Hooks all sit above this.
   const ready = hydrated && sync !== "syncing";
-  const currentSession = tapped ?? profile.currentSession ?? 1;
+  // null until the student picks one: nothing is chosen on their behalf.
+  const currentSession = tapped ?? profile.currentSession;
 
   function leaveForConfirm() {
+    if (currentSession === null) return;
     setWarningOpen(false);
     update({ currentSession });
     goTo("/onboarding/score/confirm");
   }
 
   function leaveForEstimate() {
+    if (currentSession === null) return;
     setWarningOpen(false);
     update({ currentSession });
     goTo("/onboarding/score/estimate");
@@ -116,7 +119,11 @@ export function ScoreScreen() {
               );
             })}
           </div>
-        ) : (
+        ) : null}
+        {ready && currentSession === null && (
+          <p className="text-[12px] text-ink/50">{t("bif.pickSessionFirst")}</p>
+        )}
+        {!ready && (
           <div aria-hidden className="grid grid-cols-3 gap-1.5 sm:grid-cols-6">
             {SESSIONS.map((s) => (
               <div key={s.id} className="min-h-[48px] animate-pulse rounded-lg bg-ink/[0.06]" />
@@ -129,7 +136,7 @@ export function ScoreScreen() {
         <button
           type="button"
           onClick={leaveForConfirm}
-          disabled={!ready}
+          disabled={!ready || currentSession === null}
           className="flex min-h-[58px] items-center justify-between gap-3 rounded-xl border-[1.5px] border-ultramarine bg-paper px-4 py-3 text-left text-[14.5px] font-semibold text-ultramarine shadow-sm transition-transform active:scale-[0.99] disabled:opacity-40"
         >
           {t("bif.yes")}
@@ -139,10 +146,14 @@ export function ScoreScreen() {
         <button
           type="button"
           onClick={() => setWarningOpen(true)}
-          disabled={!ready}
-          className="flex min-h-[58px] items-center justify-between gap-3 rounded-xl border border-ink/15 bg-paper px-4 py-3 text-left text-[14.5px] font-semibold text-ink transition-transform active:scale-[0.99] disabled:opacity-40"
+          disabled={!ready || currentSession === null}
+          className="flex min-h-[58px] items-center justify-between gap-3 rounded-xl border border-ink/15 bg-paper px-4 py-3 text-left text-ink transition-transform active:scale-[0.99] disabled:opacity-40"
         >
-          {t("bif.no")}
+          <span className="block">
+            <span className="block text-[14.5px] font-semibold">{t("bif.no")}</span>
+            {/* GUARDRAIL #2, one line early: the student knows what an estimate is before choosing it. */}
+            <span className="block text-[12px] font-normal text-ink/60">{t("bif.estimateSub")}</span>
+          </span>
           <ChevronRight className="h-5 w-5 flex-shrink-0 text-ink/40" aria-hidden />
         </button>
 
@@ -198,7 +209,7 @@ export function ScoreScreen() {
       <div className="flex justify-center pt-6">
         <Link
           href="/programs"
-          className="flex min-h-[48px] max-w-[240px] items-center text-center text-[13.5px] font-semibold leading-snug text-ultramarine"
+          className="inline-flex min-h-[48px] items-center rounded-full border border-ink/15 bg-paper px-5 text-center text-[13.5px] font-semibold leading-snug text-ultramarine tap-spring hover:bg-chalk"
         >
           {t("bif.justSeuils")}
         </Link>

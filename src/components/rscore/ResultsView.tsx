@@ -6,7 +6,7 @@ import { useState } from "react";
 import { DistributionCurve } from "@/components/rscore/DistributionCurve";
 import { ScoreValue } from "@/components/rscore/ScoreValue";
 import { RScoreBandSheet } from "@/components/rscore/RScoreBandSheet";
-import { bandForScore, bandLabel } from "@/lib/rscore/bands";
+import { bandForScore, bandLabel, R_SCORE_BAND_SOURCE } from "@/lib/rscore/bands";
 import { AxisRow } from "@/components/rscore/AxisRow";
 import { SourceStamp } from "@/components/SourceStamp";
 import { Logo } from "@/components/ui/Logo";
@@ -78,6 +78,11 @@ export function ResultsView({
   }));
 
   const cleared = ranked.filter((r) => r.cutoffStatus === "above").length;
+  // The catalogue's own stamp: the most recent verification across the programmes compared.
+  const catalogVerifiedAt = universityPrograms.reduce(
+    (max, p) => (p.lastVerifiedAt > max ? p.lastVerifiedAt : max),
+    "",
+  );
   // Anchors the hero chart on the first program with a verified range, so the headline
   // visual never fabricates a cross-program "average cutoff" from mismatched figure types.
   const hero = ranked.find((r) => r.range) ?? ranked[0];
@@ -116,6 +121,13 @@ export function ResultsView({
           <ScoreValue value={score} status={status} size="inline" />
           {headAfter}
         </h1>
+        {catalogVerifiedAt && (
+          <SourceStamp
+            date={catalogVerifiedAt}
+            label={t("results.catalogStamp").replace("{n}", String(universityPrograms.length))}
+            className="-mt-3"
+          />
+        )}
 
         {/* Dashed accent border + ESTIMATION badge on an estimate, matching the dashboard,
             so the two kinds of number never look alike (guardrail #2). */}
@@ -135,6 +147,10 @@ export function ResultsView({
               </p>
             </div>
           </div>
+          {/* GUARDRAIL #1: the range on the right is the hero programme's, and says so. */}
+          {hero?.range && (
+            <SourceStamp date={hero.program.lastVerifiedAt} href={hero.program.sourceUrl} hostAsLabel className="mb-2 text-right" />
+          )}
           <DistributionCurve
             score={score}
             range={hero?.range ?? null}
@@ -142,6 +158,10 @@ export function ResultsView({
             youLabel={t("common.toi")}
             rangeLabel={heroRangeLabel}
           />
+          {/* The bell is a drawing of the BCI scale, not this programme's statistics: it says so,
+              and it carries the scale's source like every other figure (guardrail #1). */}
+          <p className="mt-2 text-[11px] leading-relaxed text-ink/50">{t("results.curveNote")}</p>
+          <SourceStamp date={R_SCORE_BAND_SOURCE.lastVerifiedAt} href={R_SCORE_BAND_SOURCE.url} hostAsLabel />
 
           {/* The band (sourced and disclaimed in src/lib/rscore/bands.ts) is the only
               interpretation this screen offers — no percentiles, nothing unsourced. */}
@@ -151,7 +171,7 @@ export function ResultsView({
             className="mt-2 flex min-h-[48px] w-full items-center justify-center gap-1.5 rounded border border-ink/15 px-3 py-2.5 text-[13px] font-semibold text-ink/70 transition-transform active:scale-[0.99]"
           >
             <Info className="h-4 w-4 text-ink/45" />
-            {bandLabel(band, locale)} — {t("results.whatItMeans")}
+            {bandLabel(band, locale)} · {t("results.whatItMeans")}
           </button>
         </section>
 
@@ -171,7 +191,9 @@ export function ResultsView({
                     </h2>
                     <p className="mt-0.5 text-[11.5px] text-ink/50">
                       {program.institution} ·{" "}
-                      {range ? `${t("common.seuil")} ${formatRangeYears(range)}` : t("cutoff.unverified")}
+                      {range
+                        ? `${t("cutoff.publishedRange")} ${formatRangeYears(range)} : ${f.score(range.low)}–${f.score(range.high)}`
+                        : t("cutoff.unverified")}
                     </p>
                   </div>
                   <span className={`text-[12px] font-bold uppercase tracking-wide ${CUTOFF_STATUS_COLOR_CLASS[cutoffStatus]}`}>

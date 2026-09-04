@@ -125,6 +125,14 @@ export default function BursariesPage() {
           {cegepName && <p className="text-[13px] text-ink/55">{cegepName}</p>}
         </div>
 
+        {/* A first-session student has no cote R: say so here, and say what is already
+            matchable, instead of letting the empty "matched" tier speak for itself. */}
+        {profile.rScore === null && (
+          <p className="rounded-xl border border-ink/12 bg-paper p-3.5 text-[12.5px] leading-relaxed text-ink/65">
+            {t("burs.firstSessionNote")}
+          </p>
+        )}
+
         {TIERS.map(({ id, title, accent }) => {
           const items = matches[id];
           return (
@@ -258,7 +266,7 @@ const BursaryCard = memo(function BursaryCard({
             href={bursary.applicationUrl}
             target="_blank"
             rel="noreferrer noopener"
-            className="inline-flex min-h-[48px] items-center gap-1 text-[13px] font-semibold text-ultramarine tap-spring active:scale-[0.98]"
+            className="inline-flex min-h-[48px] items-center gap-1 rounded-full border border-ultramarine/30 px-4 text-[13px] font-semibold text-ultramarine tap-spring hover:bg-ultramarine/[0.06] active:scale-[0.98]"
           >
             {t("burs.apply")}
             {/* Kept deliberately: warns the student they are leaving the app. */}

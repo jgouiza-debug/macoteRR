@@ -34,7 +34,7 @@ export function ScoreValue({
   size = "md",
   framed = false,
   badge = "auto",
-  decimals,
+  decimals = 2,
   locale,
   className = "",
 }: {
@@ -45,6 +45,7 @@ export function ScoreValue({
   framed?: boolean;
   /** "auto" shows the ESTIMATION badge only when framed; "always" / "never" override. */
   badge?: "auto" | "always" | "never";
+  /** The student's own score is always two decimals (31,20), whatever the screen. */
   decimals?: number;
   /** Force a number locale (the counselor sheet is fr-CA on paper whatever the UI locale). */
   locale?: Locale;

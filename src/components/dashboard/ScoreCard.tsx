@@ -18,18 +18,26 @@ export const SCORE_EDIT_HREF = withFunnelParams("/onboarding/score", {
   next: "/dashboard",
 });
 
+/** The card's secondary actions: real pills, so a 48px target looks like one. */
+const PILL =
+  "inline-flex min-h-[48px] items-center gap-1.5 rounded-full border border-ink/15 bg-paper px-4 text-[12.5px] font-semibold text-ultramarine tap-spring hover:bg-chalk";
+
 /**
  * The hero card: the student's R-score, or the "pending" placeholder for a first-session
  * student who has none yet.
  *
  * GUARDRAIL #2: an estimate renders with a leading "≈ ", a dashed border and the ESTIMATION
- * badge; a confirmed score never does. Nothing here may blur that line.
+ * badge; a confirmed score never does. GUARDRAIL #1 for the student's own figure: the card says
+ * where the number came from (the cégep, or the student's grades), which session it belongs
+ * to, and when the student entered it. Nothing here may blur those lines.
  */
 export function ScoreCard({
   rScore,
   rScoreStatus,
   cegepName,
   cegepProgramName,
+  sessionLabel = null,
+  enteredOn = null,
   onOpenBands,
   canWhatIf = false,
   onOpenWhatIf,
@@ -38,6 +46,10 @@ export function ScoreCard({
   rScoreStatus: "confirmed" | "estimated" | null;
   cegepName: string | null;
   cegepProgramName: string | null;
+  /** "3e session": the session the score is recorded for, in the UI locale. */
+  sessionLabel?: string | null;
+  /** ISO date the student last entered or changed the score (profile.rScoreUpdatedAt). */
+  enteredOn?: string | null;
   onOpenBands: () => void;
   canWhatIf?: boolean;
   onOpenWhatIf?: () => void;
@@ -50,17 +62,21 @@ export function ScoreCard({
       ? t(isConfirmed ? "dash.confirmedTitle" : "dash.estimateTitle")
       : t("dash.pathwayTitle");
   const subtitle = [cegepName, cegepProgramName].filter(Boolean).join(" · ");
+  const provenance = isConfirmed ? t("dash.scoreConfirmedBy") : t("dash.scoreEstimatedFrom");
+  const entered = enteredOn
+    ? t("dash.scoreEnteredOn").replace("{date}", f.date(enteredOn))
+    : t("dash.scoreEntered");
 
   return (
     <section className="flex flex-col items-center gap-1 rounded-xl border border-ink/12 bg-paper px-5 py-6 text-center shadow-card">
-      <div className="flex flex-wrap items-center justify-center gap-x-1">
+      <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
         <h1 className="font-display text-[17px] font-bold text-ink">{title}</h1>
         {rScore !== null && (
-          // Negative vertical margin keeps the 48px hit area from pushing the heading row apart.
+          // Negative vertical margin keeps the 44px hit area from pushing the heading row apart.
           <Link
             href={SCORE_EDIT_HREF}
             aria-label={t("dash.editScore")}
-            className="-my-3 inline-flex min-h-[48px] min-w-[48px] items-center justify-center rounded-full px-2 text-[12.5px] font-semibold text-ultramarine tap-spring hover:underline"
+            className="-my-2 inline-flex min-h-[44px] items-center rounded-full border border-ink/15 px-3 text-[12px] font-semibold text-ultramarine tap-spring hover:bg-chalk"
           >
             {t("common.edit")}
           </Link>
@@ -68,12 +84,9 @@ export function ScoreCard({
       </div>
       {subtitle && <p className="text-[12.5px] text-ink/50">{subtitle}</p>}
 
-      {rScore !== null ? (
-        <button
-          type="button"
-          onClick={onOpenBands}
-          aria-label={`${title} : ${isConfirmed ? "" : "≈ "}${f.score(rScore, 2)}`}
-          className={`mt-4 flex min-w-[180px] flex-col items-center gap-1 rounded-xl border px-5 py-3.5 shadow-sm tap-spring active:scale-[0.97] ${
+      {rScore !== null && (
+        <div
+          className={`mt-4 flex min-w-[200px] flex-col items-center gap-1 rounded-xl border px-5 py-3.5 ${
             isConfirmed ? "border-moss/60 bg-moss/[0.02]" : "border-dashed border-moss/60 bg-paper"
           }`}
         >
@@ -84,25 +97,29 @@ export function ScoreCard({
             status={rScoreStatus}
             size="hero"
             badge={isConfirmed ? "never" : "always"}
-            decimals={2}
             className="text-ultramarine"
           />
-          <span className="mt-1 flex items-center gap-1 text-[11px] font-medium text-ink/45">
-            <Info className="h-3 w-3" aria-hidden="true" />
-            {t("common.seuil")}
-          </span>
-        </button>
-      ) : null}
+          <p className="mt-1 text-[11.5px] font-medium leading-snug text-ink/65">
+            {provenance}
+            {sessionLabel ? ` · ${sessionLabel}` : ""}
+          </p>
+          <p className="text-[11px] leading-snug text-ink/45">{entered}</p>
+        </div>
+      )}
 
-      {rScore !== null && canWhatIf && onOpenWhatIf && (
-        <button
-          type="button"
-          onClick={onOpenWhatIf}
-          className="mt-3 inline-flex min-h-[48px] items-center gap-1.5 rounded-full px-3 text-[12.5px] font-semibold text-ultramarine tap-spring hover:underline"
-        >
-          <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
-          {t("dash.whatIf")}
-        </button>
+      {rScore !== null && (
+        <div className="mt-3 flex flex-wrap justify-center gap-2">
+          <button type="button" onClick={onOpenBands} className={PILL}>
+            <Info className="h-4 w-4" aria-hidden="true" />
+            {t("dash.seeBands")}
+          </button>
+          {canWhatIf && onOpenWhatIf && (
+            <button type="button" onClick={onOpenWhatIf} className={PILL}>
+              <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
+              {t("dash.whatIf")}
+            </button>
+          )}
+        </div>
       )}
 
       {rScore === null && (
@@ -110,19 +127,17 @@ export function ScoreCard({
           <span className="flex items-center gap-1.5 rounded-full bg-ink/8 px-2.5 py-0.5 text-[10.5px] font-bold uppercase tracking-wider text-ink/60">
             {t("dash.pending")}
           </span>
+          {/* A dash, not "??": the product has nothing to say yet, and says so in words below. */}
           <span
             aria-hidden="true"
-            className="font-display text-[38px] font-extrabold leading-none tracking-tight text-ink/40 tabular-nums"
+            className="font-display text-[38px] font-extrabold leading-none tracking-tight text-ink/30 tabular-nums"
           >
-            ??
+            —
           </span>
           <p className="mt-1 max-w-[260px] text-[11.5px] leading-relaxed text-ink/60">
             {t("dash.pendingBody")}
           </p>
-          <Link
-            href={SCORE_EDIT_HREF}
-            className="mt-1 inline-flex min-h-[48px] items-center justify-center rounded-full px-3 text-[12.5px] font-semibold text-ultramarine tap-spring hover:underline"
-          >
+          <Link href={SCORE_EDIT_HREF} className={`mt-1 ${PILL}`}>
             {t("dash.enterScore")}
           </Link>
         </div>

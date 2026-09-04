@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Search, Check } from "lucide-react";
+import { Search, Check, ChevronRight } from "lucide-react";
 import { ScreenShell, ScreenHeading } from "@/components/onboarding/ScreenShell";
 import { CEGEP_INSTITUTIONS } from "@/lib/data/cegep-institutions";
 import { useStudentProfile } from "@/lib/profile/store";
@@ -142,16 +142,12 @@ export function CegepScreen() {
                     >
                       {cegep.name}
                     </span>
-                    <span
-                      className={`mt-0.5 block text-[12px] tabular-nums ${isSelected ? "text-ultramarine/70" : "text-ink/45"}`}
-                    >
-                      {(cegep.programCount === 1
-                        ? t("cegep.programCountOne")
-                        : t("cegep.programCountMany")
-                      ).replace("{n}", String(cegep.programCount))}
-                    </span>
                   </span>
-                  {isSelected && <Check aria-hidden="true" className="h-5 w-5 flex-shrink-0" />}
+                  {isSelected ? (
+                    <Check aria-hidden="true" className="h-5 w-5 flex-shrink-0" />
+                  ) : (
+                    <ChevronRight aria-hidden="true" className="h-5 w-5 flex-shrink-0 text-ink/35" />
+                  )}
                 </button>
               </li>
             );

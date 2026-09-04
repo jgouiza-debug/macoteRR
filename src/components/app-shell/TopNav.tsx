@@ -31,12 +31,12 @@ export function TopNav({
 
   return (
     <header className="fixed top-0 z-50 w-full border-b border-ink/10 bg-shell pt-safe">
-      <div className="mx-auto flex h-10 w-full max-w-[1200px] items-center justify-between gap-3 px-4 md:px-8">
+      <div className="mx-auto flex h-12 w-full max-w-[1200px] items-center justify-between gap-3 px-4 md:px-8">
         {backHref ? (
           <Link
             href={backHref}
             aria-label={t("common.back")}
-            className="-ml-2 -my-1 flex min-h-[48px] min-w-[48px] items-center gap-1 rounded-full pl-1 pr-2 text-ink transition-colors active:bg-ink/10"
+            className="-ml-2 flex min-h-[48px] min-w-[48px] items-center gap-1 rounded-full pl-1 pr-2 text-ink transition-colors active:bg-ink/10"
           >
             <ChevronLeft className="h-5 w-5" />
             <LogoMark size={16} />
@@ -94,7 +94,7 @@ export function TopNav({
             aria-expanded={inboxOpen}
             aria-label={unread > 0 ? t("nav.inboxUnread").replace("{n}", String(unread)) : t("nav.inbox")}
             onClick={() => setInboxOpen(true)}
-            className="relative -my-1 flex min-h-[48px] min-w-[48px] items-center justify-center rounded-full text-ink transition-colors active:bg-ink/10"
+            className="relative flex min-h-[48px] min-w-[48px] items-center justify-center rounded-full text-ink transition-colors active:bg-ink/10"
           >
             <Bell className="h-5 w-5" aria-hidden="true" />
             {unread > 0 && (

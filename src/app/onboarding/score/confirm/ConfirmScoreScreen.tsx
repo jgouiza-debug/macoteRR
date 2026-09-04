@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ScreenShell } from "@/components/onboarding/ScreenShell";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
-import { useFormat } from "@/lib/i18n/useFormat";
 import { recordConfirmedScore, useStudentProfile } from "@/lib/profile/store";
 import { useOnboardingGuard } from "@/lib/profile/onboarding";
 import { useFunnelNav } from "@/lib/profile/funnel-nav";
@@ -17,7 +16,6 @@ const FORM_ID = "cote-r-form";
  */
 export function ConfirmScoreScreen() {
   const { t } = useLocale();
-  const f = useFormat();
   const { profile, sync } = useStudentProfile();
   const { hrefFor, finishStep } = useFunnelNav();
   const hydrated = useHydrated();
@@ -70,7 +68,7 @@ export function ConfirmScoreScreen() {
             type="submit"
             form={FORM_ID}
             disabled={!isValid || !ready}
-            className="flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40"
+            className="flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:bg-ink/10 disabled:text-ink/45 disabled:shadow-none"
           >
             {t("entry.cta")}
           </button>
@@ -103,7 +101,7 @@ export function ConfirmScoreScreen() {
             inputMode="decimal"
             autoComplete="off"
             enterKeyHint="go"
-            placeholder={f.score(28.4)}
+            placeholder={t("entry.placeholder")}
             aria-invalid={showError}
             aria-describedby="cote-r-help"
             className="w-full bg-transparent font-display text-[40px] font-bold leading-tight tracking-tight text-ink outline-none tabular-nums placeholder:text-ink/20"

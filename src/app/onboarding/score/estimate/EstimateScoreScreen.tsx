@@ -200,26 +200,32 @@ export function EstimateScoreScreen() {
 
           {/* The CTA is disabled until at least one grade exists. Saying so beats leaving a
               student tapping a dimmed button with no idea what it wants from them. */}
-          <p
+          {/* The running total has a fixed home whether or not a grade exists yet, so the
+              layout never jumps when the first number lands. */}
+          <div
             aria-live="polite"
-            className="flex min-h-[24px] flex-wrap items-center justify-center gap-x-1.5 gap-y-1 text-center text-[12.5px] text-ink/60"
+            className="flex flex-col items-center gap-1 text-center text-[12.5px] text-ink/60"
           >
-            {estimate !== null ? (
-              <span className="inline-flex flex-col items-center gap-1">
-                <span className="inline-flex items-center gap-1.5">
-                  <span>{t("est.current")}</span>
-                  {/* GUARDRAIL #2 lives in ScoreValue: "≈" + dashed frame + badge for an estimate. */}
-                  <ScoreValue value={estimate} status="estimated" size="md" framed badge="always" decimals={2} />
+            <span className="inline-flex items-center gap-1.5">
+              <span>{t("est.current")}</span>
+              {estimate !== null ? (
+                // GUARDRAIL #2 lives in ScoreValue: "≈" + dashed frame + badge for an estimate.
+                <ScoreValue value={estimate} status="estimated" size="md" framed badge="always" />
+              ) : (
+                <span
+                  aria-hidden="true"
+                  className="inline-flex items-center rounded-xl border border-dashed border-ink/25 px-4 py-2.5 font-display text-[20px] font-extrabold leading-none text-ink/30 tabular-nums"
+                >
+                  ≈ —
                 </span>
-                <span className="text-[11px] text-ink/50">
-                  {t(basisKey).replace("{n}", String(calibration.sessionsUsed.length))}
-                  {calibration.clamped ? ` ${t("estimate.clamped")}` : ""}
-                </span>
-              </span>
-            ) : (
-              <span className="text-ink/50">{t("est.needsGrade")}</span>
-            )}
-          </p>
+              )}
+            </span>
+            <span className="text-[11px] text-ink/50">
+              {estimate !== null
+                ? `${t(basisKey).replace("{n}", String(calibration.sessionsUsed.length))}${calibration.clamped ? ` ${t("estimate.clamped")}` : ""}`
+                : t("est.needsGrade")}
+            </span>
+          </div>
 
           <button
             type="submit"
@@ -264,7 +270,7 @@ export function EstimateScoreScreen() {
                   aria-label={`${t("est.remove")} ${courseName || n}`}
                   onClick={() => setRows((prev) => prev.filter((_, i) => i !== index))}
                   disabled={rows.length <= 1}
-                  className="flex min-h-[48px] min-w-[48px] flex-shrink-0 items-center justify-center text-ink/35 transition-colors active:text-ember disabled:opacity-30"
+                  className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border border-ink/15 text-ink/55 transition-colors hover:bg-chalk active:text-ember disabled:opacity-30"
                 >
                   <X className="h-[18px] w-[18px]" aria-hidden />
                 </button>

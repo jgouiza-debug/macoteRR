@@ -8,7 +8,7 @@
  *
  * That is why each band carries `sourceUrl` + `lastVerifiedAt` like every other figure in the
  * product (guardrail #1), and why the labels describe what the range *opens* rather than
- * grading the student. A student at 24 is not "bad" — they clear most university programs in
+ * grading the student (no "strong" or "competitive": those grade a person). A student at 24 is not "bad" — they clear most university programs in
  * Quebec, and the copy has to say that plainly.
  *
  * Anchor points, all from the cutoffs already sourced in src/lib/sample-data.ts and the BCI's
@@ -40,12 +40,12 @@ export const R_SCORE_BANDS: RScoreBand[] = [
     max: 20,
     tone: "neutral",
     fr: {
-      label: "En construction",
+      label: "Accès plus étroit",
       meaning:
         "Sous 20, l'accès direct à l'université est plus étroit, mais loin d'être fermé : plusieurs programmes acceptent encore, et une session forte change la cote plus vite qu'on le pense. Le DEC technique et la passerelle universitaire restent des chemins complets.",
     },
     en: {
-      label: "Building",
+      label: "Narrower access",
       meaning:
         "Below 20 the direct route to university is narrower, but far from closed: a number of programs still admit here, and one strong session moves the score more than students expect. A technical DEC and the university bridge remain full paths.",
     },
@@ -56,12 +56,12 @@ export const R_SCORE_BANDS: RScoreBand[] = [
     max: 25,
     tone: "neutral",
     fr: {
-      label: "Solide",
+      label: "Zone de la majorité",
       meaning:
         "Entre 20 et 25, tu es dans la zone où se situe la majorité des étudiants de cégep. Beaucoup de baccalauréats non contingentés admettent dans cette plage.",
     },
     en: {
-      label: "Solid",
+      label: "Where most students sit",
       meaning:
         "Between 20 and 25 you sit where most cégep students sit. Many non-contingent bachelor's programs admit in this range.",
     },
@@ -72,12 +72,12 @@ export const R_SCORE_BANDS: RScoreBand[] = [
     max: 29,
     tone: "positive",
     fr: {
-      label: "Compétitive",
+      label: "Non contingenté accessible",
       meaning:
         "À partir de 25, la plupart des programmes universitaires non contingentés te sont ouverts, et plusieurs programmes contingentés deviennent atteignables — administration, génie, sciences.",
     },
     en: {
-      label: "Competitive",
+      label: "Non-contingent range",
       meaning:
         "From 25 up, most non-contingent university programs are open to you, and several contingent ones come into reach — business, engineering, sciences.",
     },
@@ -88,12 +88,12 @@ export const R_SCORE_BANDS: RScoreBand[] = [
     max: 32.5,
     tone: "positive",
     fr: {
-      label: "Forte",
+      label: "Zone des programmes contingentés",
       meaning:
         "Entre 29 et 32,5, tu entres dans la zone des programmes fortement contingentés : droit, physiothérapie, pharmacie, sciences infirmières dans les universités les plus demandées.",
     },
     en: {
-      label: "Strong",
+      label: "Contingent-programme range",
       meaning:
         "Between 29 and 32.5 you enter the heavily contingent range: law, physiotherapy, pharmacy, and nursing at the most sought-after universities.",
     },
@@ -104,12 +104,12 @@ export const R_SCORE_BANDS: RScoreBand[] = [
     max: null,
     tone: "highlight",
     fr: {
-      label: "Exceptionnelle",
+      label: "Zone des plus contingentés",
       meaning:
         "Au-dessus de 32,5, tu es dans la plage des programmes les plus contingentés du Québec, médecine et médecine dentaire incluses. À ce niveau, le dossier complet compte souvent autant que la cote.",
     },
     en: {
-      label: "Exceptional",
+      label: "Most-contingent range",
       meaning:
         "Above 32.5 you're in the range of Quebec's most contingent programs, medicine and dentistry included. At this level the rest of the file often counts as much as the score itself.",
     },

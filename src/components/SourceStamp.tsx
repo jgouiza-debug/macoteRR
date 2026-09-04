@@ -55,7 +55,7 @@ export function SourceStamp({
             href={href}
             target="_blank"
             rel="noreferrer noopener"
-            className="underline underline-offset-2 hover:text-ink"
+            className="inline-block py-3 -my-3 underline underline-offset-2 hover:text-ink"
           >
             {text}
           </a>

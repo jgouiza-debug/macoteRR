@@ -34,10 +34,10 @@ const TIERS: CutoffStatus[] = ["above", "inside", "below", "unknown"];
  * Every row is exactly this tall so the virtual list can place rows by index alone. Text
  * truncates instead of wrapping: a name cut short is still readable in full on its detail
  * page, whereas a row taller than its slot paints over the one below it.
- *   py-3 (24) + name (20) + institution line (18) + axis with margins (28) + status line (16)
- *   + source stamp with margin (22) = 128.
+ *   py-3 (24) + name (up to two lines, 40) + institution line (18) + axis with margins (28)
+ *   + status line (16) + source stamp with margin (22) = 148.
  */
-const ROW_HEIGHT = 128;
+const ROW_HEIGHT = 148;
 const SKELETON_ROWS = 5;
 
 type Row = { program: UniversityProgram; range: CutoffRange | null; tier: CutoffStatus };
@@ -70,7 +70,9 @@ const ProgramRow = memo(function ProgramRow({
         href={`/programs/${program.id}`}
         className="flex flex-col rounded tap-spring active:scale-[0.99]"
       >
-        <span className="truncate text-[14px] font-semibold leading-5 text-ink">{program.name}</span>
+        {/* Two lines, then clipped: "Doctorat de 1er cycle en médecine (MD)" and "… dentaire (DMD)"
+            were indistinguishable on one truncated line. The row is sized for two. */}
+        <span className="line-clamp-2 h-10 text-[14px] font-semibold leading-5 text-ink">{program.name}</span>
         <div className="mt-0.5 flex items-baseline justify-between gap-3 text-[12px] leading-4 text-ink/55">
           <span className="shrink-0 font-medium">{universityLabel(program.institution)}</span>
           {/* GUARDRAIL #5: a null range is "not yet verified", never "open admission". */}
@@ -119,6 +121,7 @@ function SkeletonRows() {
           className={`flex flex-col gap-2 px-4 py-3 ${i === 0 ? "" : "border-t border-ink/10"}`}
         >
           <div className="h-5 w-3/4 animate-pulse rounded bg-ink/8" />
+          <div className="h-5 w-1/3 animate-pulse rounded bg-ink/8" />
           <div className="h-4 w-1/2 animate-pulse rounded bg-ink/8" />
           <div className="my-2 h-3 w-full animate-pulse rounded bg-ink/5" />
           <div className="h-4 w-2/5 animate-pulse rounded bg-ink/8" />
@@ -283,13 +286,19 @@ export default function ProgramsPage() {
                   type="button"
                   onClick={() => setTier(tier === option ? "all" : option)}
                   aria-pressed={active}
-                  className={`flex h-[76px] flex-col items-center justify-between rounded-xl px-1.5 py-2.5 text-center tap-spring transition-transform ${
+                  // Border + shadow, like the university chips below: these are filters and
+                  // must read as tappable, not as a stats strip.
+                  className={`flex h-[76px] flex-col items-center justify-between rounded-xl border-2 px-1.5 py-2.5 text-center shadow-sm tap-spring transition-transform ${
                     active
-                      ? "bg-ultramarine text-paper shadow-card scale-[1.02]"
-                      : "border border-ink/15 bg-paper text-ink/60 hover:border-ink/30"
+                      ? "border-ultramarine bg-ultramarine/[0.08] text-ultramarine"
+                      : "border-ink/12 bg-paper text-ink/60 hover:border-ink/30"
                   }`}
                 >
-                  <span className="font-display text-[20px] font-bold tabular-nums leading-none">
+                  <span
+                    className={`font-display text-[20px] font-bold tabular-nums leading-none ${
+                      counts[option] === 0 && !active ? "text-ink/30" : ""
+                    }`}
+                  >
                     {counts[option]}
                   </span>
                   <span className="text-[10px] font-semibold leading-tight line-clamp-2">
@@ -303,7 +312,8 @@ export default function ProgramsPage() {
 
         {/* University filter chips: one scrolling row, so 17 chips at a 48px hit height do not
             push the list below the fold. */}
-        <div className="-mx-4 flex gap-2 overflow-x-auto overflow-y-hidden px-4 pb-1 [scrollbar-width:none]">
+        <div className="relative -mx-4 after:pointer-events-none after:absolute after:right-0 after:top-0 after:h-full after:w-10 after:bg-gradient-to-l after:from-chalk after:to-transparent">
+        <div className="flex gap-2 overflow-x-auto overflow-y-hidden px-4 pb-1 pr-10 [scrollbar-width:none]">
           {universityChips.map((uni) => {
             const isSelected = selectedUniversity === uni.id;
             return (
@@ -322,6 +332,7 @@ export default function ProgramsPage() {
               </button>
             );
           })}
+        </div>
         </div>
 
         {/* Results list */}
