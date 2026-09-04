@@ -46,11 +46,12 @@ export function SourceStamp({
   const text = label ?? (hostAsLabel && href ? sourceHost(href) : null) ?? fallback;
 
   return (
-    <p className={`text-[11px] leading-relaxed text-ink/45 ${className}`}>
-      {verifiedOn} {when}
+    <p className={`flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[11px] leading-relaxed text-ink/45 ${className}`}>
+      <span>
+        {verifiedOn} {when}
+      </span>
       {href && (
         <>
-          {" · "}
           <a
             href={href}
             target="_blank"

@@ -29,9 +29,15 @@ export const AxisRow = memo(function AxisRow({
   return (
     <div className="relative h-3 w-full">
       <div className="absolute top-1/2 h-px w-full -translate-y-1/2 bg-ink/15" />
-      {range ? (
+      {range && range.kind === "floor" ? (
+        // A published minimum is one figure: a tick, so the legend's "bar" never lies.
         <div
-          // A narrow published range (22,0–22,5) still has to read as a bar, not a speck.
+          className="absolute top-1/2 h-3.5 w-0.5 -translate-x-1/2 -translate-y-1/2 rounded-sm bg-ink/45"
+          style={{ left: `${scorePercent(range.low)}%` }}
+        />
+      ) : range ? (
+        <div
+          // A narrow published range still has to read as a bar, not a speck.
           className="absolute top-1/2 h-2 -translate-y-1/2 rounded-sm bg-ink/25"
           style={{
             left: `${scorePercent(range.low)}%`,

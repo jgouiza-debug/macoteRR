@@ -120,7 +120,11 @@ export function ScoreCard({
             {t("dash.seeBands")}
           </button>
           {canWhatIf && onOpenWhatIf && (
-            <button type="button" onClick={onOpenWhatIf} className={PILL}>
+            <button
+              type="button"
+              onClick={onOpenWhatIf}
+              className="inline-flex min-h-[48px] items-center gap-1.5 rounded-full bg-ultramarine px-4 text-[12.5px] font-semibold text-paper shadow-card tap-spring hover:bg-ink"
+            >
               <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
               {t("dash.whatIf")}
             </button>

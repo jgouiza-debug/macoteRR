@@ -682,7 +682,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
             if (items.length === 0) return null;
             return (
               <div key={group.category} className="flex flex-col gap-2.5">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-ink/45">
+                <p className="border-t border-ink/10 pt-3 text-[12px] font-bold uppercase tracking-wide text-ink/70">
                   {t(group.labelKey)}
                 </p>
                 {items.map((p) => {
@@ -910,19 +910,21 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
           </details>
         )}
 
-        {/* Suggestions added here are only saved by continuing; skipping saves none, on purpose. */}
-        {targetIds.length > 0 && (
-          <button type="button" onClick={finish} className={`${PRIMARY_BUTTON} mt-8`}>
-            {t("common.continue")} ({t("goal.selectedCount").replace("{n}", String(targetIds.length))})
-          </button>
-        )}
+        {/* Suggestions added here are only saved by continuing; skipping saves none, on purpose.
+            The forward action is always visible, and says how many picks it will save. */}
+        <button
+          type="button"
+          onClick={finish}
+          disabled={targetIds.length === 0}
+          className={`${PRIMARY_BUTTON} mt-8 disabled:opacity-40`}
+        >
+          {t("common.continue")} ({t("goal.selectedCount").replace("{n}", String(targetIds.length))})
+        </button>
 
         <button
           type="button"
           onClick={skip}
-          className={`mb-2 flex h-12 w-full items-center justify-center rounded-full border border-ink/15 text-[14px] font-semibold text-ink/60 transition-colors hover:bg-chalk hover:text-ink ${
-            targetIds.length > 0 ? "mt-2" : "mt-8"
-          }`}
+          className="mb-2 mt-2 flex h-12 w-full items-center justify-center rounded-full border border-ink/15 text-[14px] font-semibold text-ink/60 transition-colors hover:bg-chalk hover:text-ink"
         >
           {t("goal.skipStep")}
         </button>

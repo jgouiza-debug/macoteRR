@@ -74,8 +74,9 @@ export function TopNav({
               student, on every page, that something was missing — it was the app that had
               nothing to say. A first session gets its own honest chip instead. */}
           {hasScore ? (
-            <span
-              className={`inline-flex items-center gap-0.5 whitespace-nowrap text-[13.5px] font-extrabold tracking-tight ${
+            <Link
+              href="/dashboard"
+              className={`inline-flex min-h-[40px] items-center gap-0.5 whitespace-nowrap rounded-full border border-ink/15 bg-paper px-3 text-[13.5px] font-extrabold tracking-tight ${
                 rScoreStatus === "estimated" ? "text-moss" : "text-ultramarine"
               }`}
               aria-label={rScoreStatus === "estimated" ? t("dash.estimateTitle") : t("dash.confirmedTitle")}
@@ -87,7 +88,7 @@ export function TopNav({
                   {t("dash.estimated")}
                 </span>
               )}
-            </span>
+            </Link>
           ) : currentSession === 1 ? (
             <span className="rounded-full bg-ink/8 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-ink/60">
               {t("nav.firstSession")}
