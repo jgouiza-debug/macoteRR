@@ -20,6 +20,7 @@ import {
   getCutoffRange,
   formatRangeYears,
   cutoffRangeLabelKey,
+  formatCutoffValues,
 } from "@/lib/rscore/cutoff-range";
 import { R_SCORE_BAND_SOURCE } from "@/lib/rscore/bands";
 import type { TranslationKey } from "@/lib/i18n/dictionary";
@@ -58,7 +59,7 @@ export function ProgramDetail({ program: shipped }: { program: UniversityProgram
   const program = universityPrograms.find((p) => p.id === shipped.id) ?? shipped;
   const range = getCutoffRange(program.cutoffHistory);
   const rangeLabel = range
-    ? `${f.score(range.low)}–${f.score(range.high)} (${formatRangeYears(range)})`
+    ? `${formatCutoffValues(range, (v) => f.score(v))} (${formatRangeYears(range)})`
     : t("cutoff.unverified");
   const prereqKindByName = new Map(
     evaluatePrerequisites(findDecCoreCourses(settled ? profile.cegepProgramId : null), program).reasons
@@ -99,7 +100,7 @@ export function ProgramDetail({ program: shipped }: { program: UniversityProgram
               </p>
               {/* The published range is the figure this page exists to show: as a number, first. */}
               <p className="mt-1 font-display text-[18px] font-bold leading-tight text-ink tabular-nums">
-                {range ? `${f.score(range.low)}–${f.score(range.high)}` : "—"}
+                {range ? `${formatCutoffValues(range, (v) => f.score(v))}` : "—"}
                 <span className="ml-1.5 font-sans text-[11px] font-medium text-ink/50">
                   {range ? `${t(cutoffRangeLabelKey(range))} ${formatRangeYears(range)}` : t("cutoff.unverified")}
                 </span>

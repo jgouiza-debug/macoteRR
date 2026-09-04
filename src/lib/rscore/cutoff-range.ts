@@ -32,9 +32,19 @@ export function getCutoffRange(history: CutoffEntry[]): CutoffRange | null {
   const chosen = admitted.length > 0 ? admitted : pool;
   const kind: CutoffKind = admitted.length > 0 ? "range" : "floor";
 
+  if (kind === "floor") {
+    // A minimum is one current figure, not a span of old minimums: the latest year's value.
+    const latest = chosen.reduce((a, b) => (b.year > a.year ? b : a));
+    return { low: latest.cutoff, high: latest.cutoff, years: [latest.year], kind };
+  }
   const values = chosen.map((h) => h.cutoff);
   const years = [...new Set(chosen.map((h) => h.year))].sort((a, b) => a - b);
   return { low: Math.min(...values), high: Math.max(...values), years, kind };
+}
+
+/** "22,0–22,5" for a range, "22,5" when both ends coincide (every floor, some ranges). */
+export function formatCutoffValues(range: CutoffRange, fmt: (value: number) => string): string {
+  return range.low === range.high ? fmt(range.low) : `${fmt(range.low)}–${fmt(range.high)}`;
 }
 
 export function compareToCutoffRange(score: number, range: CutoffRange | null): CutoffStatus {

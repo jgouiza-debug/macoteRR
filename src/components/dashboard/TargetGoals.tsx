@@ -17,6 +17,7 @@ import {
   CUTOFF_STATUS_COLOR_CLASS,
   cutoffStatusLabelKey,
   cutoffRangeLabelKey,
+  formatCutoffValues,
 } from "@/lib/rscore/cutoff-range";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
@@ -164,7 +165,7 @@ export function TargetGoals({
                       <span className="font-semibold text-ink">{fullName}</span>
                       <span className="text-[12.5px] text-ink/55 tabular-nums">
                         {range
-                          ? `${t(cutoffRangeLabelKey(range))} ${formatRangeYears(range)} : ${f.score(range.low)}–${f.score(range.high)}`
+                          ? `${t(cutoffRangeLabelKey(range))} ${formatRangeYears(range)} : ${formatCutoffValues(range, (v) => f.score(v))}`
                           : t("cutoff.unverified")}
                       </span>
                     </div>

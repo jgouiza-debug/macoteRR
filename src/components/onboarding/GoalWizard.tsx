@@ -23,6 +23,7 @@ import {
   getCutoffRange,
   cutoffStatusLabelKey,
   cutoffRangeLabelKey,
+  formatCutoffValues,
 } from "@/lib/rscore/cutoff-range";
 import { useStudentProfile, type StudentProfile } from "@/lib/profile/store";
 import { useTargets } from "@/lib/profile/useTargets";
@@ -168,7 +169,7 @@ function cutoffChip(
   // the published range it compares to, which makes it a figure and earns it the stamp below.
   const status = compareToCutoffRange(score, range);
   return {
-    label: `${estimated ? "≈ " : ""}${t(cutoffStatusLabelKey(status, range))} · ${t(cutoffRangeLabelKey(range)).toLowerCase()} ${formatRangeYears(range)} : ${f.score(range.low)}–${f.score(range.high)}`,
+    label: `${estimated ? "≈ " : ""}${t(cutoffStatusLabelKey(status, range))} · ${t(cutoffRangeLabelKey(range)).toLowerCase()} ${formatRangeYears(range)} : ${formatCutoffValues(range, (v) => f.score(v))}`,
     // Neutral ink, not green/red: a coloured verdict beside a suggestion reads as an admission signal.
     cls: `border ${estimated ? "border-dashed" : ""} border-ink/15 bg-paper font-semibold tabular-nums text-ink/75`,
     figure: true,

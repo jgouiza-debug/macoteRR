@@ -44,6 +44,7 @@ import {
   CUTOFF_STATUS_COLOR_CLASS,
   type CutoffKind,
   type CutoffStatus,
+  formatCutoffValues,
 } from "@/lib/rscore/cutoff-range";
 import { evaluatePrerequisites, findDecCoreCourses } from "@/lib/matching/program-eligibility";
 
@@ -52,6 +53,9 @@ const BOTTOM_NAV_CLEARANCE = "pb-[calc(3.0625rem+env(safe-area-inset-bottom)*0.5
 
 /** How many upcoming dates the sheet lists: enough for a meeting, few enough for one page. */
 const MAX_DATES = 6;
+
+/** What a target publishes when it names no course at all. */
+const DEC_ONLY_LINE = "DEC reconnu, aucun cours précis publié";
 
 /** The four status words, in French whatever the UI locale (the sheet is paper, in French). */
 const STATUS_WORD_FR: Record<CutoffStatus, string> = {
@@ -177,7 +181,7 @@ export default function CounselorPrepPage() {
       marginLabel: margin === null ? null : formatSignedScore(margin, "fr", 2),
       color: CUTOFF_STATUS_COLOR_CLASS[status],
       rangeLabel: range
-        ? `${range.kind === "floor" ? "min. " : ""}${formatScore(range.low, "fr")}–${formatScore(range.high, "fr")} (${formatRangeYears(range)})`
+        ? `${range.kind === "floor" ? "minimum " : ""}${formatCutoffValues(range, (v) => formatScore(v, "fr"))} (${formatRangeYears(range)})`
         : "—",
     };
   });
@@ -216,9 +220,7 @@ export default function CounselorPrepPage() {
 
   // What each target publishes as a prerequisite, in the university's own words.
   const prereqLines = targets.map((p) =>
-    p.prerequisites.length > 0
-      ? p.prerequisites.map((r) => r.name).join(" · ")
-      : "DEC reconnu, aucun cours précis publié",
+    p.prerequisites.length > 0 ? p.prerequisites.map((r) => r.name).join(" · ") : DEC_ONLY_LINE,
   );
 
   const stamp = (date: string, href?: string) => (
@@ -424,15 +426,25 @@ export default function CounselorPrepPage() {
               </table>
               <p className="text-[11px] leading-relaxed text-ink/50">
                 Écart : cote R moins la borne haute (au-dessus) ou basse (en dessous) de la
-                fourchette publiée ; « min. » signale une université qui ne publie qu&rsquo;un
-                minimum, et l&rsquo;écart se mesure alors à ce minimum, pas à la cote du dernier
-                admis. Un écart décrit deux chiffres, pas une probabilité d&rsquo;admission.
+                fourchette publiée ; « minimum » signale une université qui ne publie qu&rsquo;un
+                minimum d&rsquo;admissibilité, et l&rsquo;écart se mesure alors à ce minimum, pas à la
+                cote du dernier admis. Un écart décrit deux chiffres, pas une probabilité
+                d&rsquo;admission.
               </p>
             </>
           )}
         </section>
 
-        {targets.length > 0 && (
+        {targets.length > 0 && prereqLines.every((l) => l === DEC_ONLY_LINE) ? (
+          // Nothing course-level is published for any target: one stamped line, no section.
+          <p className="text-[11.5px] leading-relaxed text-ink/55">
+            <span className="font-semibold text-ink/70">Préalables publiés</span>
+            {targetsVerified ? ` (${prereqHosts.join(", ")}, vérifiés le ${formatDate(targetsVerified, "fr")})` : ""} :
+            aucun cours précis publié pour ces programmes, seulement le DEC reconnu. À confirmer avec
+            la grille de cours du programme collégial
+            {profile.cegepProgramId ? ` (${profile.cegepProgramId})` : ""}.
+          </p>
+        ) : targets.length > 0 && (
           <section className="flex flex-col gap-3 print:break-inside-avoid">
             <SectionHead
               title="Préalables publiés"

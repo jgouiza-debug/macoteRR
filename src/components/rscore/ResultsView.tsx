@@ -18,6 +18,7 @@ import {
   CUTOFF_STATUS_COLOR_CLASS,
   cutoffStatusLabelKey,
   cutoffRangeLabelKey,
+  formatCutoffValues,
 } from "@/lib/rscore/cutoff-range";
 import {
   rankProgramsForStudent,
@@ -100,7 +101,7 @@ export function ResultsView({
   // visual never fabricates a cross-program "average cutoff" from mismatched figure types.
   const hero = ranked.find((r) => r.range) ?? ranked[0];
   const heroRangeLabel = hero?.range
-    ? `${f.score(hero.range.low)}–${f.score(hero.range.high)} (${formatRangeYears(hero.range)})`
+    ? `${formatCutoffValues(hero.range, (v) => f.score(v))} (${formatRangeYears(hero.range)})`
     : t("cutoff.unverified");
 
   // The score in the headline goes through ScoreValue too, so an estimate carries its "≈"
@@ -156,7 +157,7 @@ export function ResultsView({
             <div className="text-right">
               <p className="text-[11px] text-ink/50">{hero?.range ? t(cutoffRangeLabelKey(hero.range)) : t("cutoff.publishedRange")}</p>
               <p className="font-display text-[18px] font-bold leading-tight text-ink tabular-nums">
-                {hero?.range ? `${f.score(hero.range.low)}–${f.score(hero.range.high)}` : "—"}
+                {hero?.range ? `${formatCutoffValues(hero.range, (v) => f.score(v))}` : "—"}
               </p>
               {hero && (
                 <p className="mt-0.5 max-w-[180px] text-[10.5px] leading-snug text-ink/50">{hero.program.name}</p>
@@ -209,7 +210,7 @@ export function ResultsView({
                     <p className="mt-0.5 text-[11.5px] text-ink/50">
                       {program.institution} ·{" "}
                       {range
-                        ? `${t(cutoffRangeLabelKey(range))} ${formatRangeYears(range)} : ${f.score(range.low)}–${f.score(range.high)}`
+                        ? `${t(cutoffRangeLabelKey(range))} ${formatRangeYears(range)} : ${formatCutoffValues(range, (v) => f.score(v))}`
                         : t("cutoff.unverified")}
                     </p>
                   </div>
