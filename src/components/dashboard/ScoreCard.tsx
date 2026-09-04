@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Info, SlidersHorizontal } from "lucide-react";
+import { Check, Info, SlidersHorizontal } from "lucide-react";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { ScoreValue } from "@/components/rscore/ScoreValue";
@@ -91,7 +91,14 @@ export function ScoreCard({
           }`}
         >
           {/* GUARDRAIL #2 lives in ScoreValue: the estimate is badged and "≈"-prefixed, the
-              confirmed number is not. */}
+              confirmed number is not. A confirmed score gets its own word so the two states are
+              told apart by a label as well as by the frame. */}
+          {isConfirmed && (
+            <span className="flex items-center gap-1 text-[10.5px] font-semibold uppercase tracking-wider text-moss">
+              <Check className="h-3.5 w-3.5" aria-hidden="true" />
+              {t("nav.confirmedShort")}
+            </span>
+          )}
           <ScoreValue
             value={rScore}
             status={rScoreStatus}
@@ -99,11 +106,10 @@ export function ScoreCard({
             badge={isConfirmed ? "never" : "always"}
             className="text-ultramarine"
           />
-          <p className="mt-1 text-[11.5px] font-medium leading-snug text-ink/65">
-            {provenance}
+          <p className="mt-1 max-w-[260px] text-[11.5px] leading-snug text-ink/60">
+            {provenance}, {entered.toLowerCase()}
             {sessionLabel ? ` · ${sessionLabel}` : ""}
           </p>
-          <p className="text-[11px] leading-snug text-ink/45">{entered}</p>
         </div>
       )}
 

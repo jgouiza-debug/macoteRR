@@ -4,7 +4,6 @@ import { useState, useTransition } from "react";
 import { ArrowRight, BookOpen, GraduationCap, Award } from "lucide-react";
 import { ScreenShell } from "@/components/onboarding/ScreenShell";
 import { Sheet } from "@/components/ui/Sheet";
-import { CEGEP_DEC_PROGRAMS } from "@/lib/data/cegep-catalog";
 import { useReferenceCatalog } from "@/lib/data/reference-store";
 import { useStudentProfile } from "@/lib/profile/store";
 import { useOnboardingGuard } from "@/lib/profile/onboarding";
@@ -66,7 +65,7 @@ export function StartingScreen() {
   }
 
   const universities = new Set(universityPrograms.map((p) => p.institution)).size;
-  const verifiedCores = CEGEP_DEC_PROGRAMS.filter((p) => p.coreCoursesVerified).length;
+  const withPrerequisites = universityPrograms.filter((p) => p.prerequisites.length > 0).length;
   const programsVerifiedAt = latestVerifiedAt(universityPrograms);
   const bursariesVerifiedAt = latestVerifiedAt(bursaries);
   const stamp = (iso: string | null) =>
@@ -86,8 +85,8 @@ export function StartingScreen() {
       icon: BookOpen,
       color: "text-moss",
       label: t("starting.card2"),
-      count: t("starting.card2Count").replace("{n}", String(verifiedCores)),
-      stamp: null,
+      count: t("starting.card2Count").replace("{n}", String(withPrerequisites)),
+      stamp: stamp(programsVerifiedAt),
     },
     {
       icon: Award,
@@ -123,18 +122,8 @@ export function StartingScreen() {
           <p className="text-[14px] font-medium text-ultramarine">{t("starting.subtitle")}</p>
         </div>
 
-        <div className="flex flex-col gap-1 rounded-xl border border-ember/30 bg-ember/[0.06] p-4 shadow-sm">
-          <h2 className="text-[14px] font-bold text-ink">{t("starting.bursaryHighlight")}</h2>
-          <p className="text-[12.5px] leading-relaxed text-ink/75">
-            {t("starting.bursaryHighlightSub")}
-          </p>
-        </div>
-
-        <div className="flex flex-col gap-3 rounded-xl border border-ink/10 bg-paper p-4 text-[13.5px] leading-relaxed text-ink/75 shadow-card">
-          <p>{t("starting.body1")}</p>
-          <p>{t("starting.body2")}</p>
-        </div>
-
+        {/* The three promises come first, counted and dated from the catalogue, so the part of
+            the screen that earns trust is above the fold; the explanation follows. */}
         <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
           {cards.map(({ icon: Icon, color, label, count, stamp: verified }) => (
             <li
@@ -150,6 +139,11 @@ export function StartingScreen() {
             </li>
           ))}
         </ul>
+
+        <div className="flex flex-col gap-2 text-[13.5px] leading-relaxed text-ink/75">
+          <p>{t("starting.body1")}</p>
+          <p>{t("starting.bursaryHighlightSub")}</p>
+        </div>
       </div>
 
       <Sheet

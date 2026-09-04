@@ -78,6 +78,17 @@ export function ResultsView({
   }));
 
   const cleared = ranked.filter((r) => r.cutoffStatus === "above").length;
+  // Four rows from four institutions where possible: four programmes of one university with
+  // one shared cutoff read as mock data, and tell the student one thing four times.
+  const shown: typeof ranked = [];
+  for (const row of ranked) {
+    if (shown.length === 4) break;
+    if (!shown.some((s) => s.program.institution === row.program.institution)) shown.push(row);
+  }
+  for (const row of ranked) {
+    if (shown.length === 4) break;
+    if (!shown.includes(row)) shown.push(row);
+  }
   // The catalogue's own stamp: the most recent verification across the programmes compared.
   const catalogVerifiedAt = universityPrograms.reduce(
     (max, p) => (p.lastVerifiedAt > max ? p.lastVerifiedAt : max),
@@ -175,8 +186,9 @@ export function ResultsView({
           </button>
         </section>
 
+        <p className="-mb-3 text-[11px] text-ink/45">{t("dash.axisLegend")}</p>
         <div className="overflow-hidden rounded border border-ink/12 bg-paper shadow-card">
-          {ranked.slice(0, 4).map(({ program, range, cutoffStatus, prereq }) => (
+          {shown.map(({ program, range, cutoffStatus, prereq }) => (
             // SourceStamp renders its own <a>, so it stays a sibling of the row link —
             // an anchor inside an anchor is invalid HTML and breaks hydration.
             <div key={program.id} className="border-b border-ink/10 last:border-b-0">

@@ -228,9 +228,10 @@ export const DistributionCurve = memo(function DistributionCurve({
                 strokeDasharray="3 3"
               />
               <text
-                x={xCutoff - 4}
+                // Anchored at the line it names, on whichever side has room.
+                x={xCutoff < VIEW_W / 3 ? xCutoff + 4 : xCutoff - 4}
                 y={BASELINE_Y + 14}
-                textAnchor="end"
+                textAnchor={xCutoff < VIEW_W / 3 ? "start" : "end"}
                 fill="var(--color-secondary)"
                 fontSize="11"
                 fontFamily="var(--font-sans), sans-serif"
