@@ -12,7 +12,7 @@ export function LangToggle() {
     <div
       role="group"
       aria-label="Langue / Language"
-      className="flex items-center rounded-full bg-ink p-0.5"
+      className="flex items-center rounded-full border border-ink/20 bg-paper p-0.5"
     >
       {OPTIONS.map((option) => {
         const active = locale === option;
@@ -23,11 +23,11 @@ export function LangToggle() {
             onClick={() => setLocale(option)}
             aria-pressed={active}
             // 44px hit area with negative margins, so the capsule itself stays 32px tall.
-            className="-my-1.5 flex min-h-[44px] min-w-[44px] items-center justify-center"
+            className="-my-0.5 flex min-h-[44px] min-w-[44px] items-center justify-center"
           >
             <span
-              className={`rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide transition-colors ${
-                active ? "bg-paper text-ink" : "text-paper/60 hover:text-paper"
+              className={`rounded-full px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide transition-colors ${
+                active ? "bg-ink text-paper" : "text-ink/55 hover:text-ink"
               }`}
             >
               {option}

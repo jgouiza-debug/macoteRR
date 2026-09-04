@@ -27,7 +27,7 @@ export const DICTIONARY = {
     "account.required": "Un compte est nécessaire pour continuer.",
     "welcome.title": "Bienvenue sur MaCote.",
     "welcome.body": "Ta cote R, comparée aux seuils publiés des programmes que tu vises.",
-    "welcome.cta": "Commencer",
+    "welcome.cta": "Choisir mon cégep",
     "account.continueWithGoogle": "Continuer avec Google",
     "account.orWithEmail": "ou avec ton adresse courriel",
 
@@ -35,6 +35,7 @@ export const DICTIONARY = {
 
     "goal.decSpecial": "Cheminement particulier",
     "goal.programBodyAt": "Seuls les programmes offerts à {cegep} sont listés.",
+    "goal.programThenProfile": "Si ton programme a des profils, tu le précises à l'étape suivante.",
 
     "warn.estTitle": "Une estimation, pas ta cote",
     "warn.estBody":
@@ -76,6 +77,7 @@ export const DICTIONARY = {
     "nav.bursaries": "Bourses",
     "nav.profile": "Profil",
     "nav.firstSession": "Session 1",
+    "nav.confirmedShort": "confirmée",
     "prof.title": "Profil",
     "prof.cegep": "Cégep",
     "prof.program": "Programme",
@@ -484,7 +486,7 @@ export const DICTIONARY = {
     "account.required": "An account is required to continue.",
     "welcome.title": "Welcome to MaCote.",
     "welcome.body": "Your R score, next to the published cutoffs of the programmes you're aiming for.",
-    "welcome.cta": "Get started",
+    "welcome.cta": "Pick my cégep",
     "account.continueWithGoogle": "Continue with Google",
     "account.orWithEmail": "or with your email address",
 
@@ -492,6 +494,7 @@ export const DICTIONARY = {
 
     "goal.decSpecial": "Transition pathway",
     "goal.programBodyAt": "Only programs offered at {cegep} are listed.",
+    "goal.programThenProfile": "If your programme has profiles, you pick one at the next step.",
 
     "warn.estTitle": "An estimate, not your score",
     "warn.estBody":
@@ -533,6 +536,7 @@ export const DICTIONARY = {
     "nav.bursaries": "Bursaries",
     "nav.profile": "Profile",
     "nav.firstSession": "Term 1",
+    "nav.confirmedShort": "confirmed",
     "prof.title": "Profile",
     "prof.cegep": "Cégep",
     "prof.program": "Program",

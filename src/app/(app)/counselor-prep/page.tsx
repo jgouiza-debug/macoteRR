@@ -190,7 +190,7 @@ export default function CounselorPrepPage() {
       if (reason.kind !== "prereq_not_in_core" || !reason.name) continue;
       flags.push({
         program: program.name,
-        text: `${reason.name} n'est pas dans le tronc commun vérifié du programme collégial — à confirmer avec le cégep.`,
+        text: `${reason.name} ne figure pas dans la liste de cours MaCote pour ce programme collégial (liste sans date de vérification) : à confirmer avec le cégep.`,
         ...stamp,
       });
     }
@@ -254,7 +254,7 @@ export default function CounselorPrepPage() {
             </p>
             {/* A line to write the student's name on paper: the product never stores a name. */}
             <p className="hidden print:block">
-              Étudiant·e :{" "}
+              Étudiant ou étudiante :{" "}
               <span aria-hidden="true" className="inline-block w-44 border-b border-ink/40 align-baseline" />
             </p>
           </div>
@@ -311,7 +311,7 @@ export default function CounselorPrepPage() {
             ) : isConfirmed ? (
               <>
                 <p className="font-semibold text-ink">
-                  Confirmée par le cégep, saisie par l&rsquo;étudiant·e{enteredOn}.
+                  Confirmée par le cégep, saisie par l&rsquo;étudiant ou l&rsquo;étudiante{enteredOn}.
                 </p>
                 <p className="text-ink/50">{recordedFor}À vérifier sur le relevé de notes officiel.</p>
               </>
@@ -417,34 +417,34 @@ export default function CounselorPrepPage() {
         {targets.length > 0 && (
           <section className="flex flex-col gap-3 print:break-inside-avoid">
             <SectionHead
-              title="Préalables à vérifier"
+              title="Préalables publiés"
               stamp={
                 targetsVerified
-                  ? `Préalables publiés vérifiés le ${formatDate(targetsVerified, "fr")} · ${prereqHosts.join(", ")}`
+                  ? `Vérifiés le ${formatDate(targetsVerified, "fr")} · ${prereqHosts.join(", ")}`
                   : null
               }
             />
-            {!dec?.coreCoursesVerified && (
-              <p className="text-[12.5px] leading-relaxed text-ink/60">
-                Le tronc commun de ce programme collégial n&rsquo;est pas encore vérifié par MaCote :
-                seuls les préalables publiés par les universités sont listés, sans comparaison.
-              </p>
-            )}
-            {dec?.coreCoursesVerified && (
-              <p className="text-[11px] leading-relaxed text-ink/45">
-                Tronc commun {dec.code} : liste de cours du référentiel MaCote, à confirmer avec la
-                grille de cours du cégep.
-              </p>
-            )}
-            {gaps.length === 0 ? (
-              <p className="text-[12.5px] leading-relaxed text-ink/60">
-                {dec?.coreCoursesVerified
-                  ? "Préalables publiés comparés au tronc commun vérifié du programme collégial : aucun cours manquant repéré. "
-                  : ""}
-                Les autres conditions (entrevue, test, portfolio, contingentement) ne sont pas
-                couvertes par ce document.
-              </p>
-            ) : (
+            {/* Only what the universities publish, stamped by the head above. MaCote's own DEC
+                course lists carry no verification date yet, so no comparison verdict is printed
+                from them: the counsellor checks these against the cégep's grille de cours. */}
+            <ul className="flex flex-col gap-1 text-[12.5px] leading-snug text-ink">
+              {targets.map((p) => (
+                <li key={p.id} className="flex flex-col gap-0.5 sm:flex-row sm:gap-3">
+                  <span className="font-semibold sm:w-56 sm:flex-shrink-0">{p.name}</span>
+                  <span className="text-ink/70">
+                    {p.prerequisites.length > 0
+                      ? p.prerequisites.map((r) => r.name).join(" · ")
+                      : "DEC reconnu, aucun cours précis publié"}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className="text-[11px] leading-relaxed text-ink/45">
+              À confirmer avec la grille de cours du programme collégial
+              {profile.cegepProgramId ? ` (${profile.cegepProgramId})` : ""}. Entrevue, test,
+              portfolio et contingentement ne sont pas couverts par ce document.
+            </p>
+            {gaps.length === 0 ? null : (
               <ul className="flex flex-col gap-2">
                 {gaps.map((gap, i) => (
                   <li
@@ -454,7 +454,7 @@ export default function CounselorPrepPage() {
                     <TriangleAlert className="mt-0.5 h-4 w-4 flex-shrink-0 text-ember" aria-hidden="true" />
                     <div className="flex flex-col gap-1">
                       <span className="text-ink">
-                        <span className="font-semibold">{gap.program} — </span>
+                        <span className="font-semibold">{gap.program} : </span>
                         {gap.text}
                       </span>
                       {/* Guardrail #1: the grade floor is a figure, so it carries its source. */}
@@ -513,7 +513,7 @@ export default function CounselorPrepPage() {
 
         <footer className="border-t border-ink/10 pt-4">
           <p className="text-[11px] leading-relaxed text-ink/50">
-            Document généré par MaCote à partir des données saisies par l&rsquo;étudiant·e. Les
+            Document généré par MaCote à partir des données saisies par l&rsquo;étudiant ou l&rsquo;étudiante. Les
             cotes publiées proviennent de sources publiques, ne sont pas officielles et peuvent
             accuser plusieurs années de retard sur le cycle d&rsquo;admission en cours. Ce
             document appuie une rencontre ; il ne remplace ni un avis professionnel ni les

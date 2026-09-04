@@ -81,6 +81,9 @@ export function TopNav({
               aria-label={rScoreStatus === "estimated" ? t("dash.estimateTitle") : t("dash.confirmedTitle")}
             >
               R : <ScoreValue value={rScore} status={rScoreStatus} size="inline" />
+              <span className="ml-1 text-[10px] font-semibold uppercase tracking-wider opacity-70">
+                {rScoreStatus === "estimated" ? t("dash.estimated") : t("nav.confirmedShort")}
+              </span>
             </span>
           ) : currentSession === 1 ? (
             <span className="rounded-full bg-ink/8 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-ink/60">
@@ -94,9 +97,11 @@ export function TopNav({
             aria-expanded={inboxOpen}
             aria-label={unread > 0 ? t("nav.inboxUnread").replace("{n}", String(unread)) : t("nav.inbox")}
             onClick={() => setInboxOpen(true)}
-            className="relative flex min-h-[48px] min-w-[48px] items-center justify-center rounded-full text-ink transition-colors active:bg-ink/10"
+            className="relative flex min-h-[48px] min-w-[48px] items-center justify-center text-ink"
           >
-            <Bell className="h-5 w-5" aria-hidden="true" />
+            <span className="flex h-10 w-10 items-center justify-center rounded-full border border-ink/20 bg-paper transition-colors active:bg-ink/10">
+              <Bell className="h-5 w-5" aria-hidden="true" />
+            </span>
             {unread > 0 && (
               <span
                 aria-hidden="true"

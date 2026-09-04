@@ -33,6 +33,8 @@ export function ScoreScreen() {
   const [warningOpen, setWarningOpen] = useState(false);
   /** The chip just tapped; null until then, so the highlight falls back to the saved session. */
   const [tapped, setTapped] = useState<number | null>(null);
+  /** A path was tapped before a session was picked: the prompt turns ember and takes focus. */
+  const [needSession, setNeedSession] = useState(false);
 
   // Needs a cégep and a DEC before a score means anything.
   useOnboardingGuard("score");
@@ -45,15 +47,20 @@ export function ScoreScreen() {
   // null until the student picks one: nothing is chosen on their behalf.
   const currentSession = tapped ?? profile.currentSession;
 
+  function askForSession() {
+    setNeedSession(true);
+    document.querySelector<HTMLElement>(`[data-session="1"]`)?.focus();
+  }
+
   function leaveForConfirm() {
-    if (currentSession === null) return;
+    if (currentSession === null) return askForSession();
     setWarningOpen(false);
     update({ currentSession });
     goTo("/onboarding/score/confirm");
   }
 
   function leaveForEstimate() {
-    if (currentSession === null) return;
+    if (currentSession === null) return askForSession();
     setWarningOpen(false);
     update({ currentSession });
     goTo("/onboarding/score/estimate");
@@ -121,7 +128,9 @@ export function ScoreScreen() {
           </div>
         ) : null}
         {ready && currentSession === null && (
-          <p className="text-[12px] text-ink/50">{t("bif.pickSessionFirst")}</p>
+          <p aria-live="polite" className={`text-[12px] ${needSession ? "font-semibold text-ember" : "text-ink/50"}`}>
+            {t("bif.pickSessionFirst")}
+          </p>
         )}
         {!ready && (
           <div aria-hidden className="grid grid-cols-3 gap-1.5 sm:grid-cols-6">
@@ -136,7 +145,7 @@ export function ScoreScreen() {
         <button
           type="button"
           onClick={leaveForConfirm}
-          disabled={!ready || currentSession === null}
+          disabled={!ready}
           className="flex min-h-[58px] items-center justify-between gap-3 rounded-xl border-[1.5px] border-ultramarine bg-paper px-4 py-3 text-left text-[14.5px] font-semibold text-ultramarine shadow-sm transition-transform active:scale-[0.99] disabled:opacity-40"
         >
           {t("bif.yes")}
@@ -145,8 +154,8 @@ export function ScoreScreen() {
 
         <button
           type="button"
-          onClick={() => setWarningOpen(true)}
-          disabled={!ready || currentSession === null}
+          onClick={() => (currentSession === null ? askForSession() : setWarningOpen(true))}
+          disabled={!ready}
           className="flex min-h-[58px] items-center justify-between gap-3 rounded-xl border border-ink/15 bg-paper px-4 py-3 text-left text-ink transition-transform active:scale-[0.99] disabled:opacity-40"
         >
           <span className="block">

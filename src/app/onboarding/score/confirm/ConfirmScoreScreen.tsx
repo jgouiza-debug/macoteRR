@@ -41,7 +41,7 @@ export function ConfirmScoreScreen() {
 
   const numeric = Number(value.replace(",", "."));
   const isValid = Number.isFinite(numeric) && numeric >= 15 && numeric <= 50;
-  const showError = touched && value.length > 0 && !isValid;
+  const showError = touched && !isValid;
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -67,8 +67,9 @@ export function ConfirmScoreScreen() {
           <button
             type="submit"
             form={FORM_ID}
-            disabled={!isValid || !ready}
-            className="flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:bg-ink/10 disabled:text-ink/45 disabled:shadow-none"
+            disabled={!ready}
+            aria-disabled={!isValid}
+            className="flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40"
           >
             {t("entry.cta")}
           </button>
@@ -97,7 +98,7 @@ export function ConfirmScoreScreen() {
             name="rScore"
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            onBlur={() => setTouched(true)}
+            onBlur={() => value.length > 0 && setTouched(true)}
             inputMode="decimal"
             autoComplete="off"
             enterKeyHint="go"

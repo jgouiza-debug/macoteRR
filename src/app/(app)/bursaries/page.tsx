@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, memo } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { SourceStamp } from "@/components/SourceStamp";
@@ -128,9 +129,15 @@ export default function BursariesPage() {
         {/* A first-session student has no cote R: say so here, and say what is already
             matchable, instead of letting the empty "matched" tier speak for itself. */}
         {profile.rScore === null && (
-          <p className="rounded-xl border border-ink/12 bg-paper p-3.5 text-[12.5px] leading-relaxed text-ink/65">
-            {t("burs.firstSessionNote")}
-          </p>
+          <div className="flex flex-col gap-3 rounded-xl border border-ink/12 bg-paper p-3.5">
+            <p className="text-[12.5px] leading-relaxed text-ink/65">{t("burs.firstSessionNote")}</p>
+            <Link
+              href="/profile"
+              className="inline-flex min-h-[44px] w-fit items-center rounded-full border border-ink/15 px-4 text-[12.5px] font-semibold text-ultramarine tap-spring hover:bg-chalk"
+            >
+              {t("burs.editTags")}
+            </Link>
+          </div>
         )}
 
         {TIERS.map(({ id, title, accent }) => {

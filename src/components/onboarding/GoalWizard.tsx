@@ -656,7 +656,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
       >
         {heading(
           t("goal.programTitle"),
-          cegepName ? t("goal.programBodyAt").replace("{cegep}", cegepName) : t("goal.programBody"),
+          `${cegepName ? t("goal.programBodyAt").replace("{cegep}", cegepName) : t("goal.programBody")} ${t("goal.programThenProfile")}`,
         )}
 
         <div className="relative mb-3">
