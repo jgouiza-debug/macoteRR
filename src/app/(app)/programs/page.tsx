@@ -240,7 +240,7 @@ export default function ProgramsPage() {
           ) : score !== null ? (
             // One line: the top bar already carries the number, so the card only says what the
             // tiers below are computed against and whose figure it is.
-            <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-ink/70">
+            <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-[13px] text-ink/70">
               <span>{t("plist.calcWith")}</span>
               {/* GUARDRAIL #2 lives in ScoreValue: an estimate keeps its "≈" here too. */}
               <ScoreValue value={score} status={profile.rScoreStatus} size="md" framed={!isConfirmed} className="text-ink" />
