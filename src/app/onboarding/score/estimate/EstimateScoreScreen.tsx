@@ -191,40 +191,38 @@ export function EstimateScoreScreen() {
       backHref={hrefFor("/onboarding/score")}
       footer={
         <div className="flex flex-col items-stretch gap-2.5">
+          {/* The running total leads the footer: it has a fixed home whether or not a grade
+              exists yet, so the layout never jumps when the first number lands. */}
+          <div
+            aria-live="polite"
+            className="flex items-center justify-between gap-3 rounded-xl border border-ink/12 bg-paper px-4 py-2.5 text-[13px] text-ink/70"
+          >
+            <span className="flex min-w-0 flex-col gap-0.5">
+              <span className="font-semibold text-ink">{t("est.current")}</span>
+              <span className="text-[11px] leading-snug text-ink/50">
+                {estimate !== null
+                  ? `${t(basisKey).replace("{n}", String(calibration.sessionsUsed.length))}${calibration.clamped ? ` ${t("estimate.clamped")}` : ""}`
+                  : t("est.needsGrade")}
+              </span>
+            </span>
+            {estimate !== null ? (
+              // GUARDRAIL #2 lives in ScoreValue: "≈" + dashed frame + badge for an estimate.
+              <ScoreValue value={estimate} status="estimated" size="md" framed badge="always" />
+            ) : (
+              <span
+                aria-hidden="true"
+                className="inline-flex flex-shrink-0 items-center rounded-xl border border-dashed border-ink/25 px-4 py-2.5 font-display text-[20px] font-extrabold leading-none text-ink/30 tabular-nums"
+              >
+                ≈ —
+              </span>
+            )}
+          </div>
+
           {/* Non-dismissible, and always on screen with the CTA: an estimate never leaves this
               screen without the reason it cannot be trusted next to it (guardrail #2). */}
           <div role="note" className="flex items-start gap-2.5 rounded bg-ink/[0.04] p-3">
             <Info className="mt-0.5 h-4 w-4 flex-shrink-0 text-ink/45" aria-hidden />
             <p className="text-[12px] leading-relaxed text-ink/60">{t("est.caveat")}</p>
-          </div>
-
-          {/* The CTA is disabled until at least one grade exists. Saying so beats leaving a
-              student tapping a dimmed button with no idea what it wants from them. */}
-          {/* The running total has a fixed home whether or not a grade exists yet, so the
-              layout never jumps when the first number lands. */}
-          <div
-            aria-live="polite"
-            className="flex flex-col items-center gap-1 text-center text-[12.5px] text-ink/60"
-          >
-            <span className="inline-flex items-center gap-1.5">
-              <span>{t("est.current")}</span>
-              {estimate !== null ? (
-                // GUARDRAIL #2 lives in ScoreValue: "≈" + dashed frame + badge for an estimate.
-                <ScoreValue value={estimate} status="estimated" size="md" framed badge="always" />
-              ) : (
-                <span
-                  aria-hidden="true"
-                  className="inline-flex items-center rounded-xl border border-dashed border-ink/25 px-4 py-2.5 font-display text-[20px] font-extrabold leading-none text-ink/30 tabular-nums"
-                >
-                  ≈ —
-                </span>
-              )}
-            </span>
-            <span className="text-[11px] text-ink/50">
-              {estimate !== null
-                ? `${t(basisKey).replace("{n}", String(calibration.sessionsUsed.length))}${calibration.clamped ? ` ${t("estimate.clamped")}` : ""}`
-                : t("est.needsGrade")}
-            </span>
           </div>
 
           <button
