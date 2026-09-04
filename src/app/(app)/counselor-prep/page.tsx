@@ -23,7 +23,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, Printer, TriangleAlert } from "lucide-react";
-import { SourceStamp } from "@/components/SourceStamp";
+import { SourceStamp, sourceHost } from "@/components/SourceStamp";
 import { ScoreValue } from "@/components/rscore/ScoreValue";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { BottomNav } from "@/components/app-shell/BottomNav";
@@ -206,6 +206,15 @@ export default function CounselorPrepPage() {
     <SourceStamp date={date} href={href} locale="fr" hostAsLabel className="mt-0.5" />
   );
 
+  // When every row of a section was verified on the same day, the date is said once in the
+  // section head and each row keeps only its host: the same provenance, without the same six
+  // words typeset on every line. Rows that differ keep their full stamp.
+  const targetsVerified = sharedDate(targets.map((p) => p.lastVerifiedAt));
+  const datesVerified = sharedDate(upcoming.map((x) => x.d.lastVerifiedAt));
+  const prereqHosts = [...new Set(targets.map((p) => sourceHost(p.sourceUrl)).filter(Boolean))];
+  const rowSource = (date: string, href: string, shared: string | null) =>
+    shared ? <HostLink href={href} /> : stamp(date, href);
+
   return (
     <div className={`min-h-screen bg-chalk ${BOTTOM_NAV_CLEARANCE}`}>
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-4 print:hidden md:px-8">
@@ -288,7 +297,6 @@ export default function CounselorPrepPage() {
             )}
           </div>
           <div className="flex flex-col gap-0.5 text-[12.5px] leading-snug text-ink/70">
-            <p className="font-semibold text-ink">{session?.labelFr ?? "Session non précisée"}</p>
             {score === null ? (
               <>
                 <p>Pas encore calculée par le ministère.</p>
@@ -300,12 +308,12 @@ export default function CounselorPrepPage() {
               </>
             ) : isConfirmed ? (
               <>
-                <p>Confirmée par le cégep, saisie par l&rsquo;étudiant·e.</p>
+                <p className="font-semibold text-ink">Confirmée par le cégep, saisie par l&rsquo;étudiant·e.</p>
                 <p className="text-ink/50">À vérifier sur le relevé de notes officiel.</p>
               </>
             ) : (
               <>
-                <p>Estimation non officielle, calculée à partir des notes saisies.</p>
+                <p className="font-semibold text-ink">Estimation non officielle, calculée à partir des notes saisies.</p>
                 <p className="text-ink/50">
                   Ce n&rsquo;est pas un chiffre transmis par le cégep.
                 </p>
@@ -315,7 +323,10 @@ export default function CounselorPrepPage() {
         </section>
 
         <section className="flex flex-col gap-3 print:break-inside-avoid">
-          <h2 className="font-display text-[17px] font-bold text-ink">Programmes ciblés</h2>
+          <SectionHead
+            title="Programmes ciblés"
+            stamp={targetsVerified ? `Cotes publiées vérifiées le ${formatDate(targetsVerified, "fr")}` : null}
+          />
           {targetRows.length === 0 ? (
             <p className="text-[13px] text-ink/60">Aucun programme ciblé pour l&rsquo;instant.</p>
           ) : (
@@ -350,7 +361,7 @@ export default function CounselorPrepPage() {
                         <p className="mt-0.5 text-[11px] text-ink/60">{phrase}</p>
                       </div>
                     </div>
-                    {stamp(program.lastVerifiedAt, program.sourceUrl)}
+                    {rowSource(program.lastVerifiedAt, program.sourceUrl, targetsVerified)}
                   </li>
                 ))}
               </ul>
@@ -368,8 +379,16 @@ export default function CounselorPrepPage() {
                     <tr key={program.id} className="border-b border-ink/10 align-top">
                       <td className="py-2.5 pr-3">
                         <div className="font-semibold text-ink">{program.name}</div>
-                        <div className="text-[11.5px] text-ink/50">{program.institution}</div>
-                        {stamp(program.lastVerifiedAt, program.sourceUrl)}
+                        <div className="text-[11.5px] text-ink/50">
+                          {program.institution}
+                          {targetsVerified && (
+                            <>
+                              {" · "}
+                              <HostLink href={program.sourceUrl} />
+                            </>
+                          )}
+                        </div>
+                        {!targetsVerified && stamp(program.lastVerifiedAt, program.sourceUrl)}
                       </td>
                       <td className="py-2.5 pr-3 tabular-nums text-ink/80">{rangeLabel}</td>
                       <td className="py-2.5 text-right">
@@ -393,12 +412,27 @@ export default function CounselorPrepPage() {
 
         {targets.length > 0 && (
           <section className="flex flex-col gap-3 print:break-inside-avoid">
-            <h2 className="font-display text-[17px] font-bold text-ink">Préalables à vérifier</h2>
+            <SectionHead
+              title="Préalables à vérifier"
+              stamp={
+                targetsVerified
+                  ? `Préalables publiés vérifiés le ${formatDate(targetsVerified, "fr")} · ${prereqHosts.join(", ")}`
+                  : null
+              }
+            />
+            {!dec?.coreCoursesVerified && (
+              <p className="text-[12.5px] leading-relaxed text-ink/60">
+                Le tronc commun de ce programme collégial n&rsquo;est pas encore vérifié par MaCote :
+                seuls les préalables publiés par les universités sont listés, sans comparaison.
+              </p>
+            )}
             {gaps.length === 0 ? (
               <p className="text-[12.5px] leading-relaxed text-ink/60">
-                Préalables publiés comparés au tronc commun vérifié du programme collégial : aucun
-                cours manquant repéré. Les autres conditions (entrevue, test, portfolio,
-                contingentement) ne sont pas couvertes par ce document.
+                {dec?.coreCoursesVerified
+                  ? "Préalables publiés comparés au tronc commun vérifié du programme collégial : aucun cours manquant repéré. "
+                  : ""}
+                Les autres conditions (entrevue, test, portfolio, contingentement) ne sont pas
+                couvertes par ce document.
               </p>
             ) : (
               <ul className="flex flex-col gap-2">
@@ -414,8 +448,17 @@ export default function CounselorPrepPage() {
                         {gap.text}
                       </span>
                       {/* Guardrail #1: the grade floor is a figure, so it carries its source. */}
-                      {stamp(gap.date, gap.href)}
+                      {rowSource(gap.date, gap.href, targetsVerified)}
                     </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {!targetsVerified && (
+              <ul className="flex flex-col gap-0.5">
+                {targets.map((p) => (
+                  <li key={p.id} className="text-[11px] text-ink/45">
+                    {p.name} : {stamp(p.lastVerifiedAt, p.sourceUrl)}
                   </li>
                 ))}
               </ul>
@@ -424,7 +467,10 @@ export default function CounselorPrepPage() {
         )}
 
         <section className="flex flex-col gap-3 print:break-inside-avoid">
-          <h2 className="font-display text-[17px] font-bold text-ink">Dates à venir</h2>
+          <SectionHead
+            title="Dates à venir"
+            stamp={datesVerified ? `Dates vérifiées le ${formatDate(datesVerified, "fr")}` : null}
+          />
           {upcoming.length === 0 ? (
             <p className="text-[12.5px] text-ink/60">
               Aucune date à venir dans le calendrier vérifié pour ces programmes.
@@ -440,8 +486,14 @@ export default function CounselorPrepPage() {
                     <p className="text-[13px] leading-snug text-ink">
                       {d.titleFr}
                       {d.institution ? ` · ${d.institution}` : ""}
+                      {datesVerified && (
+                        <>
+                          {" · "}
+                          <HostLink href={d.sourceUrl} />
+                        </>
+                      )}
                     </p>
-                    {stamp(d.lastVerifiedAt, d.sourceUrl)}
+                    {!datesVerified && stamp(d.lastVerifiedAt, d.sourceUrl)}
                   </div>
                 </li>
               ))}
@@ -464,6 +516,36 @@ export default function CounselorPrepPage() {
         <BottomNav />
       </div>
     </div>
+  );
+}
+
+/** The one ISO date every item shares, or null when they differ (or there are none). */
+function sharedDate(dates: string[]): string | null {
+  return dates.length > 0 && dates.every((d) => d === dates[0]) ? dates[0] : null;
+}
+
+function SectionHead({ title, stamp }: { title: string; stamp?: string | null }) {
+  return (
+    <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
+      <h2 className="font-display text-[17px] font-bold text-ink">{title}</h2>
+      {stamp && <p className="text-[11px] text-ink/45">{stamp}</p>}
+    </div>
+  );
+}
+
+/** The source's host as a link ("ulaval.ca"): the row's share of a section-level stamp. */
+function HostLink({ href }: { href: string }) {
+  const host = sourceHost(href);
+  if (!host) return null;
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer noopener"
+      className="text-[11px] text-ink/45 underline underline-offset-2 hover:text-ink"
+    >
+      {host}
+    </a>
   );
 }
 

@@ -15,24 +15,24 @@ import path from "node:path";
 import { PIECES } from "./pieces";
 import { defaultOut, parseFlags } from "./common";
 
-type Round = { n: number; pick: "ours" | "bar" | null; gap: string; violations: string[]; at: string; ours?: string; bar?: string };
-type PieceState = { status: "pending" | "running" | "won" | "parked" | "descoped" | "checklist-pass" | "checklist-fail"; note?: string; rounds: Round[] };
-type State = { pieces: Record<string, PieceState>; updatedAt: string };
+export type Round = { n: number; pick: "ours" | "bar" | null; gap: string; violations: string[]; at: string; ours?: string; bar?: string };
+export type PieceState = { status: "pending" | "running" | "won" | "parked" | "descoped" | "checklist-pass" | "checklist-fail"; note?: string; rounds: Round[] };
+export type State = { pieces: Record<string, PieceState>; updatedAt: string };
 
 function statePath(out: string) {
   return path.join(out, "state.json");
 }
-function load(out: string): State {
+export function load(out: string): State {
   const p = statePath(out);
   if (!existsSync(p)) return { pieces: {}, updatedAt: new Date().toISOString() };
   return JSON.parse(readFileSync(p, "utf8")) as State;
 }
-function save(out: string, state: State) {
+export function save(out: string, state: State) {
   mkdirSync(out, { recursive: true });
   state.updatedAt = new Date().toISOString();
   writeFileSync(statePath(out), JSON.stringify(state, null, 2));
 }
-function pieceState(state: State, id: string): PieceState {
+export function pieceState(state: State, id: string): PieceState {
   return (state.pieces[id] ??= { status: "pending", rounds: [] });
 }
 
@@ -46,7 +46,7 @@ function esc(s: string) {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-function render(out: string) {
+export function render(out: string) {
   const state = load(out);
   const rows: string[] = [];
   const cards: string[] = [];
@@ -124,4 +124,5 @@ function main() {
   }
 }
 
-main();
+// Only run the CLI when invoked directly; record-verdicts.ts imports the ledger functions.
+if (process.argv[1] && /progress\.ts$/.test(process.argv[1])) main();

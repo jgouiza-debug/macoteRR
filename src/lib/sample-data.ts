@@ -76,13 +76,15 @@ export const CEGEP_PROGRAMS: CegepProgram[] = CEGEP_DEC_PROGRAMS.map((p) => ({
 
 export type Session = { id: number; labelFr: string; labelEn: string };
 
+// Cohort-free on purpose: the product does not know a student's start term, so a label that
+// names a year ("3e session (Automne 2027)") is wrong for anyone who did not start in Fall 2026.
 export const SESSIONS: Session[] = [
-  { id: 1, labelFr: "1ère session (Automne 2026)", labelEn: "1st Semester (Fall 2026)" },
-  { id: 2, labelFr: "2e session (Hiver 2027)", labelEn: "2nd Semester (Winter 2027)" },
-  { id: 3, labelFr: "3e session (Automne 2027)", labelEn: "3rd Semester (Fall 2027)" },
-  { id: 4, labelFr: "4e session (Hiver 2028)", labelEn: "4th Semester (Winter 2028)" },
-  { id: 5, labelFr: "5e session (Automne 2028)", labelEn: "5th Semester (Fall 2028)" },
-  { id: 6, labelFr: "6e session (Hiver 2029)", labelEn: "6th Semester (Winter 2029)" },
+  { id: 1, labelFr: "1re session", labelEn: "1st semester" },
+  { id: 2, labelFr: "2e session", labelEn: "2nd semester" },
+  { id: 3, labelFr: "3e session", labelEn: "3rd semester" },
+  { id: 4, labelFr: "4e session", labelEn: "4th semester" },
+  { id: 5, labelFr: "5e session", labelEn: "5th semester" },
+  { id: 6, labelFr: "6e session", labelEn: "6th semester" },
 ];
 
 export type PrerequisiteStatus = "met" | "missing" | "in_progress";
