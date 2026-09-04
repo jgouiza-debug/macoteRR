@@ -1,0 +1,154 @@
+{
+ "round": 5,
+ "verdicts": [
+  {
+   "id": "S1",
+   "pick": "B",
+   "confidence": 3,
+   "gapA": "The bottom mini-player is the failure: its title \"Sprite Fright - Blender Open Movi…\" is hard-truncated mid-word, and the bar sits on top of the fourth feed row so \"136 views • 6 days ago\" is sliced in half — the persistent chrome eats live content instead of reserving space for it. Second worst, in the same chrome family: the four top tabs (flame / feed / TV / bookmark) are icon-only, so the only thing telling you where you are is a thin underline under an unlabelled glyph — close that (labels + a bar that pads the list rather than covering it) and A becomes the stronger shell.",
+   "gapB": "The \"Objectifs programme\" header block is the mess: a two-line heading collides with a two-line \"+ Explorer les programmes\" pill, and directly under it sits grey 12px micro-copy that welds a chart legend to an undo rule — \"Barre grise : fourchette ou minimum publié · point : ta cote · Retirer s'annule pendant six secondes\". That last clause explains a six-second undo for an action the user has not taken yet, in the smallest, lowest-contrast type on the screen; the slider it is meant to explain (grey dot / green dot, no axis numbers) is unreadable without it. Give the heading a single line, label the slider ends, and move the undo message to the moment of undo.",
+   "violationsA": [
+    "Truncated label: mini-player title \"Sprite Fright - Blender Open Movi…\" is cut off mid-word",
+    "Overlapping content: the mini-player bar covers the fourth feed row, clipping \"136 views • 6 days ago\" and its thumbnail",
+    "Icon-only top tabs (flame/feed/TV/bookmark) carry no text label, so the active state is an underline under an unnamed target"
+   ],
+   "violationsB": [
+    "Top-bar chip \"COTE R 31,20\" displays a figure with no adjacent source or verification date (the sourcing only appears further down the card)"
+   ],
+   "notes": "B's shell does the job the criterion asks for: four labelled tabs, MA COTE unmistakably active in blue, no \"??\", and every figure below the fold carries its provenance (\"Confirmée par ton cégep, saisie par toi le 28 août 2026\", \"Vérifié le 25 août 2026 · ulaval.ca\"), while A's shell actively destroys content at both ends. A is otherwise the more assured piece of craft — tighter density, better list rhythm, cleaner legibility — and B wastes a lot of vertical space centring one number while the second card is cramped and left-aligned, an inconsistency across two adjacent cards. B's bottom bar reads as roughly 45px tall, which clears 44 but only just; the boxed \"ulaval.ca\" also looks tappable when it is a citation."
+  },
+  {
+   "id": "S2",
+   "pick": "A",
+   "confidence": 5,
+   "gapA": "The empty-state card at the top (\"Pas encore de cote R : les bourses qui en dépendent apparaîtront après ta première session. Celles de ton cégep et les bourses ouvertes à tous sont déjà là.\") names a next action that points away from the screen's own content — \"Explorer les programmes\" sends the student to programmes, while the thing they can actually act on is the populated \"Admissible maintenant\" list directly below it; the card should hand off into that list (e.g. count the open bursaries and scroll to them) so the one CTA on the screen matches the one job available in a first session.",
+   "gapB": "This is not an empty/loading/error screen at all but a tilted promo composition: the overlay headline \"Save your favorite articles\" sits on top of running body copy, and every line of that copy is sliced by the right edge (\"bound planetary systen\", \"Of the obje\", \"Sun directly, the largest\"), so there is no empty state, no retry, and no named next action anywhere — replacing this with an actual reading-list empty state that says what to tap first would be the whole fix.",
+   "violationsA": [
+    "Source chip \"cegep-ste-foy.qc.ca\" is drawn as a bordered, tappable-looking pill but is only ~26pt tall — under the 44px minimum if it links out; also the stray trailing \"·\" after \"Vérifié le 24 août 2026\" reads as an unfinished string"
+   ],
+   "violationsB": [
+    "Truncated/clipped labels throughout the body text: \"bound planetary systen\", \"indirectly.[b] Of the obje\", \"Sun directly, the largest\" all run off the right edge",
+    "Overlapping text: the white headline \"Save your favorite articles\" is laid over the article paragraph beneath it",
+    "\"Space — 5 articles, 20.85 MB\" states a figure with no source label or verification date beside it",
+    "No empty state, no error/retry, no named next action anywhere on the screen"
+   ],
+   "notes": "A is the only one of the two that is actually a product screen: clear hierarchy (title, then the plain-language explanation of why cote-R bursaries are missing, then what is available now), every amount paired with its funder and a \"Vérifié le\" date, and full-width tap targets. B is a store/marketing frame — tilted device, clipped sentences, headline dropped over body copy — and fails the stated criterion outright since nothing on it is an empty, loading, or error state. A's weakness is a mismatched CTA and one under-height source chip; B's weaknesses are structural, so the pick is not close."
+  },
+  {
+   "id": "O8",
+   "pick": "B",
+   "confidence": 4,
+   "gapA": "Calendar block: the month labels \"Dec Jan 2021\", \"Feb\", \"Mar\", \"Apr\" float free of the columns they label (the ragged pink grid below them starts and ends at different columns per row, and the Fri row is short one cell), so the densest region of the screen is unreadable as a time axis; the day chips are roughly 28px and look tappable, and the only action, the grey word \"EDIT\", reads as a caption rather than a button.",
+   "gapB": "Bottom action region: the full-width primary button says only \"Continuer →\" — after a results screen that ends with four programme cards, it names no destination and no next step (compare programmes? save? see prerequisites?), so the loudest control on the page carries the least information. Second-order, the summary card anchors the big \"Minimum publié 22,5 / Bachelor of Arts in Educational Studies\" without saying why that one programme is the reference, then repeats it verbatim as list card 1.",
+   "violationsA": [
+    "Touch targets: calendar day chips (\"27 3 10 17 24 31...\") render at roughly 28px and read as tappable state toggles, below the 44px minimum; \"EDIT\" is a bare text label with no visible hit area."
+   ],
+   "violationsB": [
+    "Inconsistent/apparently truncated status label: three cards read \"AU-DESSUS DU MINIMUM\" while \"Bachelor of Nursing (Integrated / BScN)\" reads only \"AU-DESSUS\" — same badge slot, clipped-looking text.",
+    "Legend does not match the mark it explains: \"Barre grise : fourchette ou minimum publié · point : ta cote\" but the published minimum is drawn as a small grey dot on a thin track, not a grey bar."
+   ],
+   "notes": "B meets its own bar cleanly: the headline \"Ton estimation de ≈ 28,40 dépasse le seuil publié dans 204 programmes de notre base.\" sits directly on \"Vérifié le 25 août 2026\", the curve carries \"Vérifié le 25 août 2026 · bci-qc.ca\" plus the honest caveat that it is illustrative and not a statistic of that programme, the estimate is dashed-framed and marked \"ESTIMATION ≈ 28,40\", and no percentile or admission-chance language appears anywhere. Its real cost is redundancy — the same verification date printed seven times and three cards with identical \"Minimum publié 2025 : 22,5 / Préalables couverts\" boilerplate — which flattens the list into wallpaper. A is a competent stock Material screen but its centrepiece calendar is misaligned, cramped and low-contrast, and it offers only one weak text action."
+  },
+  {
+   "id": "O9",
+   "pick": "A",
+   "confidence": 3,
+   "gapA": "The programme list is nine near-identical cards, each repeating the same two lines verbatim — the \"SUGGÉRÉ\" chip and \"Suggéré à cause du mot : santé · profil du DEC\" — while the number that drives every verdict, \"Ta cote : 31,20 · saisie par toi\", is set in the smallest, palest type on the screen directly under the intro paragraph; collapse the repeated boilerplate into one section-level line and promote the cote to a readable, framed value, and the wall of cards becomes scannable instead of nine copies of one card.",
+   "gapB": "The answer card between the question and \"OTHER ANSWERS…\" prints its own labels upside-down — \"cycle lane\" is mirrored and \"sidepath or protected cycle lane\" runs diagonally — and then explains the problem away with \"The road in the illustration is rotated the same as its center on the map\"; drawing the diagram right-way-up (or letting the user rotate it) would remove the one thing that makes this screen unreadable at arm's length, and would flip my pick.",
+   "violationsA": [
+    "Internal contradiction that reads as an admissibility judgement: the intro says \"Aucune évaluation\" and the footer says \"pas une évaluation d'admissibilité\", yet every card renders a verdict on the student — \"Au-dessus du minimum · minimum publié 2025 : 22,5\" and \"En dessous · cotes publiées 2023–2025 : 32,8–33,5\" — which is a pass/fail read of the user's own 31,20 against a cutoff.",
+    "Dangling separator / inconsistent metadata wrap: the Université Laval cards read \"Vérifié le 25 août 2026 · uluaval.ca\" on one line, while every Université de Montréal card leaves a trailing \"Vérifié le 25 août 2026 ·\" with the orphaned source chip \"admission.umontreal.ca\" dropped to the next line.",
+    "The circular \"+\" add controls on each card measure roughly 34pt — below the 44px minimum for a tappable target, and they are the primary action of the list."
+   ],
+   "violationsB": [
+    "Unlabelled, unsourced figure: \"16577\" sits alone beside a star at the top-left with no label, no source and no date.",
+    "Overlapping controls: the orange circular check button sits on top of the answer card and crowds the \"OTHER ANSWERS…\" row, covering the bottom-right corner of the illustration.",
+    "Text rendered unreadable: the illustration's own labels \"cycle lane\" (printed upside-down) and \"sidepath or protected cycle lane\" (diagonal) cannot be read in place.",
+    "The illustration is clipped by the card edge — the lane diagram runs off the bottom with no indication it continues."
+   ],
+   "notes": "A wins on the visible parts of the brief: a back chevron top-left, one exclusive choice among three large rows with the quiz as the third option, a \"SUGGÉRÉ\" chip plus a per-card reason on every entry, a footer that says suggestions come from title words, and a plain \"Passer cette étape\" — suggestions are unmistakably suggestions. Its own worst enemy is honesty, not layout: the screen promises \"Aucune évaluation\" and then grades the student's cote against every cutoff. B has the stronger single-decision hierarchy and far better touch targets, but an upside-down diagram, a check button parked on top of the answer sheet, and a naked \"16577\" are craft failures I cannot vote for."
+  },
+  {
+   "id": "A1",
+   "pick": "B",
+   "confidence": 4,
+   "gapA": "The header asks \"Did you meditate for at least 10 minutes today?\" with \"Every day · 7:30 AM\" under it, and nowhere on the screen is there a way to answer it — no Yes/No, no log control, just a pencil icon in the app bar. The screen poses its central question and then hands the user three read-only charts; putting the answer control directly beneath that question is the single change that would make it a working screen rather than a stats page.",
+   "gapB": "The grey run under \"Objectifs programme\" — \"Barre grise : fourchette ou minimum publié · point : ta cote · Retirer s'annule pendant six secondes\" — jams a chart legend and an undo-timer disclosure into one line of ~11px type, so the one sentence that explains how to read the bar is also the least legible thing on the screen. Split it: legend beside the bar, undo behaviour attached to the \"Retirer\" action where it happens.",
+   "violationsA": [
+    "Figures with no source and no verification date and no marker that they are the user's own entry: \"73%\" / \"Score\", \"+10%\" / \"Month\", \"+30%\" / \"Year\", \"1045\" / \"Total\" in the Overview row.",
+    "Clipped content: the \"History\" bar chart is amputated by the bottom system nav — the bars for \"7  7\", \"5\", \"6\" and the \"4\" values run off the bottom edge with no baseline, so the chart cannot be read."
+   ],
+   "violationsB": [
+    "Top bar repeats the figure \"COTE R 31,20\" with no source, no verification date and no confirmed/estimated marker — the card below carries all three, the header chip carries none.",
+    "Touch targets: the \"Modifier\" pill beside \"Ta cote R confirmée\" and the \"× Retirer\" pill in the programme row are visibly shorter than the two full-width buttons below them and read as roughly 35–40px at the rendered scale, short of 44px."
+   ],
+   "notes": "B does the assigned job squarely: a green ✓ CONFIRMÉE frame around \"31,20\" with \"Confirmée par ton cégep, saisie par toi le 28 août 2026 · 3e session\", a real what-if (\"Et si mes notes changeaient ?\"), and a cutoff that names its source and date (\"Minimum publié 2025 : 22,5\", \"Vérifié le 25 août 2026 · ulaval.ca\"). It never shows an estimate, so the confirmed-vs-estimated contrast is asserted rather than demonstrated, and at \"3e session\" the first-session case is untested. A loses on purpose, not on style — it is a competent chart page attached to a question it refuses to let you answer, with its last chart cut in half by the nav bar."
+  },
+  {
+   "id": "A2",
+   "pick": "B",
+   "confidence": 5,
+   "gapA": "A shows none of the required anatomy: in the \"Run\" and \"Read books\" rows the only figures are bare \"0.9 miles / 1.2 miles / 1.3 miles\" and \"50 pages / 38 pages / 65 pages\", with no status word, no published range or target, and no source or verification stamp anywhere on the screen; colour (pink/orange vs grey) is the sole, unexplained status signal, and the pale \"0 miles\" under MON 26 is close to invisible. Adding a per-row target/range plus a legend or stamp is the one change that could put it in contention.",
+   "gapB": "Undo exists only as prose. In the \"Objectifs programme\" header the grey helper line reads \"Retirer s'annule pendant six secondes\", but nothing on screen shows an \"Annuler\" control or a removed-row state, so the undo half of the criterion is asserted rather than demonstrated; the same header also wraps badly (\"Objectifs / programme\" on two lines beside a two-line \"Explorer les programmes\" pill), making the card's most important control read as an afterthought.",
+   "violationsA": [
+    "Every displayed figure must sit next to its source and verification date or be visibly the student's own entry: \"0.9 miles\", \"1.2 miles\", \"50 pages\", \"100 pages\" carry no source, no date and no marker that they are self-entered.",
+    "Legibility/consistency: the \"0\" and \"miles\" under MON 26 in the Run row are rendered in near-white grey, and the colour coding (grey vs pink vs orange numerals, grey X vs coloured check) is never explained anywhere on screen."
+   ],
+   "violationsB": [
+    "Touch targets under 44px: the date filter chips \"7 jours 0\", \"30 jours 0\", \"3 mois 4\", \"12 mois 16\" measure roughly 36px tall (73px in a 780px-wide 2x capture), below the 44px minimum; the \"Modifier\" pill in the top card is the same size."
+   ],
+   "notes": "B carries the whole brief per node — programme name, \"Minimum publié 2025 : 22,5\" / \"Cotes publiées 2024-2025 : 30,5-31,0\", a status word (\"Au-dessus du minimum\"), a stamp (\"Vérifié le 25 août 2026 · ulaval.ca\"), an add affordance and a per-row \"× Retirer\" — and its numbers are internally honest (5 dates shown + \"Afficher les 11 autres dates\" = the \"16 dates\" and \"12 mois 16\" counters, and \"30 jours 0\" is right for a September date against October deadlines). Its real craft weaknesses are the unlabelled slider scale, which makes the dot position decorative, and the very low-contrast grey of the verification lines at arm's length. A is a competent dense grid with generous 96px rows, but it answers none of the criterion and leans entirely on unexplained colour to carry meaning."
+  },
+  {
+   "id": "A3",
+   "pick": "B",
+   "confidence": 5,
+   "gapA": "In the calendar grid the whole viewport is spent on empty hour rows while the only real content is unreadable: the 2pm block character-wraps its title mid-word as \"Webinar on Lead / ership\" at roughly 10px, and the bottom category legend is clipped at the right edge to \"Profe\" with its colour swatch running off-screen. Give event blocks a legible minimum label (ellipsis, not mid-word breaks) and make the legend scroll or wrap so no label is cut — that alone would move it from \"unreadable at arm's length\" to usable.",
+   "gapB": "In the \"Dates importantes\" list the deadline itself reads second: \"15 octobre 2026\" sits in small grey type above a bold black title (\"Examen CASPer — Session d'automne\"), and there is no today-anchor or countdown anywhere, so imminence is invisible — two consecutive rows even repeat \"15 octobre 2026\" instead of grouping under one date heading. Promote the date to the row's primary weight (or group by date) and add a relative cue on the nearest items once they fall inside the 7/30-day windows.",
+   "violationsA": [
+    "Truncated label: the bottom category legend is clipped by the screen edge — \"Profe\" (Professional) with its colour swatch running off-screen.",
+    "Broken text: the 2pm event title breaks mid-word inside its block — \"Webinar on Lead / ership\".",
+    "Tap targets well under 44px: the \"Task\" chip at 05:00 PM and the day-column cells read as roughly 15-20px tall, as does the 7-day slider handle."
+   ],
+   "violationsB": [
+    "Filter chips (\"Toutes 16\", \"7 jours 0\", \"30 jours 0\", \"3 mois 4\") measure ~40px tall — marginally under the 44px minimum; every other control (\"Afficher les 11 autres dates\", \"Où se situe ta cote ?\") clears it."
+   ],
+   "notes": "B satisfies the stated criterion outright: all dates are absolute (\"1 novembre 2026\") with nothing imminent to warrant relative phrasing, each of the five rows carries \"Vérifié le 24 août 2026\" plus a named source chip (bci-qc.ca, sram.qc.ca), and the empty windows are labelled with their counts on the chip itself (\"7 jours 0\", \"30 jours 0\") so no filter can zero out silently — and the counts reconcile (5 shown + \"Afficher les 11 autres dates\" = \"16 dates\" = \"Toutes 16\"). Its weaknesses are hierarchy and grey-on-white body copy that leans light, not honesty; the confirmed 31,20 is explicitly stamped \"saisie par toi le 28 août 2026\" and no copy predicts admission or ranks programmes. A is a marketing frame around a mostly empty week grid with a mid-word break and a clipped legend, and its smallest tappable items are a third of the required height."
+  },
+  {
+   "id": "A4",
+   "pick": "A",
+   "confidence": 2,
+   "gapA": "Every programme card is guillotined at its bottom edge: in the \"Doctorat de 1er cycle en médecine (MD)\" card and again in the \"(DMD)\" card, the line \"Vérifié le 25 août 2026 ·\" and the \"ulaval.ca\" source chip are sliced mid-glyph by the row boundary — the exact sourcing the product rests on is the part destroyed, and the fixed row height also makes card 2 (two-line title) cram \"ULaval / Minimum publié 2025 : 22,5\" straight under the title with none of card 1's breathing room. Give rows their measured height so the verification line survives; that single fix would remove the \"unfinished build\" read and settle the pick.",
+   "gapB": "The bottom of the list is eaten by a translucent mini-player: the \"Coffee Run - Blender Open Movie\" row is half-covered, and the bar's own title truncates to \"Spring - Blender Open Mo..\" with grey \"Blender Studio\" sitting over a bright video frame. Beyond that, nothing on this screen counts, filters or classifies anything — no result total, no chips, no matched set — so it is a competent stock list doing a far easier job than the one being compared.",
+   "violationsA": [
+    "Truncated/clipped text: 'Vérifié le 25 août 2026 ·' and the 'ulaval.ca' source chip are cut mid-glyph at the bottom of both visible programme cards",
+    "Ragged, non-equality-matched chips: '232 Au-dessus' / '0 Dans la fourchette' and '5 En dessous' / '0 Pas encore vérifié' have unequal widths and the second row's right-hand pill does not align with the first row's",
+    "False affordance: the grey/green dots on a track under each card read as a draggable slider but are a static gauge"
+   ],
+   "violationsB": [
+    "Truncated label: mini-player reads 'Spring - Blender Open Mo..'",
+    "Overlapping text: the mini-player bar sits on top of the 'Coffee Run - Blender Open Movie' row, obscuring it",
+    "Figures without source or verification date: '1.3M views • 5 months ago', '9.1M views • 4 years ago'"
+   ],
+   "notes": "A actually does the work — 232+0+5+0 reconciles exactly with the \"PROGRAMMES TROUVÉS 237\" header, \"31,20\" is marked \"saisie par toi\", each cutoff carries \"Minimum publié 2025 : 22,5\" with an issuer and a check date, and no copy recommends or predicts — which is why it edges ahead despite failing two of its own three conditions (chips are ragged, and the clipped card bottoms are exactly the artefact of fixed-height virtualisation). B is the more finished screen and has no build-level breakage, but its information design is inert and its own overlay degrades the last row and its own label. This is close: one released row height on A would turn a 2 into a 4, while nothing B can fix would make it the more useful screen."
+  },
+  {
+   "id": "A5",
+   "pick": "A",
+   "confidence": 5,
+   "gapA": "The \"Historique des seuils\" card carries one stamp for two figures: rows \"2024 · Bas de fourchette 22,0\" and \"2025 · Bas de fourchette 22,5\" sit four lines above a single \"Vérifié le 25 août 2026 · ulaval.ca\" chip, so neither number has a stamp adjacent to it — a reader scanning the right-hand column sees bare figures. Secondary but close: the primary action pill \"✓ Ajouté à tes cibles\" is a pale mint block with a check, which reads as a passive status banner rather than a tappable control, and its copy states a state instead of saying what tapping does next (retirer? voir mes cibles?).",
+   "gapB": "This screen shows none of the brief: no cutoff history, no prerequisite badges, no add-to-targets action. Concretely, every figure on it is unsourced and undated — \"415K subscribers\" under \"Blender Studio\", \"28K views • 1 week ago\" under \"Base Meshes - Free Asset Bundle\", \"53K views • 1 week ago\" — and closing that alone would still leave the screen a channel video list, not a programme detail.",
+   "violationsA": [
+    "Header figure \"COTE R 31,20\" (top bar) sits with no adjacent source, no verification date, and no visible marker that it is the student's own entry; the clarification \"Ta cote R est celle que tu as saisie\" is in the footer, far below the fold.",
+    "In \"Historique des seuils\", the figures 22,0 and 22,5 are not adjacent to a stamp — one card-level \"Vérifié le 25 août 2026 · ulaval.ca\" chip is separated from them by a rule and a row."
+   ],
+   "violationsB": [
+    "Unsourced, undated figures throughout: \"415K subscribers\", \"28K views • 1 week ago\", \"53K views • 1 week ago\", \"9.3K views • 3 weeks ago\" — no source, no verification date, not the user's own entry.",
+    "Truncated label: the tab row ends in \"CHA\" clipped at the right screen edge after \"PLAYLISTS\".",
+    "Bottom row of content is clipped mid-thumbnail with no affordance indicating more, and the \"SUBSCRIBED\" grey ghost pill reads as disabled rather than tappable."
+   ],
+   "notes": "A is plainly the programme detail and B is an unrelated video-channel screen, so this is not a close call. A's craft holds up: title-then-action-then-numbers hierarchy is right, the cutoff card pairs \"22,5 Minimum publié 2025\" with two source chips, the badge \"DEC REQUIS, AUCUN COURS PRÉCIS\" phrases a catalogue fact, and the curve is explicitly disclaimed as \"Courbe illustrative … pas une statistique de ce programme\" so it stops short of predicting chances. Its real weaknesses are the flat-looking primary pill, the cramped two-column prerequisite row where \"Diplôme d'études collégiales (DEC) reconnu\" wraps to three lines beside a wide badge, and stamps that live at card level rather than beside each number."
+  }
+ ]
+}

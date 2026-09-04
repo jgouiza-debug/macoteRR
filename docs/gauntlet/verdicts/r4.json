@@ -1,0 +1,237 @@
+{
+ "verdicts": [
+  {
+   "id": "S2",
+   "pick": "A",
+   "confidence": 5,
+   "gapA": "The set is \"empty / loading / error\", but only the empty state is on screen: the card reading \"Pas encore de cote R : les boursesqui en dépendent apparaîtront après ta première session…\" is followed straight by real content, with no skeleton row matching the bourse-card geometry and no error/retry affordance anywhere in the frame — so two thirds of the criterion is unverifiable. Second-biggest, same card: the only named next action is \"Explorer les programmes\", which sends the student out of Bourses instead of telling them what makes the missing bourses appear (e.g. \"Ta cote R arrivera en janvier\").",
+   "gapB": "The screen is an angled marketing mockup, not a state: the headline \"Save your favorite articles\" is laid over live article text, and the body is sliced off at the right edge — \"bound planetary systen\", \"indirectly.[b] Of the obje\", \"Sun directly, the largest\" all end mid-word. Nothing here is an empty, loading or error state, and no next action is named beyond a generic \"Create new\" row.",
+   "violationsA": [],
+   "violationsB": [
+    "Truncated labels: article text cut mid-word at the right edge — \"bound planetary systen\", \"Of the obje\", \"Sun directly, the largest\"",
+    "Overlapping text: the white headline \"Save your favorite articles\" sits directly on top of the \"Planetary system of the Sun\" / \"The Solar System[a] is t…\" body copy",
+    "Figures without source or verification date: \"5 articles, 20.85 MB\" under \"Space\" is presented bare (arguably the user's own data, but nothing on screen says so)"
+   ],
+   "notes": "A is a real screen doing real work: sources sit beside every amount (\"Fondation du Cégep de Sainte-Foy · 500 $ – 1 000 $\", \"Vérifié le 24 août 2026 · cegep-ste-foy.qc.ca\"), the empty explanation is read before the list, and targets are generous — though the bordered box around \"cegep-ste-foy.qc.ca\" reads like a text input rather than a provenance chip, and \"1 novembre 2026\" carries no label saying it is a deadline. B is a store-listing render at 3x zoom, so it can be judged neither for skeleton geometry nor for retry, and it breaks the truncation and overlap rules on its face. Not close."
+  },
+  {
+   "id": "S1",
+   "pick": "A",
+   "confidence": 4,
+   "gapA": "Top bar: the session chip \"COTE R 31,20 CONFIRMÉE\" is flat coloured text with no pill, border or chevron, so the shell's key status control reads as decoration, and the bell beside it sits in a circle measuring roughly 36px — under the 44px floor. Give the chip a real ≥48px pill with an affordance and enlarge the bell, and the header stops being the weakest band on an otherwise well-built shell. Secondary: the header repeats \"31,20 CONFIRMÉE\" verbatim 150px above the card that states it again, and the FR/EN toggle occupies as much header width as the student's own score.",
+   "gapB": "Bottom mini-player: \"Sprite Fright - Blender Open Movi...\" is a truncated label set on a translucent bar with the video thumbnail showing through behind the text, and it clips the fourth feed row (\"136 views • 6 days ago\"). Make that bar opaque and let the title fit, and the screen's worst legibility failure disappears. The four unlabeled icon tabs (flame, feed, tv, bookmark) plus an unlabeled eye and \"?\" in the toolbar leave the underline as the only wayfinding cue.",
+   "violationsA": [
+    "Header bell sits in a circle measuring roughly 36px across — below the 44px tappable floor; the chip beside it has no defined target at all",
+    "\"Barre grise : fourchette publiée · point : ta cote · Retirer s'annule pendant six secondes\" crams a chart legend and an undo notice into one grey run-on line, shown before any Retirer has been pressed — copy that does not say what happens next"
+   ],
+   "violationsB": [
+    "Truncated label in the mini-player: \"Sprite Fright - Blender Open Movi...\"",
+    "Overlapping text: mini-player title and \"Blender Studio\" sit on a translucent bar with the thumbnail image visible through them, and the bar covers the fourth row's metadata",
+    "Figures shown with no source or verification date: \"8.7K views • 2 hours ago\", \"1.6K views • 2 days ago\", \"136 views • 6 days ago\"",
+    "Four bottom-row tab icons and the toolbar eye/\"?\" icons carry no labels — the active state is a bare underline"
+   ],
+   "notes": "A is the only one of the two that behaves like a designed shell: four labelled tabs with an unambiguous blue active state on \"MA COTE\", and every figure pinned to a source and date (\"Confirmée par ton cégep, saisie par toi le 28 août 2026\", \"Vérifié le 25 août 2026 · ulaval.ca\"). It still wastes its most valuable band — logo, duplicated score chip, bell and a permanent FR/EN switch all fight in one 48px header — and \"Objectifs programme\" wraps into a two-line collision with the two-line \"Explorer les programmes\" button. The green \"Au-dessus du minimum\" is a factual comparison to a published range rather than a prediction, but it sits one hair from reading as an admission signal and deserves watching."
+  },
+  {
+   "id": "O7",
+   "pick": "B",
+   "confidence": 5,
+   "gapA": "Screen A shows none of the criterion: no promises, no confirm-before-wipe, and no CTA at all — the device frame ends mid-list on \"4 No harassment, block evasion, dogpiling, or doxxing of others\" with the next action off-screen. Concretely, the top half is spent on a marketing slab (\"Decentralized. / Each server has its own rules and moderators.\") that duplicates the framed screen's own header \"Server rules\", so roughly 35% of the pixels carry no function and the actual content is squeezed into a mockup that clips every rule description.",
+   "gapB": "The one safety promise — \"Si une cote R est déjà enregistrée, on te demande confirmation avant de l'effacer.\" — is set in the lightest grey on the screen, last in a three-paragraph block above the CTA, i.e. the least legible line at arm's length carries the most consequential guarantee. Promote it to a bordered/iconed row at full body contrast (or attach it directly above \"Choisir mes programmes\") and the lower third stops reading as an undifferentiated grey wall.",
+   "violationsA": [
+    "Truncated labels throughout the rules list: \"…as well …\", \"…strictly prohibited…\", \"…strictly prohibite…\", \"…accounts solely to …\" — four visibly clipped descriptions with no affordance to expand",
+    "No visible tappable control anywhere on the framed screen; the required next action is cropped off the bottom edge"
+   ],
+   "violationsB": [
+    "\"237 programmes avec préalables publiés\" (Préalables DEC card) carries a verification date but no named source — \"publiés\" is passive and names no publisher, unlike the first card's \"cotes publiées par chaque université\"",
+    "\"15 bourses\" (Bourses de ton cégep card) shows a figure with \"vérifié le 24 août 2026\" but no source for the count"
+   ],
+   "notes": "B is the only screen that even attempts the brief: three counted, dated cards, an explicit confirm-before-erase line, and a CTA that names the next step (\"Choisir mes programmes →\", ~64px, unmistakably tappable). Its real craft problems are the bottom third — three stacked grey paragraphs with no hierarchy between explanation, sales pitch, and safety guarantee — and the blue subtitle, which uses link colour on non-tappable text right above cards that look like rows but aren't. A is a store/marketing asset with a phone mockup rather than a screen: half the canvas is a headline, the content it does show is truncated in four places, and it offers no action at all."
+  },
+  {
+   "id": "O3",
+   "pick": "A",
+   "confidence": 4,
+   "gapA": "The section headers — \"PRÉUNIVERSITAIRE\", \"TECHNIQUE\", \"CHEMINEMENT PARTICULIER\" — are tiny light-grey all-caps set at the same left margin as the card text, so they carry less visual weight than the programme codes (\"200.B1\") and dissolve at arm's length; combined with a search field (\"Cherche ton programme ou son code\") that scrolls away after the first few rows, the grouping stops working exactly where the list gets long. Make the headers sticky, heavier and higher-contrast, and pin the search bar — that alone converts a 34-card grey scroll into a scannable index.",
+   "gapB": "The top-left overlay: the star badge and the bare figure \"16577\" sit directly on top of the map label \"Exhibition Square\", with the star itself half-eaten by the camera cutout — the first thing the eye lands on is a collision of two texts and an unlabelled number with no caption or source. Move the counter into the header chrome (or drop it) so nothing overlaps and the number is either named or gone.",
+   "violationsA": [
+    "Top bar: the FR / EN language pill (and the back chevron beside it) read as roughly 30pt tall — under the 44px minimum for a tappable control, while the programme rows below are comfortably above it"
+   ],
+   "violationsB": [
+    "Overlapping text: the '16577' star badge is drawn over the map label 'Exhibition Square' at top-left, and the star glyph is clipped by the status-bar cutout",
+    "Unsourced figure: '16577' appears with no label, source or date and is not visibly the user's own entry",
+    "Truncated content: the last option 'Hut' is cut in half at the bottom sheet edge, its icon sliced by the gesture bar"
+   ],
+   "notes": "A does the job it set itself: title, one-line scope-and-next-step sentence, search, then A-Z grouped rows with codes and chevrons — \"Sciences de la nature\" is reachable in a glance and the profile step is promised in a single sentence before you commit. B has the better single line of instructional copy (\"Select the most specific one that fits:\") and bigger type, but it spends 55% of a phone screen on a map for a list-selection task, shows only five and a half options, and opens with overlapping text and a naked number. A's failure is monotony — 34 identically weighted white cards with whisper-quiet group headers — which is a fixable contrast problem, whereas B's layout and overlay defects are structural."
+  },
+  {
+   "id": "O8",
+   "pick": "A",
+   "confidence": 5,
+   "gapA": "The comparison row inside each programme card fails the legend it is given. Legend above the list reads \"Barre grise : fourchette publiée · point : ta cote\", but every card renders the published range as a single grey dot on a hairline track (e.g. Bishop's \"Minimum publié 2024–2025 : 22,0–22,5\" shows one grey dot, one green dot, no grey bar), so the width of the published fourchette — the only thing the row exists to show — is invisible and the two dots read as a slider control the user could drag. Draw the 22,0–22,5 span as an actual grey bar with its endpoints labelled and the card becomes self-explaining without the offscreen legend.",
+   "gapB": "The \"History\" chart's numbers are unitless and unsourced: bars are labelled 20, 12, 13, 18, 25, 28, 29, 28, 28, 12, 20, 14, 23, 20 with a \"Month\" dropdown, no y-axis label, no caption, and nothing saying whether these are sessions, minutes or days, or that they are the user's own logged entries. Adding a unit and an \"own entries\" line under the title would close the largest honesty and comprehension hole on the screen.",
+   "violationsA": [
+    "Truncated/inconsistent label: the fourth card's badge reads \"AU-DESSUS\" while the three above read \"AU-DESSUS DU MINIMUM\"; the same card also switches its field label to \"Cotes publiées 2024–2025 : 24,0–24,5\" while the others say \"Minimum publié 2024–2025\"",
+    "Source chips (\"ubishops.ca\", \"bci-qc.ca\", \"concordia.ca\", \"etsmtl.ca\", \"mcgill.ca\") are drawn as bordered pills — button affordance — at roughly 25pt tall, under the 44px minimum"
+   ],
+   "violationsB": [
+    "Every figure is unsourced and undated and not marked as the user's own entry: bar labels \"29\", \"28\", \"25\" in History and the whole Calendar grid of dates carry no unit, source or verification date",
+    "Calendar day cells (\"3\", \"10\", \"28\", …) are coloured, selectable-looking targets roughly 15pt tall, far under 44px; the grey \"EDIT\" text button is likewise a bare low-contrast label",
+    "Column headers over the calendar (\"Dec  Jan 2021 … Feb … Mar … Apr\") float unaligned above the grid, so no date column is reliably labelled"
+   ],
+   "notes": "A meets its own bar: the headline \"Ton estimation de ≈ 28,40 dépasse le seuil publié dans 204 programmes de notre base.\" sits directly on \"Vérifié le 25 août 2026\", the curve carries \"Courbe illustrative … pas une statistique de ce programme\" plus \"Vérifié le 25 août 2026 · bci-qc.ca\", the estimate is dashed-framed and labelled ESTIMATION, and nowhere does it claim a percentile or a chance of admission. Its residual risk is the \"toi, ≈ 28,4\" marker planted on an admittedly illustrative bell curve, which invites a positional read the disclaimer has to work hard to undo. B is a different product entirely and loses on craft anyway — no headline, unitless figures, a mis-headed calendar grid, and the section title \"Best streaks\" jammed against the system nav bar."
+  },
+  {
+   "id": "O9",
+   "pick": "B",
+   "confidence": 3,
+   "gapA": "The answer illustration card (lower third) is the failure: its only labels — \"cycle lane\" and \"sidepath or protected cycle lane\" — are rendered upside-down/mirrored and are unreadable without turning the phone, and the orange check FAB sits on top of the \"OTHER ANSWERS…\" bar while the card itself is clipped by the screen edge. Fix the label orientation and un-occlude the answer row and this screen's craft advantage becomes decisive.",
+   "gapB": "The bottom action region has no primary action at all: the last thing on a ~5300px page is grey plain text \"Passer cette étape\", with no \"Continuer\"/\"Suivant\" and no statement of what skipping saves — so the wizard's forward path is invisible and the skip's promise (\"saves nothing extra\") is never made in copy. Add a real primary button plus one line saying skip records nothing, and the screen would hold its lead outright.",
+   "violationsA": [
+    "Bare figure \"16577\" (top-left, next to a star icon) with no label, no source and no verification date",
+    "Answer card clipped at the bottom screen edge and the orange FAB overlaps the \"OTHER ANSWERS…\" action row",
+    "Illustration labels \"cycle lane\" / \"sidepath or protected cycle lane\" render mirrored/upside-down and are effectively illegible"
+   ],
+   "violationsB": [
+    "Dangling separator on every card: \"Vérifié le 25 août 2026 ·\" ends in a trailing \"·\" with nothing after it — reads as a truncated/placeholder field",
+    "Sub-44px tappables: the top-left back chevron and the FR/EN segmented toggle are roughly 24pt tall",
+    "Source URL wrapped in a bordered box (\"admission.umontreal.ca\") looks like an empty text input — false affordance, and inconsistent with the unboxed \"ulaval.ca\" on the Laval cards"
+   ],
+   "notes": "Only B is the goal wizard, and it does the hard part honestly: every card carries a \"SUGGÉRÉ\" badge, a per-card reason (\"Suggéré à cause du mot : santé\"), sourced cutoffs with a verification date, the student's own \"Ta cote : 31,20 · saisie par toi\", and a footer that explicitly disclaims admissibility. Against that, A is the better-crafted screen — one question, huge targets, instant hierarchy — but it leaks an unexplained \"16577\", occludes its own answer bar, and its key illustration is printed upside-down. B still reads as a wall: eight near-identical cards repeating the same badge and the same reason line in ~9pt grey, which drains the badge of meaning and buries the two cards where the comparison actually differs."
+  },
+  {
+   "id": "A1",
+   "pick": "B",
+   "confidence": 4,
+   "gapA": "The \"Overview\" card's four bare figures — \"73% Score\", \"+10% Month\", \"+30% Year\", \"1045 Total\" — carry no source, no date and no definition of the period or the method, so the headline number is unauditable; second to that, the \"History\" section at the bottom is sliced off by the black system nav bar with its bar labels (\"7\", \"7\", \"5\", \"6\", \"4\") half-cut, and the \"Score / Week\" selector sits above an axis reading \"Jan 2021 … Apr 25\", which contradicts itself.",
+   "gapB": "The next step is unranked: \"Où se situe ta cote ?\" and \"Et si… ?\" are two identical outline chips of equal weight, neither marked primary, and \"Et si… ?\" never says what happens when tapped — a student reading the card top-to-bottom lands on two ties instead of one obvious action; the grey legend under \"Objectifs programme\" compounds it by cramming three unrelated notes into one run-on line (\"Barre grise : fourchette publiée · point : ta cote · Retirer s'annule pendant six secondes\").",
+   "violationsA": [
+    "Figures shown with no source and no verification date and no marking as the user's own entry: \"73%\" / \"Score\", \"+10%\" / \"Month\", \"+30%\" / \"Year\", \"1045\" / \"Total\" in the Overview card",
+    "Truncated/overlapped content: the \"History\" bar chart and its value labels (\"7\", \"7\", \"5\", \"6\", \"4\") are cut through by the system navigation bar; the leftmost \"4\" label floats with no bar visible",
+    "No estimate/confirmed distinction anywhere — \"73%\" is a derived score presented in the same weight and style as a hard count (\"1045 Total\")"
+   ],
+   "violationsB": [
+    "Header figure \"COTE R 31,20 CONFIRMÉE\" is displayed in the persistent top bar with no source and no verification date beside it; the provenance line (\"Confirmée par ton cégep, saisie par toi le 28 août 2026\") lives only in the card below and is lost as soon as the page scrolls"
+   ],
+   "notes": "B's confirmed state is unmistakable — green check plus \"CONFIRMÉE\" plus a framed box plus \"Confirmée par ton cégep, saisie par toi le 28 août 2026 · 3e session\" — and every other figure on it is dated and sourced (\"Minimum publié 2024–2025 : 22,0–22,5\", \"Vérifié le 25 août 2026 · ulaval.ca\"), which is exactly the discipline A lacks. A's first read is a reminder question rather than the score, its ring at \"73%\" is decorative, and its bottom third is physically clipped by the OS nav bar. B is not clean either: the score card's own next step is two undifferentiated chips, \"Et si… ?\" is coy rather than descriptive, and the card is immediately outshouted by a busier goals section directly beneath it."
+  },
+  {
+   "id": "A2",
+   "pick": "A",
+   "confidence": 5,
+   "gapA": "In the \"Objectifs programme\" block, undo exists only as a claim in 12px grey legend text — \"Barre grise : fourchette publiée · point : ta cote · Retirer s'annule pendant six secondes\" — with no visible undo control, countdown or removed-row placeholder anywhere on screen; the two \"× Retirer\" pills therefore read as destructive-and-final, and the same legend line is doing triple duty (chart key + undo policy) in the least legible type on the page. Secondary in the same region: \"Minimum publié 2024–2025 : 22,0–22,5\" labels a range as a \"minimum\", and 22,0 as a med-school threshold is not a credible published figure.",
+   "gapB": "The entire grid body misses the brief: the \"Run — 0.9 miles / 1.2 miles / 1.3 miles / 0 miles / 0.5 miles\" and \"Read books — 50 pages / 38 pages / 65 pages / 100 pages / 10 pages\" rows show bare numbers with no published range, no status word, no source chip and no verification date, and nothing on screen removes an item or offers undo — the header \"+\" is the only mutation affordance and the \"Habits\" title bar carries no per-node controls at all. Closing it would mean rebuilding the row as name + range + status + stamp + remove, i.e. the screen does not compete as drawn.",
+   "violationsA": [
+    "Touch targets under 44px: the \"× Retirer\" and \"Modifier\" pills and the date filter chips (\"Toutes 16\", \"7 jours 0\", \"30 jours 0\", \"3 mois 4\") measure roughly 34-36 CSS px tall.",
+    "Copy/figure mismatch: \"Minimum publié 2024-2025 : 22,0-22,5\" presents a two-ended range under the word \"Minimum\", so the published figure it stamps cannot be read unambiguously; the second card uses the different label \"Cotes publiées\" for the same kind of value."
+   ],
+   "violationsB": [
+    "Every figure sits without a source or verification date and is never marked as the user's own entry: \"0.9 miles\", \"1.2 miles\", \"50 pages\", \"100 pages\" appear as authoritative numbers with no provenance.",
+    "Date column headers are truncated to \"THU 29 / WED 28 / TUE 27 / MON 26 / SUN 25\" with no month or year, so the stamps cannot be resolved."
+   ],
+   "notes": "A does the job the brief describes — each programme node carries a published range, a green status word (\"Au-dessus du minimum\" / \"Au-dessus\"), a \"Vérifié le 25 août 2026 · ulaval.ca\" stamp and an in-place Retirer, with the bar+dot giving the comparison at a glance; B is a habit grid that answers none of it. A's craft is uneven all the same: the \"Objectifs programme\" heading wraps into two lines and crowds the \"+ Explorer les programmes\" pill, and the two nodes use inconsistent labels and inconsistent status wording. B's craft is competent as a grid but reads as a wall of unexplained ticks, crosses and bold/grey numbers whose meaning is never stated."
+  },
+  {
+   "id": "A3",
+   "pick": "A",
+   "confidence": 5,
+   "gapA": "In the \"Dates importantes\" card, all 16 rows carry identical weight — same blue dot, same type ramp — so \"1 novembre 2026 · Date limite d'admission universitaire — Hiver 2027\", the only entry that is actually an admission deadline (the screen's stated purpose), reads no louder than \"Bourses Loran (Leadership & Engagement) — Date limite\" above it. Add a visible urgency/kind distinction (and a relative stamp once inside the 7/30-day window) so the nearest binding date is what the eye lands on first instead of the chip row \"Toutes 16 / 7 jours 0 / 30 jours 0\".",
+   "gapB": "No date on the screen is stamped, complete, or even coherent: the column header reads \"Dec wk. 1\" over \"S 31 · M 1 · T 2 …\" — no year, and a Sunday \"31\" cannot precede Monday 1 December. Every event block (\"Yoga Session\", \"Team Meeting\", \"Webinar on Lead ership\") shows a coloured rectangle with no source, no verification date, and no full date anywhere on the screen.",
+   "violationsA": [
+    "Tappable filter chips in \"Dates importantes\" (\"Toutes 16\", \"7 jours 0\", \"30 jours 0\", \"3 mois 4\", \"Cette année 16\") measure ~38px tall, under the 44px minimum; the \"Retirer\" and \"Modifier\" pills are the same height."
+   ],
+   "violationsB": [
+    "Truncated/broken label: the red block reads \"Webinar on Lead ership\", the word split mid-syllable across lines.",
+    "Truncated label: the category row is clipped at the right edge — \"Birthdays · Family · Leisure · Personal · Profe\".",
+    "No figure or date sits next to a source or verification date: every event block and the \"Dec wk. 1 / S 31 / M 1\" header is unsourced and undated (no year).",
+    "Dishonest date header: \"S 31\" immediately preceding \"M 1\" of December is not a real calendar day.",
+    "Tappable \"⊘ Task\" chip in the Thursday column is roughly 14px tall, far under 44px."
+   ],
+   "notes": "B is an app-store marketing shot of a week grid, not a deadlines screen: about 40% of the canvas is headline and device bezel, the grid is ~90% empty cells, and it fails the brief on every clause — no stamps, no filter feedback, no absolute dates. A does the actual job: absolute dates only (nearest is 41 days out, so no relative wording is correct), each row stamped \"Vérifié le 24 août 2026 · sram.qc.ca / bci-qc.ca / acuityinsights.app\", and each filter carries its count in the chip so \"7 jours 0\" can never zero out silently. A's remaining faults are craft, not truth: 38px chips, the \"Objectifs programme\" heading crowded into two lines by the \"Explorer les programmes\" button, and a flat list where the admission deadline is buried third."
+  },
+  {
+   "id": "A4",
+   "pick": "B",
+   "confidence": 4,
+   "gapA": "A has no tier counts, no filter chips and no result total anywhere: the only scoping signal is the query \"blender open movie\" in the red app bar, so nothing on screen says how many items exist or what subset is shown, and the closest thing to a stat line — \"1.3M views • 5 months ago\" — is per-item, unsourced and undated. Closing that (a counted, filterable, provenance-carrying list) is the only thing that could put A in contention.",
+   "gapB": "In the programme cards, the provenance line is guillotined: \"Vérifié le 25 août 2026 : ulaval.ca\" is sliced horizontally by the row divider in both the \"Doctorat de 1er cycle en médecine (MD)\" and \"(DMD)\" cards, and the \"ulaval.ca\" source chip is cut to roughly half height. The one line that makes every figure on this screen honest is the one line you cannot fully read or tap — give each row enough height to show source plus verification date intact.",
+   "violationsA": [
+    "Overlap and truncation: the translucent mini-player bar sits on top of the 'Coffee Run - Blender Open Movie' row, and its title reads 'Spring - Blender Open Mo..' with 'Blender Studio' rendered grey-on-image at unreadable contrast",
+    "Figures without source or verification date: '1.3M views • 5 months ago', '9.1M views • 4 years ago', '4.2M views • 1 year ago' stand alone with no attribution",
+    "Ragged density: rows 4 and 5 ('Official Blender Open Movies', 'Coffee Run') carry no metadata line, leaving a dead right column and inconsistent row heights against rows 1-3"
+   ],
+   "violationsB": [
+    "Truncated / clipped text: 'Vérifié le 25 août 2026 : ulaval.ca' is cut mid-glyph by the card divider in both visible programme rows",
+    "Tappable under 44px: the clipped 'ulaval.ca' source chip is rendered at roughly half its height and is not fully reachable",
+    "Contradictory claim on the same number: the header reads 'COTE R 31,20 CONFIRMÉE' while the card below reads 'Calculé avec ta cote 31,20 saisie par toi' — 'CONFIRMÉE' can be read as externally verified when the figure is self-entered"
+   ],
+   "notes": "B is the only screen that attempts the brief, and it mostly lands it: 232 + 5 = 237 matches \"PROGRAMMES TROUVÉS 237\" with \"Toutes les universités\" active, ranges are labelled \"Minimum publié 2024-2025\" with a source and a verification date, and no copy recommends or predicts. Two real failures remain: the brief asks for three tiers (above / inside / below) and only \"Au-dessus\" and \"En dessous\" exist, and the two count tiles read as flat stats rather than tappable chips — flat cards, no pressed state, nothing like the blue \"Toutes les universités\" pill that does look tappable. A is a competent stock list but answers none of the criterion, and its translucent mini-player overlapping the last row is a worse craft failure than anything in B."
+  },
+  {
+   "id": "A5",
+   "pick": "B",
+   "confidence": 5,
+   "gapA": "A makes no attempt at the brief at all: there is no add-to-targets action, no prerequisite statements, and no stamp anywhere — the channel block shows \"415K subscribers\" and the first row \"28K views • 1 week ago\" as bare figures with no source and no verification date; even as a generic screen, the red header with a grey-on-red \"SUBSCRIBED\" button and the clipped tab \"CHAI\" are the weakest craft on the page.",
+   "gapB": "The single largest visual block in the \"Cote R d'admission\" card is a bell curve whose own caption admits \"Courbe illustrative de la répartition des cotes R sur l'échelle du BCI, pas une statistique de ce programme.\" — the most prominent graphic on the screen carries no programme data, and placing the \"toi, 31,2\" dot to the right of \"22,0–22,5 (2024–2025)\" invites an admission-chance read the copy is otherwise careful to avoid; shrink or replace it with the published-cutoff history it already has.",
+   "violationsA": [
+    "Figures with no source and no verification date: \"415K subscribers\", \"28K views • 1 week ago\", \"53K views • 1 week ago\", \"9.3K views • 3 weeks ago\"",
+    "Truncated label: the tab strip cuts \"CHANNELS\" to \"CHAI\" at the right edge",
+    "Overlapping text: the \"10:57\" duration chip sits on top of the thumbnail wordmark \"PRODUCTION LOG 05\""
+   ],
+   "violationsB": [
+    "Touch targets under 44px: the bordered source chips (\"ulaval.ca\", \"bci-qc.ca\") beside \"Vérifié le 25 août 2026\" read as tappable but are roughly 25pt tall; the \"FR / EN\" pill in the header is about 29pt",
+    "Cramped header label: \"COTE R\" wraps onto two lines in the top bar beside \"31,20 CONFIRMÉE\", reading as a broken label at the screen's highest-priority position"
+   ],
+   "notes": "B is plainly the screen under test and hits its criterion: \"Ajouté à tes cibles\" sits above the fold, every published figure (22,0–22,5, 93%, 2024/2025 seuils) carries \"Vérifié le 25 août 2026\" with a named domain, and the prerequisite badge \"DEC REQUIS, AUCUN COURS PRÉCIS\" states a catalogue fact rather than advice. A is an unrelated media screen that addresses none of the brief and breaks the sourcing rule on every number it shows, so the comparison is not close. B's remaining weaknesses are craft, not honesty: the illustrative curve out-weighs the real data, the source chips are too small to tap, and the primary button shows only the completed state (\"Ajouté\") with no visible way to undo."
+  },
+  {
+   "id": "A7",
+   "pick": "A",
+   "confidence": 5,
+   "gapA": "Delete region (bottom card): the destructive trigger is bare red text \"Supprimer mon compte\" sitting under a heading with the identical words — no frame, no fill, roughly 24px of tap height, so it reads as body copy rather than a button; the two-step is only asserted in prose (\"Un bouton de confirmation s'affiche avant la suppression\") instead of being shown, and the duplicated label wastes the one place the copy should say what the next screen asks. Give it a framed 44px+ destructive control labelled with the next step and the win condition is fully met.",
+   "gapB": "There is no account-management surface at all: the only entry point is an unlabeled \"⋮\" at top right, with no scoped edit link that returns, no explanation of what any field unlocks, and no delete path. The nearest editable thing, \"Your private note about this account\" / \"best Mastodon app\", is a free-text box with no statement of consequence — closing this gap would require the screen to be a different screen.",
+   "violationsA": [
+    "Header chip \"COTE R 31,20 CONFIRMÉE\" repeats the figure and the confirmation claim with no verification date adjacent (the date only appears far below, in \"Confirmée par ton cégep, saisie par toi le 28 août 2026\")",
+    "Tag count badges (\"Sport 2\", \"Leadership 5\", \"Recherche scientifique 4\") are displayed figures about bursary demand with no source and no verification date next to them; several chips (\"Entrepreneuriat\", \"Mobilité internationale\") show no number at all, so a missing count is indistinguishable from zero",
+    "Touch targets under 44px: the red \"Supprimer mon compte\" text trigger, and the plain \"Voir\" text buttons in the \"Programmes universitaires visés\" rows"
+   ],
+   "violationsB": [
+    "Overlapping/truncated text: the blue compose FAB sits on top of the boosted post line \"Pixelfeds Mastodon Api compatibility\", cutting the sentence; content is also clipped at the right edge of the frame",
+    "\"21,000 Followers\" is a rounded figure shown with no source, no verification date and no estimate marker (no ≈, no dashed frame, no \"estimate\"), so an approximation reads as an exact count",
+    "\"https://github.com/tuskyapp/Tusky\" runs flush to the right edge with no margin, and the label/value rows alternate right-aligned bold labels against centred links — ragged alignment that breaks the field grid"
+   ],
+   "notes": "A is the only screen doing this job: per-section \"Modifier\" affordances scoped to cheminement and cote R, tag copy that states the payoff and the privacy limit (\"Sert à faire remonter des bourses auxquelles tu pourrais être admissible. Jamais partagé ni vendu.\"), and a sourced figure line with a date. Its weaknesses are real — the delete trigger looks like text, \"Préparer ma rencontre\" never says with whom or what happens next, and a dead grey band sits between the delete card and the footer — but they are craft debts on a screen that is otherwise honest and legible. B is a social profile with no edit-return path, no consequence copy, and text physically covered by a floating button, so the comparison is not close."
+  },
+  {
+   "id": "A6",
+   "pick": "B",
+   "confidence": 5,
+   "gapA": "A is not a bursaries screen and is not even a clean screen capture: the top ~17% of the frame is marketing copy (\"Customize the Explore feed to show things that interest you\") sitting above a device mockup, so the first thing read is an ad, not the content. Inside the mockup there are no matched/close/other sections and no why-chips anywhere — the feed is \"MORE LIKE THIS\", \"Today on Wikipedia — Main page on 25 Jun 2019\", \"Randomizer — Flip through random articles to read from Wikipedia.\", \"Featured article — 20 Jun 2019\", \"Echo parakeet\". Closing that gap means replacing the whole frame with an actual sectioned, chip-annotated list; nothing short of that moves my pick.",
+   "gapB": "In the top \"Admissible maintenant\" section, the \"Bourses Perspective Québec (TI, Génie, Santé, Éducation)\" card — the second-largest amount on the screen, \"2 500 $ – 20 000 $\" — carries no why-chip at all. It goes from \"Gouvernement du Québec (MES)  2 500 $ – 20 000 $\" straight to the hairline divider, then \"28 février 2027 / Postuler\", with no \"Ton programme\" / \"Ta cote R\" / \"Ouvert à tous\" pill and no requirements line, while all eleven sibling cards have one. That single card breaks the \"why-chips on every card\" rule and, because it is the richest offer in the eligible band, it is the one a student most needs a reason for.",
+   "violationsA": [
+    "Figures shown with no source and no verification date: \"Main page on 25 Jun 2019\" in the green \"Today on Wikipedia\" band and the bare \"20 Jun 2019\" in the \"Featured article\" header.",
+    "Truncated/clipped content: the top row \"MORE LIKE THIS\" is an orphaned card footer whose card is cut off above the frame, and the \"Echo parakeet — Species of parrot endemic to Mauritius\" card is sliced mid-body at the bottom edge."
+   ],
+   "violationsB": [
+    "Header badge reads \"COTE R 31,20 CONFIRMÉE\" — a self-entered figure labelled \"confirmed\" with no adjacent source, verification date, or \"ta saisie\" marker; the only disclosure, \"Ta cote R est celle que tu as saisie\", sits in the footer roughly eight screens below and is invisible at the point the number is read.",
+    "Chip \"Cote min. 32,0 : à 0,8 de ta cote\" on the \"Bourse Schulich Leader\" card states a third-party cutoff and a derived gap inline with no marker separating the sourced cutoff from the computed distance; the gap figure is a derivation presented in the same weight as verified data."
+   ],
+   "notes": "B is the only screen doing the job, and mostly doing it honestly: three colour-coded bands (\"Admissible maintenant\" green, \"À portée\" rust, \"À explorer\" grey), per-card \"Vérifié le 24 août 2026 · quebec.ca\" provenance, honest empty states (\"Aucune date limite publiée\", \"Pas de formulaire en ligne. Contacte les services aux étudiants de ton cégep.\"), and 96px-tall \"Postuler\" pills that clear the touch-target bar. Its real craft weakness is sameness: twelve near-identical white cards differ only by a heading colour, \"À explorer\" is grey-on-grey and nearly disappears, and deadlines appear as bare unlabelled dates (\"15 octobre 2026\") even though the empty case is labelled — so the reader must infer what the date means. A is a store marketing asset, not a screen under test, and fails the section/chip criterion outright."
+  },
+  {
+   "id": "A8",
+   "pick": "B",
+   "confidence": 5,
+   "gapA": "A never attempts the brief: it is a store-listing composite whose top half is spent on the marketing headline \"Customizable / Many customization options, encryption and backups\", and the UI inside the phone frame is an \"Appearance\" list (Theme, Dynamic colors, Language, View mode, Show icons) with no notification toggles, no per-row consequence copy, and no guest/signed-in state anywhere. Even taken as a settings screen, its bottom row \"Show the account name\" is sliced off by the frame and rows like \"Theme — Selected: Light theme\" carry no chevron or any other cue that they are tappable.",
+   "gapB": "The persistent top bar is the weakest region: \"COTE R\" is crushed into a two-line stack (\"COTE\" over \"R\") jammed against \"31,20 CONFIRMÉE\", so the one hard number on screen is both mangled typographically and carries a confidence word with no source or verification date beside it — the provenance (\"Ta cote R est celle que tu as saisie\") is stranded in the footer far below. Fixing that bar (single-line label, \"saisie par toi · <date>\" next to the value) would remove the only honesty and craft wound on an otherwise clean screen.",
+   "violationsA": [
+    "Bottom row 'Show the account name' is truncated — the label sits on the frame edge and its description is clipped away entirely."
+   ],
+   "violationsB": [
+    "Top bar figure '31,20 CONFIRMÉE' shows a confidence word with no source and no verification date adjacent; the 'celle que tu as saisie' provenance is only in the page footer.",
+    "Top-bar label 'COTE R' wraps mid-label into a two-line stack against the value — a mangled label in a persistent chrome element."
+   ],
+   "notes": "B is the only screen that answers the brief: four toggles each with a concrete consequence line (\"jusqu'à 14 jours avant l'échéance\", \"décembre et avril\"), a plain-language scope card up top, and an explicit device-local guest state (\"Enregistré sur cet appareil. Connecte-toi pour retrouver ces choix sur tes autres appareils.\") with a real \"Me connecter\" target — and no push block invented where nothing backs it. Its faults are the cramped header and a dead vertical gap between the sign-in card and the legal footer that wastes about a screen-third. A is a marketing frame around an unrelated Appearance list with a cropped final row and rows that give no affordance, so it loses on criterion before craft is even weighed."
+  }
+ ]
+}
