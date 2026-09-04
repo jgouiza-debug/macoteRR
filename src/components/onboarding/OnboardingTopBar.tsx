@@ -36,17 +36,21 @@ export function OnboardingTopBar({
             type="button"
             onClick={onBack}
             aria-label={t("common.back")}
-            className="-ml-2 flex min-h-[48px] min-w-[48px] items-center justify-center rounded-full text-ink transition-colors active:bg-ink/10"
+            className="-ml-1 flex min-h-[48px] min-w-[48px] items-center justify-center text-ink"
           >
-            <ChevronLeft className="h-6 w-6" />
+            <span className="flex h-11 w-11 items-center justify-center rounded-full border border-ink/20 bg-paper transition-colors active:bg-ink/10">
+              <ChevronLeft className="h-6 w-6" />
+            </span>
           </button>
         ) : backHref ? (
           <Link
             href={backHref}
             aria-label={t("common.back")}
-            className="-ml-2 flex min-h-[48px] min-w-[48px] items-center justify-center rounded-full text-ink transition-colors active:bg-ink/10"
+            className="-ml-1 flex min-h-[48px] min-w-[48px] items-center justify-center text-ink"
           >
-            <ChevronLeft className="h-6 w-6" />
+            <span className="flex h-11 w-11 items-center justify-center rounded-full border border-ink/20 bg-paper transition-colors active:bg-ink/10">
+              <ChevronLeft className="h-6 w-6" />
+            </span>
           </Link>
         ) : (
           // Same footprint as the 48px back button, so the toggle does not shift between steps.

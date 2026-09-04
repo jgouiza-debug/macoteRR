@@ -280,8 +280,8 @@ export default function ProgramsPage() {
 
         {/* Tier buttons, only once there is a score to compare against */}
         {score !== null && (
-          <div className="flex flex-wrap gap-2">
-            {TIERS.filter((option) => counts[option] > 0 || activeTier === option).map((option) => {
+          <div className="flex flex-wrap gap-2" role="group" aria-label={t("plist.found")}>
+            {TIERS.map((option) => {
               const active = activeTier === option;
               return (
                 <button
@@ -291,22 +291,16 @@ export default function ProgramsPage() {
                   aria-pressed={active}
                   // Border + shadow, like the university chips below: these are filters and
                   // must read as tappable, not as a stats strip.
-                  className={`flex h-[76px] min-w-[calc(25%-6px)] flex-1 flex-col items-center justify-between rounded-xl border-2 px-1.5 py-2.5 text-center shadow-sm tap-spring transition-transform ${
+                  className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full border px-3 text-[12px] font-semibold tap-spring ${
                     active
-                      ? "border-ultramarine bg-ultramarine/[0.08] text-ultramarine"
-                      : "border-ink/12 bg-paper text-ink/60 hover:border-ink/30"
+                      ? "border-ultramarine bg-ultramarine text-paper shadow-sm"
+                      : counts[option] === 0
+                        ? "border-ink/10 bg-paper text-ink/40"
+                        : "border-ink/15 bg-paper text-ink/70 hover:bg-chalk"
                   }`}
                 >
-                  <span
-                    className={`font-display text-[20px] font-bold tabular-nums leading-none ${
-                      counts[option] === 0 && !active ? "text-ink/30" : ""
-                    }`}
-                  >
-                    {counts[option]}
-                  </span>
-                  <span className="text-[10px] font-semibold leading-tight line-clamp-2">
-                    {t(CUTOFF_STATUS_LABEL_KEY[option])}
-                  </span>
+                  <span className="font-display text-[15px] font-bold tabular-nums">{counts[option]}</span>
+                  <span>{t(CUTOFF_STATUS_LABEL_KEY[option])}</span>
                 </button>
               );
             })}

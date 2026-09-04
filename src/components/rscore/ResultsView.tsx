@@ -158,6 +158,9 @@ export function ResultsView({
               <p className="font-display text-[18px] font-bold leading-tight text-ink tabular-nums">
                 {hero?.range ? `${f.score(hero.range.low)}–${f.score(hero.range.high)}` : "—"}
               </p>
+              {hero && (
+                <p className="mt-0.5 max-w-[180px] text-[10.5px] leading-snug text-ink/50">{hero.program.name}</p>
+              )}
             </div>
           </div>
           {/* GUARDRAIL #1: the range on the right is the hero programme's, and says so. */}

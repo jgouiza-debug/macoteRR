@@ -919,7 +919,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
         <button
           type="button"
           onClick={skip}
-          className={`mb-2 flex h-12 w-full items-center justify-center text-[14px] font-semibold text-ink/50 transition-colors hover:text-ink/70 ${
+          className={`mb-2 flex h-12 w-full items-center justify-center rounded-full border border-ink/15 text-[14px] font-semibold text-ink/60 transition-colors hover:bg-chalk hover:text-ink ${
             targetIds.length > 0 ? "mt-2" : "mt-8"
           }`}
         >

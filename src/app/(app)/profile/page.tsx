@@ -140,6 +140,11 @@ export default function ProfilePage() {
   ];
 
   const targetPrograms = universityPrograms.filter((p) => targets.ids.includes(p.id));
+  // The tag counts are computed from the bursary catalogue: they carry its stamp.
+  const bursariesVerifiedAt = bursaries.reduce<string | null>(
+    (max, b) => (max === null || b.lastVerifiedAt > max ? b.lastVerifiedAt : max),
+    null,
+  );
 
   return (
     <AppShell
@@ -157,9 +162,9 @@ export default function ProfilePage() {
         <div className="overflow-hidden rounded-xl border border-ink/12 bg-paper shadow-card">
           <div className="flex items-center justify-between border-b border-ink/10 bg-chalk/30 px-4">
             <span className="text-[12px] font-semibold text-ink/60">{t("prof.pathwayTitle")}</span>
-            <Link href={EDIT_PATHWAY_HREF} aria-label={t("prof.editPathway")} className={editLinkClass}>
+            <Link href={EDIT_PATHWAY_HREF} className={editLinkClass}>
               <Edit3 className="h-3 w-3" aria-hidden="true" />
-              <span>{t("common.edit")}</span>
+              <span>{t("prof.editPathwayShort")}</span>
             </Link>
           </div>
           {fields.map((field) => (
@@ -191,9 +196,9 @@ export default function ProfilePage() {
                   className="text-ink"
                 />
               )}
-              <Link href={EDIT_SCORE_HREF} aria-label={t("prof.editScore")} className={editLinkClass}>
+              <Link href={EDIT_SCORE_HREF} className={editLinkClass}>
                 <Edit3 className="h-3 w-3" aria-hidden="true" />
-                <span>{t("common.edit")}</span>
+                <span>{t("prof.editScoreShort")}</span>
               </Link>
             </div>
           </div>
@@ -264,7 +269,13 @@ export default function ProfilePage() {
           </div>
 
           <p className="text-[12.5px] leading-relaxed text-ink/60">{t("prof.tagsHelp")}</p>
-          <p className="text-[11.5px] leading-relaxed text-ink/50">{t("prof.tagsLegend")}</p>
+          <p className="text-[11.5px] leading-relaxed text-ink/50">
+            {t("prof.tagsLegend")}{" "}
+            {bursariesVerifiedAt &&
+              t("prof.tagsStamp")
+                .replace("{n}", String(bursaries.length))
+                .replace("{date}", f.date(bursariesVerifiedAt))}
+          </p>
 
           <ul className="flex flex-wrap gap-2">
             {SELF_TAGS.map((tag) => {
@@ -382,7 +393,7 @@ export default function ProfilePage() {
             <button
               type="button"
               onClick={() => setConfirmingDelete(true)}
-              className="mt-1 inline-flex min-h-[48px] items-center text-[13px] font-semibold text-ember"
+              className="mt-1 inline-flex min-h-[48px] items-center rounded-full border border-ember/40 px-4 text-[13px] font-semibold text-ember tap-spring hover:bg-ember/[0.06]"
             >
               {t("account.deleteTitle")}
             </button>

@@ -75,16 +75,18 @@ export function TopNav({
               nothing to say. A first session gets its own honest chip instead. */}
           {hasScore ? (
             <span
-              className={`inline-flex items-center gap-0.5 text-[13.5px] font-extrabold tracking-tight ${
+              className={`inline-flex items-center gap-0.5 whitespace-nowrap text-[13.5px] font-extrabold tracking-tight ${
                 rScoreStatus === "estimated" ? "text-moss" : "text-ultramarine"
               }`}
               aria-label={rScoreStatus === "estimated" ? t("dash.estimateTitle") : t("dash.confirmedTitle")}
             >
               <span className="text-[11px] font-semibold uppercase tracking-wider opacity-70">{t("entry.label")}</span>{" "}
               <ScoreValue value={rScore} status={rScoreStatus} size="inline" />
-              <span className="ml-1 text-[10px] font-semibold uppercase tracking-wider opacity-70">
-                {rScoreStatus === "estimated" ? t("dash.estimated") : t("nav.confirmedShort")}
-              </span>
+              {rScoreStatus === "estimated" && (
+                <span className="ml-1 text-[10px] font-semibold uppercase tracking-wider opacity-70">
+                  {t("dash.estimated")}
+                </span>
+              )}
             </span>
           ) : currentSession === 1 ? (
             <span className="rounded-full bg-ink/8 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-ink/60">
@@ -100,7 +102,7 @@ export function TopNav({
             onClick={() => setInboxOpen(true)}
             className="relative flex min-h-[48px] min-w-[48px] items-center justify-center text-ink"
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded-full border border-ink/20 bg-paper transition-colors active:bg-ink/10">
+            <span className="flex h-11 w-11 items-center justify-center rounded-full border border-ink/20 bg-paper transition-colors active:bg-ink/10">
               <Bell className="h-5 w-5" aria-hidden="true" />
             </span>
             {unread > 0 && (

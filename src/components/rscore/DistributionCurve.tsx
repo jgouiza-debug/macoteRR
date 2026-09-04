@@ -139,7 +139,7 @@ export const DistributionCurve = memo(function DistributionCurve({
 
   // Same Intl formatter as the position block beside the curve, so "32,5" and "32.5" never
   // share a screen; an estimate keeps its "≈ " here too (guardrail #2).
-  const formattedScore = f.score(score);
+  const formattedScore = f.score(score, 2);
   const studentFullLabel = `${youLabel}, ${estimated ? "≈ " : ""}${formattedScore}`;
 
   return (

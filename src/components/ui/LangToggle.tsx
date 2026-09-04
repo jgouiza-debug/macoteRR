@@ -23,10 +23,10 @@ export function LangToggle() {
             onClick={() => setLocale(option)}
             aria-pressed={active}
             // 44px hit area with negative margins, so the capsule itself stays 32px tall.
-            className="-my-0.5 flex min-h-[44px] min-w-[44px] items-center justify-center"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center"
           >
             <span
-              className={`rounded-full px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide transition-colors ${
+              className={`flex min-h-[38px] items-center rounded-full px-2.5 text-[11px] font-semibold uppercase tracking-wide transition-colors ${
                 active ? "bg-ink text-paper" : "text-ink/55 hover:text-ink"
               }`}
             >
