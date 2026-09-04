@@ -38,9 +38,9 @@ const TIERS: CutoffStatus[] = ["above", "inside", "below", "unknown"];
  * truncates instead of wrapping: a name cut short is still readable in full on its detail
  * page, whereas a row taller than its slot paints over the one below it.
  *   py-3 (24) + name (up to two lines, 40) + institution line (18) + axis with margins (28)
- *   + status line (16) + source stamp with margin (22) = 148.
+ *   + status line (16) + source stamp with its 32px chip and margin (40) = 166, rounded up.
  */
-const ROW_HEIGHT = 148;
+const ROW_HEIGHT = 172;
 const SKELETON_ROWS = 5;
 
 type Row = { program: UniversityProgram; range: CutoffRange | null; tier: CutoffStatus };

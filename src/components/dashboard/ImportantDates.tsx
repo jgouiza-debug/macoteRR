@@ -9,6 +9,17 @@ import { getDeadlinesForStudent } from "@/lib/data/important-dates";
 import { useReferenceCatalog } from "@/lib/data/reference-store";
 import { useFormat } from "@/lib/i18n/useFormat";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import type { TranslationKey } from "@/lib/i18n/dictionary";
+import type { ImportantDate } from "@/lib/data/important-dates";
+
+/** The kind of date, as a word: the rows used to carry identical weight whatever they were. */
+const CATEGORY_KEY: Record<ImportantDate["category"], TranslationKey> = {
+  cegep: "dates.cat.cegep",
+  university: "dates.cat.university",
+  bursary: "dates.cat.bursary",
+  test: "dates.cat.test",
+  general: "dates.cat.general",
+};
 
 /** Highlight a deadline in ember only when it's genuinely imminent. */
 const URGENT_WITHIN_DAYS = 14;
@@ -151,9 +162,18 @@ export function ImportantDates({ targetProgramIds }: { targetProgramIds: string[
                     isSoon ? "bg-ember" : "bg-ultramarine"
                   }`}
                 />
-                <div className={`text-[11.5px] font-semibold ${isSoon ? "text-ember" : "text-ink/50"}`}>
-                  {f.date(d.dateIso)}
-                  {relative && ` — ${relative}`}
+                <div className={`flex flex-wrap items-center gap-x-2 text-[11.5px] font-semibold ${isSoon ? "text-ember" : "text-ink/50"}`}>
+                  <span>
+                    {f.date(d.dateIso)}
+                    {relative && ` — ${relative}`}
+                  </span>
+                  <span
+                    className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                      d.category === "university" ? "bg-ultramarine/10 text-ultramarine" : "bg-ink/6 text-ink/55"
+                    }`}
+                  >
+                    {t(CATEGORY_KEY[d.category] ?? "dates.cat.general")}
+                  </span>
                 </div>
                 {/* titleFr/titleEn are the record's own bilingual data labels, not UI copy. */}
                 <div className="mt-0.5 text-[14px] font-semibold text-ink">
