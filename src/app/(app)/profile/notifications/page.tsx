@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { Check, Bell } from "lucide-react";
+import { withFunnelParams } from "@/lib/profile/funnel-nav";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { readProfile, useStudentProfile } from "@/lib/profile/store";
 import { useHydrated } from "@/lib/hooks/useHydrated";
@@ -154,7 +156,15 @@ export default function NotificationSettingsPage() {
         </section>
 
         {sync === "guest" && (
-          <p className="text-[12.5px] leading-relaxed text-ink/60">{t("sync.guestNotice")}</p>
+          <div className="flex flex-col gap-3 rounded border border-ink/12 bg-paper p-4 shadow-card">
+            <p className="text-[12.5px] leading-relaxed text-ink/60">{t("sync.guestNotice")}</p>
+            <Link
+              href={withFunnelParams("/onboarding/account", { next: "/profile/notifications" })}
+              className="inline-flex min-h-[44px] w-fit items-center rounded-full border border-ink/15 px-4 text-[12.5px] font-semibold text-ultramarine tap-spring hover:bg-chalk"
+            >
+              {t("account.signInCta")}
+            </Link>
+          </div>
         )}
       </div>
     </AppShell>

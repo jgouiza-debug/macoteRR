@@ -52,7 +52,9 @@ export function ProgramDetail({ program: shipped }: { program: UniversityProgram
   const { universityPrograms } = useReferenceCatalog();
   const program = universityPrograms.find((p) => p.id === shipped.id) ?? shipped;
   const range = getCutoffRange(program.cutoffHistory);
-  const rangeLabel = range ? `${t("common.seuil")} ${formatRangeYears(range)}` : t("cutoff.unverified");
+  const rangeLabel = range
+    ? `${f.score(range.low)}–${f.score(range.high)} (${formatRangeYears(range)})`
+    : t("cutoff.unverified");
   const prereqKindByName = new Map(
     evaluatePrerequisites(findDecCoreCourses(settled ? profile.cegepProgramId : null), program).reasons
       .filter((r) => r.name)
@@ -89,6 +91,13 @@ export function ProgramDetail({ program: shipped }: { program: UniversityProgram
               </h2>
               <p className="mt-0.5 text-[11px] leading-snug text-ink/50">
                 {program.cohortLabel}
+              </p>
+              {/* The published range is the figure this page exists to show: as a number, first. */}
+              <p className="mt-1 font-display text-[18px] font-bold leading-tight text-ink tabular-nums">
+                {range ? `${f.score(range.low)}–${f.score(range.high)}` : "—"}
+                <span className="ml-1.5 font-sans text-[11px] font-medium text-ink/50">
+                  {range ? `${t("cutoff.publishedRange")} ${formatRangeYears(range)}` : t("cutoff.unverified")}
+                </span>
               </p>
             </div>
             <div className="flex flex-col items-end text-right">

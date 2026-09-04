@@ -31,10 +31,11 @@ export const AxisRow = memo(function AxisRow({
       <div className="absolute top-1/2 h-px w-full -translate-y-1/2 bg-ink/15" />
       {range ? (
         <div
-          className="absolute top-1/2 h-2 -translate-y-1/2 rounded-sm bg-ink/12"
+          // A narrow published range (22,0–22,5) still has to read as a bar, not a speck.
+          className="absolute top-1/2 h-2 -translate-y-1/2 rounded-sm bg-ink/25"
           style={{
             left: `${scorePercent(range.low)}%`,
-            width: `${Math.max(scorePercent(range.high) - scorePercent(range.low), 1.5)}%`,
+            width: `${Math.max(scorePercent(range.high) - scorePercent(range.low), 3)}%`,
           }}
         />
       ) : (

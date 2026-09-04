@@ -44,7 +44,7 @@ export function TopNav({
         ) : (
           <Link href="/dashboard" className="flex items-center gap-2">
             <LogoMark size={18} />
-            <span className="font-display text-[15px] font-bold tracking-tight text-ultramarine">
+            <span className={`font-display text-[15px] font-bold tracking-tight text-ultramarine ${hasScore ? "hidden sm:inline" : ""}`}>
               MaCote
             </span>
           </Link>
@@ -80,7 +80,8 @@ export function TopNav({
               }`}
               aria-label={rScoreStatus === "estimated" ? t("dash.estimateTitle") : t("dash.confirmedTitle")}
             >
-              R : <ScoreValue value={rScore} status={rScoreStatus} size="inline" />
+              <span className="text-[11px] font-semibold uppercase tracking-wider opacity-70">{t("entry.label")}</span>{" "}
+              <ScoreValue value={rScore} status={rScoreStatus} size="inline" />
               <span className="ml-1 text-[10px] font-semibold uppercase tracking-wider opacity-70">
                 {rScoreStatus === "estimated" ? t("dash.estimated") : t("nav.confirmedShort")}
               </span>

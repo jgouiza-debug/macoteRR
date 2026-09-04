@@ -98,7 +98,7 @@ export function ResultsView({
   // visual never fabricates a cross-program "average cutoff" from mismatched figure types.
   const hero = ranked.find((r) => r.range) ?? ranked[0];
   const heroRangeLabel = hero?.range
-    ? `${t("common.seuil")} ${formatRangeYears(hero.range)}`
+    ? `${f.score(hero.range.low)}–${f.score(hero.range.high)} (${formatRangeYears(hero.range)})`
     : t("cutoff.unverified");
 
   // The score in the headline goes through ScoreValue too, so an estimate carries its "≈"

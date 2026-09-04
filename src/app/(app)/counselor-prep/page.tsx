@@ -204,6 +204,13 @@ export default function CounselorPrepPage() {
     .sort((a, b) => a.d.dateIso.localeCompare(b.d.dateIso))
     .slice(0, MAX_DATES);
 
+  // What each target publishes as a prerequisite, in the university's own words.
+  const prereqLines = targets.map((p) =>
+    p.prerequisites.length > 0
+      ? p.prerequisites.map((r) => r.name).join(" · ")
+      : "DEC reconnu, aucun cours précis publié",
+  );
+
   const stamp = (date: string, href?: string) => (
     <SourceStamp date={date} href={href} locale="fr" hostAsLabel className="mt-0.5" />
   );
@@ -427,18 +434,24 @@ export default function CounselorPrepPage() {
             {/* Only what the universities publish, stamped by the head above. MaCote's own DEC
                 course lists carry no verification date yet, so no comparison verdict is printed
                 from them: the counsellor checks these against the cégep's grille de cours. */}
-            <ul className="flex flex-col gap-1 text-[12.5px] leading-snug text-ink">
-              {targets.map((p) => (
-                <li key={p.id} className="flex flex-col gap-0.5 sm:flex-row sm:gap-3">
-                  <span className="font-semibold sm:w-56 sm:flex-shrink-0">{p.name}</span>
-                  <span className="text-ink/70">
-                    {p.prerequisites.length > 0
-                      ? p.prerequisites.map((r) => r.name).join(" · ")
-                      : "DEC reconnu, aucun cours précis publié"}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            {prereqLines.every((l) => l === prereqLines[0]) ? (
+              // The same published requirement for every target: said once, not per programme.
+              <p className="text-[12.5px] leading-snug text-ink">
+                <span className="font-semibold">
+                  {targets.length > 1 ? "Tous les programmes ciblés : " : `${targets[0].name} : `}
+                </span>
+                <span className="text-ink/70">{prereqLines[0]}</span>
+              </p>
+            ) : (
+              <ul className="flex flex-col gap-1 text-[12.5px] leading-snug text-ink">
+                {targets.map((p, i) => (
+                  <li key={p.id} className="flex flex-col gap-0.5 sm:flex-row sm:gap-3">
+                    <span className="font-semibold sm:w-72 sm:flex-shrink-0">{p.name}</span>
+                    <span className="text-ink/70">{prereqLines[i]}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
             <p className="text-[11px] leading-relaxed text-ink/45">
               À confirmer avec la grille de cours du programme collégial
               {profile.cegepProgramId ? ` (${profile.cegepProgramId})` : ""}. Entrevue, test,

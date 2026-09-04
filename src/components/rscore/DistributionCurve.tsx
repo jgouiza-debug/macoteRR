@@ -175,6 +175,14 @@ export const DistributionCurve = memo(function DistributionCurve({
           {/* Background area under the bell curve (7% ink opacity) */}
           <path d={BELL_AREA_PATH} fill="var(--color-ink)" fillOpacity="0.07" />
 
+          {/* Axis ends: the scale the marks sit on, so the drawing is checkable (guardrail #1). */}
+          <text x={0} y={VIEW_H - 2} fill="var(--color-secondary)" fontSize="9" fontFamily="var(--font-sans), sans-serif" className="tabular-nums">
+            {R_MIN}
+          </text>
+          <text x={VIEW_W} y={VIEW_H - 2} textAnchor="end" fill="var(--color-secondary)" fontSize="9" fontFamily="var(--font-sans), sans-serif" className="tabular-nums">
+            {R_MAX}
+          </text>
+
           {/* Static Baseline (1px, 30% ink opacity) */}
           <line
             x1={0}

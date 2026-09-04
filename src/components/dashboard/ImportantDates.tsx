@@ -50,6 +50,18 @@ export function ImportantDates({ targetProgramIds }: { targetProgramIds: string[
     [targetProgramIds, deadlines],
   );
 
+  // One count per chip, computed once: a chip that would empty the list says "0" up front
+  // instead of zeroing it out after the tap.
+  const countFor = useMemo(() => {
+    const counts: Record<DateFilter, number> = { all: 0, week: 0, month: 0, "3months": 0, year: 0 };
+    for (const d of allDeadlines) {
+      const days = daysUntil(d.dateIso);
+      if (days === null) continue;
+      for (const f of DATE_FILTERS) if (f.maxDays === null || days <= f.maxDays) counts[f.id] += 1;
+    }
+    return counts;
+  }, [allDeadlines]);
+
   const filteredDeadlines = useMemo(() => {
     const filterDef = DATE_FILTERS.find((d) => d.id === dateFilter);
     if (!filterDef || filterDef.maxDays === null) return allDeadlines;
@@ -90,13 +102,14 @@ export function ImportantDates({ targetProgramIds }: { targetProgramIds: string[
                 className="group flex min-h-[48px] min-w-[48px] items-center justify-center tap-spring"
               >
                 <span
-                  className={`rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+                  className={`inline-flex min-h-[40px] items-center gap-1 rounded-full px-3 text-[11.5px] font-semibold tabular-nums transition-colors ${
                     active
                       ? "bg-ultramarine text-paper shadow-sm"
                       : "border border-ink/15 bg-paper text-ink/65 group-hover:bg-chalk"
                   }`}
                 >
                   {t(fItem.labelKey)}
+                  <span className={active ? "text-paper/80" : "text-ink/45"}>{countFor[fItem.id]}</span>
                 </span>
               </button>
             );

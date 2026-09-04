@@ -235,13 +235,14 @@ export default function ProgramsPage() {
               <div className="h-7 w-28 animate-pulse rounded bg-ink/8" />
             </div>
           ) : score !== null ? (
-            <div>
-              <p className="text-[12px] font-medium text-ink/55">{t("plist.calcWith")}</p>
-              {/* GUARDRAIL #2 lives in ScoreValue: framed = dashed border + badge for an estimate. */}
-              <div className="mt-1">
-                <ScoreValue value={score} status={profile.rScoreStatus} size="lg" framed={!isConfirmed} className="text-ink" />
-              </div>
-            </div>
+            // One line: the top bar already carries the number, so the card only says what the
+            // tiers below are computed against and whose figure it is.
+            <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-ink/70">
+              <span>{t("plist.calcWith")}</span>
+              {/* GUARDRAIL #2 lives in ScoreValue: an estimate keeps its "≈" here too. */}
+              <ScoreValue value={score} status={profile.rScoreStatus} size="md" framed={!isConfirmed} className="text-ink" />
+              <span className="text-[11.5px] text-ink/45">{t("dash.scoreEntered").toLowerCase()}</span>
+            </p>
           ) : (
             <div>
               <p className="text-[12px] font-medium text-ink/55">{t("plist.exploreTitle")}</p>
@@ -277,8 +278,8 @@ export default function ProgramsPage() {
 
         {/* Tier buttons, only once there is a score to compare against */}
         {score !== null && (
-          <div className="grid grid-cols-4 gap-2">
-            {TIERS.map((option) => {
+          <div className="flex flex-wrap gap-2">
+            {TIERS.filter((option) => counts[option] > 0 || activeTier === option).map((option) => {
               const active = activeTier === option;
               return (
                 <button
@@ -288,7 +289,7 @@ export default function ProgramsPage() {
                   aria-pressed={active}
                   // Border + shadow, like the university chips below: these are filters and
                   // must read as tappable, not as a stats strip.
-                  className={`flex h-[76px] flex-col items-center justify-between rounded-xl border-2 px-1.5 py-2.5 text-center shadow-sm tap-spring transition-transform ${
+                  className={`flex h-[76px] min-w-[calc(25%-6px)] flex-1 flex-col items-center justify-between rounded-xl border-2 px-1.5 py-2.5 text-center shadow-sm tap-spring transition-transform ${
                     active
                       ? "border-ultramarine bg-ultramarine/[0.08] text-ultramarine"
                       : "border-ink/12 bg-paper text-ink/60 hover:border-ink/30"

@@ -234,6 +234,6 @@ button, a, input {
 }
 @media print {
   .print-sheet {
-    zoom: 0.84;
+    zoom: 0.96;
   }
 }

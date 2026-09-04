@@ -96,8 +96,13 @@ export default function BursariesPage() {
         return t("burs.rOpen");
       case "tag":
         return t("burs.rTag").replace("{tag}", reason.tagId ? tagLabel(reason.tagId, locale) : "");
-      case "rscore_gap":
-        return t("burs.rGap").replace("{gap}", f.score(reason.gap ?? 0));
+      case "rscore_gap": {
+        // The minimum the gap is measured against, so the chip is a checkable figure.
+        const min = profile.rScore !== null && reason.gap !== undefined ? profile.rScore + reason.gap : null;
+        return t("burs.rGap")
+          .replace("{gap}", f.score(reason.gap ?? 0))
+          .replace("{min}", min === null ? "—" : f.score(min));
+      }
     }
   }
 
@@ -237,16 +242,17 @@ const BursaryCard = memo(function BursaryCard({
 
   return (
     <article className="flex flex-col gap-3 rounded border border-ink/12 bg-paper p-4 shadow-card [content-visibility:auto] [contain-intrinsic-size:0_180px]">
-      <div className="flex items-start justify-between gap-3">
-        <h3 className="flex-1 text-[14px] font-semibold leading-snug text-ink">{bursary.name}</h3>
+      {/* The name leads and gets the full width; the amount follows it instead of shouting
+          from a half-width column beside a five-line title. */}
+      <h3 className="text-[14.5px] font-semibold leading-snug text-ink">{bursary.name}</h3>
+      <p className="flex flex-wrap items-baseline gap-x-2 text-[12px] text-ink/55">
+        <span>{bursary.sourceOrg}</span>
         {amountLabel && (
-          <span className="font-display text-[18px] font-bold text-ultramarine tabular-nums">
+          <span className="font-display text-[15px] font-bold text-ultramarine tabular-nums">
             {amountLabel}
           </span>
         )}
-      </div>
-
-      <p className="text-[12px] text-ink/55">{bursary.sourceOrg}</p>
+      </p>
 
       {reasons.length > 0 && (
         <ul className="flex flex-wrap gap-1.5">

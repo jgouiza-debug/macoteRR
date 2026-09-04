@@ -15,6 +15,7 @@ export const DICTIONARY = {
     "sync.unsaved":
       "Tes changements sont enregistrés sur cet appareil, mais pas encore sur ton compte. On réessaie automatiquement.",
     "sync.guestNotice": "Enregistré sur cet appareil. Connecte-toi pour retrouver ces choix sur tes autres appareils.",
+    "account.signInCta": "Me connecter",
     "error.title": "Quelque chose a planté.",
     "error.body": "Rien de ce que tu as entré n'est perdu : c'est enregistré sur cet appareil.",
     "inapp.title": "Ouvre MaCote dans ton navigateur",
@@ -224,6 +225,7 @@ export const DICTIONARY = {
     "account.changeEmail": "Utiliser un autre courriel",
     "account.deleteTitle": "Supprimer mon compte",
     "account.deleteBody": "Supprime définitivement ta cote, tes cibles et tes étiquettes. Cette action est irréversible.",
+    "account.deleteTwoStep": "Un bouton de confirmation s'affiche avant la suppression.",
     "account.deleteConfirm": "Confirmer la suppression",
     "account.deleteCancel": "Annuler",
     "account.deleteError": "Impossible de supprimer le compte. Réessaie dans un instant.",
@@ -251,7 +253,7 @@ export const DICTIONARY = {
     "dash.startOnboarding": "Commencer",
     "dash.yourEst": "Ton estimation",
     "dash.unofficial":
-      "Seuils, dates et bourses viennent de sources publiques, vérifiées à la date indiquée. Ta cote R est celle que tu as saisie. Les données officielles restent celles de ton cégep et du SRAM.",
+      "Chaque seuil, date et bourse affiché porte sa source et sa date de vérification. Ta cote R est celle que tu as saisie. Les données officielles restent celles de ton cégep et du SRAM.",
     "dash.legal": "Mentions légales",
     "dash.methodology": "Méthodologie des sources",
 
@@ -283,7 +285,7 @@ export const DICTIONARY = {
     "burs.rScore": "Ta cote R",
     "burs.rTarget": "Ton programme cible",
     "burs.rOpen": "Ouvert à tous",
-    "burs.rGap": "À {gap} de la cote requise",
+    "burs.rGap": "Cote min. {min} : à {gap} de ta cote",
     "burs.noLink": "Pas de formulaire en ligne. Contacte les services aux étudiants de ton cégep.",
     "burs.essay": "Rédaction exigée",
     "burs.firstSessionNote": "Pas encore de cote R : les bourses qui en dépendent apparaîtront après ta première session. Celles de ton cégep et les bourses ouvertes à tous sont déjà là.",
@@ -444,6 +446,7 @@ export const DICTIONARY = {
     "dash.scoreEnteredOn": "Saisie par toi le {date}",
     "dash.scoreEntered": "Saisie par toi",
     "dash.axisLegend": "Barre grise : fourchette publiée · point : ta cote",
+    "dash.removeHint": "Retirer s'annule pendant six secondes",
     "dash.whatIfAfter": "Après",
     "dash.whatIfBefore": "Avant",
     "dash.whatIfBody": "Change une note pour voir comment ton estimation bougerait. Rien n'est enregistré.",
@@ -474,6 +477,7 @@ export const DICTIONARY = {
     "sync.unsaved":
       "Your changes are saved on this device, but not on your account yet. We'll keep retrying automatically.",
     "sync.guestNotice": "Saved on this device. Sign in to keep these choices on your other devices too.",
+    "account.signInCta": "Sign in",
     "error.title": "Something broke.",
     "error.body": "Nothing you entered is lost: it's saved on this device.",
     "inapp.title": "Open MaCote in your browser",
@@ -683,6 +687,7 @@ export const DICTIONARY = {
     "account.changeEmail": "Use a different email",
     "account.deleteTitle": "Delete my account",
     "account.deleteBody": "Permanently deletes your score, targets, and tags. This can't be undone.",
+    "account.deleteTwoStep": "A confirmation button appears before anything is deleted.",
     "account.deleteConfirm": "Confirm deletion",
     "account.deleteCancel": "Cancel",
     "account.deleteError": "Couldn't delete the account. Try again in a moment.",
@@ -710,7 +715,7 @@ export const DICTIONARY = {
     "dash.startOnboarding": "Get started",
     "dash.yourEst": "Your Est.",
     "dash.unofficial":
-      "Cutoffs, dates and bursaries come from public sources, verified on the date shown. Your R score is the one you entered. The official figures remain your cégep's and the SRAM's.",
+      "Every cutoff, date and bursary shown carries its source and verification date. Your R score is the one you entered. The official figures remain your cégep's and the SRAM's.",
     "dash.legal": "Legal Notice",
     "dash.methodology": "Source Methodology",
 
@@ -742,7 +747,7 @@ export const DICTIONARY = {
     "burs.rScore": "Your R-score",
     "burs.rTarget": "Your target program",
     "burs.rOpen": "Open to all",
-    "burs.rGap": "{gap} from the required score",
+    "burs.rGap": "Min. score {min}: {gap} from yours",
     "burs.noLink": "No online form. Contact your cégep's student services.",
     "burs.essay": "Essay required",
     "burs.firstSessionNote": "No R score yet: bursaries that depend on it will appear after your first session. Your cégep's and the open-to-all ones are already here.",
@@ -903,6 +908,7 @@ export const DICTIONARY = {
     "dash.scoreEnteredOn": "Entered by you on {date}",
     "dash.scoreEntered": "Entered by you",
     "dash.axisLegend": "Grey bar: published range · dot: your score",
+    "dash.removeHint": "Remove can be undone for six seconds",
     "dash.whatIfAfter": "After",
     "dash.whatIfBefore": "Before",
     "dash.whatIfBody": "Change a grade to see how your estimate would move. Nothing is saved.",

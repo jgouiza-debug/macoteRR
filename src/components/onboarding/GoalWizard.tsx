@@ -20,6 +20,7 @@ import {
   CUTOFF_STATUS_COLOR_CLASS,
   CUTOFF_STATUS_LABEL_KEY,
   compareToCutoffRange,
+  formatRangeYears,
   getCutoffRange,
 } from "@/lib/rscore/cutoff-range";
 import { useStudentProfile, type StudentProfile } from "@/lib/profile/store";
@@ -166,7 +167,7 @@ function cutoffChip(
   // the published range it compares to, which makes it a figure and earns it the stamp below.
   const status = compareToCutoffRange(score, range);
   return {
-    label: `${estimated ? "≈ " : ""}${t(CUTOFF_STATUS_LABEL_KEY[status])} · ${f.score(range.low)}–${f.score(range.high)}`,
+    label: `${estimated ? "≈ " : ""}${t(CUTOFF_STATUS_LABEL_KEY[status])} · ${t("cutoff.publishedRange").toLowerCase()} ${formatRangeYears(range)} : ${f.score(range.low)}–${f.score(range.high)}`,
     cls: `border ${estimated ? "border-dashed" : ""} border-ink/15 bg-paper font-semibold tabular-nums ${CUTOFF_STATUS_COLOR_CLASS[status]}`,
     figure: true,
   };
@@ -820,15 +821,6 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
           </button>
         </div>
 
-        {selectedDec?.programCode && genericProfile && (
-          <div className="mt-6">
-            <DecProgramProfileCard
-              programCode={selectedDec.programCode}
-              cegepShortCode={profile.cegepId}
-            />
-          </div>
-        )}
-
         {topSuggestions.length > 0 && (
           <div className="mt-6 flex flex-col gap-3">
             <p className="text-[12px] font-bold uppercase tracking-wider text-ink/60">
@@ -860,7 +852,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
                         </span>
                       </div>
                       {chip.figure && (
-                        <SourceStamp date={item.lastVerifiedAt} href={item.sourceUrl} className="mt-1" />
+                        <SourceStamp date={item.lastVerifiedAt} href={item.sourceUrl} hostAsLabel className="mt-1" />
                       )}
                       <p className="mt-1 text-[11px] text-ink/55">
                         {t("goal.matchedOn")}{" "}
@@ -896,6 +888,17 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
             <p className="text-[11px] leading-relaxed text-ink/50">
               {t("goal.catalogSuggestionsCaveat")}
             </p>
+          </div>
+        )}
+
+        {/* The DEC reference card comes after the choices and the suggestions: it is background
+            reading, and it used to push the programme picks four screens down. */}
+        {selectedDec?.programCode && genericProfile && (
+          <div className="mt-6">
+            <DecProgramProfileCard
+              programCode={selectedDec.programCode}
+              cegepShortCode={profile.cegepId}
+            />
           </div>
         )}
 

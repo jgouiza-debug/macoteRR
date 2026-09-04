@@ -99,7 +99,11 @@ export function TargetGoals({
             {t("dash.addGoal")}
           </Link>
         </div>
-        {rows.length > 0 && <p className="text-[11px] text-ink/45">{t("dash.axisLegend")}</p>}
+        {rows.length > 0 && (
+          <p className="text-[11px] text-ink/45">
+            {t("dash.axisLegend")} · {t("dash.removeHint")}
+          </p>
+        )}
       </div>
 
       {rows.length === 0 ? (
