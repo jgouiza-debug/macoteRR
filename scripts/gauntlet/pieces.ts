@@ -45,7 +45,7 @@ const preScore: StateSeed = {
   seenWelcome: true,
 };
 const preGoal: StateSeed = {
-  profile: { cegepId: "sainte-foy", cegepProgramId: "200.B1", currentSession: 3, rScore: 31.2, rScoreStatus: "confirmed", selfTags: [], targetUniversityProgramIds: [], interestIds: [] },
+  profile: { cegepId: "sainte-foy", cegepProgramId: "200.B1", currentSession: 3, rScore: 31.2, rScoreStatus: "confirmed", rScoreUpdatedAt: "2026-08-28", selfTags: [], targetUniversityProgramIds: [], interestIds: [] },
   seenWelcome: true,
 };
 const withGrades: StateSeed = {

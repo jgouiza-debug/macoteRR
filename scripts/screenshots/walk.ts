@@ -52,11 +52,11 @@ export const STATES: Record<string, StateSeed> = {
     seenWelcome: true,
   },
   confirmed: {
-    profile: { cegepId: "sainte-foy", cegepProgramId: "200.B1", currentSession: 3, rScore: 31.2, rScoreStatus: "confirmed", selfTags: ["sports", "leadership"], targetUniversityProgramIds: [TARGET_MEDECINE_ULAVAL, TARGET_ARCHITECTURE_ULAVAL], interestIds: ["sante"] },
+    profile: { cegepId: "sainte-foy", cegepProgramId: "200.B1", currentSession: 3, rScore: 31.2, rScoreStatus: "confirmed", rScoreUpdatedAt: "2026-08-28", selfTags: ["sports", "leadership"], targetUniversityProgramIds: [TARGET_MEDECINE_ULAVAL, TARGET_ARCHITECTURE_ULAVAL], interestIds: ["sante"] },
     seenWelcome: true,
   },
   estimated: {
-    profile: { cegepId: "garneau", cegepProgramId: "300.A0", currentSession: 2, rScore: 27.8, rScoreStatus: "estimated", selfTags: ["arts_culture"], targetUniversityProgramIds: [TARGET_ARCHITECTURE_ULAVAL], interestIds: [] },
+    profile: { cegepId: "garneau", cegepProgramId: "300.A0", currentSession: 2, rScore: 27.8, rScoreStatus: "estimated", rScoreUpdatedAt: "2026-08-28", selfTags: ["arts_culture"], targetUniversityProgramIds: [TARGET_ARCHITECTURE_ULAVAL], interestIds: [] },
     seenWelcome: true,
   },
   "goal-skipped": {
@@ -66,11 +66,11 @@ export const STATES: Record<string, StateSeed> = {
   "legacy-outbox": {
     // Pre-2026-09 profile shape plus a queued mutation, exactly as an existing user's browser
     // would hold it. The store must load it without throwing and keep the record pending.
-    profile: { cegepId: "sainte-foy", cegepProgramId: "200.B1", currentSession: 2, rScore: 29.5, rScoreStatus: "confirmed", selfTags: [], targetUniversityProgramIds: [], interestIds: [] },
+    profile: { cegepId: "sainte-foy", cegepProgramId: "200.B1", currentSession: 2, rScore: 29.5, rScoreStatus: "confirmed", rScoreUpdatedAt: "2026-08-28", selfTags: [], targetUniversityProgramIds: [], interestIds: [] },
     seenWelcome: true,
     extra: {
       "macote.mutation_outbox": JSON.stringify([
-        { id: "legacy-1", timestamp: 1756700000000, patch: { selfTags: ["sports"] }, previousSnapshot: { cegepId: "sainte-foy", cegepProgramId: "200.B1", currentSession: 2, rScore: 29.5, rScoreStatus: "confirmed", selfTags: [], targetUniversityProgramIds: [], interestIds: [] }, attempts: 0, status: "pending" },
+        { id: "legacy-1", timestamp: 1756700000000, patch: { selfTags: ["sports"] }, previousSnapshot: { cegepId: "sainte-foy", cegepProgramId: "200.B1", currentSession: 2, rScore: 29.5, rScoreStatus: "confirmed", rScoreUpdatedAt: "2026-08-28", selfTags: [], targetUniversityProgramIds: [], interestIds: [] }, attempts: 0, status: "pending" },
       ]),
     },
   },
