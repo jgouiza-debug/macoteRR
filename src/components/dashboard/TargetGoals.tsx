@@ -103,8 +103,10 @@ export function TargetGoals({
           </Link>
         </div>
         {rows.length > 0 && (
-          <p className="text-[11px] text-ink/45">{t("dash.axisLegend")}</p>
-          <p className="text-[11px] text-ink/45">{t("dash.removeHint")}</p>
+          <>
+            <p className="text-[11px] text-ink/45">{t("dash.axisLegend")}</p>
+            <p className="text-[11px] text-ink/45">{t("dash.removeHint")}</p>
+          </>
         )}
       </div>
 
