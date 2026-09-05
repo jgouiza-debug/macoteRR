@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePlatformDetection } from "@/lib/platform-detect";
-import { mt, localeHref } from "@/lib/i18n/marketing-copy";
+import { mt } from "@/lib/i18n/marketing-copy";
+import { appHref } from "./SiteHeader";
 import type { Locale } from "@/lib/i18n/dictionary";
 
 const DISMISS_KEY = "macote.install_bar_dismissed";
@@ -51,6 +52,9 @@ export function InstallBar({ locale }: { locale: Locale }) {
   }
 
   return (
+    <>
+      {/* In-flow spacer so the fixed bar pads the footer instead of covering its last rows. */}
+      {visible && <div aria-hidden="true" className="h-[76px] pb-safe" />}
     <div
       role="complementary"
       aria-label={mt(locale, "mkt.installBarHeading")}
@@ -62,7 +66,7 @@ export function InstallBar({ locale }: { locale: Locale }) {
         <p className="text-[13.5px] font-semibold text-ink">{mt(locale, "mkt.installBarHeading")}</p>
         <div className="flex items-center gap-2">
           <Link
-            href={localeHref(locale, "/")}
+            href={appHref(locale)}
             className="flex min-h-[48px] items-center justify-center rounded-full bg-ultramarine px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-pressed active:bg-pressed active:scale-[0.98]"
           >
             {mt(locale, "mkt.installBarCta")}
@@ -81,5 +85,6 @@ export function InstallBar({ locale }: { locale: Locale }) {
         </div>
       </div>
     </div>
+    </>
   );
 }

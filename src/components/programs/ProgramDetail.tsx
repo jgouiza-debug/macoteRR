@@ -75,7 +75,7 @@ export function ProgramDetail({ program: shipped }: { program: UniversityProgram
       currentSession={settled ? profile.currentSession : null}
     >
       <div className="mx-auto flex w-full max-w-[480px] flex-col gap-4 px-4 py-5">
-        <span className="w-fit rounded-full border border-ink/15 bg-paper px-3 py-1 text-[11px] font-semibold text-ink/70">
+        <span className="w-fit rounded-[3px] border border-ink/15 bg-paper px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-ink/70">
           {program.institution}
         </span>
 
@@ -148,7 +148,7 @@ export function ProgramDetail({ program: shipped }: { program: UniversityProgram
           )}
           <SourceStamp date={program.lastVerifiedAt} href={program.sourceUrl} className="mt-2" />
           {score !== null && (
-            <SourceStamp date={R_SCORE_BAND_SOURCE.lastVerifiedAt} href={R_SCORE_BAND_SOURCE.url} className="mt-1" />
+            <SourceStamp date={R_SCORE_BAND_SOURCE.lastVerifiedAt} href={R_SCORE_BAND_SOURCE.url} className="mt-3" />
           )}
         </section>
 
@@ -223,7 +223,7 @@ export function ProgramDetail({ program: shipped }: { program: UniversityProgram
                     <span className="text-[13.5px] text-ink">{req.name}</span>
                     {badge && (
                       <span
-                        className={`flex-shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${badge.cls}`}
+                        className={`flex-shrink-0 rounded-[3px] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${badge.cls}`}
                       >
                         {badge.label}
                       </span>
@@ -275,7 +275,7 @@ export function ProgramDetail({ program: shipped }: { program: UniversityProgram
               {program.professionalOrders.codes.map((code) => (
                 <span
                   key={code}
-                  className="rounded-full border border-ink/15 px-3 py-1 text-[11.5px] font-semibold text-ink/75"
+                  className="rounded-[3px] border border-ink/15 px-2 py-1 text-[11.5px] font-semibold text-ink/75"
                 >
                   {code}
                 </span>

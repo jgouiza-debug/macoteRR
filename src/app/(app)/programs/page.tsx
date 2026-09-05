@@ -2,7 +2,7 @@
 
 import { memo, useCallback, useMemo, useState } from "react";
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { AxisRow } from "@/components/rscore/AxisRow";
 import { SourceStamp } from "@/components/SourceStamp";
@@ -257,7 +257,7 @@ export default function ProgramsPage() {
                 // funnel completes, instead of the default landing.
                 <Link
                   href={withFunnelParams("/onboarding", { next: "/programs" })}
-                  className="mt-1 inline-flex min-h-[48px] items-center text-[13px] font-semibold text-ultramarine underline-offset-2 hover:underline"
+                  className="mt-1 inline-flex min-h-[48px] items-center text-[13px] font-semibold text-ultramarine underline underline-offset-2 hover:text-pressed"
                 >
                   {t("prog.noScoreYet")}
                 </Link>
@@ -275,8 +275,18 @@ export default function ProgramsPage() {
             aria-label={t("goal.searchProgram")}
             placeholder={t("goal.searchProgram")}
             autoComplete="off"
-            className="h-[48px] w-full rounded-xl border border-ink/20 bg-paper pl-11 pr-4 text-[16px] text-ink outline-none transition-colors placeholder:text-ink/40 focus:border-[1.5px] focus:border-ultramarine"
+            className="h-[48px] w-full rounded-xl border border-ink/20 bg-paper pl-11 pr-12 text-[16px] text-ink outline-none transition-colors placeholder:text-ink/40 focus:border-[1.5px] focus:border-ultramarine"
           />
+          {query.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              aria-label={t("common.clear")}
+              className="absolute right-0 top-0 flex h-[48px] min-w-[48px] items-center justify-center rounded-full text-ink/50 hover:text-ink"
+            >
+              <X className="h-[18px] w-[18px]" aria-hidden="true" />
+            </button>
+          )}
         </div>
 
         {/* Tier buttons, only once there is a score to compare against */}
@@ -332,6 +342,19 @@ export default function ProgramsPage() {
           })}
         </div>
         </div>
+
+        {/* A way out of the filters that does not wait for zero results: with three filter
+            mechanisms stacked above the list, the reset used to live only in the empty state. */}
+        {(query.trim() !== "" || selectedUniversity !== "all" || activeTier !== "all") && (
+          <button
+            type="button"
+            onClick={clearFilters}
+            className="-mt-2 inline-flex min-h-[44px] w-fit items-center gap-1.5 self-end rounded-full px-3 text-[12.5px] font-semibold text-ultramarine underline underline-offset-2 hover:text-pressed"
+          >
+            <X className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("plist.clearFilters")}
+          </button>
+        )}
 
         {/* Results list */}
         <div className="overflow-hidden rounded-xl border border-ink/12 bg-paper shadow-card">

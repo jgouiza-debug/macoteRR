@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Sheet } from "@/components/ui/Sheet";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { SourceStamp } from "@/components/SourceStamp";
@@ -17,7 +17,6 @@ import { useLocale } from "@/lib/i18n/LocaleProvider";
  */
 export function NotificationInboxSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t, locale } = useLocale();
-  const router = useRouter();
   const { items } = useInbox();
   const { sync } = useStudentProfile();
 
@@ -43,13 +42,13 @@ export function NotificationInboxSheet({ open, onClose }: { open: boolean; onClo
             const stampHref = typeof item.payload.sourceUrl === "string" ? item.payload.sourceUrl : undefined;
             return (
               <li key={item.dedupeKey} className="flex flex-col py-1">
-                <a
+                <Link
                   href={item.deepLink}
-                  onClick={(e) => {
-                    e.preventDefault();
+                  onClick={() => {
+                    // Side effects only: the router follows the href itself, so a long-press
+                    // or middle-click opens the link the way every other link opens.
                     void markRead(item.dedupeKey);
                     onClose();
-                    router.push(item.deepLink);
                   }}
                   className="flex min-h-[56px] items-start gap-3 py-2 tap-spring active:scale-[0.99]"
                 >
@@ -66,8 +65,8 @@ export function NotificationInboxSheet({ open, onClose }: { open: boolean; onClo
                       {copy.body}
                     </span>
                   </span>
-                </a>
-                {stampDate && <SourceStamp date={stampDate} href={stampHref} className="pl-5 pb-2" />}
+                </Link>
+                {stampDate && <SourceStamp date={stampDate} href={stampHref} className="mt-1 pl-5 pb-2" />}
               </li>
             );
           })}

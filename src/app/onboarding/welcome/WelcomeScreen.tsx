@@ -148,7 +148,7 @@ export function WelcomeScreen() {
             <button
               type="button"
               onClick={handleStart}
-              className="mt-8 flex h-[52px] w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card tap-spring active:scale-[0.98]"
+              className="mt-8 flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card tap-spring active:scale-[0.98]"
             >
               {t("welcome.cta")}
             </button>

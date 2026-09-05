@@ -107,7 +107,7 @@ export function InstallCard({ state, locale, onInstallClick, onContinueInBrowser
                 onContinueInBrowser();
               }
             }}
-            className="w-full text-center text-ultramarine font-semibold text-[15px] hover:underline pt-1 focus-visible:outline-none"
+            className="inline-flex min-h-[48px] w-full items-center justify-center text-center text-[15px] font-semibold text-ultramarine underline underline-offset-2 hover:text-pressed"
           >
             {t("install.secondary")}
           </a>
@@ -127,7 +127,7 @@ export function InstallCard({ state, locale, onInstallClick, onContinueInBrowser
           <button
             type="button"
             onClick={onInstallClick}
-            className="w-full h-14 rounded-full bg-ultramarine hover:bg-pressed active:bg-pressed text-paper text-[16px] font-semibold transition-colors shadow-card flex items-center justify-center focus-visible:outline-none"
+            className="w-full h-14 rounded-full bg-ultramarine hover:bg-pressed active:bg-pressed text-paper text-[16px] font-semibold transition-colors shadow-card flex items-center justify-center"
           >
             {t("install.btnAndroid")}
           </button>
@@ -140,7 +140,7 @@ export function InstallCard({ state, locale, onInstallClick, onContinueInBrowser
                 onContinueInBrowser();
               }
             }}
-            className="w-full text-center text-ultramarine font-semibold text-[15px] hover:underline focus-visible:outline-none"
+            className="inline-flex min-h-[48px] w-full items-center justify-center text-center text-[15px] font-semibold text-ultramarine underline underline-offset-2 hover:text-pressed"
           >
             {t("install.secondary")}
           </a>
@@ -167,7 +167,7 @@ export function InstallCard({ state, locale, onInstallClick, onContinueInBrowser
                 onContinueInBrowser();
               }
             }}
-            className="w-full h-14 rounded-full bg-ultramarine hover:bg-pressed active:bg-pressed text-paper text-[16px] font-semibold transition-colors shadow-card flex items-center justify-center focus-visible:outline-none"
+            className="w-full h-14 rounded-full bg-ultramarine hover:bg-pressed active:bg-pressed text-paper text-[16px] font-semibold transition-colors shadow-card flex items-center justify-center"
           >
             {t("install.installedButton")}
           </a>
@@ -202,7 +202,7 @@ export function InstallCard({ state, locale, onInstallClick, onContinueInBrowser
                   onContinueInBrowser();
                 }
               }}
-              className="w-full h-14 rounded-full border border-ink bg-transparent hover:bg-chalk text-ink text-[16px] font-semibold transition-colors flex items-center justify-center focus-visible:outline-none"
+              className="w-full h-14 rounded-full border border-ink bg-transparent hover:bg-chalk text-ink text-[16px] font-semibold transition-colors flex items-center justify-center"
             >
               {t("install.desktopOpen")}
             </a>

@@ -251,7 +251,7 @@ export function AccountScreen() {
 
   if (status === "sent") {
     return (
-      <ScreenShell backHref={hrefFor("/onboarding/goal")}>
+      <ScreenShell backHref={hrefFor("/onboarding/goal")} step="account">
         <ScreenHeading
           title={t("account.checkEmailTitle")}
           body={t("account.checkEmailBody").replace("{email}", email.trim())}
@@ -263,6 +263,15 @@ export function AccountScreen() {
             physically cannot complete sign-in — it opens the system browser, which lacks the
             PKCE verifier this client holds — so leading with it would send most students down
             the one route that fails. */}
+        {/* A form, so Enter submits and the keyboard shows "go"; the code field takes focus
+            on arrival so iOS offers the mailed code without a tap. */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void verifyCode();
+          }}
+          noValidate
+        >
         <label
           htmlFor="otp-input"
           className="field-shell mt-6 flex cursor-text flex-col gap-1 rounded border border-ink/15 bg-paper px-4 py-3 transition-colors focus-within:border-[1.5px] focus-within:border-ultramarine"
@@ -270,15 +279,16 @@ export function AccountScreen() {
           <span className="text-[11px] font-medium text-ink/50">{t("account.codeLabel")}</span>
           <input
             id="otp-input"
+            name="otp"
+            autoFocus
             value={code}
             onChange={(e) => {
               setCode(digitsOf(e.target.value).slice(0, OTP_MAX_LENGTH));
               if (errorDetail) setErrorDetail(null);
             }}
-            onKeyDown={(e) => e.key === "Enter" && void verifyCode()}
             inputMode="numeric"
+            enterKeyHint="go"
             autoComplete="one-time-code"
-            placeholder="••••••"
             maxLength={OTP_MAX_LENGTH}
             aria-describedby="otp-error"
             className="w-full bg-transparent font-display text-[28px] font-bold tracking-[0.18em] text-ink outline-none placeholder:text-ink/20 tabular-nums"
@@ -292,13 +302,13 @@ export function AccountScreen() {
         )}
 
         <button
-          type="button"
-          onClick={() => void verifyCode()}
+          type="submit"
           disabled={digitsOf(code).length < OTP_MIN_LENGTH || verifying}
           className="mt-3 flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40"
         >
           {verifying ? t("account.verifying") : t("account.verify")}
         </button>
+        </form>
 
         <div className="mt-5 flex flex-col gap-2.5">
           <button
@@ -352,7 +362,7 @@ export function AccountScreen() {
   }
 
   return (
-    <ScreenShell backHref={hrefFor("/onboarding/goal")}>
+    <ScreenShell backHref={hrefFor("/onboarding/goal")} step="account">
       <ScreenHeading title={t("account.title")} body={t("account.body")} />
 
       {linkExpiredAlert}
@@ -404,6 +414,13 @@ export function AccountScreen() {
         <div className="h-px flex-1 bg-ink/15" />
       </div>
 
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          void submit();
+        }}
+        noValidate
+      >
       <label
         htmlFor="email-input"
         className="field-shell flex cursor-text flex-col gap-1 rounded border border-ink/15 bg-paper px-4 py-3 transition-colors focus-within:border-[1.5px] focus-within:border-ultramarine"
@@ -411,8 +428,10 @@ export function AccountScreen() {
         <span className="text-[11px] font-medium text-ink/50">{t("account.email")}</span>
         <input
           id="email-input"
+          name="email"
           type="email"
           inputMode="email"
+          enterKeyHint="send"
           autoComplete="email"
           value={email}
           onChange={(e) => {
@@ -420,7 +439,6 @@ export function AccountScreen() {
             if (status === "error") setStatus("idle");
             writeDraft({ email: e.target.value, status: "idle" });
           }}
-          onKeyDown={(e) => e.key === "Enter" && void submit()}
           placeholder="jad@exemple.com"
           aria-invalid={status === "error"}
           aria-describedby="email-error"
@@ -436,13 +454,13 @@ export function AccountScreen() {
       )}
 
       <button
-        type="button"
-        onClick={() => void submit()}
+        type="submit"
         disabled={!isValid || status === "sending"}
         className="mt-4 flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card tap-spring active:scale-[0.98] disabled:opacity-40"
       >
         {status === "sending" ? t("account.sending") : t("account.create")}
       </button>
+      </form>
 
       {/* No "Later" escape any more. src/proxy.ts gates /dashboard, /programs, /bursaries,
           /profile and /counselor-prep on a session, so that button led straight into a

@@ -115,7 +115,12 @@ export function ScoreCard({
 
       {rScore !== null && (
         <div className="mt-3 flex flex-wrap justify-center gap-2">
-          <button type="button" onClick={onOpenBands} className={PILL}>
+          {/* Quiet: it explains the number above, it does not compete with the what-if. */}
+          <button
+            type="button"
+            onClick={onOpenBands}
+            className="inline-flex min-h-[48px] items-center gap-1.5 rounded-full px-3 text-[12.5px] font-semibold text-ultramarine underline underline-offset-2 tap-spring hover:text-pressed"
+          >
             <Info className="h-4 w-4" aria-hidden="true" />
             {t("dash.seeBands")}
           </button>

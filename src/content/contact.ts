@@ -14,6 +14,8 @@ export type ContactFormContent = {
   messageLabel: string;
   messagePlaceholder: string;
   submitLabel: string;
+  /** Sits under the submit button: the form opens a mail client, nothing is sent from the page. */
+  mailtoNote: string;
   subjectPrefix: string;
   mailBodyName: string;
   mailBodyEmail: string;
@@ -55,7 +57,9 @@ export const CONTACT_CONTENT: Record<"fr" | "en", ContactContent> = {
       ],
       messageLabel: "Ton message",
       messagePlaceholder: "Qu'est-ce qui se passe?",
-      submitLabel: "Envoyer",
+      submitLabel: "Envoyer par courriel",
+      mailtoNote:
+        "Le bouton ouvre ton application de courriel avec le message prérempli; rien n'est envoyé depuis cette page.",
       subjectPrefix: "Message depuis macote.xyz",
       mailBodyName: "Nom",
       mailBodyEmail: "Courriel",
@@ -85,7 +89,8 @@ export const CONTACT_CONTENT: Record<"fr" | "en", ContactContent> = {
       ],
       messageLabel: "Your message",
       messagePlaceholder: "What's going on?",
-      submitLabel: "Send",
+      submitLabel: "Send by email",
+      mailtoNote: "The button opens your email app with the message pre-filled; nothing is sent from this page.",
       subjectPrefix: "Message from macote.xyz",
       mailBodyName: "Name",
       mailBodyEmail: "Email",

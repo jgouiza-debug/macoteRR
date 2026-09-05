@@ -75,8 +75,8 @@ export function CegepContactForm({ labels }: { labels: PourLesCegepsContactLabel
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder={labels.messagePlaceholder}
-          rows={4}
-          className="w-full resize-none rounded-[3px] border border-ink/50 bg-chalk px-3.5 py-2.5 text-[16px] leading-relaxed text-ink transition-colors placeholder:text-secondary/70 focus:border-ultramarine"
+          rows={6}
+          className="w-full resize-y rounded-[3px] border border-ink/50 bg-chalk px-3.5 py-2.5 text-[16px] leading-relaxed text-ink transition-colors placeholder:text-secondary/70 focus:border-ultramarine"
         />
       </label>
 

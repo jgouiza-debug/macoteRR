@@ -4,12 +4,12 @@
    and renders as a visible "à confirmer" chip until set. */
 
 import { SiteHeader } from "./SiteHeader";
+import { SkipLink } from "./SkipLink";
 import { SiteFooter } from "./SiteFooter";
 import { InstallBar } from "./InstallBar";
 import { SetHtmlLang } from "./SetHtmlLang";
 import { renderTemplate } from "./PendingValue";
 import { A_PROPOS_CONTENT } from "@/content/a-propos";
-import { mt } from "@/lib/i18n/marketing-copy";
 import type { Locale } from "@/lib/i18n/dictionary";
 
 export function AProposPage({ locale }: { locale: Locale }) {
@@ -18,12 +18,7 @@ export function AProposPage({ locale }: { locale: Locale }) {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-chalk text-ink">
       {locale === "en" && <SetHtmlLang lang="en" />}
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-ultramarine focus:px-4 focus:py-2 focus:text-paper"
-      >
-        {mt(locale, "mkt.skipToContent")}
-      </a>
+      <SkipLink locale={locale} />
       <SiteHeader locale={locale} path="/a-propos" />
 
       <main id="main" className="mx-auto w-full max-w-[1120px] flex-1 px-3 py-6 md:px-10 md:py-10">
@@ -82,7 +77,7 @@ export function AProposPage({ locale }: { locale: Locale }) {
         </div>
       </main>
 
-      <SiteFooter locale={locale} />
+      <SiteFooter locale={locale} path="/a-propos" />
       <InstallBar locale={locale} />
     </div>
   );
