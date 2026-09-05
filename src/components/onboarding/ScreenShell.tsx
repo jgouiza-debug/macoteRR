@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { OnboardingTopBar } from "./OnboardingTopBar";
+import type { OnboardingStep } from "@/lib/profile/onboarding";
 
 /**
  * Single-column funnel screen. Uses 100dvh rather than 100vh so the layout tracks
@@ -14,16 +15,19 @@ export function ScreenShell({
   backHref,
   onBack,
   brand = false,
+  step,
 }: {
   children: ReactNode;
   footer?: ReactNode;
   backHref?: string;
   onBack?: () => void;
   brand?: boolean;
+  /** Which of the five funnel steps this screen belongs to; drives the "Étape n sur 5" line. */
+  step?: OnboardingStep;
 }) {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-chalk">
-      <OnboardingTopBar backHref={backHref} onBack={onBack} brand={brand} />
+      <OnboardingTopBar backHref={backHref} onBack={onBack} brand={brand} step={step} />
       {/* justify-center pulls short funnel screens (two choices, one input) into the optical
           centre instead of stranding them at the top above ~900px of empty chalk. Long
           screens overflow past centre and scroll normally, so this costs them nothing.

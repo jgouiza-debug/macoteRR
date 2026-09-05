@@ -100,6 +100,7 @@ export function StartingScreen() {
   return (
     <ScreenShell
       backHref={hrefFor("/onboarding/score")}
+      step="score"
       footer={
         <div className="flex flex-col items-center gap-2.5">
           <button
@@ -152,20 +153,22 @@ export function StartingScreen() {
         title={t("starting.wipeTitle")}
         footer={
           <>
+            {/* Safe choice first at full weight; the wipe is an ember outline, never the solid
+                primary a thumb reaches for by habit. */}
+            <button
+              type="button"
+              onClick={() => setWipeOpen(false)}
+              className="flex h-14 w-full items-center justify-center rounded-full border border-ink bg-paper text-[15px] font-semibold text-ink transition-transform active:scale-[0.98]"
+            >
+              {t("common.cancel")}
+            </button>
             <button
               type="button"
               onClick={proceed}
               disabled={isPending}
-              className="flex h-14 w-full items-center justify-center rounded-full bg-ember text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40"
+              className="flex min-h-[48px] w-full items-center justify-center rounded-full border border-ember/50 text-[14px] font-semibold text-ember transition-transform active:scale-[0.98] disabled:opacity-40"
             >
               {t("starting.wipeConfirm")}
-            </button>
-            <button
-              type="button"
-              onClick={() => setWipeOpen(false)}
-              className="flex h-12 w-full items-center justify-center rounded-full text-[14px] font-semibold text-ink/60"
-            >
-              {t("common.cancel")}
             </button>
           </>
         }

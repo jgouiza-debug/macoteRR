@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, memo } from "react";
 import { useRouter } from "next/navigation";
-import { ExternalLink } from "lucide-react";
+import { ChevronDown, ExternalLink } from "lucide-react";
 import { AppShell } from "@/components/app-shell/AppShell";
 import { SourceStamp } from "@/components/SourceStamp";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -122,6 +122,24 @@ export default function BursariesPage() {
     );
   }
 
+  const renderCard = (match: BursaryMatch<Bursary>) => (
+    <BursaryCard
+      key={match.bursary.id}
+      match={match}
+      reasonText={reasonText}
+      amountLabel={amountLabel(match.bursary, f.amount)}
+      deadlineLabel={
+        match.bursary.deadlineIso
+          ? t("burs.deadline").replace(
+              "{date}",
+              f.date(match.bursary.deadlineIso, match.bursary.deadlinePrecision === "month" ? "month" : "day"),
+            )
+          : t("burs.noDeadline")
+      }
+      t={t}
+    />
+  );
+
   return (
     <AppShell {...shellProps}>
       <div className="mx-auto flex w-full max-w-[480px] flex-col gap-7 px-4 py-6">
@@ -170,27 +188,18 @@ export default function BursariesPage() {
                 ) : (
                   <EmptyState compact title={t("burs.emptyTier")} />
                 )
+              ) : id === "matched" ? (
+                items.map((match) => renderCard(match))
               ) : (
-                items.map((match) => (
-                  <BursaryCard
-                    key={match.bursary.id}
-                    match={match}
-                    reasonText={reasonText}
-                    amountLabel={amountLabel(match.bursary, f.amount)}
-                    deadlineLabel={
-                      match.bursary.deadlineIso
-                        ? t("burs.deadline").replace(
-                            "{date}",
-                            f.date(
-                              match.bursary.deadlineIso,
-                              match.bursary.deadlinePrecision === "month" ? "month" : "day",
-                            ),
-                          )
-                        : t("burs.noDeadline")
-                    }
-                    t={t}
-                  />
-                ))
+                // Every tier used to render every card at equal weight: dozens of cards on one
+                // scroll with only the headings to rank them. The weaker tiers now open on demand.
+                <details className="group flex flex-col gap-3">
+                  <summary className="inline-flex min-h-[48px] w-fit cursor-pointer list-none items-center gap-1.5 rounded-full border border-ink/15 bg-paper px-4 text-[12.5px] font-semibold text-ultramarine tap-spring hover:bg-chalk [&::-webkit-details-marker]:hidden">
+                    {t("burs.showTier").replace("{n}", String(items.length))}
+                    <ChevronDown aria-hidden="true" className="h-4 w-4 transition-transform group-open:rotate-180" />
+                  </summary>
+                  <div className="mt-3 flex flex-col gap-3">{items.map((match) => renderCard(match))}</div>
+                </details>
               )}
             </section>
           );

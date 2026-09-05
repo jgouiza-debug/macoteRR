@@ -43,7 +43,7 @@ export function SyncErrorToast() {
         type="button"
         onClick={() => setMessageKey(null)}
         aria-label={t("common.close")}
-        className="-mr-2 -mt-1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-ink/50 active:bg-ink/10"
+        className="-mr-3 -mt-2 flex min-h-[44px] min-w-[44px] flex-shrink-0 items-center justify-center rounded-full text-ink/50 active:bg-ink/10"
       >
         <X className="h-4 w-4" />
       </button>

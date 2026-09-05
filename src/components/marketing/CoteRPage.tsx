@@ -1,8 +1,11 @@
 import { SiteHeader } from "./SiteHeader";
+import { SkipLink } from "./SkipLink";
 import { SiteFooter } from "./SiteFooter";
 import { InstallBar } from "./InstallBar";
 import { CoteRCurve } from "./CoteRCurve";
 import { SetHtmlLang } from "./SetHtmlLang";
+import { TableOfContents } from "./TableOfContents";
+import { FaqList } from "./FaqList";
 import { COTE_R_CONTENT } from "@/content/cote-r";
 import { mt } from "@/lib/i18n/marketing-copy";
 import type { Locale } from "@/lib/i18n/dictionary";
@@ -13,12 +16,7 @@ export function CoteRPage({ locale }: { locale: Locale }) {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-chalk text-ink">
       {locale === "en" && <SetHtmlLang lang="en" />}
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-ultramarine focus:px-4 focus:py-2 focus:text-paper"
-      >
-        {mt(locale, "mkt.skipToContent")}
-      </a>
+      <SkipLink locale={locale} />
       <SiteHeader locale={locale} path="/cote-r" />
 
       <main id="main" className="mx-auto w-full max-w-[1120px] flex-1 px-3 py-6 md:px-10 md:py-10">
@@ -32,23 +30,13 @@ export function CoteRPage({ locale }: { locale: Locale }) {
             <CoteRCurve youLabel={mt(locale, "common.toi")} seuilLabel={mt(locale, "common.seuil")} />
           </div>
 
-          <nav aria-label={c.tocTitle} className="mt-6 rounded-[3px] border border-border bg-paper p-4">
-            <p className="text-[12px] font-semibold uppercase tracking-wide text-secondary">{c.tocTitle}</p>
-            <ol className="mt-3 flex list-none flex-col gap-2 p-0">
-              {c.sections.map((s, i) => (
-                <li key={s.id}>
-                  <a href={`#${s.id}`} className="text-[14.5px] text-ink transition-colors hover:text-ultramarine">
-                    {i + 1}. {s.heading}
-                  </a>
-                </li>
-              ))}
-              <li>
-                <a href="#faq" className="text-[14.5px] text-ink transition-colors hover:text-ultramarine">
-                  {c.sections.length + 1}. {c.faqTitle}
-                </a>
-              </li>
-            </ol>
-          </nav>
+          <TableOfContents
+            title={c.tocTitle}
+            items={[
+              ...c.sections.map((s) => ({ id: s.id, label: s.heading })),
+              { id: "faq", label: c.faqTitle },
+            ]}
+          />
 
           <article className="mt-8 flex flex-col gap-8">
             {c.sections.map((s) => (
@@ -70,20 +58,13 @@ export function CoteRPage({ locale }: { locale: Locale }) {
               <h2 className="font-display text-[22px] font-bold leading-tight tracking-[-0.02em] text-ink">
                 {c.faqTitle}
               </h2>
-              <div className="mt-3 flex flex-col">
-                {c.faq.map((item) => (
-                  <div key={item.q} className="border-t border-hairline py-4 first:border-t-0">
-                    <h3 className="text-[16px] font-semibold text-ink">{item.q}</h3>
-                    <p className="mt-1.5 max-w-[68ch] text-[15px] leading-relaxed text-ink/80">{item.a}</p>
-                  </div>
-                ))}
-              </div>
+              <FaqList items={c.faq} />
             </section>
           </article>
         </div>
       </main>
 
-      <SiteFooter locale={locale} />
+      <SiteFooter locale={locale} path="/cote-r" />
       <InstallBar locale={locale} />
     </div>
   );

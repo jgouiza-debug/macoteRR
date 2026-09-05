@@ -46,6 +46,9 @@
 
   /* Elevation specification */
   --shadow-card: 0 1px 2px rgba(23, 24, 26, 0.06), 0 10px 24px -10px rgba(23, 24, 26, 0.16);
+  /* Used by Sheet, SyncErrorToast and the profile row but never defined, so every overlay
+     rendered flat. Deeper than a card: it sits above the page, not on it. */
+  --shadow-overlay: 0 2px 6px rgba(23, 24, 26, 0.1), 0 24px 48px -16px rgba(23, 24, 26, 0.28);
 }
 
 :root {

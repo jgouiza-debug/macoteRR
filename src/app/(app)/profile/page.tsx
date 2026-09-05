@@ -232,7 +232,7 @@ export default function ProfilePage() {
               {targetPrograms.map((p) => (
                 <li
                   key={p.id}
-                  className="flex items-center justify-between gap-2 rounded-lg border border-ink/8 bg-chalk/30 py-1 pl-3 pr-1"
+                  className="flex items-center justify-between gap-3 rounded-lg border border-ink/8 bg-chalk/30 py-1 pl-3 pr-1"
                 >
                   <div className="min-w-0 flex-1">
                     <span className="block text-[13px] font-semibold text-ink">{p.name}</span>
@@ -277,10 +277,16 @@ export default function ProfilePage() {
                 .replace("{date}", f.date(bursariesVerifiedAt))}
           </p>
 
+          {/* Highest-yield tags first: ten identical pills in taxonomy order gave the student
+              nothing to go on; sorted by how many bursaries ask for each, the useful ones lead. */}
           <ul className="flex flex-wrap gap-2">
-            {SELF_TAGS.map((tag) => {
+            {SELF_TAGS.map((tag) => ({
+              tag,
+              usedBy: bursaries.filter((b) => b.tagCriteria?.includes(tag.id)).length,
+            }))
+              .sort((a, b) => b.usedBy - a.usedBy)
+              .map(({ tag, usedBy }) => {
               const selected = profile.selfTags.includes(tag.id);
-              const usedBy = bursaries.filter((b) => b.tagCriteria?.includes(tag.id)).length;
 
               return (
                 <li key={tag.id}>
@@ -335,10 +341,12 @@ export default function ProfilePage() {
           <ChevronRight className="h-5 w-5 text-ink/40" aria-hidden="true" />
         </Link>
 
-        <div className="flex flex-col gap-3">
+        {/* One real action on this page, dressed as one: preparing the counselor meeting is the
+            feature; signing out is housekeeping and sits below it as a quiet pill. */}
+        <div className="flex flex-col items-center gap-3">
           <Link
             href="/counselor-prep"
-            className="flex h-14 w-full items-center justify-center rounded-full border border-ink/25 bg-paper text-[15px] font-semibold text-ink transition-transform active:scale-[0.98] shadow-sm hover:bg-chalk"
+            className="flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card tap-spring hover:bg-pressed"
           >
             {t("prof.prepareMeeting")}
           </Link>
@@ -346,7 +354,7 @@ export default function ProfilePage() {
             type="button"
             onClick={handleLogout}
             disabled={loggingOut}
-            className="flex h-14 w-full items-center justify-center gap-2 rounded-full border border-ink/20 bg-paper text-[15px] font-semibold text-ink shadow-sm transition-transform active:scale-[0.98] hover:bg-chalk disabled:opacity-50"
+            className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full border border-ink/15 bg-paper px-5 text-[13.5px] font-semibold text-ink/70 tap-spring hover:bg-chalk hover:text-ink disabled:opacity-50"
           >
             <LogOut className="h-4 w-4 text-ink/70" aria-hidden="true" />
             <span>{t("account.logout")}</span>
@@ -371,22 +379,25 @@ export default function ProfilePage() {
           )}
 
           {confirmingDelete ? (
-            <div className="mt-1 flex gap-2">
-              <button
-                type="button"
-                onClick={handleDelete}
-                disabled={deleting}
-                className="flex h-12 flex-1 items-center justify-center rounded-full bg-ember text-[13.5px] font-semibold text-paper transition-transform active:scale-[0.98] disabled:opacity-50"
-              >
-                {t("account.deleteConfirm")}
-              </button>
+            // Stacked, safe choice first and full weight, the destructive one an outline below
+            // with real clearance: the two used to share one row 8px apart at equal size, with
+            // the account-wiping half on the left where a thumb lands first.
+            <div className="mt-1 flex flex-col gap-3">
               <button
                 type="button"
                 onClick={() => setConfirmingDelete(false)}
                 disabled={deleting}
-                className="flex h-12 flex-1 items-center justify-center rounded-full border border-ink/20 text-[13.5px] font-semibold text-ink transition-transform active:scale-[0.98] disabled:opacity-50"
+                className="flex h-14 w-full items-center justify-center rounded-full border border-ink bg-paper text-[14px] font-semibold text-ink tap-spring hover:bg-chalk disabled:opacity-50"
               >
                 {t("account.deleteCancel")}
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={deleting}
+                className="flex min-h-[48px] w-full items-center justify-center rounded-full border border-ember/50 text-[13.5px] font-semibold text-ember tap-spring hover:bg-ember/[0.06] disabled:opacity-50"
+              >
+                {t("account.deleteConfirm")}
               </button>
             </div>
           ) : (

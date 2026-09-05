@@ -20,6 +20,7 @@ export function Sheet({
   children,
   footer,
   dismissible = true,
+  closeLabel,
 }: {
   open: boolean;
   onClose: () => void;
@@ -28,6 +29,8 @@ export function Sheet({
   footer?: ReactNode;
   /** When false, the close affordance and light-dismiss are withheld — the footer must decide. */
   dismissible?: boolean;
+  /** Marketing pages get their locale from the URL, not the app toggle, so they pass their own label. */
+  closeLabel?: string;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const { t } = useLocale();
@@ -78,7 +81,9 @@ export function Sheet({
       className="m-0 max-h-[100dvh] w-full max-w-none bg-transparent p-0 backdrop:bg-ink/45 backdrop:backdrop-blur-[2px] backdrop:animate-backdrop-fade sm:m-auto sm:max-w-[430px] sm:px-5"
     >
       <div className="fixed inset-x-0 bottom-0 flex max-h-[88dvh] flex-col overflow-hidden rounded-t-[18px] bg-paper shadow-overlay animate-sheet-up sm:static sm:max-h-[80dvh] sm:rounded-[18px]">
-        <div className="flex items-start justify-between gap-4 px-5 pb-2 pt-5">
+        {/* Grabber: says "bottom sheet" the way every native one does. Decorative only. */}
+        <div aria-hidden="true" className="mx-auto mt-2 h-1 w-9 rounded-full bg-ink/15 sm:hidden" />
+        <div className="flex items-start justify-between gap-4 px-5 pb-2 pt-3 sm:pt-5">
           <h2
             id="sheet-title"
             className="font-display text-[20px] font-bold leading-[1.2] tracking-tight text-ink"
@@ -89,7 +94,7 @@ export function Sheet({
             <button
               type="button"
               onClick={onClose}
-              aria-label={t("common.close")}
+              aria-label={closeLabel ?? t("common.close")}
               className="-mr-2 -mt-1 flex min-h-[48px] min-w-[48px] flex-shrink-0 items-center justify-center rounded-full text-ink/45 transition-transform duration-150 hover:text-ink active:scale-90 active:bg-ink/10"
             >
               <X className="h-5 w-5" />

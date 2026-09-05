@@ -60,7 +60,7 @@ export function ConfirmScoreScreen() {
   }
 
   return (
-    <ScreenShell backHref={hrefFor("/onboarding/score")}>
+    <ScreenShell backHref={hrefFor("/onboarding/score")} step="score">
       <form id={FORM_ID} onSubmit={handleSubmit} noValidate>
         <h1 className="mb-6 pt-3 font-display text-[27px] font-bold leading-[1.15] tracking-tight text-ink">
           {t("entry.title")}
@@ -108,7 +108,6 @@ export function ConfirmScoreScreen() {
             type="submit"
             form={FORM_ID}
             disabled={!ready}
-            aria-disabled={!isValid}
             className="flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40"
           >
             {t("entry.cta")}

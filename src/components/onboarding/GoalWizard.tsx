@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Search, Check, ChevronRight, Plus } from "lucide-react";
+import { Search, Check, ChevronDown, ChevronRight, Plus } from "lucide-react";
 import { ScreenShell } from "@/components/onboarding/ScreenShell";
 import { SourceStamp } from "@/components/SourceStamp";
 import { ScoreValue } from "@/components/rscore/ScoreValue";
@@ -548,7 +548,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
   );
 
   const universityChips = (
-    <div className="mb-4 flex flex-wrap gap-1.5">
+    <div className="mb-4 flex flex-wrap gap-2">
       {universities.map((uni) => {
         const isSelected = selectedUniversity === uni.id;
         return (
@@ -575,7 +575,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
     const selected = targetIds.includes(p.id);
     const chip = cutoffChip(p, profile.rScore, !isConfirmed, t, f);
     return (
-      <li key={p.id} className="flex flex-col gap-1">
+      <li key={p.id} className="flex flex-col gap-2">
         <button
           type="button"
           aria-pressed={selected}
@@ -659,12 +659,18 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
     return (
       <ScreenShell
         backHref={hrefFor("/onboarding/cegep")}
+        step="program"
         footer={
-          cegepProgramId ? (
-            <button type="button" onClick={continueFromProgram} className={PRIMARY_BUTTON}>
-              {t("common.continue")}
-            </button>
-          ) : undefined
+          // Always present, disabled until a DEC is picked: mounting it on first tap grew the
+          // chrome by ~76px and shoved the list up under the finger that had just tapped.
+          <button
+            type="button"
+            onClick={continueFromProgram}
+            disabled={!cegepProgramId}
+            className={PRIMARY_BUTTON}
+          >
+            {t("common.continue")}
+          </button>
         }
       >
         {heading(
@@ -746,6 +752,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
     return (
       <ScreenShell
         onBack={() => goBackTo("program")}
+        step="program"
         footer={
           <button
             type="button"
@@ -802,11 +809,24 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
       profile.rScore !== null && profile.rScoreStatus !== null
         ? `/onboarding/results?score=${profile.rScore}&status=${profile.rScoreStatus}`
         : "/onboarding/score";
-    // No sticky footer on this step. The skip sat pinned over the last suggestion card, so it
-    // read as a caption on that card and competed with the three choices above it. It now
-    // lives once, at the very end of the scroll: the last thing offered, not the first in reach.
+    // Continue is pinned in the footer like every other step, carrying its live count so each
+    // add-tap is answered where the thumb is. The skip stays in flow at the very end of the
+    // scroll as a plain text link: the last thing offered, and never dressed as a second CTA.
     return (
-      <ScreenShell backHref={hrefFor(resultsHref)}>
+      <ScreenShell
+        backHref={hrefFor(resultsHref)}
+        step="goal"
+        footer={
+          <button
+            type="button"
+            onClick={finish}
+            disabled={targetIds.length === 0}
+            className={PRIMARY_BUTTON}
+          >
+            {t("common.continue")} ({t("goal.selectedCount").replace("{n}", String(targetIds.length))})
+          </button>
+        }
+      >
         {heading(t("goal.futureTitle"), t("goal.futureBody"))}
         {scoreLine}
         <div className="flex flex-col gap-2.5">
@@ -899,10 +919,10 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
         {/* The DEC reference card comes after the choices and the suggestions: it is background
             reading, and it used to push the programme picks four screens down. */}
         {selectedDec?.programCode && genericProfile && (
-          <details className="mt-6 rounded-xl border border-ink/12 bg-paper">
-            <summary className="flex min-h-[48px] cursor-pointer list-none items-center justify-between gap-3 px-4 text-[13.5px] font-semibold text-ink">
+          <details className="group mt-6 rounded-xl border border-ink/12 bg-paper">
+            <summary className="flex min-h-[48px] cursor-pointer list-none items-center justify-between gap-3 px-4 text-[13.5px] font-semibold text-ink [&::-webkit-details-marker]:hidden">
               {t("goal.aboutDec")}
-              <ChevronRight aria-hidden="true" className="h-5 w-5 text-ink/40" />
+              <ChevronDown aria-hidden="true" className="h-5 w-5 text-ink/40 transition-transform group-open:rotate-180" />
             </summary>
             <div className="border-t border-ink/10 p-3">
               <DecProgramProfileCard
@@ -913,21 +933,12 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
           </details>
         )}
 
-        {/* Suggestions added here are only saved by continuing; skipping saves none, on purpose.
-            The forward action is always visible, and says how many picks it will save. */}
-        <button
-          type="button"
-          onClick={finish}
-          disabled={targetIds.length === 0}
-          className={`${PRIMARY_BUTTON} mt-8 disabled:opacity-40`}
-        >
-          {t("common.continue")} ({t("goal.selectedCount").replace("{n}", String(targetIds.length))})
-        </button>
-
+        {/* Suggestions added here are only saved by continuing (in the footer); skipping saves
+            none, on purpose. */}
         <button
           type="button"
           onClick={skip}
-          className="mb-2 mt-2 flex h-12 w-full items-center justify-center rounded-full border border-ink/15 text-[14px] font-semibold text-ink/60 transition-colors hover:bg-chalk hover:text-ink"
+          className="mx-auto mb-2 mt-8 flex min-h-[48px] items-center justify-center px-4 text-[14px] font-semibold text-ink/60 underline underline-offset-2 transition-colors hover:text-ink"
         >
           {t("goal.skipStep")}
         </button>
@@ -938,7 +949,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
   if (view === "quiz") {
     const question = INTEREST_QUIZ[quizIndex];
     return (
-      <ScreenShell onBack={quizBack}>
+      <ScreenShell onBack={quizBack} step="goal">
         <p
           aria-live="polite"
           className="mb-2 text-[12px] font-semibold uppercase tracking-wide text-ink/45"
@@ -969,6 +980,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
     return (
       <ScreenShell
         onBack={() => goBackTo("future")}
+        step="goal"
         footer={
           <button
             type="button"
@@ -1019,6 +1031,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
   return (
     <ScreenShell
       onBack={generalBack}
+      step="goal"
       footer={
         <button type="button" onClick={finish} className={PRIMARY_BUTTON}>
           {t("common.continue")}

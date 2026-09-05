@@ -51,19 +51,17 @@ export function SourceStamp({
         {verifiedOn} {when}
       </span>
       {href && (
-        <>
-          <a
-            href={href}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="-my-[6px] inline-flex min-h-[44px] items-center py-[6px] align-middle"
-          >
-            <span className="inline-flex min-h-[32px] items-center rounded-md border border-ink/15 px-2 text-[11.5px] leading-4 text-ink/60 hover:border-ink/40 hover:text-ink"
-          >
+        <a
+          href={href}
+          target="_blank"
+          rel="noreferrer noopener"
+          className="-my-[6px] inline-flex min-h-[44px] items-center py-[6px] align-middle"
+        >
+          {/* Underlined: a bordered chip alone reads as a tag, and this one leaves the app. */}
+          <span className="inline-flex min-h-[32px] items-center rounded-md border border-ink/15 px-2 text-[11.5px] leading-4 text-ink/65 underline decoration-ink/30 underline-offset-2 hover:border-ink/40 hover:text-ink">
             {text}
-            </span>
-          </a>
-        </>
+          </span>
+        </a>
       )}
     </p>
   );

@@ -34,6 +34,8 @@ export function AddTargetButton({
     >
       {added && <Check className="h-[18px] w-[18px] animate-pop-in stroke-[2.5]" aria-hidden="true" />}
       {label}
+      {/* "Ajouté" is a status; the button is still a button, so say what a second tap does. */}
+      {added && <span className="text-[13px] font-medium text-moss/80">· {t("common.remove")}</span>}
     </button>
   );
 }

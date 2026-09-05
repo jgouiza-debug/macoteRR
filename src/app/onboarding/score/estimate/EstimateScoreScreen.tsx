@@ -189,6 +189,7 @@ export function EstimateScoreScreen() {
   return (
     <ScreenShell
       backHref={hrefFor("/onboarding/score")}
+      step="score"
       footer={
         <div className="flex flex-col items-stretch gap-2.5">
           {/* The running total leads the footer: it has a fixed home whether or not a grade
@@ -244,21 +245,23 @@ export function EstimateScoreScreen() {
             const n = index + 1;
             const courseName = row.name.trim();
             return (
-              <div key={index} className="flex items-center gap-2">
+              <div key={index} className="flex items-center gap-3">
                 <input
                   value={row.name}
                   onChange={(e) => update(index, "name", e.target.value)}
                   placeholder={t("est.coursePlaceholder")}
                   aria-label={`${t("est.course")} ${n}`}
                   autoComplete="off"
+                  enterKeyHint="next"
                   className="h-12 min-w-0 flex-1 rounded border border-ink/15 bg-paper px-3 text-[16px] text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-[1.5px] focus:border-ultramarine"
                 />
                 <input
                   value={row.grade}
                   onChange={(e) => update(index, "grade", e.target.value)}
                   placeholder="%"
-                  type="number"
+                  type="text"
                   inputMode="numeric"
+                  pattern="[0-9]*"
                   enterKeyHint="go"
                   aria-label={`${t("est.grade")} ${n}`}
                   className="h-12 w-20 rounded border border-ink/15 bg-paper px-3 text-right text-[16px] text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-[1.5px] focus:border-ultramarine tabular-nums"
@@ -281,7 +284,7 @@ export function EstimateScoreScreen() {
           type="button"
           onClick={() => setRows((prev) => [...prev, { name: "", grade: "" }])}
           disabled={rows.length >= MAX_ROWS}
-          className="mt-3 flex min-h-[48px] w-fit items-center gap-1.5 text-[14px] font-semibold text-ultramarine active:scale-[0.98] disabled:opacity-40"
+          className="mt-3 inline-flex min-h-[48px] w-fit items-center gap-1.5 rounded-full border border-ultramarine/30 px-4 text-[14px] font-semibold text-ultramarine tap-spring hover:bg-ultramarine/[0.06] disabled:opacity-40"
         >
           <Plus className="h-[18px] w-[18px]" aria-hidden />
           {t("est.addCourse")}

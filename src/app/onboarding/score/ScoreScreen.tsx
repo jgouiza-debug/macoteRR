@@ -89,7 +89,7 @@ export function ScoreScreen() {
   const chipLabel = (n: number) => t("bif.sessionChip").replace("{n}", String(n));
 
   return (
-    <ScreenShell backHref={hrefFor("/onboarding/program")}>
+    <ScreenShell backHref={hrefFor("/onboarding/program")} step="score">
       <ScreenHeading title={t("bif.title")} body={t("bif.body")} />
 
       {/* Session selector */}
@@ -102,7 +102,7 @@ export function ScoreScreen() {
             role="radiogroup"
             aria-labelledby={SESSION_PROMPT_ID}
             onKeyDown={handleChipKeyDown}
-            className="grid grid-cols-3 gap-1.5 sm:grid-cols-6"
+            className="grid grid-cols-3 gap-2.5 sm:grid-cols-6"
           >
             {SESSIONS.map((s) => {
               const isSelected = currentSession === s.id;
@@ -115,7 +115,7 @@ export function ScoreScreen() {
                   tabIndex={isSelected ? 0 : -1}
                   data-session={s.id}
                   onClick={() => setTapped(s.id)}
-                  className={`flex min-h-[44px] items-center justify-center rounded-full border text-[12px] font-semibold transition-all active:scale-[0.97] ${
+                  className={`flex min-h-[48px] items-center justify-center rounded-full border text-[12.5px] font-semibold transition-all active:scale-[0.97] ${
                     isSelected
                       ? "border-ultramarine bg-ultramarine text-paper shadow-sm"
                       : "border-ink/15 bg-paper text-ink/70 hover:border-ink/30"
@@ -133,9 +133,9 @@ export function ScoreScreen() {
           </p>
         )}
         {!ready && (
-          <div aria-hidden className="grid grid-cols-3 gap-1.5 sm:grid-cols-6">
+          <div aria-hidden className="grid grid-cols-3 gap-2.5 sm:grid-cols-6">
             {SESSIONS.map((s) => (
-              <div key={s.id} className="min-h-[48px] animate-pulse rounded-lg bg-ink/[0.06]" />
+              <div key={s.id} className="min-h-[48px] animate-pulse rounded-full bg-ink/[0.06]" />
             ))}
           </div>
         )}
@@ -146,7 +146,8 @@ export function ScoreScreen() {
           type="button"
           onClick={leaveForConfirm}
           disabled={!ready}
-          className="flex min-h-[58px] items-center justify-between gap-3 rounded-xl border-[1.5px] border-ultramarine bg-paper px-4 py-3 text-left text-[14.5px] font-semibold text-ultramarine shadow-sm transition-transform active:scale-[0.99] disabled:opacity-40"
+          // The one solid row: three differently dressed rows read as three recommendations.
+          className="flex min-h-[58px] items-center justify-between gap-3 rounded-xl bg-ultramarine px-4 py-3 text-left text-[14.5px] font-semibold text-paper shadow-card transition-transform active:scale-[0.99] disabled:opacity-40"
         >
           {t("bif.yes")}
           <ChevronRight className="h-5 w-5 flex-shrink-0" aria-hidden />
@@ -170,17 +171,17 @@ export function ScoreScreen() {
           type="button"
           onClick={leaveForStarting}
           disabled={!ready}
-          className="flex min-h-[64px] items-center justify-between gap-3 rounded-xl border border-moss/40 bg-moss/[0.04] px-4 py-3 text-left text-moss transition-transform active:scale-[0.99] disabled:opacity-40"
+          className="flex min-h-[58px] items-center justify-between gap-3 rounded-xl border border-ink/15 bg-paper px-4 py-3 text-left text-ink transition-transform active:scale-[0.99] disabled:opacity-40"
         >
           <span className="block">
-            <span className="block text-[14.5px] font-semibold text-moss">
+            <span className="block text-[14.5px] font-semibold">
               {t("bif.startingCegep")}
             </span>
-            <span className="block text-[12px] font-normal text-moss/80">
+            <span className="block text-[12px] font-normal text-ink/60">
               {t("bif.startingCegepSub")}
             </span>
           </span>
-          <ChevronRight className="h-5 w-5 flex-shrink-0 text-moss/70" aria-hidden />
+          <ChevronRight className="h-5 w-5 flex-shrink-0 text-ink/40" aria-hidden />
         </button>
       </div>
 
@@ -218,7 +219,8 @@ export function ScoreScreen() {
       <div className="flex justify-center pt-6">
         <Link
           href="/programs"
-          className="inline-flex min-h-[48px] items-center rounded-full border border-ink/15 bg-paper px-5 text-center text-[13.5px] font-semibold leading-snug text-ultramarine tap-spring hover:bg-chalk"
+          // A text link, not a fourth pill: it leaves the funnel and should look subordinate.
+          className="inline-flex min-h-[48px] items-center px-3 text-center text-[13.5px] font-semibold leading-snug text-ultramarine underline underline-offset-2 hover:text-pressed"
         >
           {t("bif.justSeuils")}
         </Link>
