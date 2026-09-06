@@ -116,7 +116,7 @@ export default function BursariesPage() {
   // Also covers the frame between "no cégep" being known and the redirect landing.
   if (matches === null || profile.cegepId === null) {
     return (
-      <AppShell {...shellProps}>
+      <AppShell {...shellProps} skeleton>
         <BursariesSkeleton label={t("common.loading")} />
       </AppShell>
     );

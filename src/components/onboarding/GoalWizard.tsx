@@ -189,10 +189,10 @@ function publishedFigure(program: UniversityProgram, t: Translate, f: Formatter)
 }
 
 const PRIMARY_BUTTON =
-  "flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40";
+  "flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card tap-spring disabled:opacity-40";
 
 const CHOICE_ROW =
-  "flex min-h-[60px] w-full items-center justify-between gap-3 rounded-xl border border-ink/15 bg-paper px-4 py-3 text-left text-[14.5px] font-semibold text-ink shadow-sm transition-transform active:scale-[0.99] hover:border-ink/30";
+  "flex min-h-[60px] w-full items-center justify-between gap-3 rounded-xl border border-ink/15 bg-paper px-4 py-3 text-left text-[14.5px] font-semibold text-ink shadow-sm tap-spring hover:border-ink/30";
 
 const CHIP_BASE =
   "flex min-h-[48px] items-center rounded-full px-3.5 text-[12.5px] font-semibold transition-colors active:scale-[0.98]";
@@ -580,7 +580,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
           type="button"
           aria-pressed={selected}
           onClick={() => toggleTarget(p.id)}
-          className={`flex min-h-[64px] w-full items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left transition-transform active:scale-[0.99] ${
+          className={`flex min-h-[64px] w-full items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left tap-spring ${
             selected
               ? "border-ultramarine bg-ultramarine/[0.07] shadow-sm"
               : "border-ink/12 bg-paper hover:border-ink/30"
@@ -711,7 +711,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
                       type="button"
                       aria-pressed={selected}
                       onClick={() => setCegepProgramId(p.programCode)}
-                      className={`flex min-h-[56px] items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left transition-transform active:scale-[0.99] ${
+                      className={`flex min-h-[56px] items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left tap-spring ${
                         selected
                           ? "border-ultramarine bg-ultramarine/[0.07] shadow-sm"
                           : "border-ink/15 bg-paper hover:border-ink/30"
@@ -775,7 +775,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
                 type="button"
                 aria-pressed={selected}
                 onClick={() => setSelectedProfileId(p.id)}
-                className={`flex min-h-[64px] items-start justify-between gap-3 rounded-xl border p-4 text-left transition-transform active:scale-[0.99] ${
+                className={`flex min-h-[64px] items-start justify-between gap-3 rounded-xl border p-4 text-left tap-spring ${
                   selected
                     ? "border-ultramarine bg-ultramarine/[0.07] shadow-sm"
                     : "border-ink/15 bg-paper hover:border-ink/30"
@@ -848,7 +848,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
           <button
             type="button"
             onClick={startQuiz}
-            className="flex min-h-[60px] w-full items-center justify-between gap-3 rounded-xl border-[1.5px] border-ultramarine bg-ultramarine/[0.07] px-4 py-3 text-left text-[14.5px] font-semibold text-ultramarine shadow-sm transition-transform active:scale-[0.99]"
+            className="flex min-h-[60px] w-full items-center justify-between gap-3 rounded-xl border-[1.5px] border-ultramarine bg-ultramarine/[0.07] px-4 py-3 text-left text-[14.5px] font-semibold text-ultramarine shadow-sm tap-spring"
           >
             {t("goal.quiz")}
             <ChevronRight aria-hidden="true" className="h-5 w-5 flex-shrink-0" />
@@ -965,7 +965,7 @@ export function GoalWizard({ startStep }: { startStep: WizardStart }) {
               key={opt.id}
               type="button"
               onClick={() => answerQuiz(opt.interest)}
-              className="flex min-h-[56px] items-center justify-between gap-3 rounded-xl border border-ink/15 bg-paper px-4 py-3 text-left text-[14.5px] font-semibold text-ink transition-transform active:scale-[0.99] hover:border-ink/30"
+              className="flex min-h-[56px] items-center justify-between gap-3 rounded-xl border border-ink/15 bg-paper px-4 py-3 text-left text-[14.5px] font-semibold text-ink tap-spring hover:border-ink/30"
             >
               {locale === "fr" ? opt.fr : opt.en}
               <ChevronRight aria-hidden="true" className="h-5 w-5 flex-shrink-0 text-ink/40" />

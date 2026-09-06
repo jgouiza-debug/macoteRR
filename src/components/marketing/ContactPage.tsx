@@ -142,7 +142,7 @@ export function ContactPage({ locale }: { locale: Locale }) {
                 type="submit"
                 disabled={contactEmail === null}
                 aria-describedby={contactEmail === null ? "contact-pending-address" : undefined}
-                className="mt-2 flex h-12 min-h-[48px] items-center justify-center self-start rounded-full bg-ultramarine px-6 text-[15px] font-semibold text-paper transition-[transform,background-color] hover:bg-pressed active:bg-pressed active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-ultramarine disabled:active:scale-100"
+                className="mt-2 flex h-12 min-h-[48px] items-center justify-center self-start rounded-full bg-ultramarine px-6 text-[15px] font-semibold text-paper tap-spring hover:bg-pressed active:bg-pressed disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-ultramarine disabled:active:scale-100"
               >
                 {c.form.submitLabel}
               </button>

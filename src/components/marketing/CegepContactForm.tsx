@@ -84,7 +84,7 @@ export function CegepContactForm({ labels }: { labels: PourLesCegepsContactLabel
         type="submit"
         disabled={pilotEmail === null}
         aria-describedby={pilotEmail === null ? "cegep-contact-pending-address" : undefined}
-        className="mt-1 flex h-12 min-h-[48px] items-center justify-center self-start rounded-full bg-ultramarine px-6 text-[14px] font-semibold text-paper transition-[transform,background-color] hover:bg-pressed active:bg-pressed active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-ultramarine disabled:active:scale-100"
+        className="mt-1 flex h-12 min-h-[48px] items-center justify-center self-start rounded-full bg-ultramarine px-6 text-[14px] font-semibold text-paper tap-spring hover:bg-pressed active:bg-pressed disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-ultramarine disabled:active:scale-100"
       >
         {labels.submitLabel}
       </button>

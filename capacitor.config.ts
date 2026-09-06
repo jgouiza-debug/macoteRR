@@ -4,6 +4,9 @@ const config: CapacitorConfig = {
   appId: 'com.macote.app',
   appName: 'MaCote',
   webDir: 'public',
+  // Chalk behind the web view while the remote app loads; the launch storyboard and the web
+  // boot splash use the same value, so nothing flashes white or black between them.
+  backgroundColor: '#E7E9E0',
   server: {
     // Points the native shell at the deployed app (SSR, no static export), NOT at a dev
     // server. It used to be http://localhost:3000 with cleartext enabled, which meant every

@@ -50,7 +50,7 @@ export function NotificationInboxSheet({ open, onClose }: { open: boolean; onClo
                     void markRead(item.dedupeKey);
                     onClose();
                   }}
-                  className="flex min-h-[56px] items-start gap-3 py-2 tap-spring active:scale-[0.99]"
+                  className="flex min-h-[56px] items-start gap-3 py-2 tap-spring"
                 >
                   <span
                     aria-hidden="true"

@@ -230,7 +230,7 @@ export function EstimateScoreScreen() {
             type="submit"
             form={FORM_ID}
             disabled={!canSubmit || !ready}
-            className="flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40"
+            className="flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card tap-spring disabled:opacity-40"
           >
             {t("est.cta")}
           </button>

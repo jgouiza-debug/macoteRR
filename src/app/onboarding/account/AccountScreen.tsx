@@ -304,7 +304,7 @@ export function AccountScreen() {
         <button
           type="submit"
           disabled={digitsOf(code).length < OTP_MIN_LENGTH || verifying}
-          className="mt-3 flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98] disabled:opacity-40"
+          className="mt-3 flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card tap-spring disabled:opacity-40"
         >
           {verifying ? t("account.verifying") : t("account.verify")}
         </button>
@@ -314,7 +314,7 @@ export function AccountScreen() {
           <button
             type="button"
             onClick={() => void submit()}
-            className="flex h-12 w-full items-center justify-center rounded-full border border-ink/25 text-[14px] font-semibold text-ink transition-transform active:scale-[0.98]"
+            className="flex h-12 w-full items-center justify-center rounded-full border border-ink/25 text-[14px] font-semibold text-ink tap-spring"
           >
             {t("account.resend")}
           </button>
@@ -456,7 +456,7 @@ export function AccountScreen() {
       <button
         type="submit"
         disabled={!isValid || status === "sending"}
-        className="mt-4 flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card tap-spring active:scale-[0.98] disabled:opacity-40"
+        className="mt-4 flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card tap-spring disabled:opacity-40"
       >
         {status === "sending" ? t("account.sending") : t("account.create")}
       </button>

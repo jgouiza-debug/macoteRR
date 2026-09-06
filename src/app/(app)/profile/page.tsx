@@ -101,6 +101,7 @@ export default function ProfilePage() {
         rScoreStatus={profile.rScoreStatus}
         currentSession={profile.currentSession}
         footer={false}
+        skeleton
       >
         <div
           className="mx-auto flex w-full max-w-[480px] flex-col gap-7 px-4 py-6"
@@ -152,7 +153,7 @@ export default function ProfilePage() {
       rScoreStatus={profile.rScoreStatus}
       currentSession={profile.currentSession}
     >
-      <div className="mx-auto flex w-full max-w-[480px] flex-col gap-7 px-4 py-6">
+      <div className="stagger-in mx-auto flex w-full max-w-[480px] flex-col gap-7 px-4 py-6">
         <div>
           <h1 className="font-display text-[27px] font-bold leading-tight tracking-tight text-ink">
             {t("prof.title")}

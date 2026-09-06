@@ -115,7 +115,7 @@ export function ScoreScreen() {
                   tabIndex={isSelected ? 0 : -1}
                   data-session={s.id}
                   onClick={() => setTapped(s.id)}
-                  className={`flex min-h-[48px] items-center justify-center rounded-full border text-[12.5px] font-semibold transition-all active:scale-[0.97] ${
+                  className={`flex min-h-[48px] items-center justify-center rounded-full border text-[12.5px] font-semibold tap-spring ${
                     isSelected
                       ? "border-ultramarine bg-ultramarine text-paper shadow-sm"
                       : "border-ink/15 bg-paper text-ink/70 hover:border-ink/30"
@@ -147,7 +147,7 @@ export function ScoreScreen() {
           onClick={leaveForConfirm}
           disabled={!ready}
           // The one solid row: three differently dressed rows read as three recommendations.
-          className="flex min-h-[58px] items-center justify-between gap-3 rounded-xl bg-ultramarine px-4 py-3 text-left text-[14.5px] font-semibold text-paper shadow-card transition-transform active:scale-[0.99] disabled:opacity-40"
+          className="flex min-h-[58px] items-center justify-between gap-3 rounded-xl bg-ultramarine px-4 py-3 text-left text-[14.5px] font-semibold text-paper shadow-card tap-spring disabled:opacity-40"
         >
           {t("bif.yes")}
           <ChevronRight className="h-5 w-5 flex-shrink-0" aria-hidden />
@@ -157,7 +157,7 @@ export function ScoreScreen() {
           type="button"
           onClick={() => (currentSession === null ? askForSession() : setWarningOpen(true))}
           disabled={!ready}
-          className="flex min-h-[58px] items-center justify-between gap-3 rounded-xl border border-ink/15 bg-paper px-4 py-3 text-left text-ink transition-transform active:scale-[0.99] disabled:opacity-40"
+          className="flex min-h-[58px] items-center justify-between gap-3 rounded-xl border border-ink/15 bg-paper px-4 py-3 text-left text-ink tap-spring disabled:opacity-40"
         >
           <span className="block">
             <span className="block text-[14.5px] font-semibold">{t("bif.no")}</span>
@@ -171,7 +171,7 @@ export function ScoreScreen() {
           type="button"
           onClick={leaveForStarting}
           disabled={!ready}
-          className="flex min-h-[58px] items-center justify-between gap-3 rounded-xl border border-ink/15 bg-paper px-4 py-3 text-left text-ink transition-transform active:scale-[0.99] disabled:opacity-40"
+          className="flex min-h-[58px] items-center justify-between gap-3 rounded-xl border border-ink/15 bg-paper px-4 py-3 text-left text-ink tap-spring disabled:opacity-40"
         >
           <span className="block">
             <span className="block text-[14.5px] font-semibold">
@@ -194,7 +194,7 @@ export function ScoreScreen() {
             <button
               type="button"
               onClick={leaveForEstimate}
-              className="flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98]"
+              className="flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card tap-spring"
             >
               {t("warn.estCta")}
             </button>

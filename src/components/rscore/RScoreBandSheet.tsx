@@ -58,7 +58,7 @@ export function RScoreBandSheet({
         <button
           type="button"
           onClick={onContinue ?? onClose}
-          className="flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98]"
+          className="flex h-14 w-full items-center justify-center rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card tap-spring"
         >
           {t("band.cta")}
         </button>

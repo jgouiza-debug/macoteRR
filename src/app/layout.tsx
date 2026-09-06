@@ -62,6 +62,9 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: "#e7e9e0",
   viewportFit: "cover",
+  // The app is light-only. Without this, an iPhone in dark mode paints the home-screen PWA's
+  // launch frame black before a single byte of ours arrives.
+  colorScheme: "light",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

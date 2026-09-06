@@ -34,13 +34,22 @@ export function Sheet({
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const { t } = useLocale();
-
+  // The dialog stays open for one exit animation after `open` flips to false: dialog.close()
+  // is instant, and a sheet that vanished mid-tap was the sharpest cut left. The exit classes
+  // derive from `open` itself, so no state is needed; a reopen inside the window cancels the
+  // timer through the effect cleanup and the classes flip back to the entrance.
   useEffect(() => {
     const dialog = ref.current;
     if (!dialog) return;
 
-    if (open && !dialog.open) dialog.showModal();
-    else if (!open && dialog.open) dialog.close();
+    if (open) {
+      if (!dialog.open) dialog.showModal();
+      return;
+    }
+    if (dialog.open) {
+      const id = window.setTimeout(() => dialog.close(), 200);
+      return () => window.clearTimeout(id);
+    }
   }, [open]);
 
   useEffect(() => {
@@ -78,9 +87,15 @@ export function Sheet({
         // dialog box rather than its inner panel is a backdrop click.
         if (dismissible && event.target === ref.current) onClose();
       }}
-      className="m-0 max-h-[100dvh] w-full max-w-none bg-transparent p-0 backdrop:bg-ink/45 backdrop:backdrop-blur-[2px] backdrop:animate-backdrop-fade sm:m-auto sm:max-w-[430px] sm:px-5"
+      className={`m-0 max-h-[100dvh] w-full max-w-none bg-transparent p-0 backdrop:bg-ink/45 backdrop:backdrop-blur-[2px] sm:m-auto sm:max-w-[430px] sm:px-5 ${
+        open ? "backdrop:animate-backdrop-fade" : "backdrop:animate-backdrop-out"
+      }`}
     >
-      <div className="fixed inset-x-0 bottom-0 flex max-h-[88dvh] flex-col overflow-hidden rounded-t-[18px] bg-paper shadow-overlay animate-sheet-up sm:static sm:max-h-[80dvh] sm:rounded-[18px]">
+      <div
+        className={`fixed inset-x-0 bottom-0 flex max-h-[88dvh] flex-col overflow-hidden rounded-t-[18px] bg-paper shadow-overlay sm:static sm:max-h-[80dvh] sm:rounded-[18px] ${
+          open ? "animate-sheet-up" : "animate-sheet-down"
+        }`}
+      >
         {/* Grabber: says "bottom sheet" the way every native one does. Decorative only. */}
         <div aria-hidden="true" className="mx-auto mt-2 h-1 w-9 rounded-full bg-ink/15 sm:hidden" />
         <div className="flex items-start justify-between gap-4 px-5 pb-2 pt-3 sm:pt-5">

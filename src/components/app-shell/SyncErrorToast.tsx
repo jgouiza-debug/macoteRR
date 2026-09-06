@@ -36,7 +36,7 @@ export function SyncErrorToast() {
     <div
       role="status"
       aria-live="polite"
-      className="fixed inset-x-0 bottom-[calc(3.5rem+env(safe-area-inset-bottom))] z-[70] mx-auto flex w-[calc(100%-2rem)] max-w-[420px] items-start gap-3 rounded-xl border border-ember/30 bg-paper px-4 py-3 shadow-overlay md:bottom-6"
+      className="fixed inset-x-0 bottom-[calc(3.5rem+env(safe-area-inset-bottom))] z-[70] mx-auto flex w-[calc(100%-2rem)] max-w-[420px] items-start gap-3 rounded-xl border border-ember/30 bg-paper px-4 py-3 shadow-overlay animate-scale-in md:bottom-6"
     >
       <p className="flex-1 text-[13px] leading-relaxed text-ink">{t(messageKey)}</p>
       <button

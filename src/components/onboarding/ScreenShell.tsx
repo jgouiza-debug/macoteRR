@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { OnboardingTopBar } from "./OnboardingTopBar";
+import { ContentTransition } from "@/components/app-shell/ContentTransition";
 import type { OnboardingStep } from "@/lib/profile/onboarding";
 
 /**
@@ -35,11 +36,11 @@ export function ScreenShell({
           the bottom safe-area inset; with one, the sticky footer already does. */}
       <main
         id="main"
-        className={`mx-auto flex w-full max-w-[430px] flex-1 flex-col justify-center px-5 pt-2 ${
+        className={`mx-auto flex w-full max-w-[430px] flex-1 flex-col px-5 pt-2 ${
           footer ? "" : "pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))]"
         }`}
       >
-        {children}
+        <ContentTransition className="flex flex-1 flex-col justify-center">{children}</ContentTransition>
       </main>
       {footer && (
         <div className="sticky bottom-0 mx-auto w-full max-w-[430px] bg-chalk/90 px-5 pt-3 backdrop-blur-sm pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] sm:pb-5">

@@ -69,7 +69,7 @@ export function InAppBrowserBanner({ inline = false }: { inline?: boolean }) {
             <button
               type="button"
               onClick={() => escapeToRealBrowser()}
-              className="mt-2.5 flex min-h-[48px] items-center justify-center rounded-full bg-ink px-4 text-[13px] font-semibold text-paper transition-transform active:scale-[0.98]"
+              className="mt-2.5 flex min-h-[48px] items-center justify-center rounded-full bg-ink px-4 text-[13px] font-semibold text-paper tap-spring"
             >
               {t("inapp.openAndroid")}
             </button>
@@ -80,7 +80,7 @@ export function InAppBrowserBanner({ inline = false }: { inline?: boolean }) {
               <button
                 type="button"
                 onClick={copyLink}
-                className="mt-2.5 flex min-h-[48px] items-center gap-1.5 rounded-full border border-ink/25 px-4 text-[13px] font-semibold text-ink transition-transform active:scale-[0.98]"
+                className="mt-2.5 flex min-h-[48px] items-center gap-1.5 rounded-full border border-ink/25 px-4 text-[13px] font-semibold text-ink tap-spring"
               >
                 {copied ? <Check className="h-4 w-4 text-moss" /> : <Copy className="h-4 w-4" />}
                 {copied ? t("inapp.copied") : t("inapp.copyLink")}

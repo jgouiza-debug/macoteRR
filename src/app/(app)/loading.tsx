@@ -6,7 +6,7 @@ import { AppShell } from "@/components/app-shell/AppShell";
  */
 export default function AppLoading() {
   return (
-    <AppShell footer={false}>
+    <AppShell footer={false} skeleton>
       <div
         className="mx-auto flex w-full max-w-[480px] flex-col gap-7 px-4 py-6"
         aria-busy="true"

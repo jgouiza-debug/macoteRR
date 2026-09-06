@@ -63,7 +63,7 @@ export default function DashboardPage() {
       rScoreStatus={profile.rScoreStatus}
       currentSession={profile.currentSession}
     >
-      <div className="mx-auto flex w-full max-w-[480px] flex-col gap-7 px-4 py-6">
+      <div className="stagger-in mx-auto flex w-full max-w-[480px] flex-col gap-7 px-4 py-6">
         <ScoreCard
           rScore={profile.rScore}
           rScoreStatus={profile.rScoreStatus}

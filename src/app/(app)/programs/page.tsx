@@ -71,7 +71,7 @@ const ProgramRow = memo(function ProgramRow({
     >
       <Link
         href={`/programs/${program.id}`}
-        className="flex flex-col rounded tap-spring active:scale-[0.99]"
+        className="flex flex-col rounded tap-spring"
       >
         {/* Two lines, then clipped: "Doctorat de 1er cycle en médecine (MD)" and "… dentaire (DMD)"
             were indistinguishable on one truncated line. The row is sized for two. */}
