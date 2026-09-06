@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, Check, ChevronRight } from "lucide-react";
 import { ScreenShell, ScreenHeading } from "@/components/onboarding/ScreenShell";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { CEGEP_INSTITUTIONS } from "@/lib/data/cegep-institutions";
 import { useStudentProfile } from "@/lib/profile/store";
 import { useFunnelNav } from "@/lib/profile/funnel-nav";
@@ -87,7 +88,7 @@ export function CegepScreen() {
   }
 
   return (
-    <ScreenShell backHref={hrefFor("/onboarding/welcome")}>
+    <ScreenShell backHref={hrefFor("/onboarding/welcome")} step="cegep">
       <ScreenHeading title={t("cegep.title")} body={t("cegep.body")} />
 
       <div className="relative mb-3">
@@ -99,6 +100,7 @@ export function CegepScreen() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           type="search"
+          enterKeyHint="search"
           aria-label={t("cegep.search")}
           placeholder={t("cegep.search")}
           autoComplete="off"
@@ -157,7 +159,7 @@ export function CegepScreen() {
 
       <div aria-live="polite">
         {ready && filtered.length === 0 && (
-          <p className="py-8 text-center text-[14px] text-ink/50">{t("cegep.empty")}</p>
+          <EmptyState compact title={t("cegep.empty")} action={{ onClick: () => setQuery(""), label: t("common.clear") }} />
         )}
       </div>
     </ScreenShell>

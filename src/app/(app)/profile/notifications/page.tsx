@@ -121,48 +121,41 @@ export default function NotificationSettingsPage() {
             const title = t(item.titleKey);
             const checked = profile.notificationPrefs[item.key];
             return (
-              <div
+              // The whole row is the switch, as in iOS and Android settings: the label used to
+              // be dead space and only the 48px knob on the right toggled.
+              <button
                 key={item.key}
-                className={`flex min-h-[48px] items-start justify-between gap-4 p-4 ${
+                type="button"
+                role="switch"
+                aria-checked={checked}
+                disabled={!ready}
+                onClick={() => handleToggle(item.key)}
+                className={`flex min-h-[64px] w-full items-start justify-between gap-4 p-4 text-left transition-colors hover:bg-chalk/40 active:bg-chalk/70 disabled:cursor-default disabled:hover:bg-transparent ${
                   idx > 0 ? "border-t border-ink/10" : ""
                 }`}
               >
-                <div className="flex-1 pr-2">
-                  <h2 className="text-[14.5px] font-semibold text-ink">{title}</h2>
-                  <p className="mt-1 text-[12.5px] leading-relaxed text-ink/60">{t(item.descKey)}</p>
-                </div>
+                <span className="flex-1 pr-2">
+                  <span className="block text-[14.5px] font-semibold text-ink">{title}</span>
+                  <span className="mt-1 block text-[12.5px] leading-relaxed text-ink/60">{t(item.descKey)}</span>
+                </span>
                 {ready ? (
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={checked}
-                    aria-label={title}
-                    onClick={() => handleToggle(item.key)}
-                    className="-mr-2 inline-flex min-h-[48px] min-w-[48px] flex-shrink-0 cursor-pointer items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ultramarine"
+                  <span
+                    aria-hidden="true"
+                    className={`relative mt-0.5 inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ${
+                      checked ? "bg-ultramarine" : "bg-ink/20"
+                    }`}
                   >
                     <span
-                      aria-hidden="true"
-                      className={`relative inline-flex h-6 w-11 rounded-full border-2 border-transparent transition-colors duration-200 ${
-                        checked ? "bg-ultramarine" : "bg-ink/20"
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-paper shadow-card transition duration-200 ease-in-out ${
+                        checked ? "translate-x-5" : "translate-x-0"
                       }`}
-                    >
-                      <span
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-paper shadow-card transition duration-200 ease-in-out ${
-                          checked ? "translate-x-5" : "translate-x-0"
-                        }`}
-                      />
-                    </span>
-                  </button>
+                    />
+                  </span>
                 ) : (
                   // Same geometry as the switch, so nothing moves when the real state lands.
-                  <div
-                    className="-mr-2 flex min-h-[48px] min-w-[48px] flex-shrink-0 items-center justify-center"
-                    aria-hidden="true"
-                  >
-                    <span className="h-6 w-11 animate-pulse rounded-full bg-ink/12" />
-                  </div>
+                  <span aria-hidden="true" className="mt-0.5 inline-block h-6 w-11 flex-shrink-0 animate-pulse rounded-full bg-ink/12" />
                 )}
-              </div>
+              </button>
             );
           })}
         </section>

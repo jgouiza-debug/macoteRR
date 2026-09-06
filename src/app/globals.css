@@ -44,8 +44,23 @@
   --radius-lg: 3px;
   --radius-xl: 3px;
 
+  /* Motion vocabulary. Declared as theme animations rather than plain classes so variants
+     work on them: `backdrop:animate-backdrop-fade` on the sheet emitted nothing while
+     .animate-backdrop-fade was a hand-written class. Every one is opacity/transform only. */
+  --animate-sheet-up: sheet-slide-up 240ms var(--ease-arrival) forwards;
+  --animate-sheet-down: sheet-slide-down 200ms cubic-bezier(0.4, 0, 1, 1) forwards;
+  --animate-backdrop-fade: backdrop-fade 200ms ease-out forwards;
+  --animate-backdrop-out: backdrop-out 200ms ease-out forwards;
+  --animate-pop-in: pop-in 220ms var(--ease-arrival) forwards;
+  --animate-scale-in: scale-in 180ms var(--ease-arrival) forwards;
+  /* Screen content arriving: a tab switch, a detail push, a skeleton handing over. */
+  --animate-content-in: content-in 200ms var(--ease-arrival) both;
+
   /* Elevation specification */
   --shadow-card: 0 1px 2px rgba(23, 24, 26, 0.06), 0 10px 24px -10px rgba(23, 24, 26, 0.16);
+  /* Used by Sheet, SyncErrorToast and the profile row but never defined, so every overlay
+     rendered flat. Deeper than a card: it sits above the page, not on it. */
+  --shadow-overlay: 0 2px 6px rgba(23, 24, 26, 0.1), 0 24px 48px -16px rgba(23, 24, 26, 0.28);
 }
 
 :root {
@@ -192,20 +207,52 @@ button, a, input {
   }
 }
 
-.animate-sheet-up {
-  animation: sheet-slide-up 240ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+@keyframes sheet-slide-down {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0.6;
+  }
 }
 
-.animate-backdrop-fade {
-  animation: backdrop-fade 200ms ease-out forwards;
+@keyframes backdrop-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
-.animate-pop-in {
-  animation: pop-in 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+@keyframes content-in {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.animate-scale-in {
-  animation: scale-in 180ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* Children of a stack arrive one after another, 40ms apart, capped so a long list never
+   waits: the seventh card and beyond land with the sixth. Cards only, never the page. */
+.stagger-in > * {
+  animation: content-in 220ms var(--ease-arrival) both;
+}
+.stagger-in > :nth-child(2) { animation-delay: 40ms; }
+.stagger-in > :nth-child(3) { animation-delay: 80ms; }
+.stagger-in > :nth-child(4) { animation-delay: 120ms; }
+.stagger-in > :nth-child(5) { animation-delay: 160ms; }
+.stagger-in > :nth-child(n + 6) { animation-delay: 200ms; }
+
+/* A disclosure's body fades in rather than snapping open. Height cannot be animated on
+   <details> without JS, but the content appearing is the part the eye notices. */
+details[open] > :not(summary) {
+  animation: content-in 180ms var(--ease-arrival) both;
 }
 
 .tap-spring {

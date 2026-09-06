@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { InstallCard } from "@/components/InstallCard";
-import { IosInstallGuide } from "@/components/pwa/IosInstallGuide";
 import { SiteHeader } from "./SiteHeader";
+import { SkipLink } from "./SkipLink";
 import { SiteFooter } from "./SiteFooter";
 import { SetHtmlLang } from "./SetHtmlLang";
 import { usePlatformDetection } from "@/lib/platform-detect";
@@ -17,19 +17,17 @@ export function HomePage({ locale }: { locale: Locale }) {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-chalk text-ink">
       {locale === "en" && <SetHtmlLang lang="en" />}
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-ultramarine focus:px-4 focus:py-2 focus:text-paper"
-      >
-        {mt(locale, "mkt.skipToContent")}
-      </a>
+      <SkipLink locale={locale} />
       <SiteHeader locale={locale} path="/" />
 
+      {/* One column on phones in reading order: headline, the install card (the page's one
+          action, within the first screen), then the three facts. Two columns from md up, with
+          the card spanning both rows on the right. */}
       <main
         id="main"
-        className="mx-auto flex w-full max-w-[1120px] flex-1 flex-col items-start justify-between gap-8 px-3 py-6 md:flex-row md:gap-12 md:px-10 md:py-10"
+        className="mx-auto grid w-full max-w-[1120px] flex-1 grid-cols-1 items-start gap-8 px-3 py-6 md:grid-cols-[minmax(0,1fr)_auto] md:grid-rows-[auto_1fr] md:gap-x-12 md:gap-y-6 md:px-10 md:py-10"
       >
-        <div className="flex max-w-[560px] flex-1 flex-col">
+        <div className="flex max-w-[560px] flex-col">
           <h1 className="font-display text-[34px] font-extrabold leading-[1.1] tracking-[-0.04em] text-ink sm:text-[42px] md:text-[48px]">
             {mt(locale, "install.heading")}
           </h1>
@@ -37,8 +35,26 @@ export function HomePage({ locale }: { locale: Locale }) {
           <p className="mt-4 text-[17px] font-normal leading-relaxed text-secondary sm:text-[18px]">
             {mt(locale, "install.sub")}
           </p>
+        </div>
 
-          <ul className="mt-6 flex flex-col gap-3">
+        <div className="flex w-full justify-center md:row-span-2 md:w-auto md:justify-end">
+          <InstallCard
+            state={detectionState}
+            locale={locale}
+            onInstallClick={install}
+            onContinueInBrowser={() => {
+              // /app is the interactive app itself, not a marketing page — it isn't
+              // URL-locale-prefixed, it uses its own client-side language toggle. The
+              // English site hands its locale across that boundary with ?lang (the proxy
+              // carries it through the sign-in bounce, the LocaleProvider consumes it), so
+              // an English visitor is not dropped into a French funnel.
+              router.push(locale === "en" ? "/app?lang=en" : "/app");
+            }}
+          />
+        </div>
+
+        <div className="flex max-w-[560px] flex-col">
+          <ul className="flex flex-col gap-3">
             {(["install.fact1", "install.fact2", "install.fact3"] as const).map((key) => (
               <li key={key} className="flex items-start gap-3">
                 <svg
@@ -62,28 +78,12 @@ export function HomePage({ locale }: { locale: Locale }) {
             ))}
           </ul>
         </div>
-
-        <div className="flex w-full shrink-0 justify-center lg:w-auto lg:justify-end">
-          <InstallCard
-            state={detectionState}
-            locale={locale}
-            onInstallClick={install}
-            onContinueInBrowser={() => {
-              // /app is the interactive app itself, not a marketing page — it isn't
-              // URL-locale-prefixed, it uses its own client-side language toggle. The
-              // English site hands its locale across that boundary with ?lang (the proxy
-              // carries it through the sign-in bounce, the LocaleProvider consumes it), so
-              // an English visitor is not dropped into a French funnel.
-              router.push(locale === "en" ? "/app?lang=en" : "/app");
-            }}
-          />
-        </div>
       </main>
 
-      <SiteFooter locale={locale} />
-      {/* The iOS "add to home screen" sheet belongs to the install page. Mounted in the root
-          layout it popped over the dashboard and every funnel step. */}
-      <IosInstallGuide />
+      <SiteFooter locale={locale} path="/" />
+      {/* The iOS "add to home screen" sheet is not mounted here on purpose. On iOS Safari the
+          install card already shows the same three steps; in an iOS in-app browser the sheet's
+          instructions do not apply. Either way it was a second modal over the card, 1.2s in. */}
     </div>
   );
 }

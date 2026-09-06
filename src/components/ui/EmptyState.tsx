@@ -21,7 +21,7 @@ export function EmptyState({
   compact?: boolean;
 }) {
   const buttonClass =
-    "flex h-12 items-center justify-center rounded-full bg-ultramarine px-6 text-[14px] font-semibold text-paper shadow-card tap-spring active:scale-[0.98]";
+    "flex h-12 items-center justify-center rounded-full bg-ultramarine px-6 text-[14px] font-semibold text-paper shadow-card tap-spring";
   return (
     <div
       className={`mx-auto flex w-full max-w-[420px] flex-col items-center gap-3 px-4 text-center ${

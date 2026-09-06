@@ -184,7 +184,7 @@ export function ResultsView({
           <button
             type="button"
             onClick={() => setBandOpen(true)}
-            className="mt-2 flex min-h-[48px] w-full items-center justify-center gap-1.5 rounded border border-ink/15 px-3 py-2.5 text-[13px] font-semibold text-ink/70 transition-transform active:scale-[0.99]"
+            className="mt-2 flex min-h-[48px] w-full items-center justify-center gap-1.5 rounded border border-ink/15 px-3 py-2.5 text-[13px] font-semibold text-ink/70 tap-spring"
           >
             <Info className="h-4 w-4 text-ink/45" />
             {bandLabel(band, locale)} · {t("results.whatItMeans")}
@@ -241,7 +241,7 @@ export function ResultsView({
             the goal step — where they're headed, or the quiz if they don't yet know. */}
         <Link
           href={hrefFor("/onboarding/goal")}
-          className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card transition-transform active:scale-[0.98]"
+          className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-ultramarine text-[15px] font-semibold text-paper shadow-card tap-spring"
         >
           {t("results.nextGoal")}
           <ArrowRight className="h-[18px] w-[18px]" />

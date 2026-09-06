@@ -41,23 +41,17 @@ export function CopyLinkControl({ locale, onContinueWithoutInstall, showNoteCapt
 
   return (
     <div className="w-full flex flex-col items-center gap-4">
-      {/* URL Display Field with inline Copy Action */}
-      <div className="w-full flex items-center justify-between px-3.5 py-3 rounded-[3px] border border-border bg-paper text-ink text-[15px] font-medium shadow-sm">
+      {/* URL display. The inline "Copier" that used to sit here did the same thing as the
+          primary button below it — one command, two controls. The text stays selectable. */}
+      <div className="w-full flex items-center px-3.5 py-3 rounded-[3px] border border-border bg-paper text-ink text-[15px] font-medium shadow-sm">
         <span className="truncate select-all text-ink font-mono text-[14px]">{displayUrl}</span>
-        <button
-          type="button"
-          onClick={handleCopy}
-          className="text-ultramarine font-semibold text-[14px] hover:underline focus-visible:outline-none ml-2 shrink-0 min-h-[44px] inline-flex items-center active:scale-[0.98]"
-        >
-          {copied ? t("install.copied") : t("install.copyShort")}
-        </button>
       </div>
 
       {/* Primary Action Button */}
       <button
         type="button"
         onClick={handleCopy}
-        className="w-full h-14 rounded-full bg-ultramarine hover:bg-pressed active:bg-pressed text-paper text-[16px] font-semibold tap-spring shadow-card flex items-center justify-center gap-2 focus-visible:outline-none"
+        className="w-full h-14 rounded-full bg-ultramarine hover:bg-pressed active:bg-pressed text-paper text-[16px] font-semibold tap-spring shadow-card flex items-center justify-center gap-2"
       >
         {copied ? (
           <>
@@ -80,7 +74,7 @@ export function CopyLinkControl({ locale, onContinueWithoutInstall, showNoteCapt
             onContinueWithoutInstall();
           }
         }}
-        className="text-ultramarine font-semibold text-[15px] hover:underline transition-colors py-2 text-center focus-visible:outline-none min-h-[48px] inline-flex items-center justify-center active:scale-[0.99]"
+        className="text-ultramarine font-semibold text-[15px] underline underline-offset-2 hover:text-pressed transition-colors py-2 text-center min-h-[48px] inline-flex items-center justify-center active:scale-[0.99]"
       >
         {t("install.inAppSecondary")}
       </a>

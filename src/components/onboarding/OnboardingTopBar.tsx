@@ -5,6 +5,7 @@ import { ChevronLeft } from "lucide-react";
 import { InAppBrowserBanner } from "@/components/InAppBrowserBanner";
 import { LangToggle } from "@/components/ui/LangToggle";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { ONBOARDING_STEPS, type OnboardingStep } from "@/lib/profile/onboarding";
 
 /**
  * The funnel's only sticky element, and the only one that pads for the notch. The
@@ -16,12 +17,15 @@ export function OnboardingTopBar({
   backHref,
   onBack,
   brand = false,
+  step,
 }: {
   backHref?: string;
   onBack?: () => void;
   brand?: boolean;
+  step?: OnboardingStep;
 }) {
   const { t } = useLocale();
+  const stepIndex = step ? ONBOARDING_STEPS.indexOf(step) : -1;
 
   return (
     <header className="sticky top-0 z-50 bg-chalk/90 backdrop-blur-sm pt-safe">
@@ -55,6 +59,15 @@ export function OnboardingTopBar({
         ) : (
           // Same footprint as the 48px back button, so the toggle does not shift between steps.
           <span className="h-12 w-12" aria-hidden="true" />
+        )}
+        {/* Where the student is in a five-step funnel. Nothing said so before; the only
+            progress signal was the quiz's "question n of 4". */}
+        {stepIndex >= 0 && (
+          <p className="text-[12px] font-semibold uppercase tracking-wider text-ink/55 tabular-nums">
+            {t("onb.stepOf")
+              .replace("{n}", String(stepIndex + 1))
+              .replace("{total}", String(ONBOARDING_STEPS.length))}
+          </p>
         )}
         <LangToggle />
       </div>

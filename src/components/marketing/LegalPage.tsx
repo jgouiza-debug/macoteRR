@@ -1,4 +1,5 @@
 import { SiteHeader } from "./SiteHeader";
+import { SkipLink } from "./SkipLink";
 import { SiteFooter } from "./SiteFooter";
 import { SetHtmlLang } from "./SetHtmlLang";
 import { renderTemplate } from "./PendingValue";
@@ -20,17 +21,12 @@ export function LegalPage({ locale, path, content }: { locale: Locale; path: str
   return (
     <div className="flex min-h-[100dvh] flex-col bg-chalk text-ink">
       {locale === "en" && <SetHtmlLang lang="en" />}
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-ultramarine focus:px-4 focus:py-2 focus:text-paper"
-      >
-        {mt(locale, "mkt.skipToContent")}
-      </a>
+      <SkipLink locale={locale} />
       <SiteHeader locale={locale} path={path} />
 
       <main id="main" className="mx-auto w-full max-w-[1120px] flex-1 px-3 py-6 md:px-10 md:py-10">
         <div className="mx-auto max-w-[720px]">
-          <div className="rounded-[3px] border border-border bg-paper p-4 text-[13px] leading-relaxed text-secondary">
+          <div role="note" className="rounded-[3px] border border-dashed border-ember/50 bg-ember/[0.06] p-4 text-[13px] font-medium leading-relaxed text-ember">
             {mt(locale, "mkt.legalDraftBanner")}
           </div>
 
@@ -74,7 +70,7 @@ export function LegalPage({ locale, path, content }: { locale: Locale; path: str
         </div>
       </main>
 
-      <SiteFooter locale={locale} />
+      <SiteFooter locale={locale} path={path} />
     </div>
   );
 }

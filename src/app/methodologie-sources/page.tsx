@@ -84,7 +84,7 @@ export default function MethodologieSourcesPage() {
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveCategory(tab.id as CategoryFilter)}
-                  className={`rounded-full px-3.5 py-1.5 text-[12.5px] font-semibold transition-all ${
+                  className={`rounded-full px-3.5 py-1.5 text-[12.5px] font-semibold transition-colors ${
                     activeCategory === tab.id
                       ? "bg-ultramarine text-paper shadow-sm"
                       : "border border-ink/12 bg-paper text-ink/70 hover:bg-chalk"
@@ -104,7 +104,7 @@ export default function MethodologieSourcesPage() {
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col gap-1.5 rounded-xl border border-ink/10 bg-paper p-4 shadow-card transition-all hover:border-ultramarine/40 hover:shadow-overlay"
+                className="group flex flex-col gap-1.5 rounded-xl border border-ink/10 bg-paper p-4 shadow-card transition-[border-color,box-shadow] hover:border-ultramarine/40 hover:shadow-overlay"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1">

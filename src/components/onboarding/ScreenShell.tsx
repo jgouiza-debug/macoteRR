@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import { OnboardingTopBar } from "./OnboardingTopBar";
+import { ContentTransition } from "@/components/app-shell/ContentTransition";
+import type { OnboardingStep } from "@/lib/profile/onboarding";
 
 /**
  * Single-column funnel screen. Uses 100dvh rather than 100vh so the layout tracks
@@ -14,16 +16,19 @@ export function ScreenShell({
   backHref,
   onBack,
   brand = false,
+  step,
 }: {
   children: ReactNode;
   footer?: ReactNode;
   backHref?: string;
   onBack?: () => void;
   brand?: boolean;
+  /** Which of the five funnel steps this screen belongs to; drives the "Étape n sur 5" line. */
+  step?: OnboardingStep;
 }) {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-chalk">
-      <OnboardingTopBar backHref={backHref} onBack={onBack} brand={brand} />
+      <OnboardingTopBar backHref={backHref} onBack={onBack} brand={brand} step={step} />
       {/* justify-center pulls short funnel screens (two choices, one input) into the optical
           centre instead of stranding them at the top above ~900px of empty chalk. Long
           screens overflow past centre and scroll normally, so this costs them nothing.
@@ -31,11 +36,11 @@ export function ScreenShell({
           the bottom safe-area inset; with one, the sticky footer already does. */}
       <main
         id="main"
-        className={`mx-auto flex w-full max-w-[430px] flex-1 flex-col justify-center px-5 pt-2 ${
+        className={`mx-auto flex w-full max-w-[430px] flex-1 flex-col px-5 pt-2 ${
           footer ? "" : "pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))]"
         }`}
       >
-        {children}
+        <ContentTransition className="flex flex-1 flex-col justify-center">{children}</ContentTransition>
       </main>
       {footer && (
         <div className="sticky bottom-0 mx-auto w-full max-w-[430px] bg-chalk/90 px-5 pt-3 backdrop-blur-sm pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] sm:pb-5">

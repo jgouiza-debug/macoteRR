@@ -104,7 +104,7 @@ export function ImportantDates({ targetProgramIds }: { targetProgramIds: string[
 
         {/* Each chip keeps its compact look inside a 48px-tall button, so the hit area is
             honest without the row of filters growing into a row of pills. */}
-        <div className="flex flex-wrap gap-x-1.5" role="group" aria-label={t("dash.importantDates")}>
+        <div className="flex flex-wrap gap-x-1.5 gap-y-1" role="group" aria-label={t("dash.importantDates")}>
           {DATE_FILTERS.map((fItem) => {
             const active = dateFilter === fItem.id;
             return (

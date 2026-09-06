@@ -15,13 +15,13 @@ export function BottomNav() {
     <nav className="fixed bottom-0 z-50 w-full border-t border-ink/10 bg-shell pb-[max(env(safe-area-inset-bottom)*0.5,6px)] md:hidden">
       <div className="flex h-12 items-center justify-around px-2">
         {NAV_ITEMS.map((item) => {
-          const active = pathname.startsWith(item.href);
+          const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
             <Link
               key={item.href}
               href={item.href}
               aria-current={active ? "page" : undefined}
-              className={`flex h-full w-full flex-col items-center justify-center gap-[3px] text-[9px] uppercase tracking-wide transition-[transform,color] duration-150 active:scale-90 ${
+              className={`flex h-full w-full flex-col items-center justify-center gap-[3px] text-[10px] uppercase tracking-wide transition-[transform,color] duration-150 active:scale-90 ${
                 active ? "text-ultramarine" : "text-secondary hover:text-ink"
               }`}
             >

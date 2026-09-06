@@ -1,4 +1,5 @@
 import { SiteHeader } from "./SiteHeader";
+import { SkipLink } from "./SkipLink";
 import { SiteFooter } from "./SiteFooter";
 import { InstallBar } from "./InstallBar";
 import { SetHtmlLang } from "./SetHtmlLang";
@@ -14,12 +15,7 @@ export function PourLesCegepsPage({ locale }: { locale: Locale }) {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-chalk text-ink">
       {locale === "en" && <SetHtmlLang lang="en" />}
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-ultramarine focus:px-4 focus:py-2 focus:text-paper"
-      >
-        {mt(locale, "mkt.skipToContent")}
-      </a>
+      <SkipLink locale={locale} />
       <SiteHeader locale={locale} path="/pour-les-cegeps" />
 
       <main id="main" className="mx-auto w-full max-w-[1120px] flex-1 px-3 py-6 md:px-10 md:py-10">
@@ -28,6 +24,14 @@ export function PourLesCegepsPage({ locale }: { locale: Locale }) {
             {c.title}
           </h1>
           <p className="mt-4 text-[17px] leading-relaxed text-secondary">{renderTemplate(c.intro, locale)}</p>
+          {/* The page's one conversion is the pilot form, two sections down. One jump link under
+              the intro, so a cégep staffer who came for it does not have to read to find it. */}
+          <a
+            href={`#${c.contact.id}`}
+            className="mt-5 inline-flex min-h-[48px] items-center justify-center rounded-full bg-ultramarine px-6 text-[15px] font-semibold text-paper transition-colors hover:bg-pressed active:bg-pressed"
+          >
+            {mt(locale, "mkt.cegepsJumpToForm")}
+          </a>
 
           <article className="mt-8 flex flex-col gap-8">
             {c.sections.map((s) => (
@@ -73,7 +77,7 @@ export function PourLesCegepsPage({ locale }: { locale: Locale }) {
         </div>
       </main>
 
-      <SiteFooter locale={locale} />
+      <SiteFooter locale={locale} path="/pour-les-cegeps" />
       <InstallBar locale={locale} />
     </div>
   );

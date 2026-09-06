@@ -12,7 +12,7 @@ export function LangToggle() {
     <div
       role="group"
       aria-label="Langue / Language"
-      className="flex items-center rounded-full border border-ink/20 bg-paper p-0.5"
+      className="flex items-center gap-0.5 rounded-full border border-ink/20 bg-paper p-0.5"
     >
       {OPTIONS.map((option) => {
         const active = locale === option;
@@ -22,7 +22,7 @@ export function LangToggle() {
             type="button"
             onClick={() => setLocale(option)}
             aria-pressed={active}
-            // 44px hit area with negative margins, so the capsule itself stays 32px tall.
+            // Each option is a full 44px target; the gap keeps the two from sharing an edge.
             className="flex min-h-[44px] min-w-[44px] items-center justify-center"
           >
             <span

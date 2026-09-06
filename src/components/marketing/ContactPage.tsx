@@ -2,13 +2,13 @@
 
 import { useState, type FormEvent } from "react";
 import { SiteHeader } from "./SiteHeader";
+import { SkipLink } from "./SkipLink";
 import { SiteFooter } from "./SiteFooter";
 import { InstallBar } from "./InstallBar";
 import { SetHtmlLang } from "./SetHtmlLang";
 import { PendingValue } from "./PendingValue";
 import { CONTACT_CONTENT } from "@/content/contact";
 import { SITE_CONFIG } from "@/lib/site-config";
-import { mt } from "@/lib/i18n/marketing-copy";
 import type { Locale } from "@/lib/i18n/dictionary";
 
 export function ContactPage({ locale }: { locale: Locale }) {
@@ -36,12 +36,7 @@ export function ContactPage({ locale }: { locale: Locale }) {
   return (
     <div className="flex min-h-[100dvh] flex-col bg-chalk text-ink">
       {locale === "en" && <SetHtmlLang lang="en" />}
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-ultramarine focus:px-4 focus:py-2 focus:text-paper"
-      >
-        {mt(locale, "mkt.skipToContent")}
-      </a>
+      <SkipLink locale={locale} />
       <SiteHeader locale={locale} path="/contact" />
 
       <main id="main" className="mx-auto w-full max-w-[1120px] flex-1 px-3 py-6 md:px-10 md:py-10">
@@ -86,7 +81,7 @@ export function ContactPage({ locale }: { locale: Locale }) {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder={c.form.namePlaceholder}
-                  className="rounded-[3px] border border-ink/50 bg-paper px-4 py-3 text-[16px] text-ink outline-none placeholder:text-secondary/60"
+                  className="min-h-[48px] rounded-[3px] border border-ink/50 bg-paper px-4 py-3 text-[16px] text-ink transition-colors placeholder:text-secondary/60 focus:border-ultramarine"
                 />
               </div>
 
@@ -104,7 +99,7 @@ export function ContactPage({ locale }: { locale: Locale }) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={c.form.emailPlaceholder}
-                  className="rounded-[3px] border border-ink/50 bg-paper px-4 py-3 text-[16px] text-ink outline-none placeholder:text-secondary/60"
+                  className="min-h-[48px] rounded-[3px] border border-ink/50 bg-paper px-4 py-3 text-[16px] text-ink transition-colors placeholder:text-secondary/60 focus:border-ultramarine"
                 />
               </div>
 
@@ -117,7 +112,7 @@ export function ContactPage({ locale }: { locale: Locale }) {
                   name="topic"
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
-                  className="rounded-[3px] border border-ink/50 bg-paper px-4 py-3 text-[16px] text-ink outline-none"
+                  className="min-h-[48px] rounded-[3px] border border-ink/50 bg-paper px-4 py-3 text-[16px] text-ink transition-colors focus:border-ultramarine"
                 >
                   {c.form.topicOptions.map((o) => (
                     <option key={o.value} value={o.value}>
@@ -139,7 +134,7 @@ export function ContactPage({ locale }: { locale: Locale }) {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder={c.form.messagePlaceholder}
-                  className="resize-y rounded-[3px] border border-ink/50 bg-paper px-4 py-3 text-[16px] leading-relaxed text-ink outline-none placeholder:text-secondary/60"
+                  className="resize-y rounded-[3px] border border-ink/50 bg-paper px-4 py-3 text-[16px] leading-relaxed text-ink transition-colors placeholder:text-secondary/60 focus:border-ultramarine"
                 />
               </div>
 
@@ -147,7 +142,7 @@ export function ContactPage({ locale }: { locale: Locale }) {
                 type="submit"
                 disabled={contactEmail === null}
                 aria-describedby={contactEmail === null ? "contact-pending-address" : undefined}
-                className="mt-2 flex h-12 min-h-[48px] items-center justify-center self-start rounded-full bg-ultramarine px-6 text-[15px] font-semibold text-paper transition-[transform,background-color] hover:bg-pressed active:bg-pressed active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-ultramarine disabled:active:scale-100"
+                className="mt-2 flex h-12 min-h-[48px] items-center justify-center self-start rounded-full bg-ultramarine px-6 text-[15px] font-semibold text-paper tap-spring hover:bg-pressed active:bg-pressed disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-ultramarine disabled:active:scale-100"
               >
                 {c.form.submitLabel}
               </button>
@@ -157,12 +152,16 @@ export function ContactPage({ locale }: { locale: Locale }) {
                   {c.pendingAddressNote}
                 </p>
               )}
+
+              {/* The form has no backend: submit hands a pre-filled draft to the mail client.
+                  Say so next to the button, so "send" does not promise a server that isn't there. */}
+              <p className="text-[12.5px] leading-relaxed text-secondary">{c.form.mailtoNote}</p>
             </form>
           </section>
         </div>
       </main>
 
-      <SiteFooter locale={locale} />
+      <SiteFooter locale={locale} path="/contact" />
       <InstallBar locale={locale} />
     </div>
   );

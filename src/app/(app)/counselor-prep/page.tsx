@@ -588,7 +588,8 @@ function HostLink({ href }: { href: string }) {
       href={href}
       target="_blank"
       rel="noreferrer noopener"
-      className="text-[11px] text-ink/45 underline underline-offset-2 hover:text-ink"
+      // Padded to 44px without shifting the line box; it is the most repeated link on the page.
+      className="-my-[6px] inline-flex min-h-[44px] items-center py-[6px] text-[11px] text-ink/55 underline underline-offset-2 hover:text-ink print:my-0 print:min-h-0 print:py-0"
     >
       {host}
     </a>

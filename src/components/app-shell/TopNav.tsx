@@ -56,7 +56,7 @@ export function TopNav({
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px] font-semibold uppercase tracking-wide transition-colors ${
+                className={`flex min-h-[44px] items-center gap-1.5 rounded-full px-3 text-[12.5px] font-semibold uppercase tracking-wide transition-colors ${
                   active ? "text-ultramarine" : "text-secondary hover:bg-chalk"
                 }`}
               >

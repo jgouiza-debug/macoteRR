@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useAppReady } from "@/lib/boot-ready";
 
 /** The R of the MaCote mark, same path the welcome screen draws. */
 const R_PATH_D =
@@ -21,8 +22,14 @@ const APP_PREFIXES = [
   "/app",
 ];
 
-/** Mark in (520ms), dot in (ends at 640ms), a beat, then a 320ms fade from 980ms. */
-const SPLASH_MS = 1350;
+/**
+ * Mark in (520ms), dot in (ends at 640ms): the floor lets that finish. After it the splash
+ * fades the moment the first real screen has rendered (see ContentTransition); the cap ends
+ * it regardless, so a slow reconcile never leaves a logo over a usable app.
+ */
+const FLOOR_MS = 700;
+const CAP_MS = 2600;
+const FADE_MS = 320;
 
 /**
  * Survives client-side navigation because the module does. The splash belongs to the boot, so
@@ -34,35 +41,48 @@ let hasBooted = false;
  * The mark, animated over the app while it comes up. Rendered in the server HTML so it is on
  * screen at first paint rather than after hydration — which is the whole point of a splash.
  *
- * The fade-out is a CSS animation, not a JS timer, so a slow or failed hydration still ends
- * with the app visible instead of a chalk rectangle nobody can dismiss. The timer below only
- * unmounts the element afterwards.
+ * Two safety nets: the JS cap above, and a CSS fade at 3s that runs even if hydration never
+ * happens, so a broken bundle still ends with the app visible instead of a chalk rectangle.
  */
 export function BootSplash() {
   const pathname = usePathname();
+  const ready = useAppReady();
   const isAppRoute = APP_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );
   // The welcome screen draws this same mark itself; back to back it reads as a stutter.
   const show = isAppRoute && pathname !== "/onboarding/welcome" && !hasBooted;
 
-  const [done, setDone] = useState(false);
+  const [phase, setPhase] = useState<"in" | "out" | "done">("in");
+  const [mountedAt] = useState(() => (typeof performance === "undefined" ? 0 : performance.now()));
 
+  // Leave once ready and past the floor, or at the cap — whichever comes first.
   useEffect(() => {
-    if (!show) return;
+    if (!show || phase !== "in") return;
+    const elapsed = performance.now() - mountedAt;
+    const wait = ready ? Math.max(0, FLOOR_MS - elapsed) : Math.max(0, CAP_MS - elapsed);
+    const id = window.setTimeout(() => setPhase("out"), wait);
+    return () => window.clearTimeout(id);
+  }, [show, phase, ready, mountedAt]);
+
+  // Unmount after the fade has played.
+  useEffect(() => {
+    if (phase !== "out") return;
     const id = window.setTimeout(() => {
       hasBooted = true;
-      setDone(true);
-    }, SPLASH_MS);
+      setPhase("done");
+    }, FADE_MS);
     return () => window.clearTimeout(id);
-  }, [show]);
+  }, [phase]);
 
-  if (!show || done) return null;
+  if (!show || phase === "done") return null;
 
   return (
     <div
       aria-hidden="true"
-      className="boot-splash pointer-events-none fixed inset-0 z-[100] flex items-center justify-center bg-chalk"
+      className={`boot-splash pointer-events-none fixed inset-0 z-[100] flex items-center justify-center bg-chalk ${
+        phase === "out" ? "boot-splash-out" : ""
+      }`}
     >
       {/* Opacity and transform only — nothing else. This plays while the app is parsing and
           hydrating, so the main thread is the busiest it will ever be; the previous version
@@ -84,7 +104,10 @@ export function BootSplash() {
           100% { opacity: 0; visibility: hidden; }
         }
         .boot-splash {
-          animation: bootSplashOut 320ms ease-out 980ms forwards;
+          animation: bootSplashOut ${FADE_MS}ms ease-out 3000ms forwards;
+        }
+        .boot-splash-out {
+          animation: bootSplashOut ${FADE_MS}ms ease-out 0ms forwards;
         }
         .boot-splash-mark {
           opacity: 0;
@@ -101,6 +124,7 @@ export function BootSplash() {
         @media (prefers-reduced-motion: reduce) {
           .boot-splash-mark, .boot-splash-dot { animation: none; opacity: 1; }
           .boot-splash { animation: bootSplashOut 200ms linear 400ms forwards; }
+          .boot-splash-out { animation: bootSplashOut 200ms linear 0ms forwards; }
         }
       `}</style>
 

@@ -75,8 +75,8 @@ export function CegepContactForm({ labels }: { labels: PourLesCegepsContactLabel
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder={labels.messagePlaceholder}
-          rows={4}
-          className="w-full resize-none rounded-[3px] border border-ink/50 bg-chalk px-3.5 py-2.5 text-[16px] leading-relaxed text-ink transition-colors placeholder:text-secondary/70 focus:border-ultramarine"
+          rows={6}
+          className="w-full resize-y rounded-[3px] border border-ink/50 bg-chalk px-3.5 py-2.5 text-[16px] leading-relaxed text-ink transition-colors placeholder:text-secondary/70 focus:border-ultramarine"
         />
       </label>
 
@@ -84,7 +84,7 @@ export function CegepContactForm({ labels }: { labels: PourLesCegepsContactLabel
         type="submit"
         disabled={pilotEmail === null}
         aria-describedby={pilotEmail === null ? "cegep-contact-pending-address" : undefined}
-        className="mt-1 flex h-12 min-h-[48px] items-center justify-center self-start rounded-full bg-ultramarine px-6 text-[14px] font-semibold text-paper transition-[transform,background-color] hover:bg-pressed active:bg-pressed active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-ultramarine disabled:active:scale-100"
+        className="mt-1 flex h-12 min-h-[48px] items-center justify-center self-start rounded-full bg-ultramarine px-6 text-[14px] font-semibold text-paper tap-spring hover:bg-pressed active:bg-pressed disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-ultramarine disabled:active:scale-100"
       >
         {labels.submitLabel}
       </button>

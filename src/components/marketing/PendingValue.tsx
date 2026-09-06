@@ -42,7 +42,12 @@ export function PendingValue({
   }
   if (kind === "email") {
     return (
-      <a href={`mailto:${value}`} className="font-semibold text-ultramarine underline-offset-2 transition-colors hover:text-pressed hover:underline">
+      <a
+        href={`mailto:${value}`}
+        // Underlined at rest (it sits mid-paragraph, where colour alone does not read as a link)
+        // and padded vertically without shifting the line box, for a taller thumb target.
+        className="-my-2 inline-block py-2 font-semibold text-ultramarine underline underline-offset-2 transition-colors hover:text-pressed"
+      >
         {value}
       </a>
     );
